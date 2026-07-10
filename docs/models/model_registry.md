@@ -64,6 +64,11 @@ extraction.
 | Bio_ClinicalBERT | Encoder | MIT (T1) | Extraction/NER baseline | Trained on **MIMIC-III** (de-identified, credentialed). Weights are a released MIT artifact — using them as a baseline does **not** put MIMIC data into MedScale (R2 intact); provenance stated for transparency |
 | PubMedBERT / BiomedBERT | Encoder | MIT (T1) | Extraction/NER baseline; embedding (H2+) | Pretrained on public PubMed + PMC |
 | OpenMed NER models | Encoder | Apache-2.0 (T1) | Extraction/NER baseline (ADR-0007) | Local-first; pinned by revision + SHA |
+| Qwen3 (0.6B–32B) | Generative | Apache-2.0 (T1) | Generative base candidate; comparison | Active family; 32K ctx; licence verified at 8B card |
+| Mistral-7B-Instruct-v0.3 | Generative | Apache-2.0 (T1) | Generative base candidate; comparison | ⚠️ newer Mistral models may be MRL — verify per model, never per family |
+| DeepSeek-R1 | Generative MoE | MIT (T1, licence only) | Comparison (API/hosted) — far beyond compute ceiling | Distillation explicitly permitted; **R1-Distill variants inherit their base licence** (Qwen2.5→T1, Llama→T2) |
+| Llama 3.1 (8B) | Generative | Llama 3.1 Community License (T2) | Eval/comparison only | Not OSI: passthrough + "Built with Llama" branding + derivative name-prefix + 700M-MAU clause |
+| Meditron-7B | Generative | Llama 2 Community License, inherited (T2) | Eval/comparison only | Sept-2023; PubMed/guidelines pretrain; authors advise against deployment |
 
 **Selection remains empirical at T4** (reserved ADR-0002): the constrained-decoding 2×2
 runs on the Tier-1 *generative* pool; medical-QA leaderboard scores are not selection
