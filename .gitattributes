@@ -1,0 +1,25 @@
+# Normalize line endings: LF in the repository, LF on checkout (cross-platform stable).
+# This removes the "LF will be replaced by CRLF" warnings on Windows and keeps hashes
+# deterministic across contributors.
+* text=auto eol=lf
+
+*.py    text eol=lf
+*.md    text eol=lf
+*.toml  text eol=lf
+*.cfg   text eol=lf
+*.ini   text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.json  text eol=lf
+*.cff   text eol=lf
+*.txt   text eol=lf
+LICENSE text eol=lf
+
+# Binary assets (never normalize)
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
+*.gz   binary
+*.zip  binary

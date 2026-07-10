@@ -1,6 +1,6 @@
 # ADR-0003 — Repository Topology and the MedScale ⇄ Afia Boundary
 
-- **Status:** Proposed (awaiting operator approval)
+- **Status:** Accepted (2026-07-10)
 - **Date:** 2026-07-09
 - **Deciders:** Operator (solo founder)
 - **Supersedes:** none
@@ -124,5 +124,12 @@ left to chance.
 ## Compliance
 
 This ADR is governed by Rule R6 (decisions costing >1 day to reverse require an ADR;
-propose, wait for approval, then implement). **No repository scaffolding (T0) proceeds
-until this ADR is approved.**
+propose, wait for approval, then implement).
+
+**Accepted 2026-07-10.** The decision is now realized: MedScale is a standalone git
+repository (`github.com/IamShehri/MedScale`) with its own remote, committed history, and a
+Python 3.11 baseline; T0 scaffolding has proceeded under
+[ADR-0004](0004-t0-foundation-scope.md). The "Live state at time of writing" section above
+is retained as a historical record. One enforcement item remains **outstanding on the Afia
+side** (not actionable from this repository): add `/medscale/` to the parent Afia
+`.gitignore` and retire the now-empty nested `Afia-remote/medscale/` repository.

@@ -1,5 +1,12 @@
 # MedScale Research Blueprint v1.0
 
+> ⚠️ **SUPERSEDED — historical record, do not use.** This early working draft has been
+> replaced by the [Strategic Blueprint v1.0](../vision/MEDSCALE_STRATEGIC_BLUEPRINT_V1.md)
+> and the [Research Vision](../vision/MEDSCALE_RESEARCH_VISION.md), and is kept only for
+> history. In particular, its "foundation model" framing is **obsolete**: MedScale's
+> position is *adapt, don't pretrain* (see [ADR-0004](../adr/0004-t0-foundation-scope.md)
+> and the Research Vision). Nothing in this file is authoritative.
+
 > Working Draft
 
 ## Vision

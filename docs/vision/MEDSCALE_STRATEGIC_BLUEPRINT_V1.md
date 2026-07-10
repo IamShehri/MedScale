@@ -11,11 +11,14 @@
 | **Owner** | Operator (solo founder) |
 | **Change control** | Amendments that expand scope, advance a horizon, or weaken the PHI boundary or the dependency direction require an Architecture Decision Record (ADR) and explicit operator approval. |
 
-> This document is the founding constitution of MedScale. It sits at the top of the
-> scope hierarchy: when a proposed piece of work cannot be traced to a research question
-> and a horizon defined below, it is out of scope until this document is amended. It is
-> intended for research collaborators, PhD researchers, open-source contributors, grant
-> reviewers, future team members, and technical advisors.
+> This document is the founding constitution of MedScale — its canonical **narrative**.
+> For **scope** decisions (what is in or out of the program), the
+> [Research Vision](MEDSCALE_RESEARCH_VISION.md) is the governing authority; where the two
+> differ, the Vision wins (see the
+> [precedence note](../README.md#canonical-sources--precedence)). A proposed piece of work
+> that cannot be traced to a research question and a horizon is out of scope until the
+> Vision is amended. This document is intended for research collaborators, PhD researchers,
+> open-source contributors, grant reviewers, future team members, and technical advisors.
 
 ---
 

@@ -1,0 +1,33 @@
+# Pre-commit hooks mirror the CI quality gate locally, using the *exact* project tool
+# versions via `uv run` (no version drift against a separate hook environment).
+#
+# Enable once per clone:  uv run pre-commit install && uv run pre-commit install --hook-type pre-push
+minimum_pre_commit_version: "3.5.0"
+
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+
+      - id: mypy
+        name: mypy (strict)
+        entry: uv run mypy
+        language: system
+        pass_filenames: false
+
+      - id: pytest
+        name: pytest
+        entry: uv run pytest -q
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

@@ -1,0 +1,105 @@
+# MedScale — packaging and tool configuration.
+# One cohesive package (src-layout). Research-heavy subpackages are added only when
+# there is research to put in them (see docs/adr/0004-t0-foundation-scope.md).
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "medscale"
+dynamic = ["version"]
+description = "An open research platform for verifiable clinical AI: FHIR-native, grammar-constrained, validator-grounded, reproducible."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [{ name = "Abdulaziz Alshehri" }]
+keywords = [
+  "healthcare",
+  "fhir",
+  "clinical-ai",
+  "verifiable-ai",
+  "constrained-decoding",
+  "reproducibility",
+]
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/IamShehri/MedScale"
+Repository = "https://github.com/IamShehri/MedScale"
+Documentation = "https://github.com/IamShehri/MedScale/tree/main/docs"
+Issues = "https://github.com/IamShehri/MedScale/issues"
+
+[dependency-groups]
+dev = [
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "pytest>=8.0",
+  "pytest-cov>=5.0",
+]
+
+[tool.hatch.version]
+path = "src/medscale/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/medscale"]
+
+# ---------------------------------------------------------------------------
+# Ruff — linting + formatting
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "E",    # pycodestyle errors
+  "F",    # pyflakes
+  "I",    # isort
+  "N",    # pep8-naming
+  "UP",   # pyupgrade
+  "B",    # flake8-bugbear
+  "A",    # flake8-builtins
+  "C4",   # flake8-comprehensions
+  "SIM",  # flake8-simplify
+  "PTH",  # flake8-use-pathlib
+  "RUF",  # ruff-specific
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["medscale"]
+
+# ---------------------------------------------------------------------------
+# Mypy — strict typing
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src", "tests"]
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unreachable = true
+
+# ---------------------------------------------------------------------------
+# Pytest + coverage
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra --strict-markers --strict-config"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src/medscale"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
