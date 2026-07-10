@@ -25,6 +25,22 @@ All notable changes to this project are documented here. The format is based on
 
 - ADR-0003 marked **Accepted** with a post-consolidation note.
 
+### Added (T1 ingestion foundation — 2026-07-10)
+
+- **`medscale.litdb` ingestion machinery**: frozen v1 query set as code (Q1–Q10),
+  four source adapters (Semantic Scholar, OpenAlex, PubMed, arXiv) behind an injectable
+  HTTP layer (CI offline; 404 recorded as NOT_FOUND; 429/transport failures abort
+  honestly), verbatim raw archival with SHA-256, byte-stable run manifests, and the
+  append-only PRISMA screening log (replay-validated).
+- **`data/litdb/` scaffolding** with R3 `LICENSE.md` (per-source terms, verified
+  2026-07-10) committed before the first archived byte.
+- **Pilot ingestion round 0** (Q2 × 4 sources, cap 3): OpenAlex, arXiv, PubMed archived
+  with manifest; Semantic Scholar rate-limited (HTTP 429) after backoff — skipped and
+  recorded; full round 1 needs an S2 API key or longer backoff.
+- **`docs/architecture/distribution_hf.md`**: Hugging Face (`MedScale` /
+  org `MedScaleAI`) recognized as the future distribution layer with publishing gates;
+  nothing published before its gate. 22 new offline tests (68 total).
+
 ### Added (T1 foundation — 2026-07-10)
 
 - **ADRs 0005–0008 Accepted** with operator refinements (identity: "Open Research
