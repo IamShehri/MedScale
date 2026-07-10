@@ -52,6 +52,7 @@ Kaggle, Lambda Labs, and future clusters:
 | Interfaces, registry, recipes, manifests, reporting | ✅ live, 42 tests | — |
 | Benchmark runner consuming `TextGenerator` | ⬜ | T3 |
 | Inference backends (extras: `medscale[transformers]`, …) | ⬜ | T4 |
+| Backend roadmap (constitution 2026-07-10): Transformers, vLLM, llama.cpp, ONNX, GGUF, MLX, OpenAI-compatible APIs — each an adapter behind the same protocols, added with evidence of need, never all at once | ⬜ | T4+ |
 | Training execution from `TrainingRecipe` | ⬜ | T5 |
 | Model selection (ADR-0002) | ⬜ | T4 benchmark manifests only |
 

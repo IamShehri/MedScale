@@ -26,7 +26,9 @@ tree.
 | `medscale-fhir` | `medscale.fhirkit` (T2, not started) | H2+ |
 | `medscale-bench` | `medscale.bench` (T3, not started) | H2+ — likely the **first** worth extracting (external labs run benchmarks without wanting the rest) |
 | `medscale-training` | Recipes exist (`modelkit.recipes`); execution gated (T5) | H3 |
-| `medscale-runtime` / `medscale-sdk` / `medscale-hub` | Do not exist; runtime/serving and a hosted hub are H3 platform questions | H3 — each needs its own ADR |
+| `medscale-validation` | The spine's validator surface (subset of `medscale-verification`) | H2+ |
+| `medscale-research` | Experiment framework + replication tooling (`modelkit.manifests` seed) | H3 |
+| `medscale-runtime` / `medscale-sdk` / `medscale-cli` / `medscale-api` / `medscale-docs` / `medscale-hub` | Do not exist; runtime/serving, CLI, hosted API/hub, and a docs site are H3 platform questions | H3 — each needs its own ADR |
 | `medscale-agents` | Explicitly gated (ADR-0005: validator-gated, H2+) | H3 |
 
 ## Graduation gates (all must hold before any extraction)

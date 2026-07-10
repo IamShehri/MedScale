@@ -45,6 +45,18 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (T1 round-1 corpus — 2026-07-10)
+
+- **`medscale.litdb.store`**: byte-stable corpus persistence (JSONL, deduplicated by
+  record_id on write, sorted, LF; load re-validates every record).
+- **`scripts/ingest_round.py`**: reproducible round runner (frozen query set at git
+  SHA; PubMed esearch→batched esummary; S2 backoff + abort-after-2-429s rule; manifest
+  + corpus + PRISMA report). Scripts added to mypy strict scope.
+- **Ingestion round 1 executed and committed**: 1,462 identified → 1,450 parsed (12
+  skipped, reasons recorded) → **1,386 unique literature records** (767 peer-reviewed,
+  619 preprint; arXiv 480 / OpenAlex 454 / PubMed 452). Semantic Scholar rate-limited;
+  all 10 failures recorded; re-run pending API key. 5 new tests (125 total).
+
 ### Added (T1 parsers + ecosystem long view — 2026-07-10)
 
 - **`medscale.litdb.parsers`**: deterministic parsers for all four sources — OpenAlex

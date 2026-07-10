@@ -30,7 +30,7 @@ this table exists so the two vocabularies never drift into two plans:
 | Directive phase | T-phase(s) | Status |
 |---|---|---|
 | Phase 1 — `medscale.core` (identifiers, hashing, provenance, repro metadata) | T0 | ✅ built as `medscale.reproducibility` + `medscale.provenance`; namespace consolidation proposed in [ADR-0014](docs/adr/0014-core-namespace.md) |
-| Phase 2 — `medscale.litdb` (source→raw→parse→record→candidate→verify) | T1 | 🟡 in progress (parsers ✅ — all four sources; next: round-1 ingestion + PRISMA screening) |
+| Phase 2 — `medscale.litdb` (source→raw→parse→record→candidate→verify) | T1 | 🟡 in progress (parsers ✅; **round-1 corpus ✅ — 1,386 records**; next: PRISMA screening; S2 re-run pending API key) |
 | Phase 3 — `medscale.evidence` (evidence operating system) | ADR-0009 (schema live); populated by T1 output | 🟡 schema + guards implemented |
 | Phase 4 — MedScale-Bench | T3 | ⬜ gated on T2 |
 | Phase 5 — AI infrastructure (models, adapters, evaluation) | T4–T7 | 🟡 contracts live: model-agnostic interfaces, registry, recipes, manifests ([ADR-0015](docs/adr/0015-model-agnostic-platform.md)); backends/training/selection gated at T4/T5; landscape + licences in [llm_landscape](docs/models/llm_landscape.md) |
