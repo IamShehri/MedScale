@@ -20,6 +20,7 @@ from medscale.litdb.adapters import (
     UrllibFetcher,
 )
 from medscale.litdb.ingest import ArchiveEntry, RunManifest, archive_retrieval, write_manifest
+from medscale.litdb.parsers import ParseOutcome, parse_pubmed_esearch_ids, parse_records
 from medscale.litdb.queries import QUERY_SET, RESULT_CAP, YEAR_FROM, QuerySpec, get_query
 from medscale.litdb.records import EvidenceTier, Identifiers, LiteratureRecord
 from medscale.litdb.screening import ScreeningStage, ScreeningState, advance_stage
@@ -42,6 +43,7 @@ __all__ = [
     "Identifiers",
     "LiteratureRecord",
     "OpenAlexAdapter",
+    "ParseOutcome",
     "PubMedAdapter",
     "QuerySpec",
     "RawRetrieval",
@@ -57,6 +59,8 @@ __all__ = [
     "append_decision",
     "archive_retrieval",
     "get_query",
+    "parse_pubmed_esearch_ids",
+    "parse_records",
     "replay_decisions",
     "write_manifest",
 ]
