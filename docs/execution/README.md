@@ -11,15 +11,15 @@ intentionally empty at freeze time: **no phase (T0 onward) has started.**
 
 | Document | Phase | Purpose | Status |
 |---|---|---|---|
-| `search_strategy.md` | T1 | Per-source queries and PRISMA thresholds for the literature database (referenced by the research docs) | Missing — to author |
+| [`search_strategy.md`](search_strategy.md) | T1 | Per-source queries, PRISMA workflow, and reproducible ingestion design | ✅ Authored (v1) |
 | `benchmark_spec.md` | T3 | Task and metric definitions for MedScale-Bench | Missing — to author |
 | `constrained_decoding_hypothesis.md` | T2 | The form-vs-content experiment design (referenced by the vision) | Missing — to author |
 | Phase tickets (T0–T7) | all | One-ticket-per-session execution records | Missing — to author |
 
 ## Phase map (see the Strategic Blueprint §6–§8 and §17)
 
-- **T0** — Repository foundation *(not started; gated on ADR-0003 approval)*
-- **T1** — Literature database
+- **T0** — Repository foundation *(✅ complete — ADR-0003/0004)*
+- **T1** — Literature database & evidence foundation *(🟡 in progress — `medscale.litdb`, ADR-0009)*
 - **T2** — FHIR toolkit (`fhirkit`)
 - **T3** — MedScale-Bench
 - **T4–T7** — Model landscape, training pipeline, MESC-v0 adapter, evaluation

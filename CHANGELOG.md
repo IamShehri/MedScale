@@ -25,6 +25,22 @@ All notable changes to this project are documented here. The format is based on
 
 - ADR-0003 marked **Accepted** with a post-consolidation note.
 
+### Added (T1 foundation — 2026-07-10)
+
+- **ADRs 0005–0008 Accepted** with operator refinements (identity: "Open Research
+  Intelligence Infrastructure for Medicine"; no hard model dependencies; OpenMed
+  boundaries kept ready for future clinical/privacy capabilities; FHIR supports, not
+  defines). **ADR-0009 (Evidence Model) Accepted**: evidence objects, verification state
+  machine, provenance datatype, deterministic study-design grading.
+- **`medscale.provenance`** — Rule R1 as a datatype (SourceAPI, Provenance, NOT_FOUND).
+- **`medscale.evidence`** — EvidenceObject with content-derived ids, PICO slots, the
+  verification state machine, and the model-cannot-self-verify guard.
+- **`medscale.litdb`** — LiteratureRecord (R1 identifier requirement,
+  dedupe-by-construction record ids), PRISMA screening state machine (mandatory
+  exclusion reasons), SourceAdapter protocol + RawRetrieval envelope (no network code).
+- **`docs/execution/search_strategy.md`** — frozen-by-commit query set, PRISMA
+  workflow, raw-response archival policy. 38 new deterministic tests (46 total).
+
 ### Added (architecture analysis — 2026-07-10)
 
 - **`docs/architecture/`**: evidence-based ecosystem analysis (OpenMed, MedGemma,

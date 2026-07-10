@@ -34,3 +34,8 @@ external contributors and collaborators can read any document without prior cont
 | **T-VALIDATE / T-REPAIR / T-EXTRACT** | Benchmark task families: detect conformance errors / repair them / extract a FHIR bundle from a note. |
 | **Constraint delta / prompting delta** | The separately-reported effects of grammar constraint vs prompting in the 2×2 evaluation. |
 | **Horizon (H1–H4)** | Time-gated stages of ambition; only H1 is committed work. |
+| **Evidence Object** | ADR-0009's unit of validated evidence: one atomic claim + provenance + verification state + declared grading. |
+| **PICO** | Population, Intervention, Comparator, Outcome — the structured slots of a clinical claim. |
+| **Verification state** | The ADR-0009 state machine: unverified → source_verified → extraction_verified, with disputed/retracted. A model can never verify its own extraction. |
+| **medscale-study-design-v1** | MedScale's deterministic study-design→level grading scheme (1 = systematic review/meta-analysis … 5 = preclinical/other). Grades design, not execution quality. |
+| **Pillar 1 / Pillar 2** | Verifiable clinical generation / verified evidence infrastructure — MedScale's two pillars on one verification spine (ADR-0005). |

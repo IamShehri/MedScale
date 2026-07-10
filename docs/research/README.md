@@ -19,7 +19,7 @@ These are cited by the documents above and will be created in their phase:
 
 | Document | Phase | Purpose |
 |---|---|---|
-| `../execution/search_strategy.md` | T1 | Per-source queries and PRISMA thresholds. |
+| [`../execution/search_strategy.md`](../execution/search_strategy.md) | T1 | ✅ Authored — per-source queries and PRISMA thresholds. |
 | `failure_taxonomy.md` | T3 | The five-class FHIR error taxonomy (RQ4). |
 | `../execution/constrained_decoding_hypothesis.md` | T2 | The form-vs-content 2×2 experiment design (RQ1). |
 | `../execution/benchmark_spec.md` | T3 | MedScale-Bench task and metric definitions. |
