@@ -90,10 +90,36 @@ never operates on real PHI inside MedScale.
 - **Hard dependency on OpenMed:** rejected in ADR-0007; the eval-time need never justifies
   coupling the platform to a fast-moving product repo.
 
-## 4. Principle absorbed, not product copied
+## 4. Architecture lessons (from OpenMed's developer surface, verified 2026-07-10)
 
-The single transferable lesson from OpenMed is **"local-first, deterministic, pinned"** —
-which MedScale already holds as reproducibility policy. MedScale takes OpenMed's *models*
-as an optional, pinned, offline baseline and its *stance* as confirmation of its own; it
-takes none of OpenMed's product surface. That is the whole integration, and it does not
-change with any future OpenMed release.
+Studying *how* OpenMed is built — not to copy, but to learn:
+
+| Observed in OpenMed | Lesson for MedScale |
+|---|---|
+| Composable **function-based API** (`analyze_text`, `deidentify`, `BatchProcessor`) over class-heavy pipelines | Prefer small, pure, composable functions with explicit inputs — MedScale's determinism story is easier to defend when the API is functions over data, not stateful pipelines |
+| **Hierarchical model naming** (`OpenMed-NER-DiseaseDetect-BioMed-335M`) | A name should encode task + domain + size so users discover by capability. MedScale mirrors this: `mesc-fhir`, `mesc-evidence` (family + task) |
+| **Local-first, "no telemetry, no license check-in, no outbound calls at runtime"** | The strongest trust signal OpenMed sends. MedScale must match it: no runtime phone-home, ever; evaluation runs offline from committed artifacts |
+| **`OpenMedConfig.from_profile(dev/prod/test)`** | Environment-specific config is legitimate — but for MedScale, *reproducibility config* (seeds, pins) must be explicit inputs, not profile magic |
+| **Backend proliferation** (MLX, Swift, Kotlin, FastAPI, WebGPU, SageMaker) | A warning, not a model: this breadth is *product* surface. MedScale keeps serving out of core; consumers (Afia) own deployment backends |
+| **SemVer + Apache-2.0, no vendor lock-in** | Confirms MedScale's own release/licence choices (ADR-0010/0011) |
+| **Use-case-organized docs** (quickstart → backend tutorials → API ref) | Documentation for non-engineers (clinical researchers) should lead with tasks, not modules — informs MedScale's guide structure |
+
+## 5. Reusable principles (adopt principles, not implementations)
+
+1. **Trust is a runtime property.** "No outbound calls at runtime" is a design constraint,
+   not a footnote. MedScale adopts it as a hard rule for the model/eval path.
+2. **Discoverability by capability.** Task-first naming and docs, so a clinical researcher
+   finds what a thing *does* before what it *is*.
+3. **Composition over pipelines.** Pure functions over data keep determinism auditable.
+4. **Local-first, offline-reproducible.** The evaluation path must run from committed
+   artifacts with no network — OpenMed proves this is viable at scale.
+5. **Keep serving out of the research core.** Backend breadth belongs to consumers.
+
+## 6. Principle absorbed, not product copied
+
+The single transferable lesson is **"local-first, deterministic, pinned, discoverable"** —
+most of which MedScale already holds as reproducibility policy, now sharpened by OpenMed's
+worked example. MedScale takes OpenMed's *models* as an optional, pinned, offline baseline
+and its *engineering stance* as confirmation and refinement of its own; it takes none of
+OpenMed's product surface. That is the whole integration, and it does not change with any
+future OpenMed release.

@@ -25,23 +25,25 @@ All notable changes to this project are documented here. The format is based on
 
 - ADR-0003 marked **Accepted** with a post-consolidation note.
 
-### Added (architecture — layering & OpenMed decomposition — 2026-07-10)
+### Added (architecture — hybrid layering, model registry, deep OpenMed study — 2026-07-10)
 
-- **`docs/architecture/openmed_capability_analysis.md`**: capability-by-capability
-  decomposition of OpenMed (NER, de-id, local inference, serving, registry) into
-  adopted/adapter/deferred/rejected, each with reasoning; extends accepted ADR-0007,
-  introduces no new decision.
-- **Proposed ADR-0012 (layered architecture model)**: reconciles a founder-proposed
-  8-layer model with the accepted reference architecture. Key architectural pushback —
-  the 8-layer model demotes verification to a peer layer; MedScale keeps it as the
-  cross-cutting spine. Adopts the useful additions (Developer Infrastructure and
-  Applications as first-class edges), resolves the Knowledge/Evidence/Research overlap
-  into pillar 2, and gives every element a horizon label. Not self-ratified.
-- **Model registry extended** (`ai_model_strategy.md`): added the *role* axis
-  (generative base vs encoder baseline — encoders cannot be MESC bases) and verified
-  entries (Bio_ClinicalBERT MIT, PubMedBERT/BiomedBERT MIT, OpenMed encoders Apache-2.0),
-  with MIMIC-III provenance transparency for Bio_ClinicalBERT. No `models/` package
-  created (ADR-0012).
+- **ADR-0012 Accepted (hybrid architecture)**: non-negotiable Verification &
+  Reproducibility **Spine** (cross-cutting) + **seven capability layers** (Knowledge,
+  Evidence, AI, Interoperability, Research, Developer, Application). Verification is never
+  a peer layer — it is MedScale's defining identity. Operator-refined from the original
+  proposal (layered model retained; Knowledge/Evidence kept as distinct layers; ADR-0005
+  pillars retained as the cross-layer mission grouping).
+- **`docs/models/`**: canonical **model registry** (two axes — licence tier × role;
+  ecosystem position map; verified entries: BioMistral Apache-2.0, MedGemma HAI-DEF,
+  Bio_ClinicalBERT MIT, PubMedBERT MIT, OpenMed Apache-2.0; MIMIC-III provenance noted)
+  and the **model card schema** (`schemas/model_card_schema.md`, machine-checkable, for
+  future card-lint CI). `medscale.registry` is *designed* and deferred to Horizon 2 — no
+  package created (ADR-0012). Registry moved out of `ai_model_strategy.md` (dedupe).
+- **Deep OpenMed study** (`openmed_capability_analysis.md` expanded): capability map +
+  architecture lessons + reusable principles + integration opportunities + things to
+  avoid, grounded in OpenMed's verified developer surface. Principles absorbed
+  (local-first, no runtime phone-home, task-first discoverability, composition over
+  pipelines); product not copied.
 
 ### Added (release infrastructure design — 2026-07-10)
 
