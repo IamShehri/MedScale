@@ -62,10 +62,11 @@ Reading rules: solid boxes are committed Horizon-1 work mapped to existing phase
 so it cannot masquerade as scope. Every layer's outputs are admissible only after
 passing the spine.
 
-> **Navigational taxonomy:** [ADR-0012](../adr/0012-layered-architecture-model.md) refines
-> this into a shared vocabulary (spine · two pillars · Developer/Applications edges) with a
-> horizon label per element, reconciling a proposed 8-layer model while keeping
-> verification cross-cutting rather than a peer layer.
+> **Canonical taxonomy:** [ADR-0012 (Accepted)](../adr/0012-layered-architecture-model.md)
+> defines the hybrid model — the non-negotiable Verification & Reproducibility Spine plus
+> seven capability layers (Knowledge, Evidence, AI, Interoperability, Research, Developer,
+> Application) — with a horizon label per element. Verification is never a peer layer.
+> The diagram above predates that vocabulary and reads as its instantiation.
 
 ## Layer-by-layer disposition
 

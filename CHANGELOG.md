@@ -45,6 +45,26 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (model research program groundwork — 2026-07-10)
+
+- **`docs/models/llm_landscape.md`**: open-LLM landscape + licence evaluation, all
+  licences verified from primary sources 2026-07-10 — Qwen3 (Apache-2.0),
+  Mistral-7B-v0.3 (Apache-2.0, with per-model MRL caution), DeepSeek-R1 (MIT,
+  distillation permitted; distills inherit base licences) = Tier 1; Llama 3.1
+  (community licence: passthrough, branding, 700M-MAU) and Meditron-7B (Llama-2
+  inheritance) = Tier 2. T4 shortlist rule recorded; capability ranking deliberately
+  deferred to the empirical 2×2. Registry entries extended accordingly.
+- **`docs/research/experiment_framework.md`**: the reproducible experiment framework —
+  mandatory experiment manifest (config, dataset hash, model revision, code SHA, seeds,
+  metrics, environment, reproduction), runner policy (Colab/local/cloud admissible;
+  replay-exact scoring over saved outputs), pre-registration discipline, storage layout.
+  "Never train without reproducibility," operationalized.
+- **Proposed ADR-0013** (language strategy: Python-first; Rust/Go role-gated by
+  evidenced triggers + entry ADRs) and **Proposed ADR-0014** (`medscale.core` spine
+  namespace — recommended now, while the rename is free). Not self-ratified.
+- ROADMAP: founder-phase ↔ T-phase mapping table (one plan, two vocabularies);
+  T1-gate text refreshed; stale "0012 Proposed" index entry corrected to Accepted.
+
 ### Added (release infrastructure design — 2026-07-10)
 
 - **`docs/releases/`** (12 documents): complete publication & artifact lifecycle —

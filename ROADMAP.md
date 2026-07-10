@@ -22,6 +22,22 @@ authoritative scope document is the
 **Horizon 1 success** = a green benchmark, a published adapter *or* a published null
 result, and a reproducible pipeline — all on Colab-class compute.
 
+### Founder's phase vocabulary → T-phases (one plan, two names)
+
+The founder's directive names five engineering phases; they map onto the T-phases —
+this table exists so the two vocabularies never drift into two plans:
+
+| Directive phase | T-phase(s) | Status |
+|---|---|---|
+| Phase 1 — `medscale.core` (identifiers, hashing, provenance, repro metadata) | T0 | ✅ built as `medscale.reproducibility` + `medscale.provenance`; namespace consolidation proposed in [ADR-0014](docs/adr/0014-core-namespace.md) |
+| Phase 2 — `medscale.litdb` (source→raw→parse→record→candidate→verify) | T1 | 🟡 in progress (parsers = next step) |
+| Phase 3 — `medscale.evidence` (evidence operating system) | ADR-0009 (schema live); populated by T1 output | 🟡 schema + guards implemented |
+| Phase 4 — MedScale-Bench | T3 | ⬜ gated on T2 |
+| Phase 5 — AI infrastructure (models, adapters, evaluation) | T4–T7 | ⬜ gated; landscape + licences pre-analyzed in [llm_landscape](docs/models/llm_landscape.md) |
+
+Language policy for all phases: [ADR-0013](docs/adr/0013-language-strategy.md)
+(Python-first; Rust/Go role-gated by evidenced triggers).
+
 ## Horizons (directional)
 
 - **Horizon 1 — Foundations (2026–2027) · committed.** The above.
@@ -39,5 +55,7 @@ result, and a reproducible pipeline — all on Colab-class compute.
 ## Current gate before T1+
 
 See the [handover / T0 exit checklist](docs/execution/README.md) and open issues.
-Notably: provision a JRE + pinned HL7 validator (blocks T2), and author
-`docs/execution/search_strategy.md` (blocks T1).
+Notably: provision a JRE + pinned HL7 validator (blocks T2). The T1 search strategy is
+authored ([search_strategy.md](docs/execution/search_strategy.md)); remaining T1 work:
+parsers (raw → `LiteratureRecord`), full round-1 ingestion (needs a Semantic Scholar
+API key or long backoffs), PRISMA screening.
