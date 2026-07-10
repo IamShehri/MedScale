@@ -45,6 +45,19 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (model-agnostic AI platform — 2026-07-10)
+
+- **`medscale.modelkit`** (ADR-0015, operator-directed): the AI-Infrastructure layer's
+  contract surface, pure and dependency-free — `TextGenerator`/`SpanExtractor`
+  protocols with `ModelRef` identity (grammar is a request field; backends that cannot
+  enforce it must raise); the machine-readable licence-first registry (Tier-2/encoder
+  base candidacy is a constructor error); content-addressed LoRA/QLoRA recipe schemas
+  (no training execution — T5 gate stands); deterministic experiment manifests with
+  runner portability (Colab/Kaggle/RunPod/Lambda/local/cluster detection); honest
+  metric reporting (mean ± 95% CI, Student-t, single implementation). 42 new offline
+  tests (110 total). Backends, benchmark runners, and training remain gated at
+  T4/T3/T5; model selection stays benchmark-manifest-driven (reserved ADR-0002).
+
 ### Added (model research program groundwork — 2026-07-10)
 
 - **`docs/models/llm_landscape.md`**: open-LLM landscape + licence evaluation, all

@@ -7,10 +7,11 @@
   [model card schema](schemas/model_card_schema.md),
   [ecosystem analysis](../architecture/ecosystem_analysis.md)
 
-This is the single source of truth for every external model MedScale evaluates, compares,
-or may adapt. It is a **documentation artifact today** (a machine-readable
-`medscale.registry` is designed below and deferred — see §5). Every row records licence,
-tier, role, and a verified source before it may inform any decision.
+This is the human narrative of the registry; the **enforceable twin is
+`medscale.modelkit.registry`** (ADR-0015), where the tier/role invariants are
+constructor errors, not prose. Every row records licence, tier, role, and a verified
+source before it may inform any decision. The two must stay consistent — the code is
+authoritative for eligibility, this document for rationale.
 
 ## 1. Where MedScale sits in the medical-AI ecosystem
 
@@ -82,10 +83,11 @@ evidence (MedScale's task is FHIR generation, not exam QA).
 No row informs a decision until every field is present and the source verified (R1
 discipline applied to models).
 
-## 5. `medscale.registry` — machine-readable registry (Horizon 2, design only)
+## 5. `medscale.modelkit.registry` — the machine-readable registry (implemented, ADR-0015)
 
-**Not implemented now** (ADR-0012: no package exists merely because it is common; there is
-no Horizon-1 consumer). Designed here so the eventual build is mechanical, not inventive.
+**Implemented 2026-07-10** under operator directive (pulling forward the structuring the
+ADR-0006 compliance clause had deferred to T4). The original design intent below is
+retained and was followed:
 
 - **Purpose:** turn §3 into a validated, versioned data file (`registry.json`, canonical
   JSON) that release CI can lint — so a model card's `base_model` must resolve to a

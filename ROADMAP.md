@@ -33,7 +33,7 @@ this table exists so the two vocabularies never drift into two plans:
 | Phase 2 — `medscale.litdb` (source→raw→parse→record→candidate→verify) | T1 | 🟡 in progress (parsers = next step) |
 | Phase 3 — `medscale.evidence` (evidence operating system) | ADR-0009 (schema live); populated by T1 output | 🟡 schema + guards implemented |
 | Phase 4 — MedScale-Bench | T3 | ⬜ gated on T2 |
-| Phase 5 — AI infrastructure (models, adapters, evaluation) | T4–T7 | ⬜ gated; landscape + licences pre-analyzed in [llm_landscape](docs/models/llm_landscape.md) |
+| Phase 5 — AI infrastructure (models, adapters, evaluation) | T4–T7 | 🟡 contracts live: model-agnostic interfaces, registry, recipes, manifests ([ADR-0015](docs/adr/0015-model-agnostic-platform.md)); backends/training/selection gated at T4/T5; landscape + licences in [llm_landscape](docs/models/llm_landscape.md) |
 
 Language policy for all phases: [ADR-0013](docs/adr/0013-language-strategy.md)
 (Python-first; Rust/Go role-gated by evidenced triggers).
