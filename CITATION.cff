@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use MedScale in academic work, please cite it as below."
+title: "MedScale: An open research platform for verifiable clinical AI"
+abstract: >-
+  MedScale is an open-source research platform for verifiable clinical AI: FHIR-native,
+  grammar-constrained, validator-grounded, deterministically benchmarked, and fully
+  reproducible. It is trained and evaluated on synthetic data only.
+type: software
+authors:
+  - family-names: Alshehri
+    given-names: Abdulaziz
+repository-code: "https://github.com/IamShehri/MedScale"
+url: "https://github.com/IamShehri/MedScale"
+license: Apache-2.0
+version: 0.0.0
+date-released: "2026-07-10"
+keywords:
+  - healthcare
+  - FHIR
+  - clinical AI
+  - verifiable AI
+  - constrained decoding
+  - reproducibility
