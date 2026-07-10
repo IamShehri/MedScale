@@ -1,7 +1,6 @@
-# ADR-0012 — The MedScale Layered Architecture Model
+# ADR-0012 — The MedScale Layered Architecture Model (Hybrid: Spine + Capability Layers)
 
-- **Status:** Proposed (awaiting operator approval — this reconciles a founder-proposed
-  architectural framing with the accepted reference architecture; not self-ratified)
+- **Status:** Accepted (2026-07-10, operator approval with refinement — see Acceptance notes)
 - **Date:** 2026-07-10
 - **Deciders:** Operator (solo founder)
 - **Supersedes:** none (refines, does not replace, the
@@ -41,60 +40,70 @@ underweights — **Developer Infrastructure** (the contributor-facing surface: t
 docs, CI, packaging) and **Applications** (Afia as *one* consumer among future many).
 Both deserve first-class naming.
 
-## Decision (proposed)
+## Decision (accepted, as refined by the operator)
 
-Adopt a **reconciled layered model**: a cross-cutting spine plus two pillars plus two
-edges, with the eight proposed labels retained as a *navigational taxonomy* that maps
-onto this structure (so the founder's vocabulary works, without demoting verification).
+Adopt a **hybrid architecture**: a non-negotiable, cross-cutting **Verification &
+Reproducibility Spine**, plus **seven capability layers**. Verification is never a peer
+capability layer, because it is the defining identity of MedScale — every capability
+layer's output is admissible only after passing the spine.
 
 ```mermaid
 flowchart TB
-    subgraph SPINE [SPINE · Verification & Reproducibility — cross-cutting, non-bypassable]
+    subgraph SPINE [VERIFICATION & REPRODUCIBILITY SPINE — non-negotiable, cross-cutting]
         direction LR
         S1[validators · deterministic scorers]
         S2[provenance · citation integrity · R1]
         S3[reproducibility primitives · seeds/hashes/manifests]
     end
-    subgraph P1 [PILLAR 1 · Verifiable Clinical Generation]
-        A1[AI infra: licence-first models · constrained decoding · MESC adapters]
-        A2[Interoperability infra: fhirkit · FHIR canonical]
+    subgraph LAYERS [CAPABILITY LAYERS]
+        direction TB
+        L1[Knowledge Infrastructure — litdb: ingestion · PRISMA screening · records]
+        L2[Evidence Infrastructure — evidence objects · verification states · grading]
+        L3[AI Infrastructure — licence-first models · constrained decoding · MESC adapters]
+        L4[Interoperability Infrastructure — fhirkit · FHIR canonical · boundary adapters]
+        L5[Research Infrastructure — benchmarks · experiments · publications · replication]
+        L6[Developer Infrastructure — tooling · docs · CI · packaging · releases]
+        L7[Application Layer — Afia and future consumers · outbound only]
     end
-    subgraph P2 [PILLAR 2 · Verified Research Intelligence]
-        B1[Knowledge/Evidence infra: litdb · evidence objects]
-        B2[Research infra: PRISMA workflow · benchmarks · publications]
-    end
-    subgraph EDGES [EDGES]
-        D[Developer infra: tooling · docs · CI · packaging · releases]
-        AP[Applications: Afia and future consumers · outbound only]
-    end
-    P1 --- SPINE
-    P2 --- SPINE
-    D -. serves .- P1 & P2
-    P1 & P2 -. published artifacts .-> AP
+    L1 --- SPINE
+    L2 --- SPINE
+    L3 --- SPINE
+    L4 --- SPINE
+    L5 --- SPINE
+    L6 --- SPINE
+    L1 & L2 & L3 & L4 & L5 -. published artifacts .-> L7
 ```
 
-**Label mapping (the founder's 8 layers → this model):**
+**Layer definitions and anchors:**
 
-| Proposed layer | Maps to | Note |
+| Capability layer | Owns | Anchor decisions |
 |---|---|---|
-| Verification | **The spine** (not a layer) | Elevated, not demoted — the one structural change from the proposal |
-| Knowledge + Evidence + Research | **Pillar 2** (Research Intelligence) | Three labels, one pillar (ADR-0005) |
-| AI | Pillar 1 · model sublayer | Licence-first (ADR-0006); models are replaceable, the spine is not |
-| Interoperability | Pillar 1 · FHIR sublayer | FHIR supports, does not define (ADR-0008) |
-| Developer | **Edge: Developer Infrastructure** | Newly first-class (see below) |
-| Applications | **Edge: Applications** | Afia is one consumer; outbound-only (ADR-0003) |
+| Knowledge Infrastructure | Literature ingestion, PRISMA screening, bibliographic records | T1; ADR-0005 |
+| Evidence Infrastructure | Evidence objects, verification states, provenance-graded claims | ADR-0009 |
+| AI Infrastructure | Model registry, constrained decoding, MESC adapters | ADR-0006; models are replaceable, the spine is not |
+| Interoperability Infrastructure | fhirkit, FHIR-canonical representation, boundary adapters | ADR-0008; FHIR supports, does not define |
+| Research Infrastructure | Benchmarks, experiment manifests, papers, replication packages | ADR-0010/0011 (releases) |
+| Developer Infrastructure | Tooling, docs, CI, packaging, release automation | First-class (see rationale below) |
+| Application Layer | Afia and every future consumer; consumes released artifacts only | ADR-0003; outbound-only, PHI never returns |
+
+The two *pillars* of ADR-0005 (verifiable clinical generation; verified research
+intelligence) remain the **mission grouping** of these layers: pillar 1 ≈ AI +
+Interoperability; pillar 2 ≈ Knowledge + Evidence + Research. Layers say *where code
+and docs live*; pillars say *why they exist*. Both vocabularies are canonical, and they
+do not conflict.
 
 **Horizon classification of each element** (never implement Horizon 3 during Horizon 1):
 
 | Element | Horizon | Basis |
 |---|---|---|
 | Spine (repro primitives, provenance) | **H1 — now** | Exists (T0); grows at T2/T3 |
-| Pillar 2 litdb/evidence | **H1 — now** | T1 in progress |
-| Pillar 1 fhirkit | H1→H2 boundary | T2, gated on JRE/validator |
-| Pillar 1 models/MESC | H2 design, H2 build | T4–T6; no training before the gate |
-| Developer infrastructure | **H1 — now** | Tooling/docs/CI/releases already live; strengthen continuously |
-| Knowledge graph, research agents | **H3 — document only** | ADR-0005 gates; not built in H1 |
-| Applications (beyond Afia) | H3 — document only | Consumers, not MedScale scope |
+| Knowledge + Evidence Infrastructure (litdb, evidence objects) | **H1 — now** | T1 in progress |
+| Interoperability Infrastructure (fhirkit) | H1→H2 boundary | T2, gated on JRE/validator |
+| AI Infrastructure (models/MESC) | H2 design, H2 build | T4–T6; no training before the gate |
+| Research Infrastructure (benchmarks, publications) | H1 design, H2+ scale | T3 onward |
+| Developer Infrastructure | **H1 — now** | Tooling/docs/CI/releases already live; strengthen continuously |
+| Knowledge graph, research agents (within Knowledge/Research layers) | **H3 — document only** | ADR-0005 gates; not built in H1 |
+| Application Layer beyond Afia | H3 — document only | Consumers, not MedScale scope |
 
 **Developer Infrastructure is elevated to a first-class edge.** Rationale drawn from the
 ecosystem the directive cites: the projects that became reference infrastructure won on
@@ -107,9 +116,10 @@ byproduct. This does not add scope; it names and protects work already underway.
 
 ## Consequences
 
-**Positive:** the founder's layering vocabulary is usable for onboarding and docs without
-weakening the verification thesis; overlap between Knowledge/Evidence/Research is resolved
-into one pillar; Developer and Applications become nameable; every component now has a
+**Positive:** the layered vocabulary is usable for onboarding and docs without weakening
+the verification thesis (the spine is structurally outside the layer list); Knowledge and
+Evidence keep distinct names while the pillar grouping preserves their mission unity;
+Developer Infrastructure and the Application Layer become nameable; every component has a
 horizon label, making "not now" decisions legible to future contributors without founder
 memory.
 
@@ -120,12 +130,14 @@ future docs or it decays.
 
 ## Alternatives considered
 
-- **Adopt the 8-layer model verbatim.** Rejected: demotes verification to a peer layer
-  (Concern 1) and triple-counts pillar 2 (Concern 2) — it would weaken the thesis in the
-  act of documenting it.
-- **Keep the existing spine+layers reference architecture unchanged.** Rejected: it
-  underweights Developer Infrastructure and Applications, both of which the decade-scale
-  goal needs named and protected.
+- **Adopt the 8-layer model with verification as layer 3.** Rejected (and this is the
+  refinement the operator confirmed): demoting verification to a peer capability layer
+  would weaken MedScale's defining identity in the very document meant to communicate it.
+  Verification is the spine, structurally outside the layer list.
+- **Collapse Knowledge/Evidence/Research into a single "pillar 2" layer.** Considered in
+  the original draft; **not adopted** — the operator kept Knowledge, Evidence, and
+  Research as distinct capability layers for clarity, with the ADR-0005 pillars retained
+  as the cross-layer mission grouping.
 - **Replace the reference architecture entirely.** Rejected: unnecessary churn; the spine
   model is correct and accepted — this refines its vocabulary, nothing more.
 
@@ -133,6 +145,18 @@ future docs or it decays.
 
 On acceptance: add a pointer from the
 [reference architecture](../architecture/medscale_reference_architecture.md) to this
-ADR's taxonomy; use the spine/pillars/edges + horizon labels as the standard vocabulary in
+ADR's taxonomy; use the spine + capability-layer + horizon vocabulary as the standard in
 future architecture docs. No code changes; no new packages; the model registry remains a
-documentation artifact under ADR-0006 ([model strategy](../architecture/ai_model_strategy.md)).
+documentation artifact under ADR-0006 ([model registry](../models/model_registry.md)).
+
+## Acceptance notes (operator refinement, 2026-07-10)
+
+The operator approved the direction with one refinement: **do not remove the layered
+model.** The adopted structure is the hybrid above — the non-negotiable Verification &
+Reproducibility Spine (cross-cutting, applying to every component) plus seven capability
+layers: Knowledge, Evidence, AI, Interoperability, Research, Developer, and Application
+(Afia and future consumers). Knowledge and Evidence remain *distinct layers* (rather than
+collapsed into one pillar label, as originally proposed here); the ADR-0005 pillars are
+retained as the mission grouping across layers. The original proposal's core correction
+stands verbatim: **verification must never be treated as a peer capability layer, because
+it is the defining identity of MedScale.**
