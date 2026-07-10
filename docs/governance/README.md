@@ -12,6 +12,7 @@ program-level documents that are *not* tied to a single research question or tic
 | Document | Purpose | Status |
 |---|---|---|
 | [`rules.md`](rules.md) (R1–R7) | Canonical definition of the program rules referenced across the docs | ✅ Created |
+| [`roles_and_authority.md`](roles_and_authority.md) | Founder/architect role separation, roadmap authority, review cadence, report format (binding addendum) | ✅ Created |
 | `licensing_policy.md` + licence ADR | Formalize the permissive, derivative-plus-commercial-use licence stance (Apache-2.0 is the working assumption) | Missing — pending licence ADR |
 | `citation_policy.md` | Consolidate Rule R1 (no citations from memory; live-API provenance) as a standalone policy | Referenced in `../research/reproducibility_policy.md` |
 | `dataset_policy.md` | Consolidate the synthetic-only / per-directory `LICENSE.md` / PHI-boundary rules | Referenced in `../research/reproducibility_policy.md` |

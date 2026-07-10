@@ -45,6 +45,18 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (governance addendum + architecture review — 2026-07-10)
+
+- **`docs/governance/roles_and_authority.md`** (binding): founder owns roadmap/scope/
+  epic approval; architect executes approved scope, challenges weak ideas, and
+  recommends via explicit options — approval never assumed. Session-report format and
+  continuous-architecture-review cadence institutionalized.
+- **Post-round-1 architecture review** (`docs/architecture/reviews/`): pipeline
+  survived first real data intact; no redesigns; one urgent decision surfaced.
+- **Proposed ADR-0016** (raw-archive storage): git history is append-only — storage
+  policy must be decided before further ingestion. Recommended: in-repo, field-trimmed,
+  capped, with a ~75 MB tripwire. **Blocks further ingestion rounds until decided.**
+
 ### Added (T1 round-1 corpus — 2026-07-10)
 
 - **`medscale.litdb.store`**: byte-stable corpus persistence (JSONL, deduplicated by
