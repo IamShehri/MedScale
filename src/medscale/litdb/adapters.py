@@ -73,6 +73,10 @@ class UrllibFetcher:
         except urllib.error.HTTPError as exc:
             body = exc.read().decode("utf-8", errors="replace") if exc.fp else ""
             return FetchResult(exc.code, body)
+        except (urllib.error.URLError, OSError) as exc:
+            # SSL/DNS/socket failures abort the run honestly, like any other
+            # non-retriable transport condition.
+            raise RetrievalError(f"transport failure at {url}: {exc}") from exc
 
 
 def _utc_now() -> str:

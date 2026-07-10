@@ -89,3 +89,17 @@ def test_other_errors_raise() -> None:
     adapter = PubMedAdapter(fetcher=FakeFetcher(status=500), now=_now)
     with pytest.raises(RetrievalError, match="HTTP 500"):
         adapter.fetch_by_identifier("1")
+
+
+def test_urllib_fetcher_wraps_transport_failures(monkeypatch: pytest.MonkeyPatch) -> None:
+    import urllib.error
+    import urllib.request
+
+    from medscale.litdb import UrllibFetcher
+
+    def boom(*args: object, **kwargs: object) -> object:
+        raise urllib.error.URLError("certificate verify failed")
+
+    monkeypatch.setattr(urllib.request, "urlopen", boom)
+    with pytest.raises(RetrievalError, match="transport failure"):
+        UrllibFetcher()("https://example.org/x")
