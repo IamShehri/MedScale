@@ -78,6 +78,6 @@ def append_decision(log_path: Path, decision: ScreeningDecision) -> ScreeningSta
     current = states.get(decision.record_id, ScreeningState(ScreeningStage.IDENTIFIED))
     new_state = advance_stage(current, decision.to_stage, reason=decision.reason)
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    with log_path.open("a", encoding="utf-8") as handle:
+    with log_path.open("a", encoding="utf-8", newline="\n") as handle:
         handle.write(canonical_json(decision.to_dict()) + "\n")
     return new_state

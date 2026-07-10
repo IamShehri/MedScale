@@ -108,5 +108,7 @@ def write_manifest(root: Path, manifest: RunManifest) -> Path:
     """Serialize the manifest canonically (byte-stable) to ``manifests/<run_id>.json``."""
     target = root / "manifests" / f"{manifest.run_id}.json"
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(canonical_json(manifest.to_dict()) + "\n", encoding="utf-8")
+    # newline="\n" pins LF on every platform — manifests must be byte-identical
+    # regardless of the OS that wrote them.
+    target.write_text(canonical_json(manifest.to_dict()) + "\n", encoding="utf-8", newline="\n")
     return target
