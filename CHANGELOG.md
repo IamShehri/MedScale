@@ -45,6 +45,22 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (scientific-integrity & CTO review constitution — 2026-07-10)
+
+- **Constitution amendments** (roles_and_authority.md): Scientific Integrity Review
+  (Chief Scientist role — Nature/NEJM/NIH-reviewer standard after every major
+  milestone; rigor outranks speed, trustworthy outranks impressive); CTO Review
+  ("would we build it the same way today?" — redesigns recommended without fear, as
+  Proposed ADRs); Duty to Challenge (the architect may tell the founder they are
+  wrong; the founder remains final decision-maker).
+- **Scientific Integrity Review #1**: eight findings — headline: round-1 is a *scoping*
+  search (relevance-biased caps; 0.66% coverage on Q2), version-duplicate dedupe gap,
+  single-screener limitation, and the corpus-purpose mismatch (methods corpus ≠
+  clinical-evidence corpus — pillar-2 framing fix). Research-debt register opened.
+- **CTO Review #1**: no redesigns; three founded-today deviations recorded (storage
+  ADR first, two corpora named from day one, leaner constitution set) + WSL2/dev-
+  container recommendation.
+
 ### Added (governance addendum + architecture review — 2026-07-10)
 
 - **`docs/governance/roles_and_authority.md`** (binding): founder owns roadmap/scope/
