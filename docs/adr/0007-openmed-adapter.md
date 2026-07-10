@@ -1,6 +1,6 @@
 # ADR-0007 — OpenMed as an Optional Evaluation-Time Adapter
 
-- **Status:** Proposed (awaiting operator approval)
+- **Status:** Accepted (2026-07-10, operator approval with modification — see Acceptance notes)
 - **Date:** 2026-07-10
 - **Deciders:** Operator (solo founder)
 - **Supersedes:** none
@@ -58,3 +58,14 @@ non-goals list, which is part of this decision).
 
 No code until T3. When implemented: extras group in `pyproject.toml`, pinned revisions
 recorded in the benchmark spec, offline-cache test in CI proving the no-OpenMed path.
+
+## Acceptance notes (operator modification, 2026-07-10)
+
+Approved with a widened *future* aperture: beyond the evaluation-time role, OpenMed is
+recognized as a **future clinical/privacy integration capability** for healthcare
+deployment. De-identification and clinical NLP remain **outside Horizon 1 scope** but are
+valid future capabilities. Architectural boundaries must stay ready for: clinical NLP,
+PII detection, privacy-preserving workflows, and local inference — i.e., adapter
+interfaces owned by MedScale (`SpanExtractor`-style protocols), optional extras groups,
+and offline/local-first design, so these capabilities can be added later without core
+rework. **No OpenMed integration is implemented now.**

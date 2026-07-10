@@ -3,9 +3,9 @@
 
 # MedScale
 
-**An open research platform for verifiable clinical AI.**
+**Open research intelligence infrastructure for medicine.**
 
-*FHIR-native · grammar-constrained · validator-grounded · deterministic · reproducible*
+*Verifiable clinical AI and verified evidence — FHIR-native · grammar-constrained · validator-grounded · deterministic · reproducible*
 
 [![CI](https://github.com/IamShehri/MedScale/actions/workflows/ci.yml/badge.svg)](https://github.com/IamShehri/MedScale/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -36,6 +36,13 @@ The platform is built around five ideas:
 
 The guiding scientific hypothesis: **grammar guarantees form; training only teaches
 content.** It is designed to be *falsified, not assumed.*
+
+MedScale has two pillars on one verification spine
+([ADR-0005](docs/adr/0005-research-intelligence-scope.md)): **verifiable clinical
+generation** (FHIR, grammar, validator, benchmark) and **verified evidence
+infrastructure** (litdb + the evidence model,
+[ADR-0009](docs/adr/0009-evidence-model.md)). It is infrastructure — not a medical
+chatbot, and not a clinician-facing answer product.
 
 > MedScale is **not** a from-scratch foundation model, **not** a medical device, and is
 > **never** trained or evaluated on PHI. See

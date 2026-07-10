@@ -258,6 +258,12 @@ benchmark and toolkit* that others run to make their own clinical-AI claims chec
 a body of honest results, positive and negative, about what constrained, adapter-based,
 validator-grounded methods can and cannot do in healthcare.
 
+Under [ADR-0005](../adr/0005-research-intelligence-scope.md), this mission is realized
+through two pillars sharing one verification spine: **verifiable clinical generation**
+(this program's committed core) and **verified research-evidence infrastructure** (litdb
+and the evidence model, ADR-0009) — the latter explicitly infrastructure, never a
+clinician-facing answer product.
+
 ---
 
 ## 6. Scientific Research Program

@@ -34,6 +34,11 @@ that cannot be checked.
   the wider research community.
 - **Verification-first**: every claim is backed by a reproducible script and a committed
   result artifact (Rule R7); every metric that headlines is deterministic and executable.
+- **Verified evidence infrastructure (pillar 2, per ADR-0005)**: literature and evidence
+  machinery — litdb, evidence objects with provenance and verification state (ADR-0009) —
+  built as reusable open infrastructure under the same verification spine. Explicitly
+  *infrastructure*, never a clinician-facing answer product; knowledge-graph and agent
+  work on this pillar is Horizon-2+ and gated.
 
 ## 3. What MedScale is NOT
 
@@ -47,6 +52,9 @@ that cannot be checked.
   fixtures). See the PHI boundary in §5.
 - **NOT the Afia product.** MedScale does not own user workflows, UI, scheduling,
   storage, or clinical applications. It has no dependency on Afia.
+- **NOT a medical chatbot or clinician-facing answer product.** MedScale does not compete
+  with OpenEvidence-class tools; it is the verifiable, open substrate such products
+  should be built on (ADR-0005).
 - **NOT a leaderboard-chasing "state of the art" effort.** No superlative performance
   claims; only reported numbers with seeds and confidence intervals. Honest negative
   results are first-class deliverables.
@@ -111,6 +119,9 @@ still holds. This section is a *filter*, not a backlog.
   community leaderboard.
 - Multi-adapter / task-specialized models; systematic ablations of the form-vs-content
   hypothesis across bases.
+- Pillar-2 growth (ADR-0005 gates): evidence-object corpus at scale; knowledge-graph
+  *views* derived from litdb and structured registries — only after T1 is populated and
+  deterministic extraction is proven (T3/T7).
 
 ### Horizon 3 — Platform (2029–2032) · DIRECTIONAL
 - MedScale as a cited, community-used open benchmark and toolkit for FHIR-native AI.

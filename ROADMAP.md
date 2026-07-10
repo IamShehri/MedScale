@@ -10,8 +10,8 @@ authoritative scope document is the
 
 | Phase | Title | Status | Depends on |
 |---|---|---|---|
-| **T0** | Repository & engineering foundation | 🟡 in progress | — |
-| **T1** | Literature database (systematic review) | ⬜ not started | T0 |
+| **T0** | Repository & engineering foundation | ✅ complete | — |
+| **T1** | Literature database & evidence foundation (`medscale.litdb`, ADR-0009) | 🟡 in progress | T0 |
 | **T2** | `fhirkit`: validation + grammar | ⬜ not started | T0, JRE + HL7 validator |
 | **T3** | MedScale-Bench v0 (deterministic, executable) | ⬜ not started | T2 |
 | **T4** | Base-model landscape + constrained-decoding 2×2 | ⬜ not started | T2, T3 |

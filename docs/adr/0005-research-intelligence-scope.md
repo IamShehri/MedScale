@@ -1,7 +1,6 @@
 # ADR-0005 — Research Intelligence as a Second Pillar (Mission Scope Amendment)
 
-- **Status:** Proposed (awaiting operator approval — this is a scope decision the
-  architect cannot self-ratify; Research Vision §9 requires it)
+- **Status:** Accepted (2026-07-10, operator approval with refinement — see Acceptance notes)
 - **Date:** 2026-07-10
 - **Deciders:** Operator (solo founder)
 - **Supersedes:** none
@@ -74,3 +73,16 @@ gates) upon acceptance.
 On acceptance: amend Research Vision §2/§6 (one paragraph), update the Blueprint's §5–§6
 cross-references, and reflect pillar 2 in ROADMAP.md. Until accepted, no litdb API design
 work beyond what T1 already required.
+
+## Acceptance notes (operator refinements, 2026-07-10)
+
+1. MedScale's identity phrase is ratified as **"Open Research Intelligence
+   Infrastructure for Medicine."**
+2. Research intelligence is implemented as a **verified evidence infrastructure
+   capability** — explicitly **not** a generic medical chatbot and **not** a direct
+   competitor to clinician-facing products (OpenEvidence/Medwise class).
+3. The core identity remains: evidence verification, reproducibility, provenance,
+   scientific workflows.
+4. Follow-up executed: Research Vision amended (§2 pillar-2 bullet, §3 not-a-chatbot
+   bullet, §6 H2 gating line); Blueprint §5 cross-reference added; ROADMAP updated;
+   the evidence abstraction is defined in [ADR-0009](0009-evidence-model.md).

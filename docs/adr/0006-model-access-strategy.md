@@ -1,6 +1,6 @@
 # ADR-0006 — Licence-First Model Registry with Two Eligibility Tiers
 
-- **Status:** Proposed (awaiting operator approval)
+- **Status:** Accepted (2026-07-10, operator approval — see Acceptance notes)
 - **Date:** 2026-07-10
 - **Deciders:** Operator (solo founder)
 - **Supersedes:** none
@@ -61,3 +61,10 @@ The registry lives as a documentation table (extends the
 [model strategy](../architecture/ai_model_strategy.md)) until T4 needs it in structured
 form. Every registry row records: licence name, passthrough (y/n), derivative +
 commercial rights, verification date, source URL.
+
+## Acceptance notes (operator, 2026-07-10)
+
+Approved as written, with two standing constraints made explicit: **no model becomes a
+hard dependency at this stage** (models are evaluation subjects or, later, adapter bases —
+never install-time requirements of `medscale`), and **no training pipeline is built yet**
+(the T5 gate stands).

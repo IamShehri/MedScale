@@ -1,6 +1,6 @@
 # ADR-0008 — FHIR as the Single Canonical Representation; Other Standards via Boundary Adapters
 
-- **Status:** Proposed (awaiting operator approval)
+- **Status:** Accepted (2026-07-10, operator approval with framing refinement — see Acceptance notes)
 - **Date:** 2026-07-10
 - **Deciders:** Operator (solo founder)
 - **Supersedes:** none
@@ -61,3 +61,12 @@ validation, not hidden in a dual core).
 fhirkit's T2 ticket inherits the scope table in the
 [interoperability strategy](../architecture/interoperability_strategy.md). Any future
 adapter requires its own ADR naming the demand evidence and licence review.
+
+## Acceptance notes (operator framing refinement, 2026-07-10)
+
+Approved, with the identity emphasis adjusted: **FHIR supports MedScale; it does not
+define it.** FHIR is the interoperability layer and the clinical instantiation of the
+verification thesis (pillar 1's substrate and a future integration capability) — but
+MedScale's primary identity is *open research intelligence infrastructure for medicine*
+(ADR-0005). Within clinical data, FHIR remains the single canonical representation
+exactly as decided above; this note changes emphasis, not architecture.
