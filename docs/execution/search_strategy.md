@@ -46,6 +46,22 @@ Execution parameters (recorded in every run log): result cap per query per sourc
 (v1: 200), year window (v1: 2019→run date; standards background exempt), language
 (English; limitation recorded per reproducibility policy).
 
+## 2b. Round classification and screener reliability (scientific review S1/S3)
+
+- **Round 1 is a *scoping* round, not a systematic search.** Source APIs return
+  relevance-ranked results and round 1 ran at cap 50, so the identified set is a
+  relevance-biased sample of each query's matching population. Every round report
+  carries per-query/source **coverage ratios** (`reports/<run>-coverage.json`) so this
+  is quantified, never implied away. A definitive higher-coverage round is planned
+  after ADR-0016 (archive storage) is decided; publications must describe round-1-based
+  analyses as scoping-level.
+- **Single-screener limitation.** Screening decisions are made by one operator. This is
+  reported as a methodological limitation in any litdb publication. Reliability
+  mechanism: after a query's screening completes, a random 5–10% sample is re-screened
+  after a washout period (≥2 weeks) and agreement is reported; a second independent
+  screener is invited when a collaborator exists (H2). Auto-proposed evidence tiers are
+  confirmed or corrected at screening (they are proposals, not facts).
+
 ## 3. PRISMA workflow (mechanized by `medscale.litdb.screening`)
 
 ```

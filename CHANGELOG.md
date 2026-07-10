@@ -45,6 +45,19 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (screening readiness — 2026-07-10)
+
+- **`litdb.dedupe`** (S2): conflict-safe fuzzy dedupe — applied to the real corpus:
+  1,386 → **1,346 records** (40 preprint/published twins merged with full lineage in
+  merge_log.jsonl; 16 uncertain groups for human confirmation). **`litdb.coverage`**
+  (S1): per-query/source coverage ratios (round-1 lowest: Q8/OpenAlex 0.10% — round 1
+  formally classified a *scoping* round). **`append_decisions`** (all-or-nothing batch)
+  + **`litdb.workqueue`**; all 1,346 records advanced to DEDUPED in the screening log.
+- Search strategy §2b: scoping classification + single-screener limitation + washout
+  re-screen protocol (S3). data/litdb README: methods-vs-clinical two-corpora framing
+  (S5). Research-debt register: S1/S2/S3/S5 struck through with mechanisms.
+- 13 new tests (138 total).
+
 ### Added (scientific-integrity & CTO review constitution — 2026-07-10)
 
 - **Constitution amendments** (roles_and_authority.md): Scientific Integrity Review

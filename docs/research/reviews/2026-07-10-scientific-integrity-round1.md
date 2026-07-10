@@ -108,7 +108,13 @@ happen before Paper 1 effort is committed.
 
 ## Research debt register
 
-S1 coverage reporting · S2 fuzzy dedupe · S3 reliability mechanism · S5 corpus framing
-(all pre-screening); S6 statistical plan, S7 contamination probes, S8 scorer validation
-(all pre-T3-spec-freeze). Tracked here; resolved items get struck through in future
-reviews.
+~~S1 coverage reporting~~ (✅ 2026-07-10: `coverage.py` + round1-coverage.json;
+scoping-round classification in search_strategy §2b) ·
+~~S2 fuzzy dedupe~~ (✅ 2026-07-10: `dedupe.py`; 40 merges applied, 16 uncertain groups
+awaiting human confirmation) ·
+~~S3 reliability mechanism~~ (✅ documented in search_strategy §2b: limitation stated +
+5–10% washout re-screen protocol; execution pending screening itself) ·
+~~S5 corpus framing~~ (✅ two-corpora naming in data/litdb/README) ·
+S4 tier confirmation at screening (open — screening-checklist item) ·
+S6 statistical plan, S7 contamination probes, S8 scorer validation (open —
+pre-T3-spec-freeze). Resolved items struck through with date and mechanism.

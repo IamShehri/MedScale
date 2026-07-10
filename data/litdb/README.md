@@ -12,6 +12,15 @@ data/litdb/
 └── screening/            # append-only PRISMA decision log (screening_log.jsonl)
 ```
 
+**What this corpus is (and is not).** litdb round 1 is MedScale's
+**methods/related-work corpus** — AI, NLP, FHIR, and evaluation literature backing
+MedScale's own research questions and papers (R1 citations). It is **not** a
+clinical-evidence corpus: PICO-shaped evidence objects (ADR-0009) target clinical
+studies, which these queries deliberately do not retrieve. A separate
+**clinical-evidence corpus** (clinical PubMed queries, trial registries) will be
+ingested through the same machinery when its round is approved — two scientific
+objects, one infrastructure (scientific review S5).
+
 Rules of the directory:
 
 - Nothing lands in `raw/` except through `medscale.litdb.ingest.archive_retrieval`
