@@ -25,6 +25,23 @@ All notable changes to this project are documented here. The format is based on
 
 - ADR-0003 marked **Accepted** with a post-consolidation note.
 
+### Added (release infrastructure design — 2026-07-10)
+
+- **`docs/releases/`** (12 documents): complete publication & artifact lifecycle —
+  lifecycle states with immutable releases and visible retraction; per-class versioning
+  (SemVer package, no-PATCH `vX.Y` for models/datasets/benchmarks, append-only integer
+  schemas); release process with ten checklists (package, HF model/dataset/Space,
+  benchmark, paper, updates, deprecation, retraction); GitHub→CI→Releases→HF
+  distribution with CI-only publishing; per-artifact licensing matrix (field-level for
+  composite datasets); model/dataset card requirements with mandatory verbatim safety
+  statements; benchmark publication + leaderboard policy; paper→replication-package
+  workflow; release manifest spec; future GitHub Actions design. Documentation only —
+  nothing implemented, nothing uploaded.
+- **Proposed ADRs 0010** (release architecture; MESC naming — "MedScale-Base" is a
+  config reference, never trained base weights) **and 0011** (versioning schemes +
+  licensing matrix; closes the long-pending licence ADR debt). Awaiting operator
+  approval; not self-ratified.
+
 ### Added (T1 ingestion foundation — 2026-07-10)
 
 - **`medscale.litdb` ingestion machinery**: frozen v1 query set as code (Q1–Q10),

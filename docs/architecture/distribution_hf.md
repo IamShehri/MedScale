@@ -36,3 +36,9 @@ The HF presence does not change MedScale's identity. MedScale is not another med
 chatbot; it is **open research intelligence infrastructure for medicine**, and the
 competitive advantage remains evidence objects, provenance, verification, and
 reproducibility. A Space is a window onto that infrastructure — never the product itself.
+
+## Detailed strategy
+
+This document is the *identity record*. The full publication and distribution strategy
+— lifecycle, versioning, checklists, naming conventions, card requirements, CI-only
+publishing — lives in [docs/releases/](../releases/README.md) (ADR-0010/0011, Proposed).
