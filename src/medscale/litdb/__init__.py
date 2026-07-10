@@ -1,25 +1,62 @@
-"""medscale.litdb — the literature database foundation (T1).
+"""medscale.litdb — the literature database (T1).
 
 Schema and workflow machinery for a PRISMA-governed, citation-verified literature
-corpus: bibliographic records with R1 provenance, the screening state machine, and the
-source-adapter protocol. Network adapters for the live APIs land only when the search
-strategy (docs/execution/search_strategy.md) is frozen; nothing in this package
-performs I/O.
+corpus: bibliographic records with R1 provenance, the screening state machine and its
+append-only decision log, the frozen query set, live-API adapters with an injectable
+HTTP layer (CI stays offline), and archival/manifest machinery for reproducible
+ingestion rounds (docs/execution/search_strategy.md).
 """
 
 from __future__ import annotations
 
+from medscale.litdb.adapters import (
+    ArxivAdapter,
+    Fetcher,
+    FetchResult,
+    OpenAlexAdapter,
+    PubMedAdapter,
+    RetrievalError,
+    SemanticScholarAdapter,
+    UrllibFetcher,
+)
+from medscale.litdb.ingest import ArchiveEntry, RunManifest, archive_retrieval, write_manifest
+from medscale.litdb.queries import QUERY_SET, RESULT_CAP, YEAR_FROM, QuerySpec, get_query
 from medscale.litdb.records import EvidenceTier, Identifiers, LiteratureRecord
 from medscale.litdb.screening import ScreeningStage, ScreeningState, advance_stage
+from medscale.litdb.screening_log import (
+    ScreeningDecision,
+    append_decision,
+    replay_decisions,
+)
 from medscale.litdb.sources import RawRetrieval, SourceAdapter
 
 __all__ = [
+    "QUERY_SET",
+    "RESULT_CAP",
+    "YEAR_FROM",
+    "ArchiveEntry",
+    "ArxivAdapter",
     "EvidenceTier",
+    "FetchResult",
+    "Fetcher",
     "Identifiers",
     "LiteratureRecord",
+    "OpenAlexAdapter",
+    "PubMedAdapter",
+    "QuerySpec",
     "RawRetrieval",
+    "RetrievalError",
+    "RunManifest",
+    "ScreeningDecision",
     "ScreeningStage",
     "ScreeningState",
+    "SemanticScholarAdapter",
     "SourceAdapter",
+    "UrllibFetcher",
     "advance_stage",
+    "append_decision",
+    "archive_retrieval",
+    "get_query",
+    "replay_decisions",
+    "write_manifest",
 ]
