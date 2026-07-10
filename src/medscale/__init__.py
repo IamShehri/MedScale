@@ -1,8 +1,9 @@
-"""MedScale: an open research platform for verifiable clinical AI.
+"""MedScale: open research intelligence infrastructure for medicine.
 
-This is the foundational public surface. It intentionally exposes only reproducibility
-primitives at v0; FHIR, grammar, validation, benchmark, and model APIs are added in
-their own phases (see docs/vision/MEDSCALE_STRATEGIC_BLUEPRINT_V1.md).
+The top-level surface exposes reproducibility primitives. Pillar-2 foundations live in
+:mod:`medscale.provenance`, :mod:`medscale.evidence` (ADR-0009), and
+:mod:`medscale.litdb` (T1). FHIR, grammar, validation, benchmark, and model APIs are
+added in their own phases (see docs/vision/MEDSCALE_STRATEGIC_BLUEPRINT_V1.md).
 """
 
 from __future__ import annotations
