@@ -27,6 +27,7 @@ from medscale.litdb.screening import ScreeningStage, ScreeningState, advance_sta
 from medscale.litdb.screening_log import (
     ScreeningDecision,
     append_decision,
+    append_decisions,
     replay_decisions,
 )
 from medscale.litdb.sources import RawRetrieval, SourceAdapter
@@ -58,6 +59,7 @@ __all__ = [
     "UrllibFetcher",
     "advance_stage",
     "append_decision",
+    "append_decisions",
     "archive_retrieval",
     "get_query",
     "load_corpus",

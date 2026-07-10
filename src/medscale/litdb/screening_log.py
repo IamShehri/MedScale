@@ -12,7 +12,7 @@ Records enter the corpus at ``identified``; the log holds every transition after
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -21,7 +21,7 @@ from medscale.litdb.screening import ScreeningStage, ScreeningState, advance_sta
 from medscale.provenance import validate_timestamp
 from medscale.reproducibility import canonical_json
 
-__all__ = ["ScreeningDecision", "append_decision", "replay_decisions"]
+__all__ = ["ScreeningDecision", "append_decision", "append_decisions", "replay_decisions"]
 
 
 @dataclass(frozen=True)
@@ -73,11 +73,31 @@ def replay_decisions(lines: Iterable[str]) -> dict[str, ScreeningState]:
 
 def append_decision(log_path: Path, decision: ScreeningDecision) -> ScreeningState:
     """Validate ``decision`` against the replayed log, then append it. Returns the new state."""
+    states = append_decisions(log_path, (decision,))
+    return states[decision.record_id]
+
+
+def append_decisions(
+    log_path: Path, decisions: Sequence[ScreeningDecision]
+) -> dict[str, ScreeningState]:
+    """Validate and append many decisions with a single replay (bulk-safe).
+
+    All-or-nothing: every decision is validated against the evolving state *before*
+    any line is written, so an illegal decision mid-batch leaves the log untouched.
+    Returns the post-batch states of the affected records.
+    """
     existing = log_path.read_text(encoding="utf-8").splitlines() if log_path.exists() else []
     states = replay_decisions(existing)
-    current = states.get(decision.record_id, ScreeningState(ScreeningStage.IDENTIFIED))
-    new_state = advance_stage(current, decision.to_stage, reason=decision.reason)
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    with log_path.open("a", encoding="utf-8", newline="\n") as handle:
-        handle.write(canonical_json(decision.to_dict()) + "\n")
-    return new_state
+    touched: dict[str, ScreeningState] = {}
+    lines: list[str] = []
+    for decision in decisions:
+        current = states.get(decision.record_id, ScreeningState(ScreeningStage.IDENTIFIED))
+        new_state = advance_stage(current, decision.to_stage, reason=decision.reason)
+        states[decision.record_id] = new_state
+        touched[decision.record_id] = new_state
+        lines.append(canonical_json(decision.to_dict()))
+    if lines:
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with log_path.open("a", encoding="utf-8", newline="\n") as handle:
+            handle.write("\n".join(lines) + "\n")
+    return touched
