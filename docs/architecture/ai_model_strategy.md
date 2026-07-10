@@ -15,48 +15,18 @@ compute ceiling (~1 GPU-week) stands. Nothing below reopens that.
 
 ## The licence-first candidate registry
 
-Candidates enter a *registry document* (not code) in two tiers, filtered by licence
-before capability is even considered:
+Candidates are filtered on two independent axes — **licence tier** (may it ship?) and
+**role** (what job can it do?) — before capability is compared. The canonical registry,
+with verified entries and the `medscale.registry` design, is a single source of truth:
 
-| Tier | Criterion | Current members (evidence: 2026-07-10) | Permitted roles |
-|---|---|---|---|
-| **1 — clean-permissive** | OSI-style licence permitting derivatives + commercial use with no terms passthrough | BioMistral-7B (Apache-2.0); other Apache/MIT-family open models to be enumerated at T4 | Base for released MESC adapters; benchmark subject; extraction model |
-| **2 — conditional terms** | Derivatives + commercial permitted, but with passthrough obligations / use policies (e.g. HAI-DEF) | MedGemma 1.5-4B / 4B / 27B, MedSigLIP | Benchmark/comparison subject; reasoning reference. Adapter base **only** via explicit ADR accepting the passthrough |
+> **→ [docs/models/model_registry.md](../models/model_registry.md)** (governed by
+> ADR-0006; structured-artifact design under ADR-0012).
 
-Rationale for the tiers: a Tier-2-derived released adapter would impose the upstream
-terms on every MedScale consumer, silently narrowing the Apache-2.0 promise (Rule R3's
-spirit, not just its letter).
-
-### Model role is a second axis (orthogonal to licence tier)
-
-Licence tier says whether a model may ship in an artifact; **role** says what job it can
-do. The two are independent, and conflating them is a common error (an encoder is not a
-smaller generator). MedScale's core task — generating FHIR JSON under a grammar — is
-**generative**, so only generative (decoder/seq2seq) models can be MESC bases. Encoders
-(BERT-family) cannot generate; their value is as deterministic **extraction/NER baselines
-and span tooling** (RQ5), the same role as OpenMed's models.
-
-| Role | What it does in MedScale | Eligible model kind |
-|---|---|---|
-| **Generative base** | MESC adapter base; constrained-decoding subject | Decoder / seq2seq LLMs (Tier 1 for release) |
-| **Reasoning reference** | Benchmark comparison only | Generative, any tier (eval-only) |
-| **Extraction / NER baseline** | T-EXTRACT non-LLM baseline; span fixtures for RQ5 | Encoder token-classifiers |
-| **Embedding / retrieval** | Deferred (no v0 RAG); only where provenance is checkable | Encoders — H2+ |
-
-### Registry entries (verified 2026-07-10; extends the tier table)
-
-| Model | Kind | Licence (tier) | Role | Provenance note |
-|---|---|---|---|---|
-| BioMistral-7B | Generative (Mistral) | Apache-2.0 (T1) | Generative base candidate; comparison | Trained on PMC-OA |
-| MedGemma 4B/27B, MedSigLIP | Generative / multimodal | HAI-DEF (T2) | Eval/comparison only; base only via ADR | Google HAI-DEF terms |
-| Bio_ClinicalBERT | **Encoder** | MIT (T1) | Extraction/NER baseline | Trained on **MIMIC-III** (de-identified, credentialed). Weights are MIT and are a *released artifact* — using them as a baseline does **not** put MIMIC data into MedScale (R2 unbroken); provenance stated for transparency |
-| PubMedBERT / BiomedBERT | **Encoder** | MIT (T1) | Extraction/NER baseline; embedding (H2+) | Pretrained on public PubMed + PMC |
-| OpenMed NER models | **Encoder** | Apache-2.0 (T1) | Extraction/NER baseline (ADR-0007) | On-device; pinned by revision + SHA |
-
-The registry stays a documentation artifact under ADR-0006 until T4 needs it structured
-([ADR-0012](../adr/0012-layered-architecture-model.md) confirms: no `models/` package is
-created merely because it is common). Every future row records licence, tier, role, and a
-verified source before it informs any decision.
+The load-bearing rule, restated here because it drives the whole model strategy: a
+Tier-2-derived *released* adapter would impose upstream terms on every MedScale consumer,
+silently narrowing the Apache-2.0 promise — so released adapter bases are Tier-1
+generative models only, while any model may be an *evaluation* subject. Encoders
+(ClinicalBERT, PubMedBERT, OpenMed) are extraction/NER baselines, never MESC bases.
 
 ## Answers to the standing questions
 

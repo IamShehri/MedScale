@@ -1,0 +1,97 @@
+# MedScale Model Registry
+
+- **Status:** Canonical registry (governed by [ADR-0006](../adr/0006-model-access-strategy.md);
+  structured-artifact design governed by [ADR-0012](../adr/0012-layered-architecture-model.md))
+- **Date:** 2026-07-10
+- **Related:** [AI model strategy](../architecture/ai_model_strategy.md),
+  [model card schema](schemas/model_card_schema.md),
+  [ecosystem analysis](../architecture/ecosystem_analysis.md)
+
+This is the single source of truth for every external model MedScale evaluates, compares,
+or may adapt. It is a **documentation artifact today** (a machine-readable
+`medscale.registry` is designed below and deferred — see §5). Every row records licence,
+tier, role, and a verified source before it may inform any decision.
+
+## 1. Where MedScale sits in the medical-AI ecosystem
+
+MedScale is **infrastructure and evaluation**, not a foundation model. It *consumes* the
+layers below and makes their claims verifiable; it competes with none of them.
+
+| Ecosystem layer | Examples | MedScale's relation |
+|---|---|---|
+| Foundation models | MedGemma, BioMistral, PubMedBERT, ClinicalBERT | Evaluation subjects; Tier-1 generative models are adapter bases |
+| Resources | OpenMed, Hugging Face (medical) | Optional eval-time adapters + distribution mirror (ADR-0007, ADR-0010) |
+| Standards | FHIR, openEHR, SNOMED, ICD | FHIR canonical; others via boundary adapters / interface (ADR-0008) |
+| Evidence | PubMed, ClinicalTrials.gov, Cochrane | Ingestion sources for litdb (licence-gated; Cochrane metadata-only) |
+| **Evaluation** | **MedScale-Bench** | **MedScale owns this** |
+| **Infrastructure** | **MedScale** | **The verifiable substrate the rest is measured on** |
+
+## 2. Two axes: licence tier × role
+
+A model's admissibility is decided on two independent axes. Conflating them is a common
+error — an encoder is not a smaller generator, and a permissive licence does not make a
+model fit for a job it cannot do.
+
+### Axis A — licence tier (may it ship in an artifact?)
+
+| Tier | Criterion | Permitted roles |
+|---|---|---|
+| **1 — clean-permissive** | OSI-style licence permitting derivatives + commercial use, no terms passthrough | Base for released MESC adapters; any evaluation role |
+| **2 — conditional terms** | Derivatives + commercial permitted, but with passthrough / use policy (e.g. HAI-DEF) | Evaluation/comparison only; adapter base **only** via a dedicated ADR accepting the passthrough |
+
+Rationale: a Tier-2-derived released adapter would impose upstream terms on every MedScale
+consumer, silently narrowing the Apache-2.0 promise (R3's spirit, not only its letter).
+
+### Axis B — role (what job can it do?)
+
+MedScale's core task — generating FHIR JSON under a grammar — is **generative**, so only
+generative models can be MESC bases. Encoders cannot generate; their value is deterministic
+extraction.
+
+| Role | Job in MedScale | Eligible kind |
+|---|---|---|
+| **Generative base** | MESC adapter base; constrained-decoding subject | Decoder / seq2seq LLMs (Tier 1 to release) |
+| **Reasoning reference** | Benchmark comparison only | Generative, any tier (eval-only) |
+| **Extraction / NER baseline** | T-EXTRACT non-LLM baseline; RQ5 span fixtures | Encoder token-classifiers |
+| **Embedding / retrieval** | Deferred (no v0 RAG); only where provenance is checkable | Encoders — H2+ |
+
+## 3. Registry entries (verified 2026-07-10)
+
+| Model | Kind | Licence (tier) | Role | Provenance / note |
+|---|---|---|---|---|
+| BioMistral-7B | Generative (Mistral) | Apache-2.0 (T1) | Generative base candidate; comparison | Trained on PMC-OA; authors warn against clinical use |
+| MedGemma 4B / 27B, MedSigLIP | Generative / multimodal | HAI-DEF (T2) | Eval/comparison; base only via ADR | Google Health AI Developer Foundations terms (passthrough) |
+| Bio_ClinicalBERT | Encoder | MIT (T1) | Extraction/NER baseline | Trained on **MIMIC-III** (de-identified, credentialed). Weights are a released MIT artifact — using them as a baseline does **not** put MIMIC data into MedScale (R2 intact); provenance stated for transparency |
+| PubMedBERT / BiomedBERT | Encoder | MIT (T1) | Extraction/NER baseline; embedding (H2+) | Pretrained on public PubMed + PMC |
+| OpenMed NER models | Encoder | Apache-2.0 (T1) | Extraction/NER baseline (ADR-0007) | Local-first; pinned by revision + SHA |
+
+**Selection remains empirical at T4** (reserved ADR-0002): the constrained-decoding 2×2
+runs on the Tier-1 *generative* pool; medical-QA leaderboard scores are not selection
+evidence (MedScale's task is FHIR generation, not exam QA).
+
+## 4. Row requirements (what every entry must carry)
+
+`model_id` · `kind` (generative/encoder/multimodal) · `licence` (SPDX or named terms) ·
+`tier` (1/2) · `role` · `revision`+`sha` when actually used · `verified_at` ·
+`source_url` · provenance note (training-data lineage, especially any credentialed source).
+No row informs a decision until every field is present and the source verified (R1
+discipline applied to models).
+
+## 5. `medscale.registry` — machine-readable registry (Horizon 2, design only)
+
+**Not implemented now** (ADR-0012: no package exists merely because it is common; there is
+no Horizon-1 consumer). Designed here so the eventual build is mechanical, not inventive.
+
+- **Purpose:** turn §3 into a validated, versioned data file (`registry.json`, canonical
+  JSON) that release CI can lint — so a model card's `base_model` must resolve to a
+  registry row of the right tier and role before a model release passes
+  ([ci_cd §validate-model](../releases/ci_cd.md)).
+- **Shape (intended):** a pure, dependency-free module over a committed data file —
+  `load_registry() -> tuple[ModelEntry, ...]`, `get(model_id)`, `eligible_bases()`
+  (Tier-1 generative), `baselines()` (encoders). No network, no downloads — it records
+  *facts about* models, never fetches weights.
+- **Build gate:** implement when the first model release (MESC-v0, T6/T7) needs card-lint
+  to enforce tier/role mechanically. Until then this table is the registry.
+
+The registry never downloads, hosts, or vendors weights. It is a catalogue of verified
+facts, consistent with the PHI boundary and the licence invariant.
