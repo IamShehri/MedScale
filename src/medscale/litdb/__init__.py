@@ -30,6 +30,7 @@ from medscale.litdb.screening_log import (
     replay_decisions,
 )
 from medscale.litdb.sources import RawRetrieval, SourceAdapter
+from medscale.litdb.store import load_corpus, write_corpus
 
 __all__ = [
     "QUERY_SET",
@@ -59,8 +60,10 @@ __all__ = [
     "append_decision",
     "archive_retrieval",
     "get_query",
+    "load_corpus",
     "parse_pubmed_esearch_ids",
     "parse_records",
     "replay_decisions",
+    "write_corpus",
     "write_manifest",
 ]

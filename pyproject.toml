@@ -84,7 +84,7 @@ known-first-party = ["medscale"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
-files = ["src", "tests"]
+files = ["src", "tests", "scripts"]
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unreachable = true
