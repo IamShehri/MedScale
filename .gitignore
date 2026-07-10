@@ -1,0 +1,9 @@
+# Local tooling / machine-specific settings (never part of the canonical foundation)
+.claude/settings.local.json
+
+# OS / editor noise
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*~
