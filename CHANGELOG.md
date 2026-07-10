@@ -25,6 +25,16 @@ All notable changes to this project are documented here. The format is based on
 
 - ADR-0003 marked **Accepted** with a post-consolidation note.
 
+### Added (architecture analysis — 2026-07-10)
+
+- **`docs/architecture/`**: evidence-based ecosystem analysis (OpenMed, MedGemma,
+  BioMistral, FHIR/EHR-FM, openEHR bridge, OpenEvidence/Medwise), reference architecture
+  (adds the verification & reproducibility spine omitted from the proposed 4-layer
+  model), AI model strategy, OpenMed integration strategy, interoperability strategy.
+- **Proposed ADRs 0005–0008** (awaiting operator approval): research-intelligence scope
+  amendment; licence-first two-tier model registry; OpenMed as optional evaluation-time
+  adapter; FHIR as single canonical representation with boundary adapters.
+
 ## [0.0.0] — 2026-07-09
 
 ### Added

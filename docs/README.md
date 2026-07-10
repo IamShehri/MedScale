@@ -18,7 +18,8 @@ The canonical documentation for MedScale. Start here.
 | **Vision** | [Strategic Blueprint](vision/MEDSCALE_STRATEGIC_BLUEPRINT_V1.md) · [Research Vision](vision/MEDSCALE_RESEARCH_VISION.md) |
 | **Research** | [index](research/README.md) · [research questions](research/research_questions.md) · [paper taxonomy](research/paper_taxonomy.md) · [reproducibility policy](research/reproducibility_policy.md) |
 | **Governance** | [rules R1–R7](governance/rules.md) · [governance index](governance/README.md) |
-| **Decisions** | [ADR template](adr/0000-template.md) · [ADR-0003 topology](adr/0003-repository-topology.md) · [ADR-0004 T0 scope](adr/0004-t0-foundation-scope.md) |
+| **Architecture** | [ecosystem analysis](architecture/ecosystem_analysis.md) · [reference architecture](architecture/medscale_reference_architecture.md) · [AI model strategy](architecture/ai_model_strategy.md) · [OpenMed strategy](architecture/openmed_integration_strategy.md) · [interoperability strategy](architecture/interoperability_strategy.md) |
+| **Decisions** | [ADR template](adr/0000-template.md) · [0003 topology](adr/0003-repository-topology.md) · [0004 T0 scope](adr/0004-t0-foundation-scope.md) · [0005 research-intelligence scope](adr/0005-research-intelligence-scope.md) *(Proposed)* · [0006 model access](adr/0006-model-access-strategy.md) *(Proposed)* · [0007 OpenMed adapter](adr/0007-openmed-adapter.md) *(Proposed)* · [0008 FHIR canonical](adr/0008-interoperability-fhir-canonical.md) *(Proposed)* |
 | **Guides** | [developer guide](guides/developer_guide.md) |
 | **Execution** | [phase planning (T0–T7)](execution/README.md) |
 | **Archive** | [superseded material](archive/) |
