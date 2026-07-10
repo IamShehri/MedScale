@@ -1,0 +1,1701 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/gEyzNAwy4aQJfFQtfV8t4s378V4</id>
+  <title>arXiv Query: search_query=(all:"clinical language model" OR all:"medical LLM" OR all:"biomedical language model")&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:50Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=all:%22clinical+language+model%22+OR+(all:%22medical+LLM%22+OR+all:%22biomedical+language+model%22)&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>270</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2203.03540v3</id>
+    <title>GatorTron: A Large Clinical Language Model to Unlock Patient Information from Unstructured Electronic Health Records</title>
+    <updated>2022-12-16T22:20:33Z</updated>
+    <link href="https://arxiv.org/abs/2203.03540v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2203.03540v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>There is an increasing interest in developing artificial intelligence (AI) systems to process and interpret electronic health records (EHRs). Natural language processing (NLP) powered by pretrained language models is the key technology for medical AI systems utilizing clinical narratives. However, there are few clinical language models, the largest of which trained in the clinical domain is comparatively small at 110 million parameters (compared with billions of parameters in the general domain). It is not clear how large clinical language models with billions of parameters can help medical AI systems utilize unstructured EHRs. In this study, we develop from scratch a large clinical language model - GatorTron - using &gt;90 billion words of text (including &gt;82 billion words of de-identified clinical text) and systematically evaluate it on 5 clinical NLP tasks including clinical concept extraction, medical relation extraction, semantic textual similarity, natural language inference (NLI), and medical question answering (MQA). We examine how (1) scaling up the number of parameters and (2) scaling up the size of the training data could benefit these NLP tasks. GatorTron models scale up the clinical language model from 110 million to 8.9 billion parameters and improve 5 clinical NLP tasks (e.g., 9.6% and 9.5% improvement in accuracy for NLI and MQA), which can be applied to medical AI systems to improve healthcare delivery. The GatorTron models are publicly available at: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara/models/gatortron_og.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-02-02T14:28:51Z</published>
+    <arxiv:comment>24 pages, 2 figures, 3 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xi Yang</name>
+    </author>
+    <author>
+      <name>Aokun Chen</name>
+    </author>
+    <author>
+      <name>Nima PourNejatian</name>
+    </author>
+    <author>
+      <name>Hoo Chang Shin</name>
+    </author>
+    <author>
+      <name>Kaleb E Smith</name>
+    </author>
+    <author>
+      <name>Christopher Parisien</name>
+    </author>
+    <author>
+      <name>Colin Compas</name>
+    </author>
+    <author>
+      <name>Cheryl Martin</name>
+    </author>
+    <author>
+      <name>Mona G Flores</name>
+    </author>
+    <author>
+      <name>Ying Zhang</name>
+    </author>
+    <author>
+      <name>Tanja Magoc</name>
+    </author>
+    <author>
+      <name>Christopher A Harle</name>
+    </author>
+    <author>
+      <name>Gloria Lipori</name>
+    </author>
+    <author>
+      <name>Duane A Mitchell</name>
+    </author>
+    <author>
+      <name>William R Hogan</name>
+    </author>
+    <author>
+      <name>Elizabeth A Shenkman</name>
+    </author>
+    <author>
+      <name>Jiang Bian</name>
+    </author>
+    <author>
+      <name>Yonghui Wu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.05795v1</id>
+    <title>ClinicalMamba: A Generative Clinical Language Model on Longitudinal Clinical Notes</title>
+    <updated>2024-03-09T04:58:25Z</updated>
+    <link href="https://arxiv.org/abs/2403.05795v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.05795v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The advancement of natural language processing (NLP) systems in healthcare hinges on language model ability to interpret the intricate information contained within clinical notes. This process often requires integrating information from various time points in a patient's medical history. However, most earlier clinical language models were pretrained with a context length limited to roughly one clinical document. In this study, We introduce ClinicalMamba, a specialized version of the Mamba language model, pretrained on a vast corpus of longitudinal clinical notes to address the unique linguistic characteristics and information processing needs of the medical domain. ClinicalMamba, with 130 million and 2.8 billion parameters, demonstrates a superior performance in modeling clinical language across extended text lengths compared to Mamba and clinical Llama. With few-shot learning, ClinicalMamba achieves notable benchmarks in speed and accuracy, outperforming existing clinical language models and general domain large models like GPT-4 in longitudinal clinical notes information extraction tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-09T04:58:25Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zhichao Yang</name>
+    </author>
+    <author>
+      <name>Avijit Mitra</name>
+    </author>
+    <author>
+      <name>Sunjae Kwon</name>
+    </author>
+    <author>
+      <name>Hong Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.17638v2</id>
+    <title>Time Matters: Examine Temporal Effects on Biomedical Language Models</title>
+    <updated>2024-08-11T05:21:33Z</updated>
+    <link href="https://arxiv.org/abs/2407.17638v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.17638v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Time roots in applying language models for biomedical applications: models are trained on historical data and will be deployed for new or future data, which may vary from training data. While increasing biomedical tasks have employed state-of-the-art language models, there are very few studies have examined temporal effects on biomedical models when data usually shifts across development and deployment. This study fills the gap by statistically probing relations between language model performance and data shifts across three biomedical tasks. We deploy diverse metrics to evaluate model performance, distance methods to measure data drifts, and statistical methods to quantify temporal effects on biomedical language models. Our study shows that time matters for deploying biomedical language models, while the degree of performance degradation varies by biomedical tasks and statistical quantification approaches. We believe this study can establish a solid benchmark to evaluate and assess temporal effects on deploying biomedical language models.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-24T21:06:40Z</published>
+    <arxiv:comment>Accepted to AMIA 2024 Annual Symposium</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Weisi Liu</name>
+    </author>
+    <author>
+      <name>Zhe He</name>
+    </author>
+    <author>
+      <name>Xiaolei Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.05213v1</id>
+    <title>BadCLM: Backdoor Attack in Clinical Language Models for Electronic Health Records</title>
+    <updated>2024-07-06T23:56:43Z</updated>
+    <link href="https://arxiv.org/abs/2407.05213v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.05213v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The advent of clinical language models integrated into electronic health records (EHR) for clinical decision support has marked a significant advancement, leveraging the depth of clinical notes for improved decision-making. Despite their success, the potential vulnerabilities of these models remain largely unexplored. This paper delves into the realm of backdoor attacks on clinical language models, introducing an innovative attention-based backdoor attack method, BadCLM (Bad Clinical Language Models). This technique clandestinely embeds a backdoor within the models, causing them to produce incorrect predictions when a pre-defined trigger is present in inputs, while functioning accurately otherwise. We demonstrate the efficacy of BadCLM through an in-hospital mortality prediction task with MIMIC III dataset, showcasing its potential to compromise model integrity. Our findings illuminate a significant security risk in clinical decision support systems and pave the way for future endeavors in fortifying clinical language models against such vulnerabilities.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-06T23:56:43Z</published>
+    <arxiv:comment>AMIA 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Weimin Lyu</name>
+    </author>
+    <author>
+      <name>Zexin Bi</name>
+    </author>
+    <author>
+      <name>Fusheng Wang</name>
+    </author>
+    <author>
+      <name>Chao Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2308.02199v1</id>
+    <title>A Survey of Spanish Clinical Language Models</title>
+    <updated>2023-08-04T08:33:07Z</updated>
+    <link href="https://arxiv.org/abs/2308.02199v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2308.02199v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This survey focuses in encoder Language Models for solving tasks in the clinical domain in the Spanish language. We review the contributions of 17 corpora focused mainly in clinical tasks, then list the most relevant Spanish Language Models and Spanish Clinical Language models. We perform a thorough comparison of these models by benchmarking them over a curated subset of the available corpora, in order to find the best-performing ones; in total more than 3000 models were fine-tuned for this study. All the tested corpora and the best models are made publically available in an accessible way, so that the results can be reproduced by independent teams or challenged in the future when new Spanish Clinical Language models are created.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-08-04T08:33:07Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Guillem García Subies</name>
+    </author>
+    <author>
+      <name>Álvaro Barbero Jiménez</name>
+    </author>
+    <author>
+      <name>Paloma Martínez Fernández</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2212.10422v3</id>
+    <title>Localising In-Domain Adaptation of Transformer-Based Biomedical Language Models</title>
+    <updated>2023-06-28T08:36:20Z</updated>
+    <link href="https://arxiv.org/abs/2212.10422v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2212.10422v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In the era of digital healthcare, the huge volumes of textual information generated every day in hospitals constitute an essential but underused asset that could be exploited with task-specific, fine-tuned biomedical language representation models, improving patient care and management. For such specialized domains, previous research has shown that fine-tuning models stemming from broad-coverage checkpoints can largely benefit additional training rounds over large-scale in-domain resources. However, these resources are often unreachable for less-resourced languages like Italian, preventing local medical institutions to employ in-domain adaptation. In order to reduce this gap, our work investigates two accessible approaches to derive biomedical language models in languages other than English, taking Italian as a concrete use-case: one based on neural machine translation of English resources, favoring quantity over quality; the other based on a high-grade, narrow-scoped corpus natively written in Italian, thus preferring quality over quantity. Our study shows that data quantity is a harder constraint than data quality for biomedical adaptation, but the concatenation of high-quality data can improve model performance even when dealing with relatively size-limited corpora. The models published from our investigations have the potential to unlock important research opportunities for Italian hospitals and academia. Finally, the set of lessons learned from the study constitutes valuable insights towards a solution to build biomedical language models that are generalizable to other less-resourced languages and different domain settings.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-12-20T16:59:56Z</published>
+    <arxiv:comment>8 pages, 2 figures, 6 tables. Published in Journal of Biomedical Informatics</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Journal of Biomedical Informatics, Volume 144, 2023, 104431, ISSN 1532-0464</arxiv:journal_ref>
+    <author>
+      <name>Tommaso Mario Buonocore</name>
+    </author>
+    <author>
+      <name>Claudio Crema</name>
+    </author>
+    <author>
+      <name>Alberto Redolfi</name>
+    </author>
+    <author>
+      <name>Riccardo Bellazzi</name>
+    </author>
+    <author>
+      <name>Enea Parimbelli</name>
+    </author>
+    <arxiv:doi>10.1016/j.jbi.2023.104431</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1016/j.jbi.2023.104431" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2408.02600v3</id>
+    <title>BioMamba: Domain-Adaptive Biomedical Language Models</title>
+    <updated>2026-06-10T03:57:13Z</updated>
+    <link href="https://arxiv.org/abs/2408.02600v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2408.02600v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Background. Biomedical language models should improve performance on biomedical text while retaining general-language-modeling fluency. For Mamba-based models, this trade-off has not been systematically studied across biomedical literature and clinical text. Methods. We developed BioMamba, a family of biomedical Mamba2 models at five scales obtained by continued pretraining of released public Mamba2 checkpoints on a balanced 80%/10%/10% mixture of PubMed abstracts, the Colossal Clean Crawled Corpus (C4), and Wikipedia. The contribution is the adaptation recipe and the accompanying open-weight checkpoints.
+  Results. Across five scales, BioMamba consistently lowered PubMed perplexity, improved Wikipedia-style held-out perplexity by 1.46-4.72 PPL, and left C4 perplexity essentially unchanged. On six out-of-domain multiple-choice benchmarks, BioMamba stayed within +/-3 percentage points of Mamba2 with no systematic regression. After supervised fine-tuning, BioMamba+SFT matched or exceeded Mamba2+SFT on MIMIC-IV note completion and discharge summary generation at every evaluated scale, and improved PubMedQA at every scale. The strongest model (BioMamba-2.7B) reached a PubMed perplexity of 5.28 and accuracies of 90.24% and 73.00% on BioASQ and PubMedQA, respectively.
+  Conclusions. A balanced domain-adaptive continued pretraining recipe strengthens Mamba2 language models on biomedical literature and clinical text while preserving general-language-modeling fluency.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-08-05T16:21:36Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ling Yue</name>
+    </author>
+    <author>
+      <name>Mingzhi Zhu</name>
+    </author>
+    <author>
+      <name>Sixue Xing</name>
+    </author>
+    <author>
+      <name>Yunning Cao</name>
+    </author>
+    <author>
+      <name>Yanbo Wang</name>
+    </author>
+    <author>
+      <name>Shimin Shan</name>
+    </author>
+    <author>
+      <name>Jinfei Liu</name>
+    </author>
+    <author>
+      <name>Vijil Chenthamarakshan</name>
+    </author>
+    <author>
+      <name>Shaowu Pan</name>
+    </author>
+    <author>
+      <name>Payel Das</name>
+    </author>
+    <author>
+      <name>Tianfan Fu</name>
+    </author>
+    <arxiv:doi>10.34133/hds.0454</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.34133/hds.0454" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2306.17649v3</id>
+    <title>Biomedical Language Models are Robust to Sub-optimal Tokenization</title>
+    <updated>2023-07-10T16:22:41Z</updated>
+    <link href="https://arxiv.org/abs/2306.17649v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2306.17649v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As opposed to general English, many concepts in biomedical terminology have been designed in recent history by biomedical professionals with the goal of being precise and concise. This is often achieved by concatenating meaningful biomedical morphemes to create new semantic units. Nevertheless, most modern biomedical language models (LMs) are pre-trained using standard domain-specific tokenizers derived from large scale biomedical corpus statistics without explicitly leveraging the agglutinating nature of biomedical language. In this work, we first find that standard open-domain and biomedical tokenizers are largely unable to segment biomedical terms into meaningful components. Therefore, we hypothesize that using a tokenizer which segments biomedical terminology more accurately would enable biomedical LMs to improve their performance on downstream biomedical NLP tasks, especially ones which involve biomedical terms directly such as named entity recognition (NER) and entity linking. Surprisingly, we find that pre-training a biomedical LM using a more accurate biomedical tokenizer does not improve the entity representation quality of a language model as measured by several intrinsic and extrinsic measures such as masked language modeling prediction (MLM) accuracy as well as NER and entity linking performance. These quantitative findings, along with a case study which explores entity representation quality more directly, suggest that the biomedical pre-training process is quite robust to instances of sub-optimal tokenization.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-06-30T13:35:24Z</published>
+    <arxiv:comment>BioNLP @ ACL 2023</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Bernal Jiménez Gutiérrez</name>
+    </author>
+    <author>
+      <name>Huan Sun</name>
+    </author>
+    <author>
+      <name>Yu Su</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2104.08305v1</id>
+    <title>Membership Inference Attack Susceptibility of Clinical Language Models</title>
+    <updated>2021-04-16T18:29:58Z</updated>
+    <link href="https://arxiv.org/abs/2104.08305v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2104.08305v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deep Neural Network (DNN) models have been shown to have high empirical privacy leakages. Clinical language models (CLMs) trained on clinical data have been used to improve performance in biomedical natural language processing tasks. In this work, we investigate the risks of training-data leakage through white-box or black-box access to CLMs. We design and employ membership inference attacks to estimate the empirical privacy leaks for model architectures like BERT and GPT2. We show that membership inference attacks on CLMs lead to non-trivial privacy leakages of up to 7%. Our results show that smaller models have lower empirical privacy leakages than larger ones, and masked LMs have lower leakages than auto-regressive LMs. We further show that differentially private CLMs can have improved model utility on clinical domain while ensuring low empirical privacy leakage. Lastly, we also study the effects of group-level membership inference and disease rarity on CLM privacy leakages.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-04-16T18:29:58Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Abhyuday Jagannatha</name>
+    </author>
+    <author>
+      <name>Bhanu Pratap Singh Rawat</name>
+    </author>
+    <author>
+      <name>Hong Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.02097v5</id>
+    <title>ClinConsensus: A Physician-Calibrated Benchmark for Evaluating Clinical Rubric Coverage in Chinese Medical LLMs</title>
+    <updated>2026-05-27T09:33:44Z</updated>
+    <link href="https://arxiv.org/abs/2603.02097v5" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.02097v5" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Open-ended medical LLM evaluation remains weakly grounded in physician-calibrated coverage of clinically relevant response criteria, especially in localized clinical settings. We introduce \textsc{ClinConsensus}, a Chinese medical benchmark of 2{,}500 expert-curated cases spanning 36 specialties, 12 task themes, multiple difficulty levels, and lay-facing versus professional-facing settings. Each case is paired with 30 case-specific binary rubric criteria. To evaluate whether responses satisfy enough physician-authored criteria, we propose \emph{Clinician-Anchored Coverage Score} (CACS), a physician-calibrated threshold metric instantiated at \(k=10\), and develop a dual-judge framework combining a GPT-5.1 grader with a physician-supervised Qwen3-8B judge. Evaluating 11 frontier LLMs, we find a persistent coverage gap: Rubric Accuracy ranges from 39.6\% to 52.1\%, whereas CACS@10 ranges from 17.8\% to 32.9\%, leaving a 19.2--21.9 point gap across models. Stratified analyses further reveal substantial variation across reasoning, evidence use, structured extraction, medication instructions, follow-up, and dialogue register. These results suggest that medical LLM evaluation should measure thresholded, rubric-grounded clinical coverage rather than average partial correctness.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-02T17:17:18Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xiang Zheng</name>
+    </author>
+    <author>
+      <name>Han Li</name>
+    </author>
+    <author>
+      <name>Wenjie Luo</name>
+    </author>
+    <author>
+      <name>Weiqi Zhai</name>
+    </author>
+    <author>
+      <name>Yiyuan Li</name>
+    </author>
+    <author>
+      <name>Chuanmiao Yan</name>
+    </author>
+    <author>
+      <name>Xue Yang</name>
+    </author>
+    <author>
+      <name>Kailuan Wu</name>
+    </author>
+    <author>
+      <name>Ruyi Xu</name>
+    </author>
+    <author>
+      <name>Tianyun Lu</name>
+    </author>
+    <author>
+      <name>Tianyi Tang</name>
+    </author>
+    <author>
+      <name>Yubo Ma</name>
+    </author>
+    <author>
+      <name>Kexin Yang</name>
+    </author>
+    <author>
+      <name>Dayiheng Liu</name>
+    </author>
+    <author>
+      <name>Sen Yang</name>
+    </author>
+    <author>
+      <name>Lin Qu</name>
+    </author>
+    <author>
+      <name>Bing Zhao</name>
+    </author>
+    <author>
+      <name>Hu Wei</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.09403v1</id>
+    <title>Black-Box Behavioral Distillation Breaks Safety Alignment in Medical LLMs</title>
+    <updated>2025-12-10T07:57:08Z</updated>
+    <link href="https://arxiv.org/abs/2512.09403v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.09403v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As medical large language models (LLMs) become increasingly integrated into clinical workflows, concerns around alignment robustness, and safety are escalating. Prior work on model extraction has focused on classification models or memorization leakage, leaving the vulnerability of safety-aligned generative medical LLMs underexplored.
+  We present a black-box distillation attack that replicates the domain-specific reasoning of safety-aligned medical LLMs using only output-level access. By issuing 48,000 instruction queries to Meditron-7B and collecting 25,000 benign instruction response pairs, we fine-tune a LLaMA3 8B surrogate via parameter efficient LoRA under a zero-alignment supervision setting, requiring no access to model weights, safety filters, or training data. With a cost of $12, the surrogate achieves strong fidelity on benign inputs while producing unsafe completions for 86% of adversarial prompts, far exceeding both Meditron-7B (66%) and the untuned base model (46%). This reveals a pronounced functional-ethical gap, task utility transfers, while alignment collapses. To analyze this collapse, we develop a dynamic adversarial evaluation framework combining Generative Query (GQ)-based harmful prompt generation, verifier filtering, category-wise failure analysis, and adaptive Random Search (RS) jailbreak attacks. We also propose a layered defense system, as a prototype detector for real-time alignment drift in black-box deployments.
+  Our findings show that benign-only black-box distillation exposes a practical and under-recognized threat: adversaries can cheaply replicate medical LLM capabilities while stripping safety mechanisms, underscoring the need for extraction-aware safety monitoring.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-10T07:57:08Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Sohely Jahan</name>
+    </author>
+    <author>
+      <name>Ruimin Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.03640v6</id>
+    <title>Apollo: A Lightweight Multilingual Medical LLM towards Democratizing Medical AI to 6B People</title>
+    <updated>2024-10-12T14:09:33Z</updated>
+    <link href="https://arxiv.org/abs/2403.03640v6" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.03640v6" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Despite the vast repository of global medical knowledge predominantly being in English, local languages are crucial for delivering tailored healthcare services, particularly in areas with limited medical resources. To extend the reach of medical AI advancements to a broader population, we aim to develop medical LLMs across the six most widely spoken languages, encompassing a global population of 6.1 billion. This effort culminates in the creation of the ApolloCorpora multilingual medical dataset and the XMedBench benchmark. In the multilingual medical benchmark, the released Apollo models, at various relatively-small sizes (i.e., 0.5B, 1.8B, 2B, 6B, and 7B), achieve the best performance among models of equivalent size. Especially, Apollo-7B is the state-of-the-art multilingual medical LLMs up to 70B. Additionally, these lite models could be used to improve the multi-lingual medical capabilities of larger models without fine-tuning in a proxy-tuning fashion. We will open-source training corpora, code, model weights and evaluation benchmark.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-06T11:56:02Z</published>
+    <arxiv:comment>Preprint</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xidong Wang</name>
+    </author>
+    <author>
+      <name>Nuo Chen</name>
+    </author>
+    <author>
+      <name>Junyin Chen</name>
+    </author>
+    <author>
+      <name>Yidong Wang</name>
+    </author>
+    <author>
+      <name>Guorui Zhen</name>
+    </author>
+    <author>
+      <name>Chunxian Zhang</name>
+    </author>
+    <author>
+      <name>Xiangbo Wu</name>
+    </author>
+    <author>
+      <name>Yan Hu</name>
+    </author>
+    <author>
+      <name>Anningzhe Gao</name>
+    </author>
+    <author>
+      <name>Xiang Wan</name>
+    </author>
+    <author>
+      <name>Haizhou Li</name>
+    </author>
+    <author>
+      <name>Benyou Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.18940v1</id>
+    <title>Rephrasing Electronic Health Records for Pretraining Clinical Language Models</title>
+    <updated>2024-11-28T06:12:28Z</updated>
+    <link href="https://arxiv.org/abs/2411.18940v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.18940v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical language models are important for many applications in healthcare, but their development depends on access to extensive clinical text for pretraining. However, obtaining clinical notes from electronic health records (EHRs) at scale is challenging due to patient privacy concerns. In this study, we rephrase existing clinical notes using LLMs to generate synthetic pretraining corpora, drawing inspiration from previous work on rephrasing web data. We examine four popular small-sized LLMs (&lt;10B) to create synthetic clinical text to pretrain both decoder-based and encoder-based language models. The method yields better results in language modeling and downstream tasks than previous synthesis approaches without referencing real clinical text. We find that augmenting original clinical notes with synthetic corpora from different LLMs improves performances even at a small token budget, showing the potential of this method to support pretraining at the institutional level or be scaled to synthesize large-scale clinical corpora.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-28T06:12:28Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jinghui Liu</name>
+    </author>
+    <author>
+      <name>Anthony Nguyen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2504.18128v1</id>
+    <title>Temporal Entailment Pretraining for Clinical Language Models over EHR Data</title>
+    <updated>2025-04-25T07:30:38Z</updated>
+    <link href="https://arxiv.org/abs/2504.18128v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2504.18128v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical language models have achieved strong performance on downstream tasks by pretraining on domain specific corpora such as discharge summaries and medical notes. However, most approaches treat the electronic health record as a static document, neglecting the temporally-evolving and causally entwined nature of patient trajectories. In this paper, we introduce a novel temporal entailment pretraining objective for language models in the clinical domain. Our method formulates EHR segments as temporally ordered sentence pairs and trains the model to determine whether a later state is entailed by, contradictory to, or neutral with respect to an earlier state. Through this temporally structured pretraining task, models learn to perform latent clinical reasoning over time, improving their ability to generalize across forecasting and diagnosis tasks. We pretrain on a large corpus derived from MIMIC IV and demonstrate state of the art results on temporal clinical QA, early warning prediction, and disease progression modeling.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-04-25T07:30:38Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Tatsunori Tanaka</name>
+    </author>
+    <author>
+      <name>Fi Zheng</name>
+    </author>
+    <author>
+      <name>Kai Sato</name>
+    </author>
+    <author>
+      <name>Zhifeng Li</name>
+    </author>
+    <author>
+      <name>Yuanyun Zhang</name>
+    </author>
+    <author>
+      <name>Shi Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.14779v1</id>
+    <title>Med42 -- Evaluating Fine-Tuning Strategies for Medical LLMs: Full-Parameter vs. Parameter-Efficient Approaches</title>
+    <updated>2024-04-23T06:36:21Z</updated>
+    <link href="https://arxiv.org/abs/2404.14779v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.14779v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This study presents a comprehensive analysis and comparison of two predominant fine-tuning methodologies - full-parameter fine-tuning and parameter-efficient tuning - within the context of medical Large Language Models (LLMs). We developed and refined a series of LLMs, based on the Llama-2 architecture, specifically designed to enhance medical knowledge retrieval, reasoning, and question-answering capabilities. Our experiments systematically evaluate the effectiveness of these tuning strategies across various well-known medical benchmarks. Notably, our medical LLM Med42 showed an accuracy level of 72% on the US Medical Licensing Examination (USMLE) datasets, setting a new standard in performance for openly available medical LLMs. Through this comparative analysis, we aim to identify the most effective and efficient method for fine-tuning LLMs in the medical domain, thereby contributing significantly to the advancement of AI-driven healthcare applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-23T06:36:21Z</published>
+    <arxiv:comment>Published at AAAI 2024 Spring Symposium - Clinical Foundation Models</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Clément Christophe</name>
+    </author>
+    <author>
+      <name>Praveen K Kanithi</name>
+    </author>
+    <author>
+      <name>Prateek Munjal</name>
+    </author>
+    <author>
+      <name>Tathagata Raha</name>
+    </author>
+    <author>
+      <name>Nasir Hayat</name>
+    </author>
+    <author>
+      <name>Ronnie Rajan</name>
+    </author>
+    <author>
+      <name>Ahmed Al-Mahrooqi</name>
+    </author>
+    <author>
+      <name>Avani Gupta</name>
+    </author>
+    <author>
+      <name>Muhammad Umar Salman</name>
+    </author>
+    <author>
+      <name>Gurpreet Gosal</name>
+    </author>
+    <author>
+      <name>Bhargav Kanakiya</name>
+    </author>
+    <author>
+      <name>Charles Chen</name>
+    </author>
+    <author>
+      <name>Natalia Vassilieva</name>
+    </author>
+    <author>
+      <name>Boulbaba Ben Amor</name>
+    </author>
+    <author>
+      <name>Marco AF Pimentel</name>
+    </author>
+    <author>
+      <name>Shadab Khan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.17952v1</id>
+    <title>Beyond Distillation: Pushing the Limits of Medical LLM Reasoning with Minimalist Rule-Based RL</title>
+    <updated>2025-05-23T14:27:37Z</updated>
+    <link href="https://arxiv.org/abs/2505.17952v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.17952v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Improving performance on complex tasks and enabling interpretable decision making in large language models (LLMs), especially for clinical applications, requires effective reasoning. Yet this remains challenging without supervised fine-tuning (SFT) on costly chain-of-thought (CoT) data distilled from closed-source models (e.g., GPT-4o). In this work, we present AlphaMed, the first medical LLM to show that reasoning capability can emerge purely through reinforcement learning (RL), using minimalist rule-based rewards on public multiple-choice QA datasets, without relying on SFT or distilled CoT data. AlphaMed achieves state-of-the-art results on six medical QA benchmarks, outperforming models trained with conventional SFT+RL pipelines. On challenging benchmarks (e.g., MedXpert), AlphaMed even surpasses larger or closed-source models such as DeepSeek-V3-671B and Claude-3.5-Sonnet. To understand the factors behind this success, we conduct a comprehensive data-centric analysis guided by three questions: (i) Can minimalist rule-based RL incentivize reasoning without distilled CoT supervision? (ii) How do dataset quantity and diversity impact reasoning? (iii) How does question difficulty shape the emergence and generalization of reasoning? Our findings show that dataset informativeness is a key driver of reasoning performance, and that minimalist RL on informative, multiple-choice QA data is effective at inducing reasoning without CoT supervision. We also observe divergent trends across benchmarks, underscoring limitations in current evaluation and the need for more challenging, reasoning-oriented medical QA benchmarks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-23T14:27:37Z</published>
+    <arxiv:comment>Under Review</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Che Liu</name>
+    </author>
+    <author>
+      <name>Haozhe Wang</name>
+    </author>
+    <author>
+      <name>Jiazhen Pan</name>
+    </author>
+    <author>
+      <name>Zhongwei Wan</name>
+    </author>
+    <author>
+      <name>Yong Dai</name>
+    </author>
+    <author>
+      <name>Fangzhen Lin</name>
+    </author>
+    <author>
+      <name>Wenjia Bai</name>
+    </author>
+    <author>
+      <name>Daniel Rueckert</name>
+    </author>
+    <author>
+      <name>Rossella Arcucci</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.21176v2</id>
+    <title>Toward Revealing Nuanced Biases in Medical LLMs</title>
+    <updated>2025-12-21T03:06:37Z</updated>
+    <link href="https://arxiv.org/abs/2507.21176v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.21176v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) used in medical applications are known to be prone to exhibiting biased and unfair patterns. Prior to deploying these in clinical decision-making, it is crucial to identify such bias patterns to enable effective mitigation and minimize negative impacts. In this study, we present a novel framework combining knowledge graphs (KGs) with auxiliary (agentic) LLMs to systematically reveal complex bias patterns in medical LLMs. The proposed approach integrates adversarial perturbation (red teaming) techniques to identify subtle bias patterns and adopts a customized multi-hop characterization of KGs to enhance the systematic evaluation of target LLMs. It aims not only to generate more effective red-teaming questions for bias evaluation but also to utilize those questions more effectively in revealing complex biases. Through a series of comprehensive experiments on three datasets, six LLMs, and five bias types, we demonstrate that our proposed framework exhibits a noticeably greater ability and scalability in revealing complex biased patterns of medical LLMs compared to other common approaches.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-26T02:33:48Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Farzana Islam Adiba</name>
+    </author>
+    <author>
+      <name>Rahmatollah Beheshti</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.11413v1</id>
+    <title>CARES: Comprehensive Evaluation of Safety and Adversarial Robustness in Medical LLMs</title>
+    <updated>2025-05-16T16:25:51Z</updated>
+    <link href="https://arxiv.org/abs/2505.11413v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.11413v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) are increasingly deployed in medical contexts, raising critical concerns about safety, alignment, and susceptibility to adversarial manipulation. While prior benchmarks assess model refusal capabilities for harmful prompts, they often lack clinical specificity, graded harmfulness levels, and coverage of jailbreak-style attacks. We introduce CARES (Clinical Adversarial Robustness and Evaluation of Safety), a benchmark for evaluating LLM safety in healthcare. CARES includes over 18,000 prompts spanning eight medical safety principles, four harm levels, and four prompting styles: direct, indirect, obfuscated, and role-play, to simulate both malicious and benign use cases. We propose a three-way response evaluation protocol (Accept, Caution, Refuse) and a fine-grained Safety Score metric to assess model behavior. Our analysis reveals that many state-of-the-art LLMs remain vulnerable to jailbreaks that subtly rephrase harmful prompts, while also over-refusing safe but atypically phrased queries. Finally, we propose a mitigation strategy using a lightweight classifier to detect jailbreak attempts and steer models toward safer behavior via reminder-based conditioning. CARES provides a rigorous framework for testing and improving medical LLM safety under adversarial and ambiguous conditions.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-16T16:25:51Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Sijia Chen</name>
+    </author>
+    <author>
+      <name>Xiaomin Li</name>
+    </author>
+    <author>
+      <name>Mengxue Zhang</name>
+    </author>
+    <author>
+      <name>Eric Hanchen Jiang</name>
+    </author>
+    <author>
+      <name>Qingcheng Zeng</name>
+    </author>
+    <author>
+      <name>Chen-Hsiang Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2109.03570v2</id>
+    <title>Biomedical and Clinical Language Models for Spanish: On the Benefits of Domain-Specific Pretraining in a Mid-Resource Scenario</title>
+    <updated>2021-09-17T05:43:58Z</updated>
+    <link href="https://arxiv.org/abs/2109.03570v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2109.03570v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This work presents biomedical and clinical language models for Spanish by experimenting with different pretraining choices, such as masking at word and subword level, varying the vocabulary size and testing with domain data, looking for better language representations. Interestingly, in the absence of enough clinical data to train a model from scratch, we applied mixed-domain pretraining and cross-domain transfer approaches to generate a performant bio-clinical model suitable for real-world clinical data. We evaluated our models on Named Entity Recognition (NER) tasks for biomedical documents and challenging hospital discharge reports. When compared against the competitive mBERT and BETO models, we outperform them in all NER tasks by a significant margin. Finally, we studied the impact of the model's vocabulary on the NER performances by offering an interesting vocabulary-centric analysis. The results confirm that domain-specific pretraining is fundamental to achieving higher performances in downstream NER tasks, even within a mid-resource scenario. To the best of our knowledge, we provide the first biomedical and clinical transformer-based pretrained language models for Spanish, intending to boost native Spanish NLP applications in biomedicine. Our best models are freely available in the HuggingFace hub: https://huggingface.co/BSC-TeMU.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-09-08T12:12:07Z</published>
+    <arxiv:comment>9 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Casimiro Pio Carrino</name>
+    </author>
+    <author>
+      <name>Jordi Armengol-Estapé</name>
+    </author>
+    <author>
+      <name>Asier Gutiérrez-Fandiño</name>
+    </author>
+    <author>
+      <name>Joan Llop-Palao</name>
+    </author>
+    <author>
+      <name>Marc Pàmies</name>
+    </author>
+    <author>
+      <name>Aitor Gonzalez-Agirre</name>
+    </author>
+    <author>
+      <name>Marta Villegas</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.01354v1</id>
+    <title>DPF-CM: A Data Processing Framework with Privacy-Preserving Vector Databases for Chinese Medical LLMs Training and Deployment</title>
+    <updated>2025-09-01T10:49:32Z</updated>
+    <link href="https://arxiv.org/abs/2509.01354v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.01354v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Current open-source training pipelines for Chinese medical language models predominantly emphasize optimizing training methodologies to enhance the performance of large language models (LLMs), yet lack comprehensive exploration into training data processing. To address this gap, we propose DPF-CM, a holistic Data Processing Framework for Chinese Medical LLMs training and deployment. DPF-CM comprises two core modules. The first module is a data processing pipeline tailored for model training. Beyond standard data processing operations, we (1) introduce a chained examples context-learning strategy to generate question-oriented instructions to mitigate the lack of instruction content, and (2) implement an ensemble-based filtering mechanism for preference data curation that averages multiple reward models to suppress noisy samples. The second module focuses on privacy preservation during model deployment. To prevent privacy risks from the inadvertent exposure of training data, we propose a Privacy Preserving Vector Database (PPVD) approach, which involves model memory search, high-risk database construction, secure database construction, and match-and-replace, four key stages to minimize privacy leakage during inference collectively. Experimental results show that DPF-CM significantly improves model accuracy, enabling our trained Chinese medical LLM to achieve state-of-the-art performance among open-source counterparts. Moreover, the framework reduces training data privacy leakage by 27%.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-01T10:49:32Z</published>
+    <arxiv:comment>Accepted by EMNLP 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Wei Huang</name>
+    </author>
+    <author>
+      <name>Anda Cheng</name>
+    </author>
+    <author>
+      <name>Zhao Zhang</name>
+    </author>
+    <author>
+      <name>Yinggui Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2607.00158v1</id>
+    <title>Readable but Not Controllable: Neuron-Level Evidence for Medical LLM Hallucination</title>
+    <updated>2026-06-30T20:34:45Z</updated>
+    <link href="https://arxiv.org/abs/2607.00158v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2607.00158v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Hallucination remains one of the central obstacles to deploying medical LLMs. Yet, even when hallucination can be detected, it is still unclear whether the internal representations associated with it can be used for control rather than detection alone. Using four open-source models across a suite of medical question-answering datasets, we show that a simple, carefully conditioned probe can reliably detect hallucination, with AUROC scores between 0.77 and 0.86 in our case. We further show that this signal is distributed and redundant rather than narrowly localized. Systematically selected neurons outperform random neurons only at very small subset sizes, whereas random subsets of a few hundred neurons recover nearly the full signal, and low-dimensional random projections preserve most of the detection performance. Beyond detection, we test whether this representation is causally actionable. Across 16 model--dataset combinations, our results reveal a sharp gap between decodability and controllability. The same internal structure that makes hallucination easy to detect does not translate into reliable neuron-level control. These findings show that medical hallucination seems to be readily visible in internal activations, but not easily corrected by steering the neurons most associated with it. More broadly, our results suggest that hallucination mitigation is not simply a matter of identifying the right neurons, and point to a deeper separation between what representations reveal and what they allow us to change.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-30T20:34:45Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Vijay Vankadaru</name>
+    </author>
+    <author>
+      <name>Asha Matthews</name>
+    </author>
+    <author>
+      <name>Tanya Roosta</name>
+    </author>
+    <author>
+      <name>Peyman Passban</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.17484v3</id>
+    <title>MedCare: Advancing Medical LLMs through Decoupling Clinical Alignment and Knowledge Aggregation</title>
+    <updated>2024-10-17T06:04:54Z</updated>
+    <link href="https://arxiv.org/abs/2406.17484v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.17484v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have shown substantial progress in natural language understanding and generation, proving valuable especially in the medical field. Despite advancements, challenges persist due to the complexity and diversity inherent in medical tasks, which can be categorized as knowledge-intensive tasks and alignment-required tasks. Previous approaches either ignore the latter task or focus on a minority of tasks and hence lose generalization. To address these drawbacks, we propose a progressive fine-tuning pipeline. This pipeline employs a Knowledge Aggregator and a Noise aggregator to encode diverse knowledge in the first stage and filter out detrimental information. In the second stage, we drop the Noise Aggregator to avoid the interference of suboptimal representation and leverage an additional alignment module optimized towards an orthogonal direction to the knowledge space to mitigate knowledge forgetting. Based on this two-stage paradigm, we proposed a Medical LLM through decoupling Clinical Alignment and Knowledge Aggregation (MedCare), which is designed to achieve state-of-the-art (SOTA) performance on over 20 medical tasks, as well as SOTA results on specific medical alignment tasks. Various model sizes of MedCare (1.8B, 7B, 14B) all demonstrate significant improvements over existing models with similar model sizes.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-25T12:05:56Z</published>
+    <arxiv:comment>EMNLP2024 Findings</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yusheng Liao</name>
+    </author>
+    <author>
+      <name>Shuyang Jiang</name>
+    </author>
+    <author>
+      <name>Zhe Chen</name>
+    </author>
+    <author>
+      <name>Yanfeng Wang</name>
+    </author>
+    <author>
+      <name>Yu Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.05348v1</id>
+    <title>From Retinal Evidence to Safe Decisions: RETINA-SAFE and ECRT for Hallucination Risk Triage in Medical LLMs</title>
+    <updated>2026-04-07T02:40:13Z</updated>
+    <link href="https://arxiv.org/abs/2604.05348v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.05348v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Hallucinations in medical large language models (LLMs) remain a safety-critical issue, particularly when available evidence is insufficient or conflicting. We study this problem in diabetic retinopathy (DR) decision settings and introduce RETINA-SAFE, an evidence-grounded benchmark aligned with retinal grading records, comprising 12,522 samples. RETINA-SAFE is organized into three evidence-relation tasks: E-Align (evidence-consistent), E-Conflict (evidence-conflicting), and E-Gap (evidence-insufficient). We further propose ECRT (Evidence-Conditioned Risk Triage), a two-stage white-box detection framework: Stage 1 performs Safe/Unsafe risk triage, and Stage 2 refines unsafe cases into contradiction-driven versus evidence-gap risks. ECRT leverages internal representation and logit shifts under CTX/NOCTX conditions, with class-balanced training for robust learning. Under evidence-grouped (not patient-disjoint) splits across multiple backbones, ECRT provides strong Stage-1 risk triage and explicit subtype attribution, improves Stage-1 balanced accuracy by +0.15 to +0.19 over external uncertainty and self-consistency baselines and by +0.02 to +0.07 over the strongest adapted supervised baseline, and consistently exceeds a single-stage white-box ablation on Stage-1 balanced accuracy. These findings support white-box internal signals grounded in retinal evidence as a practical route to interpretable medical LLM risk triage.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-07T02:40:13Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Zhe Yu</name>
+    </author>
+    <author>
+      <name>Wenpeng Xing</name>
+    </author>
+    <author>
+      <name>Meng Han</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.24635v1</id>
+    <title>HiMed: Incentivizing Hindi Reasoning in Medical LLMs</title>
+    <updated>2026-05-23T15:51:04Z</updated>
+    <link href="https://arxiv.org/abs/2605.24635v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.24635v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical large language models hold promise for reducing healthcare disparities, yet Hindi remains severely underrepresented. While medical LLMs excel in high-resource languages, their performance degrades sharply in Hindi, particularly on Indian systems of medicine. We argue that robust cross-lingual medical transfer requires Hindi reasoning. To this end, we introduce HiMed, a Hindi reasoning medical corpus and benchmark suite covering both Western and Indian medicine. We further propose HiMed-8B, a Hindi-form medical reasoning LLM, through the design of decaying scaffolding reward. Extensive experiments demonstrate improvement in Hindi medical reasoning performance and reduction in the English--Hindi accuracy gap. Ablation studies validate the contribution of each training stage and reward component. All data and code are available on GitHub: https://github.com/FreedomIntelligence/HiMed.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-23T15:51:04Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Dingfeng Jiang</name>
+    </author>
+    <author>
+      <name>Han Yan</name>
+    </author>
+    <author>
+      <name>Chenze Ma</name>
+    </author>
+    <author>
+      <name>Amit Kumar Jaiswal</name>
+    </author>
+    <author>
+      <name>Ang Li</name>
+    </author>
+    <author>
+      <name>Yunxiang Jiang</name>
+    </author>
+    <author>
+      <name>Xinlei Xiong</name>
+    </author>
+    <author>
+      <name>Juhao Liang</name>
+    </author>
+    <author>
+      <name>Hongru Xiao</name>
+    </author>
+    <author>
+      <name>Xiang Li</name>
+    </author>
+    <author>
+      <name>Fan Bu</name>
+    </author>
+    <author>
+      <name>Jiale Han</name>
+    </author>
+    <author>
+      <name>Ruchir Gupta</name>
+    </author>
+    <author>
+      <name>Prayag Tiwari</name>
+    </author>
+    <author>
+      <name>Benyou Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.23486v3</id>
+    <title>A Novel Evaluation Benchmark for Medical LLMs: Illuminating Safety and Effectiveness in Clinical Domains</title>
+    <updated>2025-08-13T08:51:25Z</updated>
+    <link href="https://arxiv.org/abs/2507.23486v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.23486v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) hold promise in clinical decision support but face major challenges in safety evaluation and effectiveness validation. We developed the Clinical Safety-Effectiveness Dual-Track Benchmark (CSEDB), a multidimensional framework built on clinical expert consensus, encompassing 30 criteria covering critical areas like critical illness recognition, guideline adherence, and medication safety, with weighted consequence measures. Thirty-two specialist physicians developed and reviewed 2,069 open-ended Q&amp;A items aligned with these criteria, spanning 26 clinical departments to simulate real-world scenarios. Benchmark testing of six LLMs revealed moderate overall performance (average total score 57.2%, safety 54.7%, effectiveness 62.3%), with a significant 13.3% performance drop in high-risk scenarios (p &lt; 0.0001). Domain-specific medical LLMs showed consistent performance advantages over general-purpose models, with relatively higher top scores in safety (0.912) and effectiveness (0.861). The findings of this study not only provide a standardized metric for evaluating the clinical application of medical LLMs, facilitating comparative analyses, risk exposure identification, and improvement directions across different scenarios, but also hold the potential to promote safer and more effective deployment of large language models in healthcare environments.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-31T12:10:00Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Shirui Wang</name>
+    </author>
+    <author>
+      <name>Zhihui Tang</name>
+    </author>
+    <author>
+      <name>Huaxia Yang</name>
+    </author>
+    <author>
+      <name>Qiuhong Gong</name>
+    </author>
+    <author>
+      <name>Tiantian Gu</name>
+    </author>
+    <author>
+      <name>Hongyang Ma</name>
+    </author>
+    <author>
+      <name>Yongxin Wang</name>
+    </author>
+    <author>
+      <name>Wubin Sun</name>
+    </author>
+    <author>
+      <name>Zeliang Lian</name>
+    </author>
+    <author>
+      <name>Kehang Mao</name>
+    </author>
+    <author>
+      <name>Yinan Jiang</name>
+    </author>
+    <author>
+      <name>Zhicheng Huang</name>
+    </author>
+    <author>
+      <name>Lingyun Ma</name>
+    </author>
+    <author>
+      <name>Wenjie Shen</name>
+    </author>
+    <author>
+      <name>Yajie Ji</name>
+    </author>
+    <author>
+      <name>Yunhui Tan</name>
+    </author>
+    <author>
+      <name>Chunbo Wang</name>
+    </author>
+    <author>
+      <name>Yunlu Gao</name>
+    </author>
+    <author>
+      <name>Qianling Ye</name>
+    </author>
+    <author>
+      <name>Rui Lin</name>
+    </author>
+    <author>
+      <name>Mingyu Chen</name>
+    </author>
+    <author>
+      <name>Lijuan Niu</name>
+    </author>
+    <author>
+      <name>Zhihao Wang</name>
+    </author>
+    <author>
+      <name>Peng Yu</name>
+    </author>
+    <author>
+      <name>Mengran Lang</name>
+    </author>
+    <author>
+      <name>Yue Liu</name>
+    </author>
+    <author>
+      <name>Huimin Zhang</name>
+    </author>
+    <author>
+      <name>Haitao Shen</name>
+    </author>
+    <author>
+      <name>Long Chen</name>
+    </author>
+    <author>
+      <name>Qiguang Zhao</name>
+    </author>
+    <author>
+      <name>Si-Xuan Liu</name>
+    </author>
+    <author>
+      <name>Lina Zhou</name>
+    </author>
+    <author>
+      <name>Hua Gao</name>
+    </author>
+    <author>
+      <name>Dongqiang Ye</name>
+    </author>
+    <author>
+      <name>Lingmin Meng</name>
+    </author>
+    <author>
+      <name>Youtao Yu</name>
+    </author>
+    <author>
+      <name>Naixin Liang</name>
+    </author>
+    <author>
+      <name>Jianxiong Wu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2311.01301v3</id>
+    <title>TRIALSCOPE: A Unifying Causal Framework for Scaling Real-World Evidence Generation with Biomedical Language Models</title>
+    <updated>2025-08-16T16:33:01Z</updated>
+    <link href="https://arxiv.org/abs/2311.01301v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2311.01301v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapid digitization of real-world data presents an unprecedented opportunity to optimize healthcare delivery and accelerate biomedical discovery. However, these data are often found in unstructured forms such as clinical notes in electronic medical records (EMRs), and is typically plagued by confounders, making it challenging to generate robust real-world evidence (RWE). Therefore, we present TRIALSCOPE, a framework designed to distil RWE from population level observational data at scale. TRIALSCOPE leverages biomedical language models to structure clinical text at scale, employs advanced probabilistic modeling for denoising and imputation, and incorporates state-of-the-art causal inference techniques to address common confounders in treatment effect estimation. Extensive experiments were conducted on a large-scale dataset of over one million cancer patients from a single large healthcare network in the United States. TRIALSCOPE was shown to automatically curate high-quality structured patient data, expanding the dataset and incorporating key patient attributes only available in unstructured form. The framework reduces confounding in treatment effect estimation, generating comparable results to randomized controlled lung cancer trials. Additionally, we demonstrate simulations of unconducted clinical trials - including a pancreatic cancer trial with varying eligibility criteria - using a suite of validation tests to ensure robustness. Thorough ablation studies were conducted to better understand key components of TRIALSCOPE and establish best practices for RWE generation from EMRs. TRIALSCOPE was able to extract data cancer treatment data from EMRs, overcoming limitations of manual curation. We were also able to show that TRIALSCOPE could reproduce results of lung and pancreatic cancer clinical trials from the extracted real world data.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ME" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-11-02T15:15:47Z</published>
+    <arxiv:comment>4 figures, 1 table</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Javier González</name>
+    </author>
+    <author>
+      <name>Risa Ueno</name>
+    </author>
+    <author>
+      <name>Cliff Wong</name>
+    </author>
+    <author>
+      <name>Zelalem Gero</name>
+    </author>
+    <author>
+      <name>Jass Bagga</name>
+    </author>
+    <author>
+      <name>Isabel Chien</name>
+    </author>
+    <author>
+      <name>Eduard Oravkin</name>
+    </author>
+    <author>
+      <name>Emre Kiciman</name>
+    </author>
+    <author>
+      <name>Aditya Nori</name>
+    </author>
+    <author>
+      <name>Roshanthi Weerasinghe</name>
+    </author>
+    <author>
+      <name>Rom S. Leidner</name>
+    </author>
+    <author>
+      <name>Brian Piening</name>
+    </author>
+    <author>
+      <name>Tristan Naumann</name>
+    </author>
+    <author>
+      <name>Carlo Bifulco</name>
+    </author>
+    <author>
+      <name>Hoifung Poon</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.02501v1</id>
+    <title>ECG Foundation Models and Medical LLMs for Agentic Cardiovascular Intelligence at the Edge: A Review and Outlook</title>
+    <updated>2026-04-02T20:09:05Z</updated>
+    <link href="https://arxiv.org/abs/2604.02501v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.02501v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electrocardiogram (ECG) foundation models represent a paradigm shift from task-specific pipelines to generalizable architectures pre-trained on large-scale unlabeled waveform data. This survey presents a unified and deployment-aware review of foundation models and medical large language models (LLMs) for ECG intelligence in cardiovascular disease (CVD) diagnosis, monitoring, and clinical decision support. The central thesis of this survey paper is that next-generation cardiovascular AI systems will be inherently agentic, requiring the synergistic integration of two complementary model classes: (i) ECG foundation models that act as signal-level interpreters, learning rich electrophysiological representations via self-supervised and multimodal pretraining, and (ii) medical LLMs, trained on biomedical text corpora, that function as knowledge-based reasoning backbones for contextual inference, guideline alignment, and clinical decision support. Thus, the survey systematically reviews existing pool of generalist medical LLMs, as well as ECG foundation models that utilize techniques such as self-supervised learning, multimodal ECG-language alignment, vision transformer architectures, and possess capabilities such as zero-shot classification, automated report generation, and longitudinal risk modeling. Recognizing the constraints of consumer-grade wearable edge devices, we further examine model optimization techniques such as quantization, pruning, knowledge distillation, as well as the role of small language models in enabling low-latency, energy-efficient, and privacy-preserving ECG intelligence on edge platforms such as smartwatches. Finally, we outline future directions in multimodal ECG foundation models, agent-driven monitoring, and explainable, secure edge intelligence, with particular emphasis on real-time, on-device cardiovascular analytics in consumer electronics ecosystems.</summary>
+    <category term="eess.SP" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-02T20:09:05Z</published>
+    <arxiv:comment>18 pages, 4 figures, 4 tables, under review with a journal</arxiv:comment>
+    <arxiv:primary_category term="eess.SP"/>
+    <author>
+      <name>Mudassir Hasan Khan</name>
+    </author>
+    <author>
+      <name>Ahmad Nayfeh</name>
+    </author>
+    <author>
+      <name>Mudassir Masood</name>
+    </author>
+    <author>
+      <name>Ali Ahmad Al-Shaikhi</name>
+    </author>
+    <author>
+      <name>Muhammad Mahboob Ur Rahman</name>
+    </author>
+    <author>
+      <name>Tareq Y. Al-Naffouri</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.01301v1</id>
+    <title>Med-HEAL: Analyzing and Mitigating Hallucinations in Medical LLMs with Hallucination-Aware In-Context Learning</title>
+    <updated>2026-05-31T15:43:42Z</updated>
+    <link href="https://arxiv.org/abs/2606.01301v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.01301v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Hallucinations in medical large language models (LLMs) pose serious risks for clinical decision support, particularly when models must reason over complex electronic health records (EHRs). However, existing benchmarks often lack a realistic clinical context and provide limited insight into how hallucinations can be mitigated in practice. We introduce Med-HEAL, a framework for systematically identifying, analyzing, and mitigating hallucinations in medical LLMs using clinically grounded data. Building on the EHRNoteQA benchmark derived from MIMIC-IV discharge summaries, we construct a hallucination dataset by evaluating BioMistral-7B on open-ended clinical question answering tasks. Model outputs are labeled through a dual evaluation pipeline that combines LLM-as-a-Judge assessment (GPT-4o) with human auditing by medical student reviewers, producing correctness judgments and annotations of reasoning errors via a custom web-based evaluation system.
+  We then leverage this dataset to investigate mitigation strategies: a self-critique pipeline, in which the test model reviews its own answers to detect potential errors and regenerates responses for flagged cases, and retrieval-augmented in-context learning (RA-ICL), which exposes the model to hallucinated and corrected examples. Experiments across five open-source LLMs-BioMistral, Llama-3.1, DeepSeek, Qwen2.5, and Qwen3, show that the self-critique strategy improves accuracy for three of five models (p &lt; 0.05) without requiring parameter updates.
+  Med-HEAL provides both a reusable hallucination dataset and a practical framework for studying and mitigating hallucinations in medical LLMs, supporting safer deployment of AI systems in clinical environments. Our code and data are publicly available at https://github.com/yimingliao-blad/med-heal.git.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-31T15:43:42Z</published>
+    <arxiv:comment>12 pages, 5 figures. Preprint full version of an accepted ACM-BCB 2026 short paper</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yiming Liao</name>
+    </author>
+    <author>
+      <name>Zeno Franco</name>
+    </author>
+    <author>
+      <name>Jose Eduardo Lizarraga Mazaba</name>
+    </author>
+    <author>
+      <name>Keke Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.13500v2</id>
+    <title>MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts</title>
+    <updated>2025-11-03T08:12:08Z</updated>
+    <link href="https://arxiv.org/abs/2510.13500v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.13500v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLMs hold great promise for healthcare applications, but the rapid evolution of medical knowledge and errors in training data often cause them to generate outdated or inaccurate information, limiting their applicability in high-stakes clinical practice. Model editing has emerged as a potential remedy without full retraining. While parameter-based editing often compromises locality and is thus ill-suited for the medical domain, retrieval-based editing offers a more viable alternative. However, it still faces two critical challenges: (1) representation overlap within the medical knowledge space often causes inaccurate retrieval and reduces editing accuracy; (2) existing methods are restricted to single-sample edits, while batch-editing remains largely unexplored despite its importance for real-world medical applications. To address these challenges, we first construct MedVersa, an enhanced benchmark with broader coverage of medical subjects, designed to evaluate both single and batch edits under strict locality constraints. We then propose MedREK, a retrieval-based editing framework that integrates a shared query-key module for precise matching with an attention-based prompt encoder for informative guidance. Experimental results on various medical benchmarks demonstrate that our MedREK achieves superior performance across different core metrics and provides the first validated solution for batch-editing in medical LLMs. Our code and dataset are available at https://github.com/mylittleriver/MedREK.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-15T12:50:33Z</published>
+    <arxiv:comment>Preprint, work in progress</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Shujun Xia</name>
+    </author>
+    <author>
+      <name>Haokun Lin</name>
+    </author>
+    <author>
+      <name>Yichen Wu</name>
+    </author>
+    <author>
+      <name>Yinan Zhou</name>
+    </author>
+    <author>
+      <name>Zixuan Li</name>
+    </author>
+    <author>
+      <name>Zhongwei Wan</name>
+    </author>
+    <author>
+      <name>Xingrun Xing</name>
+    </author>
+    <author>
+      <name>Yefeng Zheng</name>
+    </author>
+    <author>
+      <name>Xiang Li</name>
+    </author>
+    <author>
+      <name>Caifeng Shan</name>
+    </author>
+    <author>
+      <name>Zhenan Sun</name>
+    </author>
+    <author>
+      <name>Quanzheng Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.18034v1</id>
+    <title>LLMs for Doctors: Leveraging Medical LLMs to Assist Doctors, Not Replace Them</title>
+    <updated>2024-06-26T03:08:24Z</updated>
+    <link href="https://arxiv.org/abs/2406.18034v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.18034v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The recent success of Large Language Models (LLMs) has had a significant impact on the healthcare field, providing patients with medical advice, diagnostic information, and more. However, due to a lack of professional medical knowledge, patients are easily misled by generated erroneous information from LLMs, which may result in serious medical problems. To address this issue, we focus on tuning the LLMs to be medical assistants who collaborate with more experienced doctors. We first conduct a two-stage survey by inspiration-feedback to gain a broad understanding of the real needs of doctors for medical assistants. Based on this, we construct a Chinese medical dataset called DoctorFLAN to support the entire workflow of doctors, which includes 92K Q\&amp;A samples from 22 tasks and 27 specialists. Moreover, we evaluate LLMs in doctor-oriented scenarios by constructing the DoctorFLAN-\textit{test} containing 550 single-turn Q\&amp;A and DotaBench containing 74 multi-turn conversations. The evaluation results indicate that being a medical assistant still poses challenges for existing open-source models, but DoctorFLAN can help them significantly. It demonstrates that the doctor-oriented dataset and benchmarks we construct can complement existing patient-oriented work and better promote medical LLMs research.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-26T03:08:24Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Wenya Xie</name>
+    </author>
+    <author>
+      <name>Qingying Xiao</name>
+    </author>
+    <author>
+      <name>Yu Zheng</name>
+    </author>
+    <author>
+      <name>Xidong Wang</name>
+    </author>
+    <author>
+      <name>Junying Chen</name>
+    </author>
+    <author>
+      <name>Ke Ji</name>
+    </author>
+    <author>
+      <name>Anningzhe Gao</name>
+    </author>
+    <author>
+      <name>Xiang Wan</name>
+    </author>
+    <author>
+      <name>Feng Jiang</name>
+    </author>
+    <author>
+      <name>Benyou Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.02262v1</id>
+    <title>Silent Sabotage During Fine-Tuning: Few-Shot Rationale Poisoning of Compact Medical LLMs</title>
+    <updated>2026-02-28T07:25:22Z</updated>
+    <link href="https://arxiv.org/abs/2603.02262v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.02262v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Supervised fine-tuning (SFT) is essential for the development of medical large language models (LLMs), yet prior poisoning studies have mainly focused on the detectable backdoor attacks. We propose a novel poisoning attack targeting the reasoning process of medical LLMs during SFT. Unlike backdoor attacks, our method injects poisoned rationales into few-shot training data, leading to stealthy degradation of model performance on targeted medical topics. Results showed that knowledge overwriting was ineffective, while rationale poisoning caused significant decline on the accuracy of the target subject, as long as no correct samples of the same subject appear in the dataset. A minimum number and ratio of poisoned samples was needed to carry out an effective and stealthy attack, which was more efficient and accurate than catastrophic forgetting. We demonstrate though this study the risk of SFT-stage poisoning, hoping to spur more studies of defense in the sensitive medical domain.</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-28T07:25:22Z</published>
+    <arxiv:primary_category term="cs.CR"/>
+    <author>
+      <name>Jingyuan Xie</name>
+    </author>
+    <author>
+      <name>Wenjie Wang</name>
+    </author>
+    <author>
+      <name>Ji Wu</name>
+    </author>
+    <author>
+      <name>Jiandong Gao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.12255v1</id>
+    <title>Shallow Robustness, Deep Vulnerabilities: Multi-Turn Evaluation of Medical LLMs</title>
+    <updated>2025-10-14T08:04:18Z</updated>
+    <link href="https://arxiv.org/abs/2510.12255v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.12255v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) are rapidly transitioning into medical clinical use, yet their reliability under realistic, multi-turn interactions remains poorly understood. Existing evaluation frameworks typically assess single-turn question answering under idealized conditions, overlooking the complexities of medical consultations where conflicting input, misleading context, and authority influence are common. We introduce MedQA-Followup, a framework for systematically evaluating multi-turn robustness in medical question answering. Our approach distinguishes between shallow robustness (resisting misleading initial context) and deep robustness (maintaining accuracy when answers are challenged across turns), while also introducing an indirect-direct axis that separates contextual framing (indirect) from explicit suggestion (direct). Using controlled interventions on the MedQA dataset, we evaluate five state-of-the-art LLMs and find that while models perform reasonably well under shallow perturbations, they exhibit severe vulnerabilities in multi-turn settings, with accuracy dropping from 91.2% to as low as 13.5% for Claude Sonnet 4. Counterintuitively, indirect, context-based interventions are often more harmful than direct suggestions, yielding larger accuracy drops across models and exposing a significant vulnerability for clinical deployment. Further compounding analyses reveal model differences, with some showing additional performance drops under repeated interventions while others partially recovering or even improving. These findings highlight multi-turn robustness as a critical but underexplored dimension for safe and reliable deployment of medical LLMs.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-14T08:04:18Z</published>
+    <arxiv:comment>Dataset and code: https://huggingface.co/datasets/dynamoai-ml/MedQA-USMLE-4-MultiTurnRobust ; https://github.com/bmanczak/MedQA-MultiTurnRobustness Accepted as a poster at NeurIPS 2025 Workshop on GenAI for Health: Potential, Trust, and Policy Compliance</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Blazej Manczak</name>
+    </author>
+    <author>
+      <name>Eric Lin</name>
+    </author>
+    <author>
+      <name>Francisco Eiras</name>
+    </author>
+    <author>
+      <name>James O' Neill</name>
+    </author>
+    <author>
+      <name>Vaikkunth Mugunthan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.13373v1</id>
+    <title>A Novel Hierarchical Integration Method for Efficient Model Merging in Medical LLMs</title>
+    <updated>2025-11-17T13:47:27Z</updated>
+    <link href="https://arxiv.org/abs/2511.13373v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.13373v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) face significant challenges in distributed healthcare, including consolidating specialized domain knowledge across institutions while maintaining privacy, reducing computational overhead, and preventing catastrophic forgetting during model updates.This paper presents a systematic evaluation of six parameter-space merging techniques applied to two architecturally compatible medical LLMs derived from the Mistral-7B base model. We introduce a novel hierarchical method that combines selective Optimal Transport (OT) alignment for attention layers with cosine similarity-weighted interpolation, designed to address permutation variance while minimizing computational overhead for edge deployment scenarios. Our study evaluates Task Arithmetic, Linear Averaging, DARE-TIES, DELLA, Breadcrumbs, and our Hierarchical approach across five medical benchmarks. Results demonstrate that architecturally compatible models benefit significantly from simple averaging methods, with Task Arithmetic achieving 45.80% accuracy on MedQA, outperforming complex pruning-based approaches. These findings offer critical insights for the deployment of distributed medical AI in resource-constrained IoT environments, where computational efficiency and model compatibility are paramount. Our work establishes that for architecturally compatible models, simple averaging provides a robust and computationally efficient baseline for knowledge consolidation, offering a pragmatic path forward for scalable medical AI systems.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-17T13:47:27Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Prakrit Timilsina</name>
+    </author>
+    <author>
+      <name>Anuj Nepal</name>
+    </author>
+    <author>
+      <name>Rajan Kadel</name>
+    </author>
+    <author>
+      <name>Robin Doss</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2306.10765v1</id>
+    <title>Path to Medical AGI: Unify Domain-specific Medical LLMs with the Lowest Cost</title>
+    <updated>2023-06-19T08:15:14Z</updated>
+    <link href="https://arxiv.org/abs/2306.10765v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2306.10765v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical artificial general intelligence (AGI) is an emerging field that aims to develop systems specifically designed for medical applications that possess the ability to understand, learn, and apply knowledge across a wide range of tasks and domains. Large language models (LLMs) represent a significant step towards AGI. However, training cross-domain LLMs in the medical field poses significant challenges primarily attributed to the requirement of collecting data from diverse domains. This task becomes particularly difficult due to privacy restrictions and the scarcity of publicly available medical datasets. Here, we propose Medical AGI (MedAGI), a paradigm to unify domain-specific medical LLMs with the lowest cost, and suggest a possible path to achieve medical AGI. With an increasing number of domain-specific professional multimodal LLMs in the medical field being developed, MedAGI is designed to automatically select appropriate medical models by analyzing users' questions with our novel adaptive expert selection algorithm. It offers a unified approach to existing LLMs in the medical field, eliminating the need for retraining regardless of the introduction of new models. This characteristic renders it a future-proof solution in the dynamically advancing medical domain. To showcase the resilience of MedAGI, we conducted an evaluation across three distinct medical domains: dermatology diagnosis, X-ray diagnosis, and analysis of pathology pictures. The results demonstrated that MedAGI exhibited remarkable versatility and scalability, delivering exceptional performance across diverse domains. Our code is publicly available to facilitate further research at https://github.com/JoshuaChou2018/MedAGI.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-06-19T08:15:14Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Juexiao Zhou</name>
+    </author>
+    <author>
+      <name>Xiuying Chen</name>
+    </author>
+    <author>
+      <name>Xin Gao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2211.11363v2</id>
+    <title>AF Adapter: Continual Pretraining for Building Chinese Biomedical Language Model</title>
+    <updated>2023-10-20T02:32:13Z</updated>
+    <link href="https://arxiv.org/abs/2211.11363v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2211.11363v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Continual pretraining is a popular way of building a domain-specific pretrained language model from a general-domain language model. In spite of its high efficiency, continual pretraining suffers from catastrophic forgetting, which may harm the model's performance in downstream tasks. To alleviate the issue, in this paper, we propose a continual pretraining method for the BERT-based model, named Attention-FFN Adapter. Its main idea is to introduce a small number of attention heads and hidden units inside each self-attention layer and feed-forward network. Furthermore, we train a domain-specific language model named AF Adapter based RoBERTa for the Chinese biomedical domain. In experiments, models are applied to downstream tasks for evaluation. The results demonstrate that with only about 17% of model parameters trained, AF Adapter achieves 0.6%, 2% gain in performance on average, compared to strong baselines. Further experimental results show that our method alleviates the catastrophic forgetting problem by 11% compared to the fine-tuning method.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-11-21T11:30:13Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yongyu Yan</name>
+    </author>
+    <author>
+      <name>Kui Xue</name>
+    </author>
+    <author>
+      <name>Xiaoming Shi</name>
+    </author>
+    <author>
+      <name>Qi Ye</name>
+    </author>
+    <author>
+      <name>Jingping Liu</name>
+    </author>
+    <author>
+      <name>Tong Ruan</name>
+    </author>
+    <arxiv:doi>10.1109/BIBM58861.2023.10385733</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1109/BIBM58861.2023.10385733" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2204.03951v1</id>
+    <title>RuBioRoBERTa: a pre-trained biomedical language model for Russian language biomedical text mining</title>
+    <updated>2022-04-08T09:18:59Z</updated>
+    <link href="https://arxiv.org/abs/2204.03951v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2204.03951v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper presents several BERT-based models for Russian language biomedical text mining (RuBioBERT, RuBioRoBERTa). The models are pre-trained on a corpus of freely available texts in the Russian biomedical domain. With this pre-training, our models demonstrate state-of-the-art results on RuMedBench - Russian medical language understanding benchmark that covers a diverse set of tasks, including text classification, question answering, natural language inference, and named entity recognition.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-04-08T09:18:59Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Alexander Yalunin</name>
+    </author>
+    <author>
+      <name>Alexander Nesterov</name>
+    </author>
+    <author>
+      <name>Dmitriy Umerenkov</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2308.08625v1</id>
+    <title>BIOptimus: Pre-training an Optimal Biomedical Language Model with Curriculum Learning for Named Entity Recognition</title>
+    <updated>2023-08-16T18:48:01Z</updated>
+    <link href="https://arxiv.org/abs/2308.08625v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2308.08625v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Using language models (LMs) pre-trained in a self-supervised setting on large corpora and then fine-tuning for a downstream task has helped to deal with the problem of limited label data for supervised learning tasks such as Named Entity Recognition (NER). Recent research in biomedical language processing has offered a number of biomedical LMs pre-trained using different methods and techniques that advance results on many BioNLP tasks, including NER. However, there is still a lack of a comprehensive comparison of pre-training approaches that would work more optimally in the biomedical domain. This paper aims to investigate different pre-training methods, such as pre-training the biomedical LM from scratch and pre-training it in a continued fashion. We compare existing methods with our proposed pre-training method of initializing weights for new tokens by distilling existing weights from the BERT model inside the context where the tokens were found. The method helps to speed up the pre-training stage and improve performance on NER. In addition, we compare how masking rate, corruption strategy, and masking strategies impact the performance of the biomedical LM. Finally, using the insights from our experiments, we introduce a new biomedical LM (BIOptimus), which is pre-trained using Curriculum Learning (CL) and contextualized weight distillation method. Our model sets new states of the art on several biomedical Named Entity Recognition (NER) tasks. We release our code and all pre-trained models</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-08-16T18:48:01Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>https://aclanthology.org/2023.bionlp-1.31/</arxiv:journal_ref>
+    <author>
+      <name>Pavlova Vera</name>
+    </author>
+    <author>
+      <name>Mohammed Makhlouf</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.03250v1</id>
+    <title>The Word and the Way: Strategies for Domain-Specific BERT Pre-Training in German Medical NLP</title>
+    <updated>2026-06-02T07:10:43Z</updated>
+    <link href="https://arxiv.org/abs/2606.03250v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.03250v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Digital healthcare generates vast amounts of clinical text that can support AI-assisted applications, yet German biomedical language models remain limited by older architectures or restricted training data. We present ChristBERT (Clinical- and Healthcare-Related Issues and Subjects Tuned BERT), a family of domain-specific German RoBERTa-based language models trained on a 13.5GB corpus of scientific publications, clinical texts, health-related web content, and translated clinical resources. To investigate the impact of domain adaptation strategies in German clinical NLP, we compare continued pre-training, training from scratch, and domain-specific vocabulary adaptation. The resulting models are evaluated on three medical named entity recognition tasks and two text classification tasks. ChristBERT consistently outperforms existing general-purpose and medical German language models on four of five benchmarks and establishes a new state of the art for German clinical language modeling. Our results show that the optimal adaptation strategy is task-dependent: in our evaluation, training from scratch is particularly effective for highly specialized clinical texts, whereas continued pre-training performs well on more commonly written medical texts. All models are publicly released to support future research and applications in German medical NLP.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-02T07:10:43Z</published>
+    <arxiv:comment>Under revision at BMC Medical Informatics and Decision Making</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Henry He</name>
+    </author>
+    <author>
+      <name>Johann Frei</name>
+    </author>
+    <author>
+      <name>Raphael Schmitt</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.06801v1</id>
+    <title>Detecting Idiomatic Multiword Expressions in Clinical Terminology using Definition-Based Representation Learning</title>
+    <updated>2023-05-11T13:42:58Z</updated>
+    <link href="https://arxiv.org/abs/2305.06801v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.06801v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper shines a light on the potential of definition-based semantic models for detecting idiomatic and semi-idiomatic multiword expressions (MWEs) in clinical terminology. Our study focuses on biomedical entities defined in the UMLS ontology and aims to help prioritize the translation efforts of these entities. In particular, we develop an effective tool for scoring the idiomaticity of biomedical MWEs based on the degree of similarity between the semantic representations of those MWEs and a weighted average of the representation of their constituents. We achieve this using a biomedical language model trained to produce similar representations for entity names and their definitions, called BioLORD. The importance of this definition-based approach is highlighted by comparing the BioLORD model to two other state-of-the-art biomedical language models based on Transformer: SapBERT and CODER. Our results show that the BioLORD model has a strong ability to identify idiomatic MWEs, not replicated in other models. Our corpus-free idiomaticity estimation helps ontology translators to focus on more challenging MWEs.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-11T13:42:58Z</published>
+    <arxiv:comment>Best Paper Award @ MWE 2023</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>François Remy</name>
+    </author>
+    <author>
+      <name>Alfiya Khabibullina</name>
+    </author>
+    <author>
+      <name>Thomas Demeester</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.17803v2</id>
+    <title>Examining Imbalance Effects on Performance and Demographic Fairness of Clinical Language Models</title>
+    <updated>2025-02-13T21:28:17Z</updated>
+    <link href="https://arxiv.org/abs/2412.17803v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.17803v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Data imbalance is a fundamental challenge in applying language models to biomedical applications, particularly in ICD code prediction tasks where label and demographic distributions are uneven. While state-of-the-art language models have been increasingly adopted in biomedical tasks, few studies have systematically examined how data imbalance affects model performance and fairness across demographic groups. This study fills the gap by statistically probing the relationship between data imbalance and model performance in ICD code prediction. We analyze imbalances in a standard benchmark data across gender, age, ethnicity, and social determinants of health by state-of-the-art biomedical language models. By deploying diverse performance metrics and statistical analyses, we explore the influence of data imbalance on performance variations and demographic fairness. Our study shows that data imbalance significantly impacts model performance and fairness, but feature similarity to the majority class may be a more critical factor. We believe this study provides valuable insights for developing more equitable and robust language models in healthcare applications.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-23T18:58:11Z</published>
+    <arxiv:comment>10 pages. Accepted by IEEE ICHI 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Precious Jones</name>
+    </author>
+    <author>
+      <name>Weisi Liu</name>
+    </author>
+    <author>
+      <name>I-Chan Huang</name>
+    </author>
+    <author>
+      <name>Xiaolei Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2205.03695v1</id>
+    <title>AKI-BERT: a Pre-trained Clinical Language Model for Early Prediction of Acute Kidney Injury</title>
+    <updated>2022-05-07T18:04:31Z</updated>
+    <link href="https://arxiv.org/abs/2205.03695v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2205.03695v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Acute kidney injury (AKI) is a common clinical syndrome characterized by a sudden episode of kidney failure or kidney damage within a few hours or a few days. Accurate early prediction of AKI for patients in ICU who are more likely than others to have AKI can enable timely interventions, and reduce the complications of AKI. Much of the clinical information relevant to AKI is captured in clinical notes that are largely unstructured text and requires advanced natural language processing (NLP) for useful information extraction. On the other hand, pre-trained contextual language models such as Bidirectional Encoder Representations from Transformers (BERT) have improved performances for many NLP tasks in general domain recently. However, few have explored BERT on disease-specific medical domain tasks such as AKI early prediction. In this paper, we try to apply BERT to specific diseases and present an AKI domain-specific pre-trained language model based on BERT (AKI-BERT) that could be used to mine the clinical notes for early prediction of AKI. AKI-BERT is a BERT model pre-trained on the clinical notes of patients having risks for AKI. Our experiments on Medical Information Mart for Intensive Care III (MIMIC-III) dataset demonstrate that AKI-BERT can yield performance improvements for early AKI prediction, thus expanding the utility of the BERT model from general clinical domain to disease-specific domain.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-05-07T18:04:31Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Chengsheng Mao</name>
+    </author>
+    <author>
+      <name>Liang Yao</name>
+    </author>
+    <author>
+      <name>Yuan Luo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1909.08229v1</id>
+    <title>Pre-trained Language Model for Biomedical Question Answering</title>
+    <updated>2019-09-18T06:53:30Z</updated>
+    <link href="https://arxiv.org/abs/1909.08229v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1909.08229v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The recent success of question answering systems is largely attributed to pre-trained language models. However, as language models are mostly pre-trained on general domain corpora such as Wikipedia, they often have difficulty in understanding biomedical questions. In this paper, we investigate the performance of BioBERT, a pre-trained biomedical language model, in answering biomedical questions including factoid, list, and yes/no type questions. BioBERT uses almost the same structure across various question types and achieved the best performance in the 7th BioASQ Challenge (Task 7b, Phase B). BioBERT pre-trained on SQuAD or SQuAD 2.0 easily outperformed previous state-of-the-art models. BioBERT obtains the best performance when it uses the appropriate pre-/post-processing strategies for questions, passages, and answers.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-09-18T06:53:30Z</published>
+    <arxiv:comment>This paper is accepted for an oral presentation in BioASQ Workshop @ ECML PKDD 2019</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Wonjin Yoon</name>
+    </author>
+    <author>
+      <name>Jinhyuk Lee</name>
+    </author>
+    <author>
+      <name>Donghyeon Kim</name>
+    </author>
+    <author>
+      <name>Minbyul Jeong</name>
+    </author>
+    <author>
+      <name>Jaewoo Kang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.10694v1</id>
+    <title>Medical Large Language Model Benchmarks Should Prioritize Construct Validity</title>
+    <updated>2025-03-12T05:08:02Z</updated>
+    <link href="https://arxiv.org/abs/2503.10694v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.10694v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical large language models (LLMs) research often makes bold claims, from encoding clinical knowledge to reasoning like a physician. These claims are usually backed by evaluation on competitive benchmarks; a tradition inherited from mainstream machine learning. But how do we separate real progress from a leaderboard flex? Medical LLM benchmarks, much like those in other fields, are arbitrarily constructed using medical licensing exam questions. For these benchmarks to truly measure progress, they must accurately capture the real-world tasks they aim to represent. In this position paper, we argue that medical LLM benchmarks should (and indeed can) be empirically evaluated for their construct validity. In the psychological testing literature, "construct validity" refers to the ability of a test to measure an underlying "construct", that is the actual conceptual target of evaluation. By drawing an analogy between LLM benchmarks and psychological tests, we explain how frameworks from this field can provide empirical foundations for validating benchmarks. To put these ideas into practice, we use real-world clinical data in proof-of-concept experiments to evaluate popular medical LLM benchmarks and report significant gaps in their construct validity. Finally, we outline a vision for a new ecosystem of medical LLM evaluation centered around the creation of valid benchmarks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-12T05:08:02Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ahmed Alaa</name>
+    </author>
+    <author>
+      <name>Thomas Hartvigsen</name>
+    </author>
+    <author>
+      <name>Niloufar Golchini</name>
+    </author>
+    <author>
+      <name>Shiladitya Dutta</name>
+    </author>
+    <author>
+      <name>Frances Dean</name>
+    </author>
+    <author>
+      <name>Inioluwa Deborah Raji</name>
+    </author>
+    <author>
+      <name>Travis Zack</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.10990v1</id>
+    <title>MedBench: A Comprehensive, Standardized, and Reliable Benchmarking System for Evaluating Chinese Medical Large Language Models</title>
+    <updated>2024-06-24T02:25:48Z</updated>
+    <link href="https://arxiv.org/abs/2407.10990v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.10990v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Ensuring the general efficacy and goodness for human beings from medical large language models (LLM) before real-world deployment is crucial. However, a widely accepted and accessible evaluation process for medical LLM, especially in the Chinese context, remains to be established. In this work, we introduce "MedBench", a comprehensive, standardized, and reliable benchmarking system for Chinese medical LLM. First, MedBench assembles the currently largest evaluation dataset (300,901 questions) to cover 43 clinical specialties and performs multi-facet evaluation on medical LLM. Second, MedBench provides a standardized and fully automatic cloud-based evaluation infrastructure, with physical separations for question and ground truth. Third, MedBench implements dynamic evaluation mechanisms to prevent shortcut learning and answer remembering. Applying MedBench to popular general and medical LLMs, we observe unbiased, reproducible evaluation results largely aligning with medical professionals' perspectives. This study establishes a significant foundation for preparing the practical applications of Chinese medical LLMs. MedBench is publicly accessible at https://medbench.opencompass.org.cn.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-24T02:25:48Z</published>
+    <arxiv:comment>25 pages.4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mianxin Liu</name>
+    </author>
+    <author>
+      <name>Jinru Ding</name>
+    </author>
+    <author>
+      <name>Jie Xu</name>
+    </author>
+    <author>
+      <name>Weiguo Hu</name>
+    </author>
+    <author>
+      <name>Xiaoyang Li</name>
+    </author>
+    <author>
+      <name>Lifeng Zhu</name>
+    </author>
+    <author>
+      <name>Zhian Bai</name>
+    </author>
+    <author>
+      <name>Xiaoming Shi</name>
+    </author>
+    <author>
+      <name>Benyou Wang</name>
+    </author>
+    <author>
+      <name>Haitao Song</name>
+    </author>
+    <author>
+      <name>Pengfei Liu</name>
+    </author>
+    <author>
+      <name>Xiaofan Zhang</name>
+    </author>
+    <author>
+      <name>Shanshan Wang</name>
+    </author>
+    <author>
+      <name>Kang Li</name>
+    </author>
+    <author>
+      <name>Haofen Wang</name>
+    </author>
+    <author>
+      <name>Tong Ruan</name>
+    </author>
+    <author>
+      <name>Xuanjing Huang</name>
+    </author>
+    <author>
+      <name>Xin Sun</name>
+    </author>
+    <author>
+      <name>Shaoting Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2302.08091v1</id>
+    <title>Do We Still Need Clinical Language Models?</title>
+    <updated>2023-02-16T05:08:34Z</updated>
+    <link href="https://arxiv.org/abs/2302.08091v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2302.08091v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Although recent advances in scaling large language models (LLMs) have resulted in improvements on many NLP tasks, it remains unclear whether these models trained primarily with general web text are the right tool in highly specialized, safety critical domains such as clinical text. Recent results have suggested that LLMs encode a surprising amount of medical knowledge. This raises an important question regarding the utility of smaller domain-specific language models. With the success of general-domain LLMs, is there still a need for specialized clinical models? To investigate this question, we conduct an extensive empirical analysis of 12 language models, ranging from 220M to 175B parameters, measuring their performance on 3 different clinical tasks that test their ability to parse and reason over electronic health records. As part of our experiments, we train T5-Base and T5-Large models from scratch on clinical notes from MIMIC III and IV to directly investigate the efficiency of clinical tokens. We show that relatively small specialized clinical models substantially outperform all in-context learning approaches, even when finetuned on limited annotated data. Further, we find that pretraining on clinical tokens allows for smaller, more parameter-efficient models that either match or outperform much larger language models trained on general text. We release the code and the models used under the PhysioNet Credentialed Health Data license and data use agreement.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-02-16T05:08:34Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Eric Lehman</name>
+    </author>
+    <author>
+      <name>Evan Hernandez</name>
+    </author>
+    <author>
+      <name>Diwakar Mahajan</name>
+    </author>
+    <author>
+      <name>Jonas Wulff</name>
+    </author>
+    <author>
+      <name>Micah J. Smith</name>
+    </author>
+    <author>
+      <name>Zachary Ziegler</name>
+    </author>
+    <author>
+      <name>Daniel Nadler</name>
+    </author>
+    <author>
+      <name>Peter Szolovits</name>
+    </author>
+    <author>
+      <name>Alistair Johnson</name>
+    </author>
+    <author>
+      <name>Emily Alsentzer</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.07468v1</id>
+    <title>Evaluating large language models in medical applications: a survey</title>
+    <updated>2024-05-13T05:08:33Z</updated>
+    <link href="https://arxiv.org/abs/2405.07468v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.07468v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have emerged as powerful tools with transformative potential across numerous domains, including healthcare and medicine. In the medical domain, LLMs hold promise for tasks ranging from clinical decision support to patient education. However, evaluating the performance of LLMs in medical contexts presents unique challenges due to the complex and critical nature of medical information. This paper provides a comprehensive overview of the landscape of medical LLM evaluation, synthesizing insights from existing studies and highlighting evaluation data sources, task scenarios, and evaluation methods. Additionally, it identifies key challenges and opportunities in medical LLM evaluation, emphasizing the need for continued research and innovation to ensure the responsible integration of LLMs into clinical practice.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-13T05:08:33Z</published>
+    <arxiv:comment>4 figures, 1 table</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xiaolan Chen</name>
+    </author>
+    <author>
+      <name>Jiayang Xiang</name>
+    </author>
+    <author>
+      <name>Shanfu Lu</name>
+    </author>
+    <author>
+      <name>Yexin Liu</name>
+    </author>
+    <author>
+      <name>Mingguang He</name>
+    </author>
+    <author>
+      <name>Danli Shi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.00952v2</id>
+    <title>MediSwift: Efficient Sparse Pre-trained Biomedical Language Models</title>
+    <updated>2024-08-07T18:14:12Z</updated>
+    <link href="https://arxiv.org/abs/2403.00952v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.00952v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) are typically trained on general source data for various domains, but a recent surge in domain-specific LLMs has shown their potential to outperform general-purpose models in domain-specific tasks (e.g., biomedicine). Although domain-specific pre-training enhances efficiency and leads to smaller models, the computational costs of training these LLMs remain high, posing budgeting challenges. We introduce MediSwift, a suite of biomedical LMs that leverage sparse pre-training on domain-specific biomedical text data. By inducing up to 75% weight sparsity during the pre-training phase, MediSwift achieves a 2-2.5x reduction in training FLOPs. Notably, all sparse pre-training was performed on the Cerebras CS-2 system, which is specifically designed to realize the acceleration benefits from unstructured weight sparsity, thereby significantly enhancing the efficiency of the MediSwift models. Through subsequent dense fine-tuning and strategic soft prompting, MediSwift models outperform existing LLMs up to 7B parameters on biomedical tasks, setting new benchmarks w.r.t efficiency-accuracy on tasks such as PubMedQA. Our results show that sparse pre-training, along with dense fine-tuning and soft prompting, offers an effective method for creating high-performing, computationally efficient models in specialized domains.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-01T20:03:44Z</published>
+    <arxiv:comment>14 pages, 2 Figures, 5 Tables (Main Paper) + 3 pages (Supplementary Material). Published at ACL 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Vithursan Thangarasa</name>
+    </author>
+    <author>
+      <name>Mahmoud Salem</name>
+    </author>
+    <author>
+      <name>Shreyas Saxena</name>
+    </author>
+    <author>
+      <name>Kevin Leong</name>
+    </author>
+    <author>
+      <name>Joel Hestness</name>
+    </author>
+    <author>
+      <name>Sean Lie</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2111.08529v1</id>
+    <title>Improving the robustness and accuracy of biomedical language models through adversarial training</title>
+    <updated>2021-11-16T14:58:05Z</updated>
+    <link href="https://arxiv.org/abs/2111.08529v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2111.08529v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deep transformer neural network models have improved the predictive accuracy of intelligent text processing systems in the biomedical domain. They have obtained state-of-the-art performance scores on a wide variety of biomedical and clinical Natural Language Processing (NLP) benchmarks. However, the robustness and reliability of these models has been less explored so far. Neural NLP models can be easily fooled by adversarial samples, i.e. minor changes to input that preserve the meaning and understandability of the text but force the NLP system to make erroneous decisions. This raises serious concerns about the security and trust-worthiness of biomedical NLP systems, especially when they are intended to be deployed in real-world use cases. We investigated the robustness of several transformer neural language models, i.e. BioBERT, SciBERT, BioMed-RoBERTa, and Bio-ClinicalBERT, on a wide range of biomedical and clinical text processing tasks. We implemented various adversarial attack methods to test the NLP systems in different attack scenarios. Experimental results showed that the biomedical NLP models are sensitive to adversarial samples; their performance dropped in average by 21 and 18.9 absolute percent on character-level and word-level adversarial noise, respectively. Conducting extensive adversarial training experiments, we fine-tuned the NLP models on a mixture of clean samples and adversarial inputs. Results showed that adversarial training is an effective defense mechanism against adversarial noise; the models robustness improved in average by 11.3 absolute percent. In addition, the models performance on clean data increased in average by 2.4 absolute present, demonstrating that adversarial training can boost generalization abilities of biomedical NLP systems.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-11-16T14:58:05Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Milad Moradi</name>
+    </author>
+    <author>
+      <name>Matthias Samwald</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2110.07244v2</id>
+    <title>Building Chinese Biomedical Language Models via Multi-Level Text Discrimination</title>
+    <updated>2022-03-02T10:04:24Z</updated>
+    <link href="https://arxiv.org/abs/2110.07244v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2110.07244v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Pre-trained language models (PLMs), such as BERT and GPT, have revolutionized the field of NLP, not only in the general domain but also in the biomedical domain. Most prior efforts in building biomedical PLMs have resorted simply to domain adaptation and focused mainly on English. In this work we introduce eHealth, a Chinese biomedical PLM built from scratch with a new pre-training framework. This new framework pre-trains eHealth as a discriminator through both token- and sequence-level discrimination. The former is to detect input tokens corrupted by a generator and recover their original identities from plausible candidates, while the latter is to further distinguish corruptions of a same original sequence from those of others. As such, eHealth can learn language semantics at both token and sequence levels. Extensive experiments on 11 Chinese biomedical language understanding tasks of various forms verify the effectiveness and superiority of our approach. We release the pre-trained model at \url{https://github.com/PaddlePaddle/Research/tree/master/KG/eHealth} and will also release the code later.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-10-14T10:43:28Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Quan Wang</name>
+    </author>
+    <author>
+      <name>Songtai Dai</name>
+    </author>
+    <author>
+      <name>Benfeng Xu</name>
+    </author>
+    <author>
+      <name>Yajuan Lyu</name>
+    </author>
+    <author>
+      <name>Yong Zhu</name>
+    </author>
+    <author>
+      <name>Hua Wu</name>
+    </author>
+    <author>
+      <name>Haifeng Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2109.07765v1</id>
+    <title>Spanish Biomedical Crawled Corpus: A Large, Diverse Dataset for Spanish Biomedical Language Models</title>
+    <updated>2021-09-16T07:22:28Z</updated>
+    <link href="https://arxiv.org/abs/2109.07765v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2109.07765v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We introduce CoWeSe (the Corpus Web Salud Español), the largest Spanish biomedical corpus to date, consisting of 4.5GB (about 750M tokens) of clean plain text. CoWeSe is the result of a massive crawler on 3000 Spanish domains executed in 2020. The corpus is openly available and already preprocessed. CoWeSe is an important resource for biomedical and health NLP in Spanish and has already been employed to train domain-specific language models and to produce word embbedings. We released the CoWeSe corpus under a Creative Commons Attribution 4.0 International license, both in Zenodo (\url{https://zenodo.org/record/4561971\#.YTI5SnVKiEA}).</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-09-16T07:22:28Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Casimiro Pio Carrino</name>
+    </author>
+    <author>
+      <name>Jordi Armengol-Estapé</name>
+    </author>
+    <author>
+      <name>Ona de Gibert Bonet</name>
+    </author>
+    <author>
+      <name>Asier Gutiérrez-Fandiño</name>
+    </author>
+    <author>
+      <name>Aitor Gonzalez-Agirre</name>
+    </author>
+    <author>
+      <name>Martin Krallinger</name>
+    </author>
+    <author>
+      <name>Marta Villegas</name>
+    </author>
+  </entry>
+</feed>

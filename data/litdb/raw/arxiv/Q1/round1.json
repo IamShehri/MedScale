@@ -1,0 +1,1383 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/5qJKVLv7q54t5gFWXBoL0Ttn20U</id>
+  <title>arXiv Query: search_query=(all:"constrained decoding" OR all:"grammar-constrained" OR all:"structured output" OR all:GBNF) AND (all:"language model" OR all:LLM)&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:09Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=(all:%22constrained+decoding%22+OR+(all:%22grammar-constrained%22+OR+(all:%22structured+output%22+OR+all:GBNF)))+AND+(all:%22language+model%22+OR+all:LLM)&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>409</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2502.05111v2</id>
+    <title>Flexible and Efficient Grammar-Constrained Decoding</title>
+    <updated>2025-07-15T21:10:27Z</updated>
+    <link href="https://arxiv.org/abs/2502.05111v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.05111v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) are often asked to generate structured outputs that obey precise syntactic rules, such as code snippets or formatted data. Grammar-constrained decoding (GCD) can guarantee that LLM outputs matches such rules by masking out tokens that will provably lead to outputs that do not belong to a specified context-free grammar (CFG). To guarantee soundness, GCD algorithms have to compute how a given LLM subword tokenizer can align with the tokens used
+  by a given context-free grammar and compute token masks based on this information. Doing so efficiently is challenging and existing GCD algorithms require tens of minutes to preprocess common grammars. We present a new GCD algorithm together with an implementation that offers 17.71x faster offline preprocessing than existing approaches while preserving state-of-the-art efficiency in online mask computation.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-07T17:35:17Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kanghee Park</name>
+    </author>
+    <author>
+      <name>Timothy Zhou</name>
+    </author>
+    <author>
+      <name>Loris D'Antoni</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.11817v1</id>
+    <title>Grammar-Constrained Decoding Can Jailbreak LLMs into Generating Malicious Code</title>
+    <updated>2026-06-10T08:50:59Z</updated>
+    <link href="https://arxiv.org/abs/2606.11817v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.11817v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) are increasingly used for code generation, raising concerns that they may be misused to produce malicious code. Meanwhile, Grammar-Constrained Decoding (GCD) has been widely adopted to improve the reliability of LLM-generated code by enforcing syntactic validity. In this paper, we reveal a counterintuitive risk: this reliability-oriented technique can itself become an attack surface. We uncover a new jailbreak attack, termed CodeSpear, that exploits GCD to induce LLMs into generating malicious code. Our experiments show that simply applying a benign code grammar constraint can effectively jailbreak LLMs.
+  To address this vulnerability, we propose CodeShield, a safety alignment approach that robustly preserves safe behavior even under attacker-controlled grammar constraints. CodeShield aligns the model in the code modality by teaching it to generate honeypot code under GCD. Such code is semantically harmless, so it does not implement the malicious request, and structurally diverse, so it is difficult to suppress through grammar tightening. At the same time, CodeShield still preserves natural-language refusals when natural language is available. Experiments on 10 popular LLMs across 4 benchmarks show that CodeSpear outperforms representative jailbreak baselines and increases the attack success rate by more than 30 percentage points on average. CodeShield also restores safety under CodeSpear while preserving benign utility. Our findings reveal a fundamental risk of GCD and call for greater attention to its potential security implications.</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-10T08:50:59Z</published>
+    <arxiv:primary_category term="cs.CR"/>
+    <author>
+      <name>Yitong Zhang</name>
+    </author>
+    <author>
+      <name>Shiteng Lu</name>
+    </author>
+    <author>
+      <name>Jia Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.13971v6</id>
+    <title>Grammar-Constrained Decoding for Structured NLP Tasks without Finetuning</title>
+    <updated>2024-01-18T13:35:55Z</updated>
+    <link href="https://arxiv.org/abs/2305.13971v6" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.13971v6" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Despite their impressive performance, large language models (LMs) still struggle with reliably generating complex output structures when not finetuned to follow the required output format exactly. To address this issue, grammar-constrained decoding (GCD) can be used to control the generation of LMs, guaranteeing that the output follows a given structure. Most existing GCD methods are, however, limited to specific tasks, such as parsing or code generation. In this work, we demonstrate that formal grammars can describe the output space for a much wider range of tasks and argue that GCD can serve as a unified framework for structured NLP tasks in general. For increased flexibility, we introduce input-dependent grammars, which allow the grammar to depend on the input and thus enable the generation of different output structures for different inputs. We then empirically demonstrate the power and flexibility of GCD-enhanced LMs on (1) information extraction, (2) entity disambiguation, and (3) constituency parsing. Our results indicate that grammar-constrained LMs substantially outperform unconstrained LMs or even beat task-specific finetuned models. Grammar constraints thus hold great promise for harnessing off-the-shelf LMs for a wide range of structured NLP tasks, especially where training data is scarce or finetuning is expensive. Code and data: https://github.com/epfl-dlab/GCD.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-23T11:54:37Z</published>
+    <arxiv:comment>Accepted at EMNLP 2023 Main Conference</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Saibo Geng</name>
+    </author>
+    <author>
+      <name>Martin Josifoski</name>
+    </author>
+    <author>
+      <name>Maxime Peyrard</name>
+    </author>
+    <author>
+      <name>Robert West</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.04233v1</id>
+    <title>Precise Robot Command Understanding Using Grammar-Constrained Large Language Models</title>
+    <updated>2026-04-05T19:30:54Z</updated>
+    <link href="https://arxiv.org/abs/2604.04233v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.04233v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Human-robot collaboration in industrial settings requires precise and reliable communication to enhance operational efficiency. While Large Language Models (LLMs) understand general language, they often lack the domain-specific rigidity needed for safe and executable industrial commands. To address this gap, this paper introduces a novel grammar-constrained LLM that integrates a grammar-driven Natural Language Understanding (NLU) system with a fine-tuned LLM, which enables both conversational flexibility and the deterministic precision required in robotics. Our method employs a two-stage process. First, a fine-tuned LLM performs high-level contextual reasoning and parameter inference on natural language inputs. Second, a Structured Language Model (SLM) and a grammar-based canonicalizer constrain the LLM's output, forcing it into a standardized symbolic format composed of valid action frames and command elements. This process guarantees that generated commands are valid and structured in a robot-readable JSON format. A key feature of the proposed model is a validation and feedback loop. A grammar parser validates the output against a predefined list of executable robotic actions. If a command is invalid, the system automatically generates corrective prompts and re-engages the LLM. This iterative self-correction mechanism allows the model to recover from initial interpretation errors to improve system robustness. We evaluate our grammar-constrained hybrid model against two baselines: a fine-tuned API-based LLM and a standalone grammar-driven NLU model. Using the Human Robot Interaction Corpus (HuRIC) dataset, we demonstrate that the hybrid approach achieves superior command validity, which promotes safer and more effective industrial human-robot collaboration.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-05T19:30:54Z</published>
+    <arxiv:comment>Accepted at ASME MSEC2026</arxiv:comment>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Xinyun Huo</name>
+    </author>
+    <author>
+      <name>Raghav Gnanasambandam</name>
+    </author>
+    <author>
+      <name>Xinyao Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2401.09967v4</id>
+    <title>Sketch-Guided Constrained Decoding for Boosting Blackbox Large Language Models without Logit Access</title>
+    <updated>2024-07-22T01:05:29Z</updated>
+    <link href="https://arxiv.org/abs/2401.09967v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2401.09967v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Constrained decoding, a technique for enforcing constraints on language model outputs, offers a way to control text generation without retraining or architectural modifications. Its application is, however, typically restricted to models that give users access to next-token distributions (usually via softmax logits), which poses a limitation with blackbox large language models (LLMs). This paper introduces sketch-guided constrained decoding (SGCD), a novel approach to constrained decoding for blackbox LLMs, which operates without access to the logits of the blackbox LLM. SGCD utilizes a locally hosted auxiliary model to refine the output of an unconstrained blackbox LLM, effectively treating this initial output as a "sketch" for further elaboration. This approach is complementary to traditional logit-based techniques and enables the application of constrained decoding in settings where full model transparency is unavailable. We demonstrate the efficacy of SGCD through experiments in closed information extraction and constituency parsing, showing how it enhances the utility and flexibility of blackbox LLMs for complex NLP tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-01-18T13:31:24Z</published>
+    <arxiv:comment>Accepted to ACL 2024 Oral</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Saibo Geng</name>
+    </author>
+    <author>
+      <name>Berkay Döner</name>
+    </author>
+    <author>
+      <name>Chris Wendler</name>
+    </author>
+    <author>
+      <name>Martin Josifoski</name>
+    </author>
+    <author>
+      <name>Robert West</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.10111v1</id>
+    <title>Constrained Decoding of Diffusion LLMs with Context-Free Grammars</title>
+    <updated>2025-08-13T18:09:09Z</updated>
+    <link href="https://arxiv.org/abs/2508.10111v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.10111v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have shown promising performance across diverse domains. Many practical applications of LLMs, such as code completion and structured data extraction, require adherence to syntactic constraints specified by a formal language. Yet, due to their probabilistic nature, LLM output is not guaranteed to adhere to such formal languages. Prior work has proposed constrained decoding as a means to restrict LLM generation to particular formal languages. However, existing works are not applicable to the emerging paradigm of diffusion LLMs, when used in practical scenarios such as the generation of formally correct C++ or JSON output. In this paper we address this challenge and present the first constrained decoding method for diffusion models, one that can handle formal languages captured by context-free grammars. We begin by reducing constrained decoding to the more general additive infilling problem, which asks whether a partial output can be completed to a valid word in the target language. This problem also naturally subsumes the previously unaddressed multi-region infilling constrained decoding. We then reduce this problem to the task of deciding whether the intersection of the target language and a regular language is empty and present an efficient algorithm to solve it for context-free languages. Empirical results on various applications, such as C++ code infilling and structured data extraction in JSON, demonstrate that our method achieves near-perfect syntactic correctness while consistently preserving or improving functional correctness. Importantly, our efficiency optimizations ensure that the computational overhead remains practical.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.FL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-13T18:09:09Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Niels Mündler</name>
+    </author>
+    <author>
+      <name>Jasper Dekoninck</name>
+    </author>
+    <author>
+      <name>Martin Vechev</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2504.09135v1</id>
+    <title>Efficient and Asymptotically Unbiased Constrained Decoding for Large Language Models</title>
+    <updated>2025-04-12T08:49:21Z</updated>
+    <link href="https://arxiv.org/abs/2504.09135v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2504.09135v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In real-world applications of large language models, outputs are often required to be confined: selecting items from predefined product or document sets, generating phrases that comply with safety standards, or conforming to specialized formatting styles. To control the generation, constrained decoding has been widely adopted. However, existing prefix-tree-based constrained decoding is inefficient under GPU-based model inference paradigms, and it introduces unintended biases into the output distribution. This paper introduces Dynamic Importance Sampling for Constrained Decoding (DISC) with GPU-based Parallel Prefix-Verification (PPV), a novel algorithm that leverages dynamic importance sampling to achieve theoretically guaranteed asymptotic unbiasedness and overcomes the inefficiency of prefix-tree. Extensive experiments demonstrate the superiority of our method over existing methods in both efficiency and output quality. These results highlight the potential of our methods to improve constrained generation in applications where adherence to specific constraints is essential.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-04-12T08:49:21Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>AISTATS 2025</arxiv:journal_ref>
+    <author>
+      <name>Haotian Ye</name>
+    </author>
+    <author>
+      <name>Himanshu Jain</name>
+    </author>
+    <author>
+      <name>Chong You</name>
+    </author>
+    <author>
+      <name>Ananda Theertha Suresh</name>
+    </author>
+    <author>
+      <name>Haowei Lin</name>
+    </author>
+    <author>
+      <name>James Zou</name>
+    </author>
+    <author>
+      <name>Felix Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.30247v1</id>
+    <title>Grounding LLM Reasoning under Incomplete Graph Evidence</title>
+    <updated>2026-06-29T12:56:21Z</updated>
+    <link href="https://arxiv.org/abs/2606.30247v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.30247v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Knowledge graphs can guide large language models (LLMs) reasoning, but the graph seen by a system is usually a retrieved, linked, temporally scoped, and incomplete evidence state rather than a complete account of truth. We develop a theoretical perspective on grounding observable LLM trajectories under such incomplete graph evidence.The evidence state induces entity anchors, typed relation residuals, path energies, and support regions, while the language model supplies a prior over candidate trajectories. We show that, under open-world incompleteness, no hard rule based only on the observed state can both reject every false unsupported trajectory and retain every true-but-unobserved one.We then characterize soft grounding as a KL-regularized deformation of the LLM prior: finite slack preserves support for unsupported but non-contradicted trajectories, whereas hard conditioning appears as an infinite-penalty limit.The framework also yields stability bounds under evidence perturbations and clarifies the constraint regimes appropriate for GraphRAG, KGQA, graph agents, constrained decoding, and faithful generation. The claims are evidence-relative: KG compatibility is treated as declared support, not factual truth.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-29T12:56:21Z</published>
+    <arxiv:comment>A theoretical perspective about Grounding LLM Reasoning</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jiaqi Li</name>
+    </author>
+    <author>
+      <name>Fanghui Song</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.21791v3</id>
+    <title>Quantifying the Impact of Structured Output Format on Large Language Models through Causal Inference</title>
+    <updated>2025-12-19T01:55:45Z</updated>
+    <link href="https://arxiv.org/abs/2509.21791v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.21791v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Structured output from large language models (LLMs) has enhanced efficiency in processing generated information and is increasingly adopted in industrial applications. Prior studies have investigated the impact of structured output on LLMs' generation quality, often presenting one-way findings. Some suggest that structured format enhances completeness and factual accuracy, while others argue that it restricts the reasoning capacity of LLMs and leads to reductions in standard evaluation metrics. Potential limitations of these assessments include restricted testing scenarios, weakly controlled comparative settings, and reliance on coarse metrics. In this work, we present a refined analysis using causal inference. Based on one assumed and two guaranteed constraints, we derive five potential causal structures characterizing the influence of structured output on LLMs' generation: (1) collider without m-bias, (2) collider with m-bias, (3) single cause from instruction, (4) single cause from output format, and (5) independence. Across seven public and one developed reasoning tasks, we find that coarse metrics report positive, negative, or neutral effects of structured output on GPT-4o's generation. However, causal inference reveals no causal impact in 43 out of 48 scenarios. In the remaining 5, 3 involve multifaceted causal structures influenced by concrete instructions. Further experiments show that OpenAI-o3 are more resilient to output formats than general-purpose GPT-4o and GPT-4.1, highlighting an unaware advantage of reasoning models.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-26T02:47:11Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Han Yuan</name>
+    </author>
+    <author>
+      <name>Yue Zhao</name>
+    </author>
+    <author>
+      <name>Li Zhang</name>
+    </author>
+    <author>
+      <name>Wuqiong Luo</name>
+    </author>
+    <author>
+      <name>Zheng Ma</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.10868v3</id>
+    <title>JSONSchemaBench: A Rigorous Benchmark of Structured Outputs for Language Models</title>
+    <updated>2025-02-27T15:37:21Z</updated>
+    <link href="https://arxiv.org/abs/2501.10868v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.10868v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reliably generating structured outputs has become a critical capability for modern language model (LM) applications. Constrained decoding has emerged as the dominant technology across sectors for enforcing structured outputs during generation. Despite its growing adoption, little has been done with the systematic evaluation of the behaviors and performance of constrained decoding. Constrained decoding frameworks have standardized around JSON Schema as a structured data format, with most uses guaranteeing constraint compliance given a schema. However, there is poor understanding of the effectiveness of the methods in practice. We present an evaluation framework to assess constrained decoding approaches across three critical dimensions: efficiency in generating constraint-compliant outputs, coverage of diverse constraint types, and quality of the generated outputs. To facilitate this evaluation, we introduce JSONSchemaBench, a benchmark for constrained decoding comprising 10K real-world JSON schemas that encompass a wide range of constraints with varying complexity. We pair the benchmark with the existing official JSON Schema Test Suite and evaluate six state-of-the-art constrained decoding frameworks, including Guidance, Outlines, Llamacpp, XGrammar, OpenAI, and Gemini. Through extensive experiments, we gain insights into the capabilities and limitations of constrained decoding on structured generation with real-world JSON schemas. Our work provides actionable insights for improving constrained decoding frameworks and structured generation tasks, setting a new standard for evaluating constrained decoding and structured generation. We release JSONSchemaBench at https://github.com/guidance-ai/jsonschemabench</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-01-18T20:26:00Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Saibo Geng</name>
+    </author>
+    <author>
+      <name>Hudson Cooper</name>
+    </author>
+    <author>
+      <name>Michał Moskal</name>
+    </author>
+    <author>
+      <name>Samuel Jenkins</name>
+    </author>
+    <author>
+      <name>Julian Berman</name>
+    </author>
+    <author>
+      <name>Nathan Ranchin</name>
+    </author>
+    <author>
+      <name>Robert West</name>
+    </author>
+    <author>
+      <name>Eric Horvitz</name>
+    </author>
+    <author>
+      <name>Harsha Nori</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.03305v2</id>
+    <title>The Hidden Cost of Structured Generation in LLMs: Draft-Conditioned Constrained Decoding</title>
+    <updated>2026-06-27T21:00:11Z</updated>
+    <link href="https://arxiv.org/abs/2603.03305v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.03305v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) are increasingly used to generate executable outputs, JSON objects, and API calls, where a single syntax error can make the output unusable. Constrained decoding enforces validity token-by-token via masking and renormalization, but it can distort generation when the model assigns low probability mass to valid continuations, pushing decoding toward locally valid yet semantically incorrect trajectories. We propose \emph{Draft-Conditioned Constrained Decoding (DCCD)}, a simple two-step, training-free inference procedure that decouples semantic planning from structural enforcement: an unconstrained draft is generated first, and constrained decoding is then applied, conditioned on this draft, to guarantee validity. We analyze DCCD through a KL-projection view, showing that draft conditioning increases feasible mass and reduces the cumulative "projection tax" induced by hard constraints, with an optional best-of-$K$ draft selection. Across structured reasoning benchmarks, DCCD improves strict structured accuracy by up to +24 percentage points over standard constrained decoding (e.g., 15.2\% to 39.0\% on GSM8K with a 1B model), and enables smaller model pairs to match or exceed much larger constrained baselines, yielding substantial gains in parameter efficiency.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-08T03:52:24Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Avinash Reddy</name>
+    </author>
+    <author>
+      <name>Thayne T. Walker</name>
+    </author>
+    <author>
+      <name>James S. Ide</name>
+    </author>
+    <author>
+      <name>Amrit Singh Bedi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.18014v2</id>
+    <title>Real-Time Trustworthiness Scoring for LLM Structured Outputs and Data Extraction</title>
+    <updated>2026-03-31T08:50:29Z</updated>
+    <link href="https://arxiv.org/abs/2603.18014v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.18014v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Structured Outputs from current LLMs exhibit sporadic errors, hindering enterprise AI deployment. We present CONSTRUCT, a real-time uncertainty estimator that scores the trustworthiness of LLM Structured Outputs. Lower-scoring outputs are more likely to contain errors, enabling automatic prioritization of limited human review bandwidth. CONSTRUCT additionally scores the trustworthiness of each field within a Structured Output, helping reviewers quickly identify which parts of the output are incorrect. Our method is suitable for any LLM (including black-box LLM APIs without logprobs), does not require labeled training data or custom model deployment, and supports complex Structured Outputs with heterogeneous fields and nested JSON schemas.
+  We also introduce one of the first public LLM Structured Output benchmarks with reliable ground-truth values. Over this four-dataset benchmark, CONSTRUCT detects errors in outputs from various LLMs (including Gemini 3 and GPT-5) with significantly higher precision/recall than existing techniques.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-24T09:17:57Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hui Wen Goh</name>
+    </author>
+    <author>
+      <name>Jonas Mueller</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.25359v1</id>
+    <title>The Structured Output Benchmark: A Multi-Source Benchmark for Evaluating Structured Output Quality in Large Language Models</title>
+    <updated>2026-04-28T08:27:01Z</updated>
+    <link href="https://arxiv.org/abs/2604.25359v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.25359v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models are increasingly being deployed to extract structured data from unstructured and semi-structured sources: parsing invoices, medical records, and converting PDF documents to database entries. Yet existing benchmarks for structured output generation either focus on schema compliance alone, or evaluate value correctness within a single source domain. We introduce SOB (The Structured Output Benchmark), a multi-source benchmark spanning three source modalities: native text, images, and audio conversations. All models receive a text-normalized representation of their context regardless of source modality; this deliberate design isolates structured-output capability from raw vision or speech-processing quality, ensuring a fair, source-agnostic comparison. Our benchmark comprises 5,000 text evaluation records derived from multi-hop QA drawn from a 25,091-record full corpus, 209 image records from OCR-processed PDFs across seven document types including multi-column layouts, dense tables, scanned historical documents, small-print text, and mathematical typesetting, and 115 audio records from the AMI corpus. Each record pairs a natural-language question with a JSON schema that the model must follow and a ground-truth answer verified against the source context. We evaluate 21 frontier and open-weight models across three source domains and seven metrics. Our results reveal a consistent pattern: models achieve near-perfect schema compliance, yet the best Value Accuracy, measured by exact leaf-value match, reaches only 83.0% on text, 67.2% on images, and 23.7% on audio, where longer context makes extraction substantially harder. We release the dataset, evaluation pipeline, and all related code.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-28T08:27:01Z</published>
+    <arxiv:comment>19 pages, 4 figures, 11 tables, submitted to NeurIPS 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Abhinav Kumar Singh</name>
+    </author>
+    <author>
+      <name>Harsha Vardhan Khurdula</name>
+    </author>
+    <author>
+      <name>Yoeven D Khemlani</name>
+    </author>
+    <author>
+      <name>Vineet Agarwal</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.14862v2</id>
+    <title>Schema Key Wording as an Instruction Channel in Structured Generation under Constrained Decoding</title>
+    <updated>2026-04-28T09:45:16Z</updated>
+    <link href="https://arxiv.org/abs/2604.14862v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.14862v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Constrained decoding is widely used to make large language models produce structured outputs that satisfy schemas such as JSON. Existing work mainly treats schemas as structural constraints, overlooking that schema-key tokens also enter the autoregressive context and may guide generation. To the best of our knowledge, we present the first systematic study of schema keys as an implicit instruction channel under constrained decoding. We formulate structured generation as a multi-channel instruction problem, where task signals can be placed in prompts, schema keys, or both. We further provide a projection-aware analysis: a CoT-style key helps only when its semantic gain exceeds the distortion induced by grammar-constrained projection, offering a theoretical explanation for model-dependent key effects. Experiments on mathematical reasoning benchmarks show that changing only schema-key wording can substantially affect accuracy while keeping the prompt, model, output structure, and decoding setup fixed. Qwen models tend to benefit more from schema-level instructions, whereas LLaMA models rely more on prompt-level guidance, and the two channels interact non-additively. Our findings show that schema design is not merely output formatting, but part of instruction specification in structured generation.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-16T10:52:50Z</published>
+    <arxiv:comment>11 pages, 3 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yifan Le</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.06066v1</id>
+    <title>From Hallucination to Structure Snowballing: The Alignment Tax of Constrained Decoding in LLM Reflection</title>
+    <updated>2026-04-07T16:47:37Z</updated>
+    <link href="https://arxiv.org/abs/2604.06066v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.06066v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Intrinsic self-correction in Large Language Models (LLMs) frequently fails in open-ended reasoning tasks due to ``hallucination snowballing,'' a phenomenon in which models recursively justify early errors during free-text reflection. While structured feedback can mitigate this issue, existing approaches often rely on externally trained critics or symbolic tools, reducing agent autonomy. This study investigates whether enforcing structured reflection purely through Outlines-based constrained decoding can disrupt error propagation without additional training. Evaluating an 8-billion-parameter model (Qwen3-8B), we show that simply imposing structural constraints does not improve self-correction performance. Instead, it triggers a new failure mode termed ``structure snowballing.'' We find that the cognitive load required to satisfy strict formatting rules pushes the model into formatting traps. This observation helps explain why the agent achieves near-perfect superficial syntactic alignment yet fails to detect or resolve deeper semantic errors. These findings expose an ``alignment tax'' inherent to constrained decoding, highlighting a tension between structural granularity and internal model capacity in autonomous workflows. Code and raw logs are available in the GitHub repository: https://github.com/hongxuzhou/agentic_llm_structured_self_critique.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-07T16:47:37Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hongxu Zhou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.13183v1</id>
+    <title>DSCD: Large Language Model Detoxification with Self-Constrained Decoding</title>
+    <updated>2025-10-15T06:10:47Z</updated>
+    <link href="https://arxiv.org/abs/2510.13183v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.13183v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Detoxification in large language models (LLMs) remains a significant research challenge. Existing decoding detoxification methods are all based on external constraints, which require additional resource overhead and lose generation fluency. This work proposes Detoxification with Self-Constrained Decoding (DSCD), a novel method for LLM detoxification without parameter fine-tuning. DSCD strengthens the inner next-token distribution of the safety layer while weakening that of hallucination and toxic layers during output generation. This effectively diminishes toxicity and enhances output safety. DSCD offers lightweight, high compatibility, and plug-and-play capabilities, readily integrating with existing detoxification methods for further performance improvement. Extensive experiments on representative open-source LLMs and public datasets validate DSCD's effectiveness, demonstrating state-of-the-art (SOTA) performance in both detoxification and generation fluency, with superior efficiency compared to existing methods. These results highlight DSCD's potential as a practical and scalable solution for safer LLM deployments.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-15T06:10:47Z</published>
+    <arxiv:comment>Accepted at EMNLP 2025 MainConference</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ming Dong</name>
+    </author>
+    <author>
+      <name>Jinkui Zhang</name>
+    </author>
+    <author>
+      <name>Bolong Zheng</name>
+    </author>
+    <author>
+      <name>Xinhui Tu</name>
+    </author>
+    <author>
+      <name>Po Hu</name>
+    </author>
+    <author>
+      <name>Tingting He</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.08182v1</id>
+    <title>XML Prompting as Grammar-Constrained Interaction: Fixed-Point Semantics, Convergence Guarantees, and Human-AI Protocols</title>
+    <updated>2025-09-09T23:03:53Z</updated>
+    <link href="https://arxiv.org/abs/2509.08182v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.08182v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Structured prompting with XML tags has emerged as an effective way to steer large language models (LLMs) toward parseable, schema-adherent outputs in real-world systems. We develop a logic-first treatment of XML prompting that unifies (i) grammar-constrained decoding, (ii) fixed-point semantics over lattices of hierarchical prompts, and (iii) convergent human-AI interaction loops. We formalize a complete lattice of XML trees under a refinement order and prove that monotone prompt-to-prompt operators admit least fixed points (Knaster-Tarski) that characterize steady-state protocols; under a task-aware contraction metric on trees, we further prove Banach-style convergence of iterative guidance. We instantiate these results with context-free grammars (CFGs) for XML schemas and show how constrained decoding guarantees well-formedness while preserving task performance. A set of multi-layer human-AI interaction recipes demonstrates practical deployment patterns, including multi-pass "plan $\to$ verify $\to$ revise" routines and agentic tool use. We provide mathematically complete proofs and tie our framework to recent advances in grammar-aligned decoding, chain-of-verification, and programmatic prompting.</summary>
+    <category term="cs.PL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-09T23:03:53Z</published>
+    <arxiv:comment>7 pages, multiple XML prompts</arxiv:comment>
+    <arxiv:primary_category term="cs.PL"/>
+    <author>
+      <name>Faruk Alpay</name>
+    </author>
+    <author>
+      <name>Taylan Alpay</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.03306v1</id>
+    <title>Token-Oriented Object Notation vs JSON: A Benchmark of Plain and Constrained Decoding Generation</title>
+    <updated>2026-02-08T11:58:03Z</updated>
+    <link href="https://arxiv.org/abs/2603.03306v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.03306v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recently presented Token-Oriented Object Notation (TOON) aims to replace JSON as a serialization format for passing structured data to LLMs with significantly reduced token usage. While showing solid accuracy in LLM comprehension, there is a lack of tests against JSON generation. Though never present in training data, TOON syntax is simple enough to suggest one-shot in-context learning could support accurate generation. The inevitable prompt overhead can be an acceptable trade-off for shorter completions.
+  To test this, we conducted a benchmark creating several test cases with regard to structural complexity, a validation pipeline, and comparing plain JSON generation vs structured output (via constrained decoding) JSON generation vs TOON one-shot in-context learning generation. JSON structured output was included to establish a minimum token budget baseline and to set a starting point for future experiments testing TOON constrained decoding inference enforcement.
+  Key findings: TOON shows promising accuracy/token consumption ratio for in-domain generation tasks, though this advantage is often reduced by the "prompt tax" of instructional overhead in shorter contexts. Plain JSON generation shows the best one-shot and final accuracy, even compared with constrained decoding structured output, where the only significant advantage is the lowest token usage as a trade-off for slightly decreased accuracy overall and significant degradation for some models. Notably, for simple structures, this "lowest token usage" of constrained decoding outperformed even TOON, hinting that TOON enforcing via frameworks such as xgrammar may not yield the desired results. Furthermore, the results suggest a scaling hypothesis: TOON's true efficiency potential likely follows a non-linear curve, shining only beyond a specific point where cumulative syntax savings amortize the initial prompt overhead.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-08T11:58:03Z</published>
+    <arxiv:comment>9 pages, 2 figures, 2 tables. Benchmark code and data available at https://github.com/vetertann/TOON-generation-benchmark</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ivan Matveev</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.28028v1</id>
+    <title>Reliable Answers for Recurring Questions: Boosting Text-to-SQL Accuracy with Template Constrained Decoding</title>
+    <updated>2026-04-30T15:44:34Z</updated>
+    <link href="https://arxiv.org/abs/2604.28028v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.28028v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have revolutionized Text-to-SQL generation, allowing users to query structured data using natural language with growing ease. Yet, real-world deployment remains challenging, especially in complex or unseen schemas, due to inconsistent accuracy and the risk of generating invalid SQL. We introduce Template Constrained Decoding (TeCoD), a system that addresses these limitations by harnessing the recurrence of query patterns in labeled workloads. TeCoD converts historical NL-SQL pairs into reusable templates and introduces a robust template selection module that uses a fine-tuned natural language inference model to match or reject queries efficiently. Once the template is selected, TeCoD enforces it during SQL generation through grammar-constrained decoding, implemented via a novel partitioned strategy that ensures both syntactic validity and efficiency. Together, these components yield up to 36% higher execution accuracy than in-context learning (ICL) and 2.2x lower latency on matched queries.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DB" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-30T15:44:34Z</published>
+    <arxiv:comment>Project Code: https://github.com/SSLab-CSE-IITB/tecod</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Proceedings of the ACM on Management of Data, Volume 3, Issue 6, 2025, Article 357, Pages 1 - 26</arxiv:journal_ref>
+    <author>
+      <name>Smit Jivani</name>
+    </author>
+    <author>
+      <name>Sarvam Maheshwari</name>
+    </author>
+    <author>
+      <name>Sunita Sarawagi</name>
+    </author>
+    <arxiv:doi>10.1145/3769822</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3769822" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.24191v3</id>
+    <title>When Grammar Guides the Attack: Uncovering Control-Plane Vulnerabilities in LLMs with Structured Output</title>
+    <updated>2026-05-21T06:13:41Z</updated>
+    <link href="https://arxiv.org/abs/2503.24191v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.24191v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Content Warning: This paper may contain unsafe or harmful content generated by LLMs that may be offensive to readers. Large Language Models (LLMs) increasingly serve as tooling platforms through structured output APIs, but the grammar-guided decoding that powers this feature opens a critical control-plane attack surface orthogonal to traditional data-plane vulnerabilities. We introduce Constrained Decoding Attack (CDA), a new jailbreak class that targets the LLM control plane. CDA is best characterized as a control-to-semantic pipeline: (1) schema-enforced logit masking injects a malicious prefix into the generation trajectory, and (2) the model itself completes the harmful intent. Unlike data-plane jailbreaks that rely on bypassing alignment with visible inputs, CDA acts on the decoding process itself, so internal safety alignment alone cannot stop it. We instantiate CDA with EnumAttack, which hides malicious content in enum fields, and the more evasive DictAttack, which decouples the payload across a benign prompt and a dictionary-based grammar. Across 13 proprietary/open-weight models and five standard benchmarks, DictAttack achieves 94.3--99.5% Attack Success Rate (ASR) on flagship models including gpt-5, gemini-2.5-pro, deepseek-r1, and gpt-oss-120b. While basic grammar auditing mitigates EnumAttack, DictAttack still sustains 75.8% ASR against SOTA jailbreak guardrails, exposing a "semantic gap" that demands cross-plane defenses bridging the data and control planes. Project page and code are available at https://ict-cda.github.io/.</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-31T15:08:06Z</published>
+    <arxiv:comment>To appear in CCS2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CR"/>
+    <author>
+      <name>Shuoming Zhang</name>
+    </author>
+    <author>
+      <name>Jiacheng Zhao</name>
+    </author>
+    <author>
+      <name>Hanyuan Dong</name>
+    </author>
+    <author>
+      <name>Ruiyuan Xu</name>
+    </author>
+    <author>
+      <name>Zhicheng Li</name>
+    </author>
+    <author>
+      <name>Yangyu Zhang</name>
+    </author>
+    <author>
+      <name>Shuaijiang Li</name>
+    </author>
+    <author>
+      <name>Yuan Wen</name>
+    </author>
+    <author>
+      <name>Chunwei Xia</name>
+    </author>
+    <author>
+      <name>Zheng Wang</name>
+    </author>
+    <author>
+      <name>Xiaobing Feng</name>
+    </author>
+    <author>
+      <name>Huimin Cui</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2402.08761v1</id>
+    <title>JAMDEC: Unsupervised Authorship Obfuscation using Constrained Decoding over Small Language Models</title>
+    <updated>2024-02-13T19:54:29Z</updated>
+    <link href="https://arxiv.org/abs/2402.08761v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2402.08761v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The permanence of online content combined with the enhanced authorship identification techniques calls for stronger computational methods to protect the identity and privacy of online authorship when needed, e.g., blind reviews for scientific papers, anonymous online reviews, or anonymous interactions in the mental health forums. In this paper, we propose an unsupervised inference-time approach to authorship obfuscation to address the unique challenges of authorship obfuscation: lack of supervision data for diverse authorship and domains, and the need for a sufficient level of revision beyond simple paraphrasing to obfuscate the authorship, all the while preserving the original content and fluency.
+  We introduce JAMDEC, a user-controlled, inference-time algorithm for authorship obfuscation that can be in principle applied to any text and authorship. Our approach builds on small language models such as GPT2-XL in order to help avoid disclosing the original content to proprietary LLM's APIs, while also reducing the performance gap between small and large language models via algorithmic enhancement. The key idea behind our approach is to boost the creative power of smaller language models through constrained decoding, while also allowing for user-specified controls and flexibility. Experimental results demonstrate that our approach based on GPT2-XL outperforms previous state-of-the-art methods based on comparably small models, while performing competitively against GPT3.5 175B, a propriety model that is two orders of magnitudes larger.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-02-13T19:54:29Z</published>
+    <arxiv:comment>Code is available at https://github.com/jfisher52/JAMDecoding</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jillian Fisher</name>
+    </author>
+    <author>
+      <name>Ximing Lu</name>
+    </author>
+    <author>
+      <name>Jaehun Jung</name>
+    </author>
+    <author>
+      <name>Liwei Jiang</name>
+    </author>
+    <author>
+      <name>Zaid Harchaoui</name>
+    </author>
+    <author>
+      <name>Yejin Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.23061v1</id>
+    <title>DINGO: Constrained Inference for Diffusion LLMs</title>
+    <updated>2025-05-29T04:04:54Z</updated>
+    <link href="https://arxiv.org/abs/2505.23061v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.23061v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Diffusion LLMs have emerged as a promising alternative to conventional autoregressive LLMs, offering significant potential for improved runtime efficiency. However, existing diffusion models lack the ability to provably enforce user-specified formal constraints, such as regular expressions, which makes them unreliable for tasks that require structured outputs, such as fixed-schema JSON generation. Unlike autoregressive models that generate tokens sequentially, diffusion LLMs predict a block of tokens in parallel. This parallelism makes traditional constrained decoding algorithms, which are designed for sequential token prediction, ineffective at preserving the true output distribution. To address this limitation, we propose DINGO, a dynamic programming-based constrained decoding strategy that is both efficient and provably distribution-preserving. DINGO enables sampling of output strings with the highest probability under the model's predicted distribution, while strictly satisfying any user-specified regular expression. On standard symbolic math and JSON generation benchmarks, DINGO achieves up to a 68 percentage point improvement over unconstrained inference</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-29T04:04:54Z</published>
+    <arxiv:comment>DINGO an algorithm to provably apply constraints to diffusion LLM generations</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Tarun Suresh</name>
+    </author>
+    <author>
+      <name>Debangshu Banerjee</name>
+    </author>
+    <author>
+      <name>Shubham Ugare</name>
+    </author>
+    <author>
+      <name>Sasa Misailovic</name>
+    </author>
+    <author>
+      <name>Gagandeep Singh</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.00218v3</id>
+    <title>Constrained Decoding for Secure Code Generation</title>
+    <updated>2024-07-20T19:14:03Z</updated>
+    <link href="https://arxiv.org/abs/2405.00218v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.00218v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Code Large Language Models (Code LLMs) have been increasingly used by developers to boost productivity, but they often generate vulnerable code. Thus, there is an urgent need to ensure that code generated by Code LLMs is correct and secure. Previous research has primarily focused on generating secure code, overlooking the fact that secure code also needs to be correct. This oversight can lead to a false sense of security. Currently, the community lacks a method to measure actual progress in this area, and we need solutions that address both security and correctness of code generation.
+  This paper introduces a new benchmark, CodeGuard+, along with two new metrics, to measure Code LLMs' ability to generate both secure and correct code. Using our new evaluation methods, we show that the state-of-the-art defense technique, prefix tuning, may not be as strong as previously believed, since it generates secure code but sacrifices functional correctness. We also demonstrate that different decoding methods significantly affect the security of Code LLMs.
+  Furthermore, we explore a new defense direction: constrained decoding for secure code generation. We propose new constrained decoding techniques to generate secure code. Our results reveal that constrained decoding is more effective than prefix tuning to improve the security of Code LLMs, without requiring a specialized training dataset. Moreover, our evaluations over eight state-of-the-art Code LLMs show that constrained decoding has strong performance to improve the security of Code LLMs, and our technique outperforms GPT-4.</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-30T21:52:19Z</published>
+    <arxiv:comment>17 pages, 9 figures, our website is available at https://codeguardplus.github.io</arxiv:comment>
+    <arxiv:primary_category term="cs.CR"/>
+    <author>
+      <name>Yanjun Fu</name>
+    </author>
+    <author>
+      <name>Ethan Baker</name>
+    </author>
+    <author>
+      <name>Yu Ding</name>
+    </author>
+    <author>
+      <name>Yizheng Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.17376v1</id>
+    <title>AdapTrack: Constrained Decoding without Distorting LLM's Output Intent</title>
+    <updated>2025-10-20T10:11:34Z</updated>
+    <link href="https://arxiv.org/abs/2510.17376v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.17376v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Language model-based code generation and completion tools have been widely adopted, but they may sometimes produce code that does not meet necessary constraints, such as syntactic correctness or API existence. Constrained decoding techniques are developed to help the model generate code adhering to the constraints by greedily eliminating generation options that violate constraints at each step of the generation process. However, there is a severe limitation of constrained decoding, that it distorts the model's output intent, forcing it to produce code that may satisfy the constraint but does not match the development intent and is therefore incorrect. In response to this challenge, we propose AdapTrack. By incorporating backtracking into the generation process, AdapTrack avoids distorting the output intent of the model, thereby producing results that are not only constraint-compliant but also more semantically aligned with model's output intent. On our synthetic API completion dataset, AdapTrack can achieve up to 360.87% improvement compared to constrained decoding; on the real-world API completion dataset we collect that exhibits similar issues, AdapTrack can achieve up to 38.93% improvement over constrained decoding; in general code genration benchmarks, compared to constrained decoding, AdapTrack can achieve up to 7.84% improvement on HumanEval, and up to 6.42% improvement on MBPP. This indicates that, simply by better adhering to the model's output intent, AdapTrack can achieve significant improvements. We provide a theoretical proof that the distribution produced by AdapTrack aligns with the model's distribution given the generated tokens, thereby ensuring that the model's output intent is not distorted. Experiments on DSL problems show that, compared to existing methods, our approach can provide generation results that are more consistent with the language model's distribution.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-20T10:11:34Z</published>
+    <arxiv:comment>to be published in ICSE 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Yongmin Li</name>
+    </author>
+    <author>
+      <name>Jia Li</name>
+    </author>
+    <author>
+      <name>Ge Li</name>
+    </author>
+    <author>
+      <name>Zhi Jin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.23712v1</id>
+    <title>STED and Consistency Scoring: A Framework for Evaluating LLM Structured Output Reliability</title>
+    <updated>2025-11-27T02:49:52Z</updated>
+    <link href="https://arxiv.org/abs/2512.23712v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.23712v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) are increasingly deployed for structured data generation, yet output consistency remains critical for production applications. We introduce a comprehensive framework for evaluating and improving consistency in LLM-generated structured outputs. Our approach combines: (1) STED (Semantic Tree Edit Distance), a novel similarity metric balancing semantic flexibility with structural strictness when comparing JSON outputs, and (2) a consistency scoring framework aggregating multiple STED measurements across repeated generations to quantify reliability. Through systematic experiments on synthetic datasets with controlled schema, expression, and semantic variations, we demonstrate STED achieves superior performance ($0.86-0.90$ similarity for semantic equivalents, $0.0$ for structural breaks) compared to existing metrics including TED, BERTScore, and DeepDiff. Applying our framework to benchmark six LLMs reveals significant variations: Claude-3.7-Sonnet demonstrates exceptional consistency, maintaining near-perfect structural reliability even at high temperatures ($T=0.9$), while models like Claude-3-Haiku and Nova-Pro exhibit substantial degradation requiring careful tuning. Our framework enables practical applications including targeted model selection for structured tasks, iterative prompt refinement for reproducible results, and diagnostic analysis to identify inconsistency root causes. This work provides theoretical foundations and practical tools for ensuring reliable structured output generation in LLM-based production systems.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-27T02:49:52Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Guanghui Wang</name>
+    </author>
+    <author>
+      <name>Jinze Yu</name>
+    </author>
+    <author>
+      <name>Xing Zhang</name>
+    </author>
+    <author>
+      <name>Dayuan Jiang</name>
+    </author>
+    <author>
+      <name>Yin Song</name>
+    </author>
+    <author>
+      <name>Tomal Deb</name>
+    </author>
+    <author>
+      <name>Xuefeng Liu</name>
+    </author>
+    <author>
+      <name>Peiyang He</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.10418v2</id>
+    <title>Constrained Decoding with Speculative Lookaheads</title>
+    <updated>2025-02-10T22:51:59Z</updated>
+    <link href="https://arxiv.org/abs/2412.10418v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.10418v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Constrained decoding with lookahead heuristics (CDLH) is a highly effective method for aligning LLM generations to human preferences. However, the extensive lookahead roll-out operations for each generated token makes CDLH prohibitively expensive, resulting in low adoption in practice. In contrast, common decoding strategies such as greedy decoding are extremely efficient, but achieve very low constraint satisfaction. We propose constrained decoding with speculative lookaheads (CDSL), a technique that significantly improves upon the inference efficiency of CDLH without experiencing the drastic performance reduction seen with greedy decoding. CDSL is motivated by the recently proposed idea of speculative decoding that uses a much smaller draft LLM for generation and a larger target LLM for verification. In CDSL, the draft model is used to generate lookaheads which is verified by a combination of target LLM and task-specific reward functions. This process accelerates decoding by reducing the computational burden while maintaining strong performance. We evaluate CDSL in two constraint decoding tasks with three LLM families and achieve 2.2x to 12.15x speedup over CDLH without significant performance reduction.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-09T22:29:57Z</published>
+    <arxiv:comment>NAACL 2025 (main) camera-ready</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Nishanth Nakshatri</name>
+    </author>
+    <author>
+      <name>Shamik Roy</name>
+    </author>
+    <author>
+      <name>Rajarshi Das</name>
+    </author>
+    <author>
+      <name>Suthee Chaidaroon</name>
+    </author>
+    <author>
+      <name>Leonid Boytsov</name>
+    </author>
+    <author>
+      <name>Rashmi Gangadharaiah</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.05766v3</id>
+    <title>FLAP: Flow-Adhering Planning with Constrained Decoding in LLMs</title>
+    <updated>2024-06-04T20:55:04Z</updated>
+    <link href="https://arxiv.org/abs/2403.05766v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.05766v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Planning is a crucial task for agents in task oriented dialogs (TODs). Human agents typically resolve user issues by following predefined workflows, decomposing workflow steps into actionable items, and performing actions by executing APIs in order; all of which require reasoning and planning. With the recent advances in LLMs, there have been increasing attempts to use them for task planning and API usage. However, the faithfulness of the plans to predefined workflows and API dependencies, is not guaranteed with LLMs. Moreover, workflows in real life are often custom-defined and prone to changes; hence, adaptation is desirable. To study this, we propose the problem of faithful planning in TODs that needs to resolve user intents by following predefined flows and preserving API dependencies. To solve this problem, we propose FLAP, a Flow-Adhering Planning algorithm based on constrained decoding with lookahead heuristic for LLMs. Our algorithm alleviates the need for finetuning LLMs using domain specific (plan/dependency) data, enables quick adaptation to predefined flows, and outperforms other decoding and prompting-based baselines. Further, our algorithm empowers smaller LLMs (7B) to perform at par larger LLMs (30B-40B).</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-09T02:27:45Z</published>
+    <arxiv:comment>NAACL 2024 (Camera Ready) (fixed minor typos)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Shamik Roy</name>
+    </author>
+    <author>
+      <name>Sailik Sengupta</name>
+    </author>
+    <author>
+      <name>Daniele Bonadiman</name>
+    </author>
+    <author>
+      <name>Saab Mansour</name>
+    </author>
+    <author>
+      <name>Arshit Gupta</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.10366v1</id>
+    <title>Advancing Cross-lingual Aspect-Based Sentiment Analysis with LLMs and Constrained Decoding for Sequence-to-Sequence Models</title>
+    <updated>2025-08-14T06:07:43Z</updated>
+    <link href="https://arxiv.org/abs/2508.10366v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.10366v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Aspect-based sentiment analysis (ABSA) has made significant strides, yet challenges remain for low-resource languages due to the predominant focus on English. Current cross-lingual ABSA studies often centre on simpler tasks and rely heavily on external translation tools. In this paper, we present a novel sequence-to-sequence method for compound ABSA tasks that eliminates the need for such tools. Our approach, which uses constrained decoding, improves cross-lingual ABSA performance by up to 10\%. This method broadens the scope of cross-lingual ABSA, enabling it to handle more complex tasks and providing a practical, efficient alternative to translation-dependent techniques. Furthermore, we compare our approach with large language models (LLMs) and show that while fine-tuned multilingual LLMs can achieve comparable results, English-centric LLMs struggle with these tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-14T06:07:43Z</published>
+    <arxiv:comment>Published in Proceedings of the 17th International Conference on Agents and Artificial Intelligence - Volume 2 (ICAART 2025). Official version: https://www.scitepress.org/Link.aspx?doi=10.5220/0013349400003890</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jakub Šmíd</name>
+    </author>
+    <author>
+      <name>Pavel Přibáň</name>
+    </author>
+    <author>
+      <name>Pavel Král</name>
+    </author>
+    <arxiv:doi>10.5220/0013349400003890</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.5220/0013349400003890" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.02363v1</id>
+    <title>When Correct Isn't Usable: Improving Structured Output Reliability in Small Language Models</title>
+    <updated>2026-05-04T09:07:44Z</updated>
+    <link href="https://arxiv.org/abs/2605.02363v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.02363v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deployed language models must produce outputs that are both correct and format-compliant. We study this structured-output reliability gap using two mathematical benchmarks -- GSM8K and MATH -- as a controlled testbed: ground truth is unambiguous and the output contract is strict (JSON with required fields). We evaluate three 7-9B models under five prompting strategies and report output accuracy -- the joint event of mathematical correctness and valid JSON structure -- as the primary metric. A systematic format failure emerges: NAIVE prompting (no system prompt) achieves up to 85% task accuracy on GSM8K but 0% output accuracy across all models and datasets. REFERENCE prompting (a minimal hand-written JSON format prompt) fares little better, yielding 0% output accuracy for two of four models tested. Constrained decoding enforces syntactic validity but incurs 3.6x-8.2x latency overhead and in several settings degrades task performance substantially. To overcome this limitation, we developed AloLab, an iterative system-prompt optimizer (meta-agent: Claude Sonnet 4.5) requiring only black-box API access to the target model; it reaches 84-87% output accuracy on GSM8K and 34-40% on MATH across five independent runs per model, with 29/30 paired McNemar comparisons against the best static prompt significant at p &lt; 0.05, at near-NAIVE inference latency and without model fine-tuning. The same format failure extends to GPT-4o (OpenAI, 2024), a proprietary closed-source model: REFERENCE achieves 0% output accuracy due to systematic markdown-fence wrapping, while AloLab reaches 95.2% [94.8, 95.6]. An ablation replacing the Sonnet 4.5 meta-agent with Claude 3 Haiku reduces mean output accuracy to 61.0% and increases run-to-run standard deviation from &lt;1 pp to 21.8 pp, confirming that meta-agent capability is a primary driver of optimization quality.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-04T09:07:44Z</published>
+    <arxiv:comment>18 pages, 6 figures, 4 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Cosimo Galeone</name>
+    </author>
+    <author>
+      <name>Minsu Park</name>
+    </author>
+    <author>
+      <name>Giuseppe Ettorre</name>
+    </author>
+    <author>
+      <name>Daniele Ligorio</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.22647v1</id>
+    <title>Vectorizing the Trie: Efficient Constrained Decoding for LLM-based Generative Retrieval on Accelerators</title>
+    <updated>2026-02-26T06:00:56Z</updated>
+    <link href="https://arxiv.org/abs/2602.22647v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.22647v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative retrieval has emerged as a powerful paradigm for LLM-based recommendation. However, industrial recommender systems often benefit from restricting the output space to a constrained subset of items based on business logic (e.g. enforcing content freshness or product category), which standard autoregressive decoding cannot natively support. Moreover, existing constrained decoding methods that make use of prefix trees (Tries) incur severe latency penalties on hardware accelerators (TPUs/GPUs). In this work, we introduce STATIC (Sparse Transition Matrix-Accelerated Trie Index for Constrained Decoding), an efficient and scalable constrained decoding technique designed specifically for high-throughput LLM-based generative retrieval on TPUs/GPUs. By flattening the prefix tree into a static Compressed Sparse Row (CSR) matrix, we transform irregular tree traversals into fully vectorized sparse matrix operations, unlocking massive efficiency gains on hardware accelerators. We deploy STATIC on a large-scale industrial video recommendation platform serving billions of users. STATIC produces significant product metric impact with minimal latency overhead (0.033 ms per step and 0.25% of inference time), achieving a 948x speedup over a CPU trie implementation and a 47-1033x speedup over a hardware-accelerated binary-search baseline. Furthermore, the runtime overhead of STATIC remains extremely low across a wide range of practical configurations. To the best of our knowledge, STATIC enables the first production-scale deployment of strictly constrained generative retrieval. In addition, evaluation on academic benchmarks demonstrates that STATIC can considerably improve cold-start performance for generative retrieval. Our code is available at https://github.com/youtube/static-constraint-decoding.</summary>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-26T06:00:56Z</published>
+    <arxiv:comment>14 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.IR"/>
+    <author>
+      <name>Zhengyang Su</name>
+    </author>
+    <author>
+      <name>Isay Katsman</name>
+    </author>
+    <author>
+      <name>Yueqi Wang</name>
+    </author>
+    <author>
+      <name>Ruining He</name>
+    </author>
+    <author>
+      <name>Lukasz Heldt</name>
+    </author>
+    <author>
+      <name>Raghunandan Keshavan</name>
+    </author>
+    <author>
+      <name>Shao-Chuan Wang</name>
+    </author>
+    <author>
+      <name>Xinyang Yi</name>
+    </author>
+    <author>
+      <name>Mingyan Gao</name>
+    </author>
+    <author>
+      <name>Onkar Dalal</name>
+    </author>
+    <author>
+      <name>Lichan Hong</name>
+    </author>
+    <author>
+      <name>Ed Chi</name>
+    </author>
+    <author>
+      <name>Ningren Han</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.14969v2</id>
+    <title>Lost in Space: Finding the Right Tokens for Structured Output</title>
+    <updated>2025-08-01T03:52:27Z</updated>
+    <link href="https://arxiv.org/abs/2502.14969v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.14969v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>General-purpose language models are trained to produce varied natural language outputs, but for some tasks, like annotation or classification, we need more specific output formats. LLM systems increasingly support structured output, which enforces formats by sampling tokens according to a grammar -- but also unpredictably reduces downstream performance. Are there systematic differences between grammars that appear semantically (and often visually) similar to humans? To answer this, we test four popular model families with five varying output formats on four common NLP benchmarks. We find all models perform most accurately when guided to use formats respecting convention, such as letters for multiple choice and real numbers for numerical prediction. Performance also improves by 5%-10% when guiding models to return tokens incorporating leading whitespace, with smaller models benefiting the most. We find leading whitespace helps models avoid structural deficiencies in subword token representations. We finally present best practices for researchers using language models as zero-shot classifiers with structured output.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-20T19:06:18Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Sil Hamilton</name>
+    </author>
+    <author>
+      <name>David Mimno</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.07362v1</id>
+    <title>"We Need Structured Output": Towards User-centered Constraints on Large Language Model Output</title>
+    <updated>2024-04-10T21:37:07Z</updated>
+    <link href="https://arxiv.org/abs/2404.07362v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.07362v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models can produce creative and diverse responses. However, to integrate them into current developer workflows, it is essential to constrain their outputs to follow specific formats or standards. In this work, we surveyed 51 experienced industry professionals to understand the range of scenarios and motivations driving the need for output constraints from a user-centered perspective. We identified 134 concrete use cases for constraints at two levels: low-level, which ensures the output adhere to a structured format and an appropriate length, and high-level, which requires the output to follow semantic and stylistic guidelines without hallucination. Critically, applying output constraints could not only streamline the currently repetitive process of developing, testing, and integrating LLM prompts for developers, but also enhance the user experience of LLM-powered features and applications. We conclude with a discussion on user preferences and needs towards articulating intended constraints for LLMs, alongside an initial design for a constraint prototyping tool.</summary>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-10T21:37:07Z</published>
+    <arxiv:primary_category term="cs.HC"/>
+    <arxiv:journal_ref>"We Need Structured Output": Towards User-centered Constraints on LLM Output. In Extended Abstracts of the CHI Conference on Human Factors in Computing Systems (CHI EA '24), May 11-16, 2024, Honolulu, HI, USA</arxiv:journal_ref>
+    <author>
+      <name>Michael Xieyang Liu</name>
+    </author>
+    <author>
+      <name>Frederick Liu</name>
+    </author>
+    <author>
+      <name>Alexander J. Fiannaca</name>
+    </author>
+    <author>
+      <name>Terry Koo</name>
+    </author>
+    <author>
+      <name>Lucas Dixon</name>
+    </author>
+    <author>
+      <name>Michael Terry</name>
+    </author>
+    <author>
+      <name>Carrie J. Cai</name>
+    </author>
+    <arxiv:doi>10.1145/3613905.3650756</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3613905.3650756" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.18146v1</id>
+    <title>Meaning Typed Prompting: A Technique for Efficient, Reliable Structured Output Generation</title>
+    <updated>2024-10-22T20:43:50Z</updated>
+    <link href="https://arxiv.org/abs/2410.18146v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.18146v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Extending Large Language Models (LLMs) to advanced applications requires reliable structured output generation. Existing methods which often rely on rigid JSON schemas, can lead to unreliable outputs, diminished reasoning capabilities, and increased computational overhead, limiting LLMs' adaptability for complex tasks. We introduce Meaning Typed Prompting (MTP), a technique for efficient structured output generation that integrates types, meanings, and abstractions, such as variables and classes, into the prompting process. By utilizing expressive type definitions, MTP enhances output clarity and reduces dependence on complex abstractions, simplifying development, and improving implementation efficiency. This enables LLMs to understand relationships and generate structured data more effectively. Empirical evaluations on multiple benchmarks demonstrate that MTP outperforms existing frameworks in accuracy, reliability, consistency, and token efficiency. We present Semantix, a framework that implements MTP, providing practical insights into its application.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-10-22T20:43:50Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Chandra Irugalbandara</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.00612v2</id>
+    <title>Lookahead-then-Verify: Reliable Constrained Decoding for Diffusion LLMs under Context-Free Grammars</title>
+    <updated>2026-02-08T08:22:03Z</updated>
+    <link href="https://arxiv.org/abs/2602.00612v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.00612v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Diffusion Large Language Models (dLLMs) have demonstrated promising generative capabilities and are increasingly used to produce formal languages defined by context-free grammars, such as source code and chemical expressions. However, as probabilistic models, they still struggle to generate syntactically valid outputs reliably. A natural and promising direction to address this issue is to adapt constrained decoding techniques to enforce grammatical correctness during generation. However, applying these techniques faces two primary obstacles. On the one hand, the non-autoregressive nature of dLLMs renders most existing constrained decoding approaches inapplicable. On the other hand, current approaches specifically designed for dLLMs may allow intermediate outputs that are impossible to complete into valid sentences, which significantly limits their reliability in practice.
+  To address these challenges, we present LAVE, a constrained decoding approach specifically designed for dLLMs. Our approach leverages a key property of dLLMs, namely their ability to predict token distributions for all positions in parallel during each forward pass. Whenever a new token is proposed by model, LAVE performs lookahead using these distributions to efficiently and reliably verify the validity of the proposed token. This design ensures reliable constraints by reliably preserving the potential for intermediate outputs to be extended into valid sentences. Extensive experiments across four widely used dLLMs and three representative benchmarks demonstrate that LAVE consistently outperforms existing baselines and achieves substantial improvements in syntactic correctness, while incurring negligible runtime overhead.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-31T08:58:15Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yitong Zhang</name>
+    </author>
+    <author>
+      <name>Yongmin Li</name>
+    </author>
+    <author>
+      <name>Yuetong Liu</name>
+    </author>
+    <author>
+      <name>Jia Li</name>
+    </author>
+    <author>
+      <name>Xiaoran Jia</name>
+    </author>
+    <author>
+      <name>Zherui Li</name>
+    </author>
+    <author>
+      <name>Ge Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.13527v1</id>
+    <title>Exploiting Prefix-Tree in Structured Output Interfaces for Enhancing Jailbreak Attacking</title>
+    <updated>2025-02-19T08:29:36Z</updated>
+    <link href="https://arxiv.org/abs/2502.13527v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.13527v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rise of Large Language Models (LLMs) has led to significant applications but also introduced serious security threats, particularly from jailbreak attacks that manipulate output generation. These attacks utilize prompt engineering and logit manipulation to steer models toward harmful content, prompting LLM providers to implement filtering and safety alignment strategies. We investigate LLMs' safety mechanisms and their recent applications, revealing a new threat model targeting structured output interfaces, which enable attackers to manipulate the inner logit during LLM generation, requiring only API access permissions. To demonstrate this threat model, we introduce a black-box attack framework called AttackPrefixTree (APT). APT exploits structured output interfaces to dynamically construct attack patterns. By leveraging prefixes of models' safety refusal response and latent harmful outputs, APT effectively bypasses safety measures. Experiments on benchmark datasets indicate that this approach achieves higher attack success rate than existing methods. This work highlights the urgent need for LLM providers to enhance security protocols to address vulnerabilities arising from the interaction between safety patterns and structured outputs.</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-19T08:29:36Z</published>
+    <arxiv:primary_category term="cs.CR"/>
+    <author>
+      <name>Yanzeng Li</name>
+    </author>
+    <author>
+      <name>Yunfan Xiong</name>
+    </author>
+    <author>
+      <name>Jialun Zhong</name>
+    </author>
+    <author>
+      <name>Jinchao Zhang</name>
+    </author>
+    <author>
+      <name>Jie Zhou</name>
+    </author>
+    <author>
+      <name>Lei Zou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.12014v1</id>
+    <title>Are LLMs Ready for TOON? Benchmarking Structural Correctness-Sustainability Trade-offs in Novel Structured Output Formats</title>
+    <updated>2026-01-17T11:42:02Z</updated>
+    <link href="https://arxiv.org/abs/2601.12014v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.12014v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) are increasingly required to generate structured, machine-readable outputs for downstream systems. While recent benchmarks have focused on evaluating the structural correctness of such outputs, the environmental impact of inference for different output formats has largely been overlooked. In this paper, we argue that structured output formats should be assessed not only in terms of correctness, but also with respect to their environmental efficiency. To this end, we introduce a sustainability-aware evaluation framework for structured generation that measures token usage, generation time, and estimated carbon emissions. Within this framework, we propose the Environment-Aware Generation Correctness Score (GCS_env), a unified metric that integrates structural correctness with carbon-aware efficiency. Using this framework, we systematically benchmark the novel TOON format against established representations (JSON, XML, YAML) across multiple LLMs spanning different architectures and parameter scales.
+  Our results reveal a consistent trade-off: TOON yields markedly more compact outputs and lower emissions, but lower structural correctness when models lack native support. We show that increased model capacity reduces this gap and that environment-aware scoring can shift format rankings depending on deployment priorities. highlighting the need for sustainability-inclusive benchmarking and provides empirical evidence that compact representations such as TOON can offer practical advantages in large-scale, carbon-conscious LLM deployments.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-17T11:42:02Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Elio Masciari</name>
+    </author>
+    <author>
+      <name>Vincenzo Moscato</name>
+    </author>
+    <author>
+      <name>Enea Vincenzo Napolitano</name>
+    </author>
+    <author>
+      <name>Gian Marco Orlando</name>
+    </author>
+    <author>
+      <name>Marco Perillo</name>
+    </author>
+    <author>
+      <name>Diego Russo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.26961v2</id>
+    <title>Static Program Slicing Using Language Models With Dataflow-Aware Pretraining and Constrained Decoding</title>
+    <updated>2026-05-10T14:14:59Z</updated>
+    <link href="https://arxiv.org/abs/2604.26961v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.26961v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Static program slicing is a fundamental software engineering technique for isolating code relevant to specific variables. While recent learning-based approaches using language models (LMs) show promise in automating slice prediction, they suffer from inaccurate dependency modeling and unconstrained generation, where LMs fail to capture precise data flow relations and produce slices containing hallucinated tokens and statements. To address these challenges, we propose Sliceformer, a novel approach that reformulates static program slicing as a sequence-to-sequence task using small language models such as CodeT5+. Sliceformer introduces two key innovations that directly target the identified limitations. First, to improve dependency modeling, we design dataflow-aware pretraining objectives that leverage data flow graphs (DFG) to teach models data dependencies through dataflow-preserving statement permutation and dataflow-aware span corruption. Second, to eliminate hallucination, we develop a constrained decoding mechanism that enforces both lexical and syntactic constraints. We evaluate Sliceformer on Java and Python program slicing benchmarks, demonstrating consistent improvements over state-of-the-art baselines with up to 22% gain in ExactMatch.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-09T19:46:06Z</published>
+    <arxiv:comment>Accepted at ACL 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Pengfei He</name>
+    </author>
+    <author>
+      <name>Shaowei Wang</name>
+    </author>
+    <author>
+      <name>Tse-Hsun Chen</name>
+    </author>
+    <author>
+      <name>Muhammad Asaduzzaman</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.23417v1</id>
+    <title>Retrieval-Constrained Decoding Reveals Underestimated Parametric Knowledge in Language Models</title>
+    <updated>2025-09-27T17:17:01Z</updated>
+    <link href="https://arxiv.org/abs/2509.23417v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.23417v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Language models (LMs) encode substantial factual knowledge, but often produce answers judged as incorrect. We hypothesize that many of these answers are actually correct, but are expressed in alternative surface forms that are dismissed due to an overly strict evaluation, leading to an underestimation of models' parametric knowledge. We propose Retrieval-Constrained Decoding (RCD), a decoding strategy that restricts model outputs to unique surface forms. We introduce YAGO-QA, a dataset of 19,137 general knowledge questions. Evaluating open-source LMs from 135M to 70B parameters, we show that standard decoding undervalues their knowledge. For instance, Llama-3.1-70B scores only 32.3% F1 with vanilla decoding but 46.0% with RCD. Similarly, Llama-3.1-8B reaches 33.0% with RCD, outperforming the larger model under vanilla decoding. We publicly share the code and dataset at https://github.com/Rajjaa/disambiguated-LLM.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-27T17:17:01Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Rajaa El Hamdani</name>
+    </author>
+    <author>
+      <name>Samy Haffoudhi</name>
+    </author>
+    <author>
+      <name>Nils Holzenberger</name>
+    </author>
+    <author>
+      <name>Fabian Suchanek</name>
+    </author>
+    <author>
+      <name>Thomas Bonald</name>
+    </author>
+    <author>
+      <name>Fragkiskos D. Malliaros</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.05540v1</id>
+    <title>Attention Meets Reachability: Structural Equivalence and Efficiency in Grammar-Constrained LLM Decoding</title>
+    <updated>2026-03-04T11:49:55Z</updated>
+    <link href="https://arxiv.org/abs/2603.05540v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.05540v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We study grammar-constrained decoding (GCD) as a coupling between an autoregressive next-token distribution and a reachability oracle over a pushdown system compiled from a context-free grammar (CFG). We prove an oracle invariance theorem: language-equivalent grammars induce identical admissible next-token sets for every prefix, hence identical logit masks, yet can yield provably different compiled state spaces and online ambiguity costs. We give exact control-state blowup counts for the canonical $a^n b^n$ language under redundant nonterminal delegation, and introduce a left-to-right structural ambiguity cost (SAC) measuring incremental packed-parse-forest growth per token. For two equivalent grammars over all finite strings, SAC is $O(1)$ per token under right-recursion but $Θ(t^2)$ per token and $Θ(n^3)$ cumulatively under concatenation. We establish engine-independent lower bounds: any sound, retrieval-efficient, parse-preserving online masking engine must incur $Ω(t^2)$ work per token on a specific constant-size CFG family, unconditionally within this model. We define decoding-cost equivalence classes of grammars and prove existence of minimal-SAC representatives within bounded rewrite families. Finally, we characterize the true conditional sampler via a Doob $h$-transform and derive sharp one-step KL and total-variation distortion bounds for hard-masked decoding in terms of survival-probability spread among admissible next tokens. We integrate these results with Transformer and Mixture-of-Experts architectures, derive latency envelopes in terms of vocabulary size, active state sets, and beam width, and connect SAC to instrumentation-based predictive performance models and automated grammar optimization.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.FL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-04T11:49:55Z</published>
+    <arxiv:comment>20 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Faruk Alpay</name>
+    </author>
+    <author>
+      <name>Bilge Senturk</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.10369v1</id>
+    <title>Improving Generative Cross-lingual Aspect-Based Sentiment Analysis with Constrained Decoding</title>
+    <updated>2025-08-14T06:07:53Z</updated>
+    <link href="https://arxiv.org/abs/2508.10369v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.10369v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>While aspect-based sentiment analysis (ABSA) has made substantial progress, challenges remain for low-resource languages, which are often overlooked in favour of English. Current cross-lingual ABSA approaches focus on limited, less complex tasks and often rely on external translation tools. This paper introduces a novel approach using constrained decoding with sequence-to-sequence models, eliminating the need for unreliable translation tools and improving cross-lingual performance by 5\% on average for the most complex task. The proposed method also supports multi-tasking, which enables solving multiple ABSA tasks with a single model, with constrained decoding boosting results by more than 10\%.
+  We evaluate our approach across seven languages and six ABSA tasks, surpassing state-of-the-art methods and setting new benchmarks for previously unexplored tasks. Additionally, we assess large language models (LLMs) in zero-shot, few-shot, and fine-tuning scenarios. While LLMs perform poorly in zero-shot and few-shot settings, fine-tuning achieves competitive results compared to smaller multilingual models, albeit at the cost of longer training and inference times.
+  We provide practical recommendations for real-world applications, enhancing the understanding of cross-lingual ABSA methodologies. This study offers valuable insights into the strengths and limitations of cross-lingual ABSA approaches, advancing the state-of-the-art in this challenging research domain.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-14T06:07:53Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jakub Šmíd</name>
+    </author>
+    <author>
+      <name>Pavel Přibáň</name>
+    </author>
+    <author>
+      <name>Pavel Král</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.29986v1</id>
+    <title>Accelerating Constrained Decoding with Token Space Compression</title>
+    <updated>2026-05-28T14:22:20Z</updated>
+    <link href="https://arxiv.org/abs/2605.29986v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.29986v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>To guarantee that an LLM's outputs conform to a specified structure, context-free grammar (CFG) decoding engines force the selection of next tokens that produce strings that conform to a given CFG. While current CFG-constrained decoding engines are highly optimized, the inherent costs arising from the massive per-step search space -- i.e. the entire token vocabulary -- result in intractably high overhead for more complex CFGs: precisely the situation where CFG engines are most useful. In this paper, we introduce CFGzip, an offline technique for compressing the token search space, which massively reduces CFG engine overhead. In experiments, we report latency reduction of up to two orders of magnitude when CFGzip is used with a SoTA grammar engine, yielding an up to 7.5x speedup in total constrained generation time: with CFGzip, constrained decoding is now feasible at scale for complex CFGs.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-28T14:22:20Z</published>
+    <arxiv:comment>13 pages; 5 figures; under review at EMNLP 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Michael Sullivan</name>
+    </author>
+    <author>
+      <name>Alexander Koller</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.20139v3</id>
+    <title>StructEval: Benchmarking LLMs' Capabilities to Generate Structural Outputs</title>
+    <updated>2026-04-02T18:48:19Z</updated>
+    <link href="https://arxiv.org/abs/2505.20139v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.20139v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As Large Language Models (LLMs) become integral to software development workflows, their ability to generate structured outputs has become critically important. We introduce StructEval, a comprehensive benchmark for evaluating LLMs' capabilities in producing both non-renderable (JSON, YAML, CSV) and renderable (HTML, React, SVG) structured formats. Unlike prior benchmarks, StructEval systematically evaluates structural fidelity across diverse formats through two paradigms: 1) generation tasks, producing structured output from natural language prompts, and \textbf{2)} conversion tasks, translating between structured formats. Our benchmark encompasses 18 formats and 44 types of task, with novel metrics for format adherence and structural correctness. Results reveal significant performance gaps-even state-of-the-art models like o1-mini achieve only 75.58 average score, with open-source alternatives lagging approximately 10 points behind. We find generation tasks more challenging than conversion tasks, and producing correct visual content more difficult than generating text-only structures.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-26T15:40:42Z</published>
+    <arxiv:comment>24 pages, 8 figures, 14 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Jialin Yang</name>
+    </author>
+    <author>
+      <name>Dongfu Jiang</name>
+    </author>
+    <author>
+      <name>Lipeng He</name>
+    </author>
+    <author>
+      <name>Sherman Siu</name>
+    </author>
+    <author>
+      <name>Yuxuan Zhang</name>
+    </author>
+    <author>
+      <name>Disen Liao</name>
+    </author>
+    <author>
+      <name>Zhuofeng Li</name>
+    </author>
+    <author>
+      <name>Huaye Zeng</name>
+    </author>
+    <author>
+      <name>Yiming Jia</name>
+    </author>
+    <author>
+      <name>Haozhe Wang</name>
+    </author>
+    <author>
+      <name>Benjamin Schneider</name>
+    </author>
+    <author>
+      <name>Chi Ruan</name>
+    </author>
+    <author>
+      <name>Wentao Ma</name>
+    </author>
+    <author>
+      <name>Zhiheng Lyu</name>
+    </author>
+    <author>
+      <name>Yifei Wang</name>
+    </author>
+    <author>
+      <name>Yi Lu</name>
+    </author>
+    <author>
+      <name>Quy Duc Do</name>
+    </author>
+    <author>
+      <name>Ziyan Jiang</name>
+    </author>
+    <author>
+      <name>Ping Nie</name>
+    </author>
+    <author>
+      <name>Wenhu Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.04016v1</id>
+    <title>SLOT: Structuring the Output of Large Language Models</title>
+    <updated>2025-05-06T23:29:43Z</updated>
+    <link href="https://arxiv.org/abs/2505.04016v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.04016v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Structured outputs are essential for large language models (LLMs) in critical applications like agents and information extraction. Despite their capabilities, LLMs often generate outputs that deviate from predefined schemas, significantly hampering reliable application development. We present SLOT (Structured LLM Output Transformer), a model-agnostic approach that transforms unstructured LLM outputs into precise structured formats. While existing solutions predominantly rely on constrained decoding techniques or are tightly coupled with specific models, SLOT employs a fine-tuned lightweight language model as a post-processing layer, achieving flexibility across various LLMs and schema specifications. We introduce a systematic pipeline for data curation and synthesis alongside a formal evaluation methodology that quantifies both schema accuracy and content fidelity. Our results demonstrate that fine-tuned Mistral-7B model with constrained decoding achieves near perfect schema accuracy (99.5%) and content similarity (94.0%), outperforming Claude-3.5-Sonnet by substantial margins (+25 and +20 percentage points, respectively). Notably, even compact models like Llama-3.2-1B can match or exceed the structured output capabilities of much larger proprietary models when equipped with SLOT, enabling reliable structured generation in resource-constrained environments.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-06T23:29:43Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Darren Yow-Bang Wang</name>
+    </author>
+    <author>
+      <name>Zhengyuan Shen</name>
+    </author>
+    <author>
+      <name>Soumya Smruti Mishra</name>
+    </author>
+    <author>
+      <name>Zhichao Xu</name>
+    </author>
+    <author>
+      <name>Yifei Teng</name>
+    </author>
+    <author>
+      <name>Haibo Ding</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2607.07026v1</id>
+    <title>Constrained Decoding for Diffusion Language Models via Efficient Inference over Finite Automata</title>
+    <updated>2026-07-08T05:48:57Z</updated>
+    <link href="https://arxiv.org/abs/2607.07026v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2607.07026v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Constrained decoding is essential for serving LLMs, ensuring that generated outputs follow specific structures such as JSON schema-formatted function calls. Existing systems are designed for autoregressive models and assume left-to-right generation, masking out invalid next tokens at each step. Diffusion language models, however, break this assumption: they sample multiple positions simultaneously from a fully-factorized mean-field distribution at each denoising step. In this paper, we present an exact and tractable algorithm for sampling from the constrained mean-field posterior under any constraint expressible as a finite automaton. Viewing finite automata as graphical models, we obtain tractable representations of the constrained distribution that enable efficient inference. The approach guarantees constraint satisfaction by construction, supports both greedy and sampling-based decoding, and is compatible with parallel and block-wise decoding under arbitrary remasking schedules. Applying depth-reduction techniques from arithmetic circuit theory, we further reduce sampling depth from linear to logarithmic in the sequence length. Empirical evaluations on Dream-7B and LLaDA-8B show substantial accuracy gains across various tasks including function calling (xLAM, BFCL), planning (Sudoku, Countdown), text-to-SQL (Spider), and math reasoning (GSM-Symbolic), with little inference overhead relative to unconstrained decoding. For example, on BFCL-Live, our approach improves Dream-7B's greedy decoding accuracy from 63.9% to 71.5%, and stochastic sampling accuracy from 22.3% to 69.0%, where the unconstrained baseline collapses, with under 5% wall-clock overhead.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-07-08T05:48:57Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Meihua Dang</name>
+    </author>
+    <author>
+      <name>Stefano Ermon</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.01810v1</id>
+    <title>Evaluating Structured Output Robustness of Small Language Models for Open Attribute-Value Extraction from Clinical Notes</title>
+    <updated>2025-07-02T15:27:41Z</updated>
+    <link href="https://arxiv.org/abs/2507.01810v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.01810v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present a comparative analysis of the parseability of structured outputs generated by small language models for open attribute-value extraction from clinical notes. We evaluate three widely used serialization formats: JSON, YAML, and XML, and find that JSON consistently yields the highest parseability. Structural robustness improves with targeted prompting and larger models, but declines for longer documents and certain note types. Our error analysis identifies recurring format-specific failure patterns. These findings offer practical guidance for selecting serialization formats and designing prompts when deploying language models in privacy-sensitive clinical settings.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-02T15:27:41Z</published>
+    <arxiv:comment>To appear in the ACL Anthology</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Nikita Neveditsin</name>
+    </author>
+    <author>
+      <name>Pawan Lingras</name>
+    </author>
+    <author>
+      <name>Vijay Mago</name>
+    </author>
+    <arxiv:doi>10.18653/v1/2025.acl-srw.19</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.18653/v1/2025.acl-srw.19" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.01926v1</id>
+    <title>Mitigating Bias in Locally Constrained Decoding via Tractable Proposals</title>
+    <updated>2026-06-01T08:58:18Z</updated>
+    <link href="https://arxiv.org/abs/2606.01926v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.01926v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generations from large language models often fail to conform to desired constraints such as JSON schema. Existing locally constrained decoding (LCD) approaches enforce constraints by myopically masking out next tokens, resulting in biased sampling and degradation in performance. Recent work uses sequential Monte Carlo (SMC) methods to mitigate such biases, but designing effective proposal distributions or potential functions remains a key challenge. In this work, we propose a generic approach to construct proposals and potentials for SMC sampling from $p_{\mathrm{lm}}( \cdot \mid \mathrm{constraint})$. First, we show that constraints specified as finite automata can be tensorized for efficient execution on GPUs, which we use to construct globally constrained decoding (GCD) proposals. In addition, leveraging the fact that tensorized finite automata share the same circuit structure as hidden Markov models, we circuit-multiply them to obtain the probabilistic GCD (P-GCD) proposals encoding both logical and probabilistic information about the target distributions. We evaluate (P-)GCD on the tasks of function calling, keyword-based generation, and SQL generation. Experiments show that under the same SMC sampling setup, compared to LCD proposals, (P-)GCD converges faster to the target distribution with significantly fewer particles.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-01T08:58:18Z</published>
+    <arxiv:comment>13 pages, 5 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Meihua Dang</name>
+    </author>
+    <author>
+      <name>Linxin Song</name>
+    </author>
+    <author>
+      <name>Honghua Zhang</name>
+    </author>
+    <author>
+      <name>Jieyu Zhao</name>
+    </author>
+    <author>
+      <name>Guy Van den Broeck</name>
+    </author>
+    <author>
+      <name>Stefano Ermon</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.23523v1</id>
+    <title>Grammar-Constrained Refinement of Safety Operational Rules Using Language in the Loop: What Could Go Wrong</title>
+    <updated>2026-04-26T04:10:56Z</updated>
+    <link href="https://arxiv.org/abs/2604.23523v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.23523v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Safety specifications in cyber-physical systems (CPS) capture the operational conditions the system must satisfy to operate safely within its intended environment. As operating environments evolve, operational rules must be continuously refined to preserve consistency with observed system behavior during simulation-based verification and validation. Revising inconsistent rules is challenging because the changes must remain syntactically correct under a domain-specific grammar. Language-in-the-loop refinement further raises safety concerns beyond syntactic violations, as it can produce semantically unjustified refinements that overfit to the observed outcomes. We introduce a framework that combines counterfactual reasoning with a grammar-constrained refinement loop to refine operational rules, aligning them with the observed system behavior. Applied to an autonomous driving control system, our approach successfully resolved the inconsistencies in an operational rule inferred by a conventional baseline while remaining grammar compliant. An empirical large language model (LLM) study further revealed model-dependent refinement quality and safety lessons, which motivate rigorous grammar enforcement, stronger semantic validation, and broader evaluation in future work.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-26T04:10:56Z</published>
+    <arxiv:comment>6 pages, 1 figure, 2 tables. Accepted at SEAMS 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <arxiv:journal_ref>Proc. 21st International Conference on Software Engineering for Adaptive and Self-Managing Systems (SEAMS 2026), ACM, 2026, 6 pages</arxiv:journal_ref>
+    <author>
+      <name>Khouloud Gaaloul</name>
+    </author>
+    <author>
+      <name>Zaid Ghazal</name>
+    </author>
+    <author>
+      <name>Madhu Latha Pulimi</name>
+    </author>
+    <author>
+      <name>Sam Emmanuel Kathiravan</name>
+    </author>
+    <arxiv:doi>10.1145/3788550.3794884</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3788550.3794884" title="doi"/>
+    <arxiv:doi>10.1145/3788550.3794884</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3788550.3794884" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.17993v6</id>
+    <title>DRS: Deep Question Reformulation With Structured Output</title>
+    <updated>2025-09-25T22:44:14Z</updated>
+    <link href="https://arxiv.org/abs/2411.17993v6" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.17993v6" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Question answering represents a core capability of large language models (LLMs). However, when individuals encounter unfamiliar knowledge in texts, they often formulate questions that the text itself cannot answer due to insufficient understanding of the underlying information. Recent studies reveal that while LLMs can detect unanswerable questions, they struggle to assist users in reformulating these questions. Even advanced models like GPT-3.5 demonstrate limited effectiveness in this regard. To address this limitation, we propose DRS: Deep Question Reformulation with Structured Output, a novel zero-shot method aimed at enhancing LLMs ability to assist users in reformulating questions to extract relevant information from new documents. DRS combines the strengths of LLMs with a DFS-based algorithm to iteratively explore potential entity combinations and constrain outputs using predefined entities. This structured approach significantly enhances the reformulation capabilities of LLMs. Comprehensive experimental evaluations demonstrate that DRS improves the reformulation accuracy of GPT-3.5 from $23.03\%$ to $70.42\%$, while also enhancing the performance of open-source models, such as Gemma2-9B, from $26.35\%$ to $56.75\%$.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-27T02:20:44Z</published>
+    <arxiv:comment>Accepted to ACL 2025 (Findings)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zhecheng Li</name>
+    </author>
+    <author>
+      <name>Yiwei Wang</name>
+    </author>
+    <author>
+      <name>Bryan Hooi</name>
+    </author>
+    <author>
+      <name>Yujun Cai</name>
+    </author>
+    <author>
+      <name>Nanyun Peng</name>
+    </author>
+    <author>
+      <name>Kai-Wei Chang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.07075v3</id>
+    <title>Don't Fine-Tune, Decode: Syntax Error-Free Tool Use via Constrained Decoding</title>
+    <updated>2024-06-04T15:50:22Z</updated>
+    <link href="https://arxiv.org/abs/2310.07075v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.07075v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Instruction-tuned large language models (LLMs) excel at many tasks but often fail to use external tools due to complicated and unfamiliar syntax constraints. While extensive fine-tuning and prompting can mitigate the issue, these approaches are expensive and hard to generalize. Furthermore, because syntax constraints are only learned implicitly during fine-tuning, models still make frequent syntax errors. Motivated by the fact that these constraints can be better satisfied explicitly with constrained decoding, we propose TOOLDEC, a decoding algorithm using finite state machines to force LLMs to follow tool syntax. Our experiments show that TOOLDEC eliminates all syntax errors, achieving significantly better performance on various base models and benchmarks. More surprisingly, when applied to generalist out-of-the-box LLMs such as Mistral-Instruct, TOOLDEC improves its accuracy in tool use from the initial 0% to an impressive 52%, matching the performance of specialized fine-tuned models such as ToolLLM.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-10T23:37:53Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kexun Zhang</name>
+    </author>
+    <author>
+      <name>Hongqiao Chen</name>
+    </author>
+    <author>
+      <name>Lei Li</name>
+    </author>
+    <author>
+      <name>William Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.17338v1</id>
+    <title>SLICET5: Static Program Slicing using Language Models with Copy Mechanism and Constrained Decoding</title>
+    <updated>2025-09-22T03:14:47Z</updated>
+    <link href="https://arxiv.org/abs/2509.17338v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.17338v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Static program slicing is a fundamental technique in software engineering. Traditional static slicing tools rely on parsing complete source code, which limits their applicability to real-world scenarios where code snippets are incomplete or unparsable. While recent research developed learning-based approaches to predict slices, they face critical challenges: (1) Inaccurate dependency identification, where models fail to precisely capture data and control dependencies between code elements; and (2) Unconstrained generation, where models produce slices with extraneous or hallucinated tokens not present in the input, violating the structural integrity of slices. To address these challenges, we propose \ourtool, a novel slicing framework that reformulates static program slicing as a sequence-to-sequence task using lightweight language models (e.g., CodeT5+). Our approach incorporates two key innovations. First, we introduce a copy mechanism that enables the model to more accurately capture inter-element dependencies and directly copy relevant tokens from the input, improving both dependency reasoning and generation constraint. Second, we design a constrained decoding process with (a) lexical constraint, restricting outputs to input tokens only, and (b) syntactic constraint, leveraging Tree Similarity of Edit Distance (TSED) monotonicity to detect structurally invalid outputs and discard them. We evaluate \ourtool on CodeNet and LeetCode datasets and show it consistently outperforms state-of-the-art baselines, improving ExactMatch scores by up to 27\%. Furthermore, \ourtool demonstrates strong performance on incomplete code, highlighting its robustness and practical utility in real-world development environments.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-22T03:14:47Z</published>
+    <arxiv:comment>3 tables, 6 Figures, 12 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Pengfei He</name>
+    </author>
+    <author>
+      <name>Shaowei Wang</name>
+    </author>
+    <author>
+      <name>Tse-Hsun Chen</name>
+    </author>
+  </entry>
+</feed>

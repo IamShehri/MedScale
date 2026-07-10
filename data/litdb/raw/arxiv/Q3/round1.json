@@ -1,0 +1,1376 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/sTUpG62EgAXqYaOvL1FuK4vGFsM</id>
+  <title>arXiv Query: search_query=(all:"clinical information extraction" OR all:"clinical NER" OR all:"note to structured") AND (all:"language model" OR all:transformer)&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:16Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=(all:%22clinical+information+extraction%22+OR+(all:%22clinical+NER%22+OR+all:%22note+to+structured%22))+AND+(all:%22language+model%22+OR+all:transformer)&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>43</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2510.17437v1</id>
+    <title>Multilingual Clinical NER for Diseases and Medications Recognition in Cardiology Texts using BERT Embeddings</title>
+    <updated>2025-10-20T11:26:22Z</updated>
+    <link href="https://arxiv.org/abs/2510.17437v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.17437v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapidly increasing volume of electronic health record (EHR) data underscores a pressing need to unlock biomedical knowledge from unstructured clinical texts to support advancements in data-driven clinical systems, including patient diagnosis, disease progression monitoring, treatment effects assessment, prediction of future clinical events, etc. While contextualized language models have demonstrated impressive performance improvements for named entity recognition (NER) systems in English corpora, there remains a scarcity of research focused on clinical texts in low-resource languages. To bridge this gap, our study aims to develop multiple deep contextual embedding models to enhance clinical NER in the cardiology domain, as part of the BioASQ MultiCardioNER shared task. We explore the effectiveness of different monolingual and multilingual BERT-based models, trained on general domain text, for extracting disease and medication mentions from clinical case reports written in English, Spanish, and Italian. We achieved an F1-score of 77.88% on Spanish Diseases Recognition (SDR), 92.09% on Spanish Medications Recognition (SMR), 91.74% on English Medications Recognition (EMR), and 88.9% on Italian Medications Recognition (IMR). These results outperform the mean and median F1 scores in the test leaderboard across all subtasks, with the mean/median values being: 69.61%/75.66% for SDR, 81.22%/90.18% for SMR, 89.2%/88.96% for EMR, and 82.8%/87.76% for IMR.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-20T11:26:22Z</published>
+    <arxiv:comment>11 pages, 5 figures, 1 table, published in Working Notes of the Conference and Labs of the Evaluation Forum (CLEF 2024)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Danu, M. D., Marica, V. G., Suciu, C., Itu, L. M., &amp; Farri, O. (2024). Multilingual clinical NER for diseases and medications recognition in cardiology texts using BERT embeddings. CLEF Working Notes</arxiv:journal_ref>
+    <author>
+      <name>Manuela Daniela Danu</name>
+    </author>
+    <author>
+      <name>George Marica</name>
+    </author>
+    <author>
+      <name>Constantin Suciu</name>
+    </author>
+    <author>
+      <name>Lucian Mihai Itu</name>
+    </author>
+    <author>
+      <name>Oladimeji Farri</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.00031v1</id>
+    <title>Distilling Large Language Models for Efficient Clinical Information Extraction</title>
+    <updated>2024-12-21T02:15:29Z</updated>
+    <link href="https://arxiv.org/abs/2501.00031v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.00031v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) excel at clinical information extraction but their computational demands limit practical deployment. Knowledge distillation--the process of transferring knowledge from larger to smaller models--offers a potential solution. We evaluate the performance of distilled BERT models, which are approximately 1,000 times smaller than modern LLMs, for clinical named entity recognition (NER) tasks. We leveraged state-of-the-art LLMs (Gemini and OpenAI models) and medical ontologies (RxNorm and SNOMED) as teacher labelers for medication, disease, and symptom extraction. We applied our approach to over 3,300 clinical notes spanning five publicly available datasets, comparing distilled BERT models against both their teacher labelers and BERT models fine-tuned on human labels. External validation was conducted using clinical notes from the MedAlign dataset. For disease extraction, F1 scores were 0.82 (teacher model), 0.89 (BioBERT trained on human labels), and 0.84 (BioBERT-distilled). For medication, F1 scores were 0.84 (teacher model), 0.91 (BioBERT-human), and 0.87 (BioBERT-distilled). For symptoms: F1 score of 0.73 (teacher model) and 0.68 (BioBERT-distilled). Distilled BERT models had faster inference (12x, 4x, 8x faster than GPT-4o, o1-mini, and Gemini Flash respectively) and lower costs (85x, 101x, 2x cheaper than GPT-4o, o1-mini, and Gemini Flash respectively). On the external validation dataset, the distilled BERT model achieved F1 scores of 0.883 (medication), 0.726 (disease), and 0.699 (symptom). Distilled BERT models were up to 101x cheaper and 12x faster than state-of-the-art LLMs while achieving similar performance on NER tasks. Distillation offers a computationally efficient and scalable alternative to large LLMs for clinical information extraction.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-21T02:15:29Z</published>
+    <arxiv:comment>19 pages, 1 figure, 10 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Karthik S. Vedula</name>
+    </author>
+    <author>
+      <name>Annika Gupta</name>
+    </author>
+    <author>
+      <name>Akshay Swaminathan</name>
+    </author>
+    <author>
+      <name>Ivan Lopez</name>
+    </author>
+    <author>
+      <name>Suhana Bedi</name>
+    </author>
+    <author>
+      <name>Nigam H. Shah</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.20859v1</id>
+    <title>Leveraging Open-Source Large Language Models for Clinical Information Extraction in Resource-Constrained Settings</title>
+    <updated>2025-07-28T14:12:37Z</updated>
+    <link href="https://arxiv.org/abs/2507.20859v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.20859v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical reports contain rich clinical information but are often unstructured and written in domain-specific language, posing challenges for information extraction. While proprietary large language models (LLMs) have shown promise in clinical natural language processing, their lack of transparency and data privacy concerns limit their utility in healthcare. This study therefore evaluates nine open-source generative LLMs on the DRAGON benchmark, which includes 28 clinical information extraction tasks in Dutch. We developed \texttt{llm\_extractinator}, a publicly available framework for information extraction using open-source generative LLMs, and used it to assess model performance in a zero-shot setting. Several 14 billion parameter models, Phi-4-14B, Qwen-2.5-14B, and DeepSeek-R1-14B, achieved competitive results, while the bigger Llama-3.3-70B model achieved slightly higher performance at greater computational cost. Translation to English prior to inference consistently degraded performance, highlighting the need of native-language processing. These findings demonstrate that open-source LLMs, when used with our framework, offer effective, scalable, and privacy-conscious solutions for clinical information extraction in low-resource settings.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-28T14:12:37Z</published>
+    <arxiv:comment>34 pages, 5 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Luc Builtjes</name>
+    </author>
+    <author>
+      <name>Joeran Bosma</name>
+    </author>
+    <author>
+      <name>Mathias Prokop</name>
+    </author>
+    <author>
+      <name>Bram van Ginneken</name>
+    </author>
+    <author>
+      <name>Alessa Hering</name>
+    </author>
+    <arxiv:doi>10.1093/jamiaopen/ooaf109</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1093/jamiaopen/ooaf109" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.06028v1</id>
+    <title>A Multi-Stage Validation Framework for Trustworthy Large-scale Clinical Information Extraction using Large Language Models</title>
+    <updated>2026-04-07T16:23:52Z</updated>
+    <link href="https://arxiv.org/abs/2604.06028v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.06028v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) show promise for extracting clinically meaningful information from unstructured health records, yet their translation into real-world settings is constrained by the lack of scalable and trustworthy validation approaches. Conventional evaluation methods rely heavily on annotation-intensive reference standards or incomplete structured data, limiting feasibility at population scale. We propose a multi-stage validation framework for LLM-based clinical information extraction that enables rigorous assessment under weak supervision. The framework integrates prompt calibration, rule-based plausibility filtering, semantic grounding assessment, targeted confirmatory evaluation using an independent higher-capacity judge LLM, selective expert review, and external predictive validity analysis to quantify uncertainty and characterize error modes without exhaustive manual annotation. We applied this framework to extraction of substance use disorder (SUD) diagnoses across 11 substance categories from 919,783 clinical notes. Rule-based filtering and semantic grounding removed 14.59% of LLM-positive extractions that were unsupported, irrelevant, or structurally implausible. For high-uncertainty cases, the judge LLM's assessments showed substantial agreement with subject matter expert review (Gwet's AC1=0.80). Using judge-evaluated outputs as references, the primary LLM achieved an F1 score of 0.80 under relaxed matching criteria. LLM-extracted SUD diagnoses also predicted subsequent engagement in SUD specialty care more accurately than structured-data baselines (AUC=0.80). These findings demonstrate that scalable, trustworthy deployment of LLM-based clinical information extraction is feasible without annotation-intensive evaluation.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-07T16:23:52Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Maria Mahbub</name>
+    </author>
+    <author>
+      <name>Gregory M. Dams</name>
+    </author>
+    <author>
+      <name>Josh Arnold</name>
+    </author>
+    <author>
+      <name>Caitlin Rizy</name>
+    </author>
+    <author>
+      <name>Sudarshan Srinivasan</name>
+    </author>
+    <author>
+      <name>Elliot M. Fielstein</name>
+    </author>
+    <author>
+      <name>Minu A. Aghevli</name>
+    </author>
+    <author>
+      <name>Kamonica L. Craig</name>
+    </author>
+    <author>
+      <name>Elizabeth M. Oliva</name>
+    </author>
+    <author>
+      <name>Joseph Erdos</name>
+    </author>
+    <author>
+      <name>Jodie Trafton</name>
+    </author>
+    <author>
+      <name>Ioana Danciu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.04221v2</id>
+    <title>Self-Prompting Small Language Models for Privacy-Sensitive Clinical Information Extraction</title>
+    <updated>2026-06-10T05:50:04Z</updated>
+    <link href="https://arxiv.org/abs/2605.04221v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.04221v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical named entity recognition from dental progress notes is challenging because documentation is highly unstructured, domain-specific, and often privacy-sensitive. We developed a locally deployable framework that enables small language models to self-generate, verify, refine, and evaluate entity-specific prompts for extracting multiple clinical entities from dental notes. Using 1,200 annotated notes, we evaluated candidate open-weight models with multi-prompt ensemble inference and further adapted selected models using QLoRA-based supervised fine-tuning and direct preference optimization. Model performance varied substantially, highlighting the need for task-specific evaluation rather than reliance on generic benchmarks. Qwen2.5-14B-Instruct achieved the strongest baseline performance. After DPO, Qwen2.5-14B-Instruct and Llama-3.1-8B-Instruct achieved micro/macro F1 scores of 0.864/0.837 and 0.806/0.797, respectively. These findings suggest that automated prompt optimization combined with lightweight preference-based post-training can support scalable clinical information extraction using locally deployed small language models.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-05T19:03:40Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yao-Shun Chuang</name>
+    </author>
+    <author>
+      <name>Tushti Mody</name>
+    </author>
+    <author>
+      <name>Uday Pratap Singh</name>
+    </author>
+    <author>
+      <name>Shirindokht Shiraz</name>
+    </author>
+    <author>
+      <name>Chun-Teh Lee</name>
+    </author>
+    <author>
+      <name>Ryan Brandon</name>
+    </author>
+    <author>
+      <name>Muhammad F Walji</name>
+    </author>
+    <author>
+      <name>Xiaoqian Jiang</name>
+    </author>
+    <author>
+      <name>Bunmi Tokede</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.13369v2</id>
+    <title>Clinical information extraction for Low-resource languages with Few-shot learning using Pre-trained language models and Prompting</title>
+    <updated>2024-08-13T07:35:31Z</updated>
+    <link href="https://arxiv.org/abs/2403.13369v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.13369v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Automatic extraction of medical information from clinical documents poses several challenges: high costs of required clinical expertise, limited interpretability of model predictions, restricted computational resources and privacy regulations. Recent advances in domain-adaptation and prompting methods showed promising results with minimal training data using lightweight masked language models, which are suited for well-established interpretability methods. We are first to present a systematic evaluation of these methods in a low-resource setting, by performing multi-class section classification on German doctor's letters. We conduct extensive class-wise evaluations supported by Shapley values, to validate the quality of our small training data set and to ensure the interpretability of model predictions. We demonstrate that a lightweight, domain-adapted pretrained model, prompted with just 20 shots, outperforms a traditional classification model by 30.5% accuracy. Our results serve as a process-oriented guideline for clinical information extraction projects working with low-resource.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-20T08:01:33Z</published>
+    <arxiv:comment>Paper accepted for publication in the journal: Natural Language Engineering (Cambridge Core)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Natural Language Processing. Published online 2024:1-24</arxiv:journal_ref>
+    <author>
+      <name>Phillip Richter-Pechanski</name>
+    </author>
+    <author>
+      <name>Philipp Wiesenbach</name>
+    </author>
+    <author>
+      <name>Dominic M. Schwab</name>
+    </author>
+    <author>
+      <name>Christina Kiriakou</name>
+    </author>
+    <author>
+      <name>Nicolas Geis</name>
+    </author>
+    <author>
+      <name>Christoph Dieterich</name>
+    </author>
+    <author>
+      <name>Anette Frank</name>
+    </author>
+    <arxiv:doi>10.1017/nlp.2024.52</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1017/nlp.2024.52" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2306.00024v1</id>
+    <title>Self-Verification Improves Few-Shot Clinical Information Extraction</title>
+    <updated>2023-05-30T22:05:11Z</updated>
+    <link href="https://arxiv.org/abs/2306.00024v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2306.00024v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Extracting patient information from unstructured text is a critical task in health decision-support and clinical research. Large language models (LLMs) have shown the potential to accelerate clinical curation via few-shot in-context learning, in contrast to supervised learning which requires much more costly human annotations. However, despite drastic advances in modern LLMs such as GPT-4, they still struggle with issues regarding accuracy and interpretability, especially in mission-critical domains such as health. Here, we explore a general mitigation framework using self-verification, which leverages the LLM to provide provenance for its own extraction and check its own outputs. This is made possible by the asymmetry between verification and generation, where the latter is often much easier than the former. Experimental results show that our method consistently improves accuracy for various LLMs in standard clinical information extraction tasks. Additionally, self-verification yields interpretations in the form of a short text span corresponding to each output, which makes it very efficient for human experts to audit the results, paving the way towards trustworthy extraction of clinical information in resource-constrained scenarios. To facilitate future research in this direction, we release our code and prompts.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-30T22:05:11Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>IMLH 2023</arxiv:journal_ref>
+    <author>
+      <name>Zelalem Gero</name>
+    </author>
+    <author>
+      <name>Chandan Singh</name>
+    </author>
+    <author>
+      <name>Hao Cheng</name>
+    </author>
+    <author>
+      <name>Tristan Naumann</name>
+    </author>
+    <author>
+      <name>Michel Galley</name>
+    </author>
+    <author>
+      <name>Jianfeng Gao</name>
+    </author>
+    <author>
+      <name>Hoifung Poon</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2306.04384v1</id>
+    <title>Multilingual Clinical NER: Translation or Cross-lingual Transfer?</title>
+    <updated>2023-06-07T12:31:07Z</updated>
+    <link href="https://arxiv.org/abs/2306.04384v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2306.04384v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Natural language tasks like Named Entity Recognition (NER) in the clinical domain on non-English texts can be very time-consuming and expensive due to the lack of annotated data. Cross-lingual transfer (CLT) is a way to circumvent this issue thanks to the ability of multilingual large language models to be fine-tuned on a specific task in one language and to provide high accuracy for the same task in another language. However, other methods leveraging translation models can be used to perform NER without annotated data in the target language, by either translating the training set or test set. This paper compares cross-lingual transfer with these two alternative methods, to perform clinical NER in French and in German without any training data in those languages. To this end, we release MedNERF a medical NER test set extracted from French drug prescriptions and annotated with the same guidelines as an English dataset. Through extensive experiments on this dataset and on a German medical dataset (Frei and Kramer, 2021), we show that translation-based methods can achieve similar performance to CLT but require more care in their design. And while they can take advantage of monolingual clinical language models, those do not guarantee better results than large general-purpose multilingual models, whether with cross-lingual transfer or translation.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-06-07T12:31:07Z</published>
+    <arxiv:comment>23 pages, Proceedings of the 5th Clinical Natural Language Processing Workshop</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xavier Fontaine</name>
+    </author>
+    <author>
+      <name>Félix Gaschi</name>
+    </author>
+    <author>
+      <name>Parisa Rastin</name>
+    </author>
+    <author>
+      <name>Yannick Toussaint</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1911.05604v1</id>
+    <title>Adapting and evaluating a deep learning language model for clinical why-question answering</title>
+    <updated>2019-11-13T16:43:22Z</updated>
+    <link href="https://arxiv.org/abs/1911.05604v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1911.05604v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Objectives: To adapt and evaluate a deep learning language model for answering why-questions based on patient-specific clinical text. Materials and Methods: Bidirectional encoder representations from transformers (BERT) models were trained with varying data sources to perform SQuAD 2.0 style why-question answering (why-QA) on clinical notes. The evaluation focused on: 1) comparing the merits from different training data, 2) error analysis. Results: The best model achieved an accuracy of 0.707 (or 0.760 by partial match). Training toward customization for the clinical language helped increase 6% in accuracy. Discussion: The error analysis suggested that the model did not really perform deep reasoning and that clinical why-QA might warrant more sophisticated solutions. Conclusion: The BERT model achieved moderate accuracy in clinical why-QA and should benefit from the rapidly evolving technology. Despite the identified limitations, it could serve as a competent proxy for question-driven clinical information extraction.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-11-13T16:43:22Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Andrew Wen</name>
+    </author>
+    <author>
+      <name>Mohamed Y. Elwazir</name>
+    </author>
+    <author>
+      <name>Sungrim Moon</name>
+    </author>
+    <author>
+      <name>Jungwei Fan</name>
+    </author>
+    <arxiv:doi>10.1093/jamiaopen/ooz072</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1093/jamiaopen/ooz072" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2401.15780v1</id>
+    <title>Fine-Tuned Large Language Models for Symptom Recognition from Spanish Clinical Text</title>
+    <updated>2024-01-28T22:11:25Z</updated>
+    <link href="https://arxiv.org/abs/2401.15780v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2401.15780v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The accurate recognition of symptoms in clinical reports is significantly important in the fields of healthcare and biomedical natural language processing. These entities serve as essential building blocks for clinical information extraction, enabling retrieval of critical medical insights from vast amounts of textual data. Furthermore, the ability to identify and categorize these entities is fundamental for developing advanced clinical decision support systems, aiding healthcare professionals in diagnosis and treatment planning. In this study, we participated in SympTEMIST, a shared task on the detection of symptoms, signs and findings in Spanish medical documents. We combine a set of large language models fine-tuned with the data released by the organizers.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-01-28T22:11:25Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mai A. Shaaban</name>
+    </author>
+    <author>
+      <name>Abbas Akkasi</name>
+    </author>
+    <author>
+      <name>Adnan Khan</name>
+    </author>
+    <author>
+      <name>Majid Komeili</name>
+    </author>
+    <author>
+      <name>Mohammad Yaqub</name>
+    </author>
+    <arxiv:doi>10.5281/zenodo.10104138</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.5281/zenodo.10104138" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.05638v1</id>
+    <title>ELMTEX: Fine-Tuning Large Language Models for Structured Clinical Information Extraction. A Case Study on Clinical Reports</title>
+    <updated>2025-02-08T16:44:56Z</updated>
+    <link href="https://arxiv.org/abs/2502.05638v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.05638v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Europe's healthcare systems require enhanced interoperability and digitalization, driving a demand for innovative solutions to process legacy clinical data. This paper presents the results of our project, which aims to leverage Large Language Models (LLMs) to extract structured information from unstructured clinical reports, focusing on patient history, diagnoses, treatments, and other predefined categories. We developed a workflow with a user interface and evaluated LLMs of varying sizes through prompting strategies and fine-tuning. Our results show that fine-tuned smaller models match or surpass larger counterparts in performance, offering efficiency for resource-limited settings. A new dataset of 60,000 annotated English clinical summaries and 24,000 German translations was validated with automated and manual checks. The evaluations used ROUGE, BERTScore, and entity-level metrics. The work highlights the approach's viability and outlines future improvements.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-08T16:44:56Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Aynur Guluzade</name>
+    </author>
+    <author>
+      <name>Naguib Heiba</name>
+    </author>
+    <author>
+      <name>Zeyd Boukhers</name>
+    </author>
+    <author>
+      <name>Florim Hamiti</name>
+    </author>
+    <author>
+      <name>Jahid Hasan Polash</name>
+    </author>
+    <author>
+      <name>Yehya Mohamad</name>
+    </author>
+    <author>
+      <name>Carlos A Velasco</name>
+    </author>
+    <arxiv:doi>10.1007/978-3-031-95841-0_34</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1007/978-3-031-95841-0_34" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2208.10240v2</id>
+    <title>A Multimodal Transformer: Fusing Clinical Notes with Structured EHR Data for Interpretable In-Hospital Mortality Prediction</title>
+    <updated>2023-05-09T16:54:31Z</updated>
+    <link href="https://arxiv.org/abs/2208.10240v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2208.10240v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deep-learning-based clinical decision support using structured electronic health records (EHR) has been an active research area for predicting risks of mortality and diseases. Meanwhile, large amounts of narrative clinical notes provide complementary information, but are often not integrated into predictive models. In this paper, we provide a novel multimodal transformer to fuse clinical notes and structured EHR data for better prediction of in-hospital mortality. To improve interpretability, we propose an integrated gradients (IG) method to select important words in clinical notes and discover the critical structured EHR features with Shapley values. These important words and clinical features are visualized to assist with interpretation of the prediction outcomes. We also investigate the significance of domain adaptive pretraining and task adaptive fine-tuning on the Clinical BERT, which is used to learn the representations of clinical notes. Experiments demonstrated that our model outperforms other methods (AUCPR: 0.538, AUCROC: 0.877, F1:0.490).</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-08-09T03:49:52Z</published>
+    <arxiv:comment>AMIA Annual Symposium Proceedings 2022</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>AMIA Annu Symp Proc 2022</arxiv:journal_ref>
+    <author>
+      <name>Weimin Lyu</name>
+    </author>
+    <author>
+      <name>Xinyu Dong</name>
+    </author>
+    <author>
+      <name>Rachel Wong</name>
+    </author>
+    <author>
+      <name>Songzhu Zheng</name>
+    </author>
+    <author>
+      <name>Kayley Abell-Hart</name>
+    </author>
+    <author>
+      <name>Fusheng Wang</name>
+    </author>
+    <author>
+      <name>Chao Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.21374v1</id>
+    <title>Small Language Models for Privacy-Preserving Clinical Information Extraction in Low-Resource Languages</title>
+    <updated>2026-02-24T21:10:29Z</updated>
+    <link href="https://arxiv.org/abs/2602.21374v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.21374v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Extracting clinical information from medical transcripts in low-resource languages remains a significant challenge in healthcare natural language processing (NLP). This study evaluates a two-step pipeline combining Aya-expanse-8B as a Persian-to-English translation model with five open-source small language models (SLMs) -- Qwen2.5-7B-Instruct, Llama-3.1-8B-Instruct, Llama-3.2-3B-Instruct, Qwen2.5-1.5B-Instruct, and Gemma-3-1B-it -- for binary extraction of 13 clinical features from 1,221 anonymized Persian transcripts collected at a cancer palliative care call center. Using a few-shot prompting strategy without fine-tuning, models were assessed on macro-averaged F1-score, Matthews Correlation Coefficient (MCC), sensitivity, and specificity to account for class imbalance. Qwen2.5-7B-Instruct achieved the highest overall performance (median macro-F1: 0.899; MCC: 0.797), while Gemma-3-1B-it showed the weakest results. Larger models (7B--8B parameters) consistently outperformed smaller counterparts in sensitivity and MCC. A bilingual analysis of Aya-expanse-8B revealed that translating Persian transcripts to English improved sensitivity, reduced missing outputs, and boosted metrics robust to class imbalance, though at the cost of slightly lower specificity and precision. Feature-level results showed reliable extraction of physiological symptoms across most models, whereas psychological complaints, administrative requests, and complex somatic features remained challenging. These findings establish a practical, privacy-preserving blueprint for deploying open-source SLMs in multilingual clinical NLP settings with limited infrastructure and annotation resources, and highlight the importance of jointly optimizing model scale and input language strategy for sensitive healthcare applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-24T21:10:29Z</published>
+    <arxiv:comment>16 pages, 3 figures, 2 supplementary files</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mohammadreza Ghaffarzadeh-Esfahani</name>
+    </author>
+    <author>
+      <name>Nahid Yousefian</name>
+    </author>
+    <author>
+      <name>Ebrahim Heidari-Farsani</name>
+    </author>
+    <author>
+      <name>Ali Akbar Omidvarian</name>
+    </author>
+    <author>
+      <name>Sepehr Ghahraei</name>
+    </author>
+    <author>
+      <name>Atena Farangi</name>
+    </author>
+    <author>
+      <name>AmirBahador Boroumand</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.22124v1</id>
+    <title>A Federated and Parameter-Efficient Framework for Large Language Model Training in Medicine</title>
+    <updated>2026-01-29T18:48:21Z</updated>
+    <link href="https://arxiv.org/abs/2601.22124v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.22124v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have demonstrated strong performance on medical benchmarks, including question answering and diagnosis. To enable their use in clinical settings, LLMs are typically further adapted through continued pretraining or post-training using clinical data. However, most medical LLMs are trained on data from a single institution, which faces limitations in generalizability and safety in heterogeneous systems. Federated learning (FL) is a promising solution for enabling collaborative model development across healthcare institutions. Yet applying FL to LLMs in medicine remains fundamentally limited. First, conventional FL requires transmitting the full model during each communication round, which becomes impractical for multi-billion-parameter LLMs given the limited computational resources. Second, many FL algorithms implicitly assume data homogeneity, whereas real-world clinical data are highly heterogeneous across patients, diseases, and institutional practices. We introduce the model-agnostic and parameter-efficient federated learning framework for adapting LLMs to medical applications. Fed-MedLoRA transmits only low-rank adapter parameters, reducing communication and computation overhead, while Fed-MedLoRA+ further incorporates adaptive, data-aware aggregation to improve convergence under cross-site heterogeneity. We apply the framework to clinical information extraction (IE), which transforms patient narratives into structured medical entities and relations. Accuracy was assessed across five patient cohorts through comparisons with BERT models, and LLaMA-3 and DeepSeek-R1, GPT-4o models. Evaluation settings included (1) in-domain training and testing, (2) external validation on independent cohorts, and (3) a low-resource new-site adaptation scenario using real-world clinical notes from the Yale New Haven Health System.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-29T18:48:21Z</published>
+    <arxiv:comment>38 pages, 9 tables, 3 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Anran Li</name>
+    </author>
+    <author>
+      <name>Yuanyuan Chen</name>
+    </author>
+    <author>
+      <name>Wenjun Long</name>
+    </author>
+    <author>
+      <name>Yu Yin</name>
+    </author>
+    <author>
+      <name>Yan Hu</name>
+    </author>
+    <author>
+      <name>Hyunjae Kim</name>
+    </author>
+    <author>
+      <name>Weipeng Zhou</name>
+    </author>
+    <author>
+      <name>Yujia Zhou</name>
+    </author>
+    <author>
+      <name>Hongyi Peng</name>
+    </author>
+    <author>
+      <name>Yang Ren</name>
+    </author>
+    <author>
+      <name>Xuguang Ai</name>
+    </author>
+    <author>
+      <name>Zhenyue Qin</name>
+    </author>
+    <author>
+      <name>Ming Hu</name>
+    </author>
+    <author>
+      <name>Xiaoxiao Li</name>
+    </author>
+    <author>
+      <name>Han Yu</name>
+    </author>
+    <author>
+      <name>Yih-Chung Tham</name>
+    </author>
+    <author>
+      <name>Lucila Ohno-Machado</name>
+    </author>
+    <author>
+      <name>Hua Xu</name>
+    </author>
+    <author>
+      <name>Qingyu Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2205.12689v2</id>
+    <title>Large Language Models are Few-Shot Clinical Information Extractors</title>
+    <updated>2022-11-30T18:43:44Z</updated>
+    <link href="https://arxiv.org/abs/2205.12689v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2205.12689v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>A long-running goal of the clinical NLP community is the extraction of important variables trapped in clinical notes. However, roadblocks have included dataset shift from the general domain and a lack of public clinical corpora and annotations. In this work, we show that large language models, such as InstructGPT, perform well at zero- and few-shot information extraction from clinical text despite not being trained specifically for the clinical domain. Whereas text classification and generation performance have already been studied extensively in such models, here we additionally demonstrate how to leverage them to tackle a diverse set of NLP tasks which require more structured outputs, including span identification, token-level sequence classification, and relation extraction. Further, due to the dearth of available data to evaluate these systems, we introduce new datasets for benchmarking few-shot clinical information extraction based on a manual re-annotation of the CASI dataset for new tasks. On the clinical extraction tasks we studied, the GPT-3 systems significantly outperform existing zero- and few-shot baselines.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-05-25T11:49:58Z</published>
+    <arxiv:comment>Accepted as a long paper to The 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Monica Agrawal</name>
+    </author>
+    <author>
+      <name>Stefan Hegselmann</name>
+    </author>
+    <author>
+      <name>Hunter Lang</name>
+    </author>
+    <author>
+      <name>Yoon Kim</name>
+    </author>
+    <author>
+      <name>David Sontag</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2504.10536v1</id>
+    <title>Federated Learning with Layer Skipping: Efficient Training of Large Language Models for Healthcare NLP</title>
+    <updated>2025-04-13T07:27:56Z</updated>
+    <link href="https://arxiv.org/abs/2504.10536v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2504.10536v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Federated learning (FL) enables collaborative model training across organizations without sharing raw data, addressing crucial privacy concerns in healthcare natural language processing (NLP). However, training large language models (LLMs) in federated settings faces significant challenges, including communication overhead and data heterogeneity. We propose Layer-Skipping Federated Learning, where only selected layers of a pre-trained LLM are fine-tuned across clients while others remain frozen. Applied to LLaMA 3.2-1B, our approach reduces communication costs by approximately 70% while maintaining performance within 2% of centralized training. We evaluate our method on clinical NER and classification tasks using i2b2 and MIMIC-III datasets. Our experiments demonstrate that Layer-Skipping FL outperforms competitive baselines, handles non-IID clinical data distributions effectively, and shows robustness when combined with differential privacy. This approach represents a practical solution for privacy-preserving collaborative learning in healthcare NLP.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-04-13T07:27:56Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Lihong Zhang</name>
+    </author>
+    <author>
+      <name>Yue Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.09127v1</id>
+    <title>Knowledge-Guided Large Language Model for Automatic Pediatric Dental Record Understanding and Safe Antibiotic Recommendation</title>
+    <updated>2025-12-09T21:11:55Z</updated>
+    <link href="https://arxiv.org/abs/2512.09127v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.09127v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Accurate interpretation of pediatric dental clinical records and safe antibiotic prescribing remain persistent challenges in dental informatics. Traditional rule-based clinical decision support systems struggle with unstructured dental narratives, incomplete radiographic descriptions, and complex safety constraints. To address these limitations, this study proposes a Knowledge-Guided Large Language Model (KG-LLM) that integrates a pediatric dental knowledge graph, retrieval-augmented generation (RAG), and a multi-stage safety validation pipeline for evidence-grounded antibiotic recommendation. The framework first employs a clinical NER/RE module to extract structured entities and relations from dental notes and radiology reports. Relevant guidelines, drug-safety rules, and analogous historical cases are subsequently retrieved from the knowledge graph and supplied to the LLM for diagnostic summarization and dose-drug-duration prediction. Safety assurance is achieved through a dual-layer validation mechanism combining deterministic rule checking with a learned classifier for detecting allergies, contraindications, and dosing errors. Experiments on 32,000 de-identified pediatric dental visit records demonstrate the effectiveness of the proposed approach. Compared with a domain-adapted Llama-2 clinical baseline, KG-LLM improves record-understanding performance (F1: 0.914 vs. 0.867), drug-dose-duration accuracy (Top-1: 0.782 vs. 0.716), and reduces unsafe antibiotic suggestions by 50%. Additional evaluation across summary quality, recommendation accuracy, and global safety scores further confirms the robustness of the system. Ablation analyses indicate that the knowledge graph, RAG, and safety modules each contribute substantially to clinical reliability and interpretability.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-09T21:11:55Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zihan Han</name>
+    </author>
+    <author>
+      <name>Junyan Ge</name>
+    </author>
+    <author>
+      <name>Caifeng Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.02229v2</id>
+    <title>Extraction of Medication and Temporal Relation from Clinical Text using Neural Language Models</title>
+    <updated>2023-10-08T21:17:54Z</updated>
+    <link href="https://arxiv.org/abs/2310.02229v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.02229v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical texts, represented in electronic medical records (EMRs), contain rich medical information and are essential for disease prediction, personalised information recommendation, clinical decision support, and medication pattern mining and measurement. Relation extractions between medication mentions and temporal information can further help clinicians better understand the patients' treatment history. To evaluate the performances of deep learning (DL) and large language models (LLMs) in medication extraction and temporal relations classification, we carry out an empirical investigation of \textbf{MedTem} project using several advanced learning structures including BiLSTM-CRF and CNN-BiLSTM for a clinical domain named entity recognition (NER), and BERT-CNN for temporal relation extraction (RE), in addition to the exploration of different word embedding techniques. Furthermore, we also designed a set of post-processing roles to generate structured output on medications and the temporal relation. Our experiments show that CNN-BiLSTM slightly wins the BiLSTM-CRF model on the i2b2-2009 clinical NER task yielding 75.67, 77.83, and 78.17 for precision, recall, and F1 scores using Macro Average. BERT-CNN model also produced reasonable evaluation scores 64.48, 67.17, and 65.03 for P/R/F1 using Macro Avg on the temporal relation extraction test set from i2b2-2012 challenges. Code and Tools from MedTem will be hosted at \url{https://github.com/HECTA-UoM/MedTem}</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-03T17:37:22Z</published>
+    <arxiv:comment>working paper</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hangyu Tu</name>
+    </author>
+    <author>
+      <name>Lifeng Han</name>
+    </author>
+    <author>
+      <name>Goran Nenadic</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2402.12801v2</id>
+    <title>Few-shot clinical entity recognition in English, French and Spanish: masked language models outperform generative model prompting</title>
+    <updated>2024-10-08T11:59:07Z</updated>
+    <link href="https://arxiv.org/abs/2402.12801v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2402.12801v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have become the preferred solution for many natural language processing tasks. In low-resource environments such as specialized domains, their few-shot capabilities are expected to deliver high performance. Named Entity Recognition (NER) is a critical task in information extraction that is not covered in recent LLM benchmarks. There is a need for better understanding the performance of LLMs for NER in a variety of settings including languages other than English. This study aims to evaluate generative LLMs, employed through prompt engineering, for few-shot clinical NER. %from the perspective of F1 performance and environmental impact. We compare 13 auto-regressive models using prompting and 16 masked models using fine-tuning on 14 NER datasets covering English, French and Spanish. While prompt-based auto-regressive models achieve competitive F1 for general NER, they are outperformed within the clinical domain by lighter biLSTM-CRF taggers based on masked models. Additionally, masked models exhibit lower environmental impact compared to auto-regressive models. Findings are consistent across the three languages studied, which suggests that LLM prompting is not yet suited for NER production in the clinical domain.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-02-20T08:20:49Z</published>
+    <arxiv:comment>Accepted to EMNLP Findings, 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Marco Naguib</name>
+    </author>
+    <author>
+      <name>Xavier Tannier</name>
+    </author>
+    <author>
+      <name>Aurélie Névéol</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.00731v2</id>
+    <title>Large Language Models Struggle in Token-Level Clinical Named Entity Recognition</title>
+    <updated>2024-08-17T00:59:55Z</updated>
+    <link href="https://arxiv.org/abs/2407.00731v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.00731v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) have revolutionized various sectors, including healthcare where they are employed in diverse applications. Their utility is particularly significant in the context of rare diseases, where data scarcity, complexity, and specificity pose considerable challenges. In the clinical domain, Named Entity Recognition (NER) stands out as an essential task and it plays a crucial role in extracting relevant information from clinical texts. Despite the promise of LLMs, current research mostly concentrates on document-level NER, identifying entities in a more general context across entire documents, without extracting their precise location. Additionally, efforts have been directed towards adapting ChatGPT for token-level NER. However, there is a significant research gap when it comes to employing token-level NER for clinical texts, especially with the use of local open-source LLMs. This study aims to bridge this gap by investigating the effectiveness of both proprietary and local LLMs in token-level clinical NER. Essentially, we delve into the capabilities of these models through a series of experiments involving zero-shot prompting, few-shot prompting, retrieval-augmented generation (RAG), and instruction-fine-tuning. Our exploration reveals the inherent challenges LLMs face in token-level NER, particularly in the context of rare diseases, and suggests possible improvements for their application in healthcare. This research contributes to narrowing a significant gap in healthcare informatics and offers insights that could lead to a more refined application of LLMs in the healthcare sector.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-30T15:38:48Z</published>
+    <arxiv:comment>AMIA 2024 Annual Symposium Proceedings</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Qiuhao Lu</name>
+    </author>
+    <author>
+      <name>Rui Li</name>
+    </author>
+    <author>
+      <name>Andrew Wen</name>
+    </author>
+    <author>
+      <name>Jinlian Wang</name>
+    </author>
+    <author>
+      <name>Liwei Wang</name>
+    </author>
+    <author>
+      <name>Hongfang Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.10020v4</id>
+    <title>Information Extraction from Clinical Notes: Are We Ready to Switch to Large Language Models?</title>
+    <updated>2025-01-07T16:48:36Z</updated>
+    <link href="https://arxiv.org/abs/2411.10020v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.10020v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Backgrounds: Information extraction (IE) is critical in clinical natural language processing (NLP). While large language models (LLMs) excel on generative tasks, their performance on extractive tasks remains debated. Methods: We investigated Named Entity Recognition (NER) and Relation Extraction (RE) using 1,588 clinical notes from four sources (UT Physicians, MTSamples, MIMIC-III, and i2b2). We developed an annotated corpus covering 4 clinical entities and 16 modifiers, and compared instruction-tuned LLaMA-2 and LLaMA-3 against BERT in terms of performance, generalizability, computational resources, and throughput to BERT. Results: LLaMA models outperformed BERT across datasets. With sufficient training data, LLaMA showed modest improvements (1% on NER, 1.5-3.7% on RE); improvements were larger with limited training data. On unseen i2b2 data, LLaMA-3-70B outperformed BERT by 7% (F1) on NER and 4% on RE. However, LLaMA models required more computing resources and ran up to 28 times slower. We implemented "Kiwi," a clinical IE package featuring both models, available at https://kiwi.clinicalnlp.org/. Conclusion: This study is among the first to develop and evaluate a comprehensive clinical IE system using open-source LLMs. Results indicate that LLaMA models outperform BERT for clinical NER and RE but with higher computational costs and lower throughputs. These findings highlight that choosing between LLMs and traditional deep learning methods for clinical IE applications should remain task-specific, taking into account both performance metrics and practical considerations such as available computing resources and the intended use case scenarios.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-15T07:54:19Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yan Hu</name>
+    </author>
+    <author>
+      <name>Xu Zuo</name>
+    </author>
+    <author>
+      <name>Yujia Zhou</name>
+    </author>
+    <author>
+      <name>Xueqing Peng</name>
+    </author>
+    <author>
+      <name>Jimin Huang</name>
+    </author>
+    <author>
+      <name>Vipina K. Keloth</name>
+    </author>
+    <author>
+      <name>Vincent J. Zhang</name>
+    </author>
+    <author>
+      <name>Ruey-Ling Weng</name>
+    </author>
+    <author>
+      <name>Qingyu Chen</name>
+    </author>
+    <author>
+      <name>Xiaoqian Jiang</name>
+    </author>
+    <author>
+      <name>Kirk E. Roberts</name>
+    </author>
+    <author>
+      <name>Hua Xu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2304.07396v2</id>
+    <title>Improving Patient Pre-screening for Clinical Trials: Assisting Physicians with Large Language Models</title>
+    <updated>2023-06-29T12:59:16Z</updated>
+    <link href="https://arxiv.org/abs/2304.07396v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2304.07396v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Physicians considering clinical trials for their patients are met with the laborious process of checking many text based eligibility criteria. Large Language Models (LLMs) have shown to perform well for clinical information extraction and clinical reasoning, including medical tests, but not yet in real-world scenarios. This paper investigates the use of InstructGPT to assist physicians in determining eligibility for clinical trials based on a patient's summarised medical profile. Using a prompting strategy combining one-shot, selection-inference and chain-of-thought techniques, we investigate the performance of LLMs on 10 synthetically created patient profiles. Performance is evaluated at four levels: ability to identify screenable eligibility criteria from a trial given a medical profile; ability to classify for each individual criterion whether the patient qualifies; the overall classification whether a patient is eligible for a clinical trial and the percentage of criteria to be screened by physician. We evaluated against 146 clinical trials and a total of 4,135 eligibility criteria. The LLM was able to correctly identify the screenability of 72% (2,994/4,135) of the criteria. Additionally, 72% (341/471) of the screenable criteria were evaluated correctly. The resulting trial level classification as eligible or ineligible resulted in a recall of 0.5. By leveraging LLMs with a physician-in-the-loop, a recall of 1.0 and precision of 0.71 on clinical trial level can be achieved while reducing the amount of criteria to be checked by an estimated 90%. LLMs can be used to assist physicians with pre-screening of patients for clinical trials. By forcing instruction-tuned LLMs to produce chain-of-thought responses, the reasoning can be made transparent to and the decision process becomes amenable by physicians, thereby making such a system feasible for use in real-world scenarios.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-04-14T21:19:46Z</published>
+    <arxiv:comment>11 pages, 4 tables, 2 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Danny M. den Hamer</name>
+    </author>
+    <author>
+      <name>Perry Schoor</name>
+    </author>
+    <author>
+      <name>Tobias B. Polak</name>
+    </author>
+    <author>
+      <name>Daniel Kapitan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2209.12177v1</id>
+    <title>Application of Deep Learning in Generating Structured Radiology Reports: A Transformer-Based Technique</title>
+    <updated>2022-09-25T08:03:15Z</updated>
+    <link href="https://arxiv.org/abs/2209.12177v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2209.12177v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Since radiology reports needed for clinical practice and research are written and stored in free-text narrations, extraction of relative information for further analysis is difficult. In these circumstances, natural language processing (NLP) techniques can facilitate automatic information extraction and transformation of free-text formats to structured data. In recent years, deep learning (DL)-based models have been adapted for NLP experiments with promising results. Despite the significant potential of DL models based on artificial neural networks (ANN) and convolutional neural networks (CNN), the models face some limitations to implement in clinical practice. Transformers, another new DL architecture, have been increasingly applied to improve the process. Therefore, in this study, we propose a transformer-based fine-grained named entity recognition (NER) architecture for clinical information extraction. We collected 88 abdominopelvic sonography reports in free-text formats and annotated them based on our developed information schema. The text-to-text transfer transformer model (T5) and Scifive, a pre-trained domain-specific adaptation of the T5 model, were applied for fine-tuning to extract entities and relations and transform the input into a structured format. Our transformer-based model in this study outperformed previously applied approaches such as ANN and CNN models based on ROUGE-1, ROUGE-2, ROUGE-L, and BLEU scores of 0.816, 0.668, 0.528, and 0.743, respectively, while providing an interpretable structured report.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-09-25T08:03:15Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Journal of Digital Imaging (2022) 1--11 Springer</arxiv:journal_ref>
+    <author>
+      <name>Seyed Ali Reza Moezzi</name>
+    </author>
+    <author>
+      <name>Abdolrahman Ghaedi</name>
+    </author>
+    <author>
+      <name>Mojdeh Rahmanian</name>
+    </author>
+    <author>
+      <name>Seyedeh Zahra Mousavi</name>
+    </author>
+    <author>
+      <name>Ashkan Sami</name>
+    </author>
+    <arxiv:doi>10.1007/s10278-022-00692-x</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1007/s10278-022-00692-x" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.15467v1</id>
+    <title>Retrieval-Augmented Large Language Models for Schema-Constrained Clinical Information Extraction</title>
+    <updated>2026-05-14T23:13:05Z</updated>
+    <link href="https://arxiv.org/abs/2605.15467v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.15467v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Conversational nurse-patient transcripts contain actionable observations, but converting these transcripts into structured representations at scale remains challenging. Documentation burden is substantial, with prior studies showing clinicians spend large portions of their workday on documentation and related desk work rather than direct patient care. MEDIQA-SYNUR focuses on observation extraction from conversational nurse-patient transcripts, requiring systems to normalize these narratives into a predefined schema with value-type constraints. We propose a modular retrieval-augmented generation (RAG) pipeline that uses the training set as an exemplar corpus, combines schema-constrained prompting (full schema vs. pruned candidate schema), deterministic schema-based postprocessing, and a second-pass audit, with two LLM backbones: Llama-4-Scout-17B-16E-Instruct and GPT-5.2 with corresponding embedding models for RAG. Our best configuration uses GPT-5.2 with full schema, RAG, and a second-pass auditing, achieving 80.36% F1 score. Overall, our results show that RAG consistently improves performance, while the optimal degree of schema constraint depends on the model, and second-pass auditing yields modest additional gains by correcting residual schema-adherence errors.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-14T23:13:05Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>A H M Rezaul Karim</name>
+    </author>
+    <author>
+      <name>Ozlem Uzuner</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2504.02871v1</id>
+    <title>Synthesized Annotation Guidelines are Knowledge-Lite Boosters for Clinical Information Extraction</title>
+    <updated>2025-04-01T15:59:04Z</updated>
+    <link href="https://arxiv.org/abs/2504.02871v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2504.02871v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative information extraction using large language models, particularly through few-shot learning, has become a popular method. Recent studies indicate that providing a detailed, human-readable guideline-similar to the annotation guidelines traditionally used for training human annotators can significantly improve performance. However, constructing these guidelines is both labor- and knowledge-intensive. Additionally, the definitions are often tailored to meet specific needs, making them highly task-specific and often non-reusable. Handling these subtle differences requires considerable effort and attention to detail. In this study, we propose a self-improving method that harvests the knowledge summarization and text generation capacity of LLMs to synthesize annotation guidelines while requiring virtually no human input. Our zero-shot experiments on the clinical named entity recognition benchmarks, 2012 i2b2 EVENT, 2012 i2b2 TIMEX, 2014 i2b2, and 2018 n2c2 showed 25.86%, 4.36%, 0.20%, and 7.75% improvements in strict F1 scores from the no-guideline baseline. The LLM-synthesized guidelines showed equivalent or better performance compared to human-written guidelines by 1.15% to 4.14% in most tasks. In conclusion, this study proposes a novel LLM self-improving method that requires minimal knowledge and human input and is applicable to multiple biomedical domains.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-04-01T15:59:04Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Enshuo Hsu</name>
+    </author>
+    <author>
+      <name>Martin Ugbala</name>
+    </author>
+    <author>
+      <name>Krishna Kumar Kookal</name>
+    </author>
+    <author>
+      <name>Zouaidi Kawtar</name>
+    </author>
+    <author>
+      <name>Nicholas L. Rider</name>
+    </author>
+    <author>
+      <name>Muhammad F. Walji</name>
+    </author>
+    <author>
+      <name>Kirk Roberts</name>
+    </author>
+    <arxiv:doi>10.1093/jamia/ocag084</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1093/jamia/ocag084" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.13696v1</id>
+    <title>Integrating Text and Time-Series into (Large) Language Models to Predict Medical Outcomes</title>
+    <updated>2025-09-17T05:02:14Z</updated>
+    <link href="https://arxiv.org/abs/2509.13696v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.13696v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) excel at text generation, but their ability to handle clinical classification tasks involving structured data, such as time series, remains underexplored. In this work, we adapt instruction-tuned LLMs using DSPy-based prompt optimization to process clinical notes and structured EHR inputs jointly. Our results show that this approach achieves performance on par with specialized multimodal systems while requiring less complexity and offering greater adaptability across tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-17T05:02:14Z</published>
+    <arxiv:comment>Presented and published at BioCreative IX</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Iyadh Ben Cheikh Larbi</name>
+    </author>
+    <author>
+      <name>Ajay Madhavan Ravichandran</name>
+    </author>
+    <author>
+      <name>Aljoscha Burchardt</name>
+    </author>
+    <author>
+      <name>Roland Roller</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2409.08936v4</id>
+    <title>SimSUM: Simulated Benchmark with Structured and Unstructured Medical Records</title>
+    <updated>2025-12-09T15:48:34Z</updated>
+    <link href="https://arxiv.org/abs/2409.08936v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2409.08936v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical information extraction, which involves structuring clinical concepts from unstructured medical text, remains a challenging problem that could benefit from the inclusion of tabular background information available in electronic health records. Existing open-source datasets lack explicit links between structured features and clinical concepts in the text, motivating the need for a new research dataset. We introduce SimSUM, a benchmark dataset of 10,000 simulated patient records that link unstructured clinical notes with structured background variables. Each record simulates a patient encounter in the domain of respiratory diseases and includes tabular data (e.g., symptoms, diagnoses, underlying conditions) generated from a Bayesian network whose structure and parameters are defined by domain experts. A large language model (GPT-4o) is prompted to generate a clinical note describing the encounter, including symptoms and relevant context. These notes are annotated with span-level symptom mentions. We conduct an expert evaluation to assess note quality and run baseline predictive models on both the tabular and textual data. The SimSUM dataset is primarily designed to support research on clinical information extraction in the presence of tabular background variables, which can be linked through domain knowledge to concepts of interest to be extracted from the text -- namely, symptoms in the case of SimSUM. Secondary uses include research on the automation of clinical reasoning over both tabular data and text, causal effect estimation in the presence of tabular and/or textual confounders, and multi-modal synthetic data generation. SimSUM is not intended for training clinical decision support systems or production-grade models, but rather to facilitate reproducible research in a simplified and controlled setting.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-09-13T15:55:15Z</published>
+    <arxiv:comment>An earlier version of this dataset was published under the name SynSUM. It has since been renamed to SimSUM to avoid confusion with synthetic data generated from real data, and to emphasize the simulated nature of the dataset. The dataset is available at https://github.com/prabaey/SimSUM</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Paloma Rabaey</name>
+    </author>
+    <author>
+      <name>Stefan Heytens</name>
+    </author>
+    <author>
+      <name>Thomas Demeester</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2303.16416v3</id>
+    <title>Improving Large Language Models for Clinical Named Entity Recognition via Prompt Engineering</title>
+    <updated>2024-01-25T04:02:23Z</updated>
+    <link href="https://arxiv.org/abs/2303.16416v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2303.16416v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Objective: This study quantifies the capabilities of GPT-3.5 and GPT-4 for clinical named entity recognition (NER) tasks and proposes task-specific prompts to improve their performance. Materials and Methods: We evaluated these models on two clinical NER tasks: (1) to extract medical problems, treatments, and tests from clinical notes in the MTSamples corpus, following the 2010 i2b2 concept extraction shared task, and (2) identifying nervous system disorder-related adverse events from safety reports in the vaccine adverse event reporting system (VAERS). To improve the GPT models' performance, we developed a clinical task-specific prompt framework that includes (1) baseline prompts with task description and format specification, (2) annotation guideline-based prompts, (3) error analysis-based instructions, and (4) annotated samples for few-shot learning. We assessed each prompt's effectiveness and compared the models to BioClinicalBERT. Results: Using baseline prompts, GPT-3.5 and GPT-4 achieved relaxed F1 scores of 0.634, 0.804 for MTSamples, and 0.301, 0.593 for VAERS. Additional prompt components consistently improved model performance. When all four components were used, GPT-3.5 and GPT-4 achieved relaxed F1 socres of 0.794, 0.861 for MTSamples and 0.676, 0.736 for VAERS, demonstrating the effectiveness of our prompt framework. Although these results trail BioClinicalBERT (F1 of 0.901 for the MTSamples dataset and 0.802 for the VAERS), it is very promising considering few training samples are needed. Conclusion: While direct application of GPT models to clinical NER tasks falls short of optimal performance, our task-specific prompt framework, incorporating medical knowledge and training samples, significantly enhances GPT models' feasibility for potential clinical applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-03-29T02:46:18Z</published>
+    <arxiv:comment>17 pages, 5 tables, 6 figure</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yan Hu</name>
+    </author>
+    <author>
+      <name>Qingyu Chen</name>
+    </author>
+    <author>
+      <name>Jingcheng Du</name>
+    </author>
+    <author>
+      <name>Xueqing Peng</name>
+    </author>
+    <author>
+      <name>Vipina Kuttichi Keloth</name>
+    </author>
+    <author>
+      <name>Xu Zuo</name>
+    </author>
+    <author>
+      <name>Yujia Zhou</name>
+    </author>
+    <author>
+      <name>Zehan Li</name>
+    </author>
+    <author>
+      <name>Xiaoqian Jiang</name>
+    </author>
+    <author>
+      <name>Zhiyong Lu</name>
+    </author>
+    <author>
+      <name>Kirk Roberts</name>
+    </author>
+    <author>
+      <name>Hua Xu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.18938v1</id>
+    <title>Reshaping Free-Text Radiology Notes Into Structured Reports With Generative Transformers</title>
+    <updated>2024-03-27T18:38:39Z</updated>
+    <link href="https://arxiv.org/abs/2403.18938v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.18938v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>BACKGROUND: Radiology reports are typically written in a free-text format, making clinical information difficult to extract and use. Recently the adoption of structured reporting (SR) has been recommended by various medical societies thanks to the advantages it offers, e.g. standardization, completeness and information retrieval. We propose a pipeline to extract information from free-text radiology reports, that fits with the items of the reference SR registry proposed by a national society of interventional and medical radiology, focusing on CT staging of patients with lymphoma. METHODS: Our work aims to leverage the potential of Natural Language Processing (NLP) and Transformer-based models to deal with automatic SR registry filling. With the availability of 174 radiology reports, we investigate a rule-free generative Question Answering approach based on a domain-specific version of T5 (IT5). Two strategies (batch-truncation and ex-post combination) are implemented to comply with the model's context length limitations. Performance is evaluated in terms of strict accuracy, F1, and format accuracy, and compared with the widely used GPT-3.5 Large Language Model. A 5-point Likert scale questionnaire is used to collect human-expert feedback on the similarity between medical annotations and generated answers. RESULTS: The combination of fine-tuning and batch splitting allows IT5 to achieve notable results; it performs on par with GPT-3.5 albeit its size being a thousand times smaller in terms of parameters. Human-based assessment scores show a high correlation (Spearman's correlation coefficients&gt;0.88, p-values&lt;0.001) with AI performance metrics (F1) and confirm the superior ability of LLMs (i.e., GPT-3.5, 175B of parameters) in generating plausible human-like statements.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-27T18:38:39Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Artificial Intelligence in Medicine, Volume 154, 2024</arxiv:journal_ref>
+    <author>
+      <name>Laura Bergomi</name>
+    </author>
+    <author>
+      <name>Tommaso M. Buonocore</name>
+    </author>
+    <author>
+      <name>Paolo Antonazzo</name>
+    </author>
+    <author>
+      <name>Lorenzo Alberghi</name>
+    </author>
+    <author>
+      <name>Riccardo Bellazzi</name>
+    </author>
+    <author>
+      <name>Lorenzo Preda</name>
+    </author>
+    <author>
+      <name>Chandra Bortolotto</name>
+    </author>
+    <author>
+      <name>Enea Parimbelli</name>
+    </author>
+    <arxiv:doi>10.1016/j.artmed.2024.102924</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1016/j.artmed.2024.102924" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2109.07243v2</id>
+    <title>Enhancing Clinical Information Extraction with Transferred Contextual Embeddings</title>
+    <updated>2021-09-22T12:00:19Z</updated>
+    <link href="https://arxiv.org/abs/2109.07243v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2109.07243v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The Bidirectional Encoder Representations from Transformers (BERT) model has achieved the state-of-the-art performance for many natural language processing (NLP) tasks. Yet, limited research has been contributed to studying its effectiveness when the target domain is shifted from the pre-training corpora, for example, for biomedical or clinical NLP applications. In this paper, we applied it to a widely studied a hospital information extraction (IE) task and analyzed its performance under the transfer learning setting. Our application became the new state-of-the-art result by a clear margin, compared with a range of existing IE models. Specifically, on this nursing handover data set, the macro-average F1 score from our model was 0.438, whilst the previous best deep learning models had 0.416. In conclusion, we showed that BERT based pre-training models can be transferred to health-related documents under mild conditions and with a proper fine-tuning process.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-09-15T12:22:57Z</published>
+    <arxiv:comment>6 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zimin Wan</name>
+    </author>
+    <author>
+      <name>Chenchen Xu</name>
+    </author>
+    <author>
+      <name>Hanna Suominen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.26510v1</id>
+    <title>Clinical named entity recognition in the Portuguese language: a benchmark of modern BERT models and LLMs</title>
+    <updated>2026-03-27T15:22:07Z</updated>
+    <link href="https://arxiv.org/abs/2603.26510v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.26510v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical notes contain valuable unstructured information. Named entity recognition (NER) enables the automatic extraction of medical concepts; however, benchmarks for Portuguese remain scarce. In this study, we aimed to evaluate BERT-based models and large language models (LLMs) for clinical NER in Portuguese and to test strategies for addressing multilabel imbalance. We compared BioBERTpt, BERTimbau, ModernBERT, and mmBERT with LLMs such as GPT-5 and Gemini-2.5, using the public SemClinBr corpus and a private breast cancer dataset. Models were trained under identical conditions and evaluated using precision, recall, and F1-score. Iterative stratification, weighted loss, and oversampling were explored to mitigate class imbalance. The mmBERT-base model achieved the best performance (micro F1 = 0.76), outperforming all other models. Iterative stratification improved class balance and overall performance. Multilingual BERT models, particularly mmBERT, perform strongly for Portuguese clinical NER and can run locally with limited computational resources. Balanced data-splitting strategies further enhance performance.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-27T15:22:07Z</published>
+    <arxiv:comment>Under peer review. GitHub: https://github.com/GRUPOMED4U/clinical_ner_benchmark_paper</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Vinicius Anjos de Almeida</name>
+    </author>
+    <author>
+      <name>Sandro Saorin da Silva</name>
+    </author>
+    <author>
+      <name>Josimar Chire</name>
+    </author>
+    <author>
+      <name>Leonardo Vicenzi</name>
+    </author>
+    <author>
+      <name>Nícolas Henrique Borges</name>
+    </author>
+    <author>
+      <name>Helena Kociolek</name>
+    </author>
+    <author>
+      <name>Sarah Miriã de Castro Rocha</name>
+    </author>
+    <author>
+      <name>Frederico Nassif Gomes</name>
+    </author>
+    <author>
+      <name>Júlia Cristina Ferreira</name>
+    </author>
+    <author>
+      <name>Oge Marques</name>
+    </author>
+    <author>
+      <name>Lucas Emanuel Silva e Oliveira</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.15211v2</id>
+    <title>OEMA: Ontology-Enhanced Multi-Agent Collaboration Framework for Zero-Shot Clinical Named Entity Recognition</title>
+    <updated>2025-11-20T04:13:45Z</updated>
+    <link href="https://arxiv.org/abs/2511.15211v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.15211v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>With the rapid expansion of unstructured clinical texts in electronic health records (EHRs), clinical named entity recognition (NER) has become a crucial technique for extracting medical information. However, traditional supervised models such as CRF and BioClinicalBERT suffer from high annotation costs. Although zero-shot NER based on large language models (LLMs) reduces the dependency on labeled data, challenges remain in aligning example selection with task granularity and effectively integrating prompt design with self-improvement frameworks. To address these limitations, we propose OEMA, a novel zero-shot clinical NER framework based on multi-agent collaboration. OEMA consists of three core components: (1) a self-annotator that autonomously generates candidate examples; (2) a discriminator that leverages SNOMED CT to filter token-level examples by clinical relevance; and (3) a predictor that incorporates entity-type descriptions to enhance inference accuracy. Experimental results on two benchmark datasets, MTSamples and VAERS, demonstrate that OEMA achieves state-of-the-art performance under exact-match evaluation. Moreover, under related-match criteria, OEMA performs comparably to the supervised BioClinicalBERT model while significantly outperforming the traditional CRF method. OEMA improves zero-shot clinical NER, achieving near-supervised performance under related-match criteria. Future work will focus on continual learning and open-domain adaptation to expand its applicability in clinical NLP.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-19T08:02:55Z</published>
+    <arxiv:comment>12 pages, 4 figures, 4 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>JAMIA Open, 2026, ooag049</arxiv:journal_ref>
+    <author>
+      <name>Xinli Tao</name>
+    </author>
+    <author>
+      <name>Xin Dong</name>
+    </author>
+    <author>
+      <name>Xuezhong Zhou</name>
+    </author>
+    <arxiv:doi>10.1093/jamiaopen/ooag049</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1093/jamiaopen/ooag049" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.10583v1</id>
+    <title>Evaluating Prompting Strategies with MedGemma for Medical Order Extraction</title>
+    <updated>2025-11-13T18:22:32Z</updated>
+    <link href="https://arxiv.org/abs/2511.10583v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.10583v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The accurate extraction of medical orders from doctor-patient conversations is a critical task for reducing clinical documentation burdens and ensuring patient safety. This paper details our team submission to the MEDIQA-OE-2025 Shared Task. We investigate the performance of MedGemma, a new domain-specific open-source language model, for structured order extraction. We systematically evaluate three distinct prompting paradigms: a straightforward one-Shot approach, a reasoning-focused ReAct framework, and a multi-step agentic workflow. Our experiments reveal that while more complex frameworks like ReAct and agentic flows are powerful, the simpler one-shot prompting method achieved the highest performance on the official validation set. We posit that on manually annotated transcripts, complex reasoning chains can lead to "overthinking" and introduce noise, making a direct approach more robust and efficient. Our work provides valuable insights into selecting appropriate prompting strategies for clinical information extraction in varied data conditions.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-13T18:22:32Z</published>
+    <arxiv:comment>2 figures 7 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Abhinand Balachandran</name>
+    </author>
+    <author>
+      <name>Bavana Durgapraveen</name>
+    </author>
+    <author>
+      <name>Gowsikkan Sikkan Sudhagar</name>
+    </author>
+    <author>
+      <name>Vidhya Varshany J S</name>
+    </author>
+    <author>
+      <name>Sriram Rajkumar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.18525v3</id>
+    <title>ClinicRealm: Re-evaluating Large Language Models with Conventional Machine Learning for Non-Generative Clinical Prediction Tasks</title>
+    <updated>2025-10-04T20:21:52Z</updated>
+    <link href="https://arxiv.org/abs/2407.18525v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.18525v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) are increasingly deployed in medicine. However, their utility in non-generative clinical prediction, often presumed inferior to specialized models, remains under-evaluated, leading to ongoing debate within the field and potential for misuse, misunderstanding, or over-reliance due to a lack of systematic benchmarking. Our ClinicRealm study addresses this by benchmarking 15 GPT-style LLMs, 5 BERT-style models, and 11 traditional methods on unstructured clinical notes and structured Electronic Health Records (EHR), while also assessing their reasoning, reliability, and fairness. Key findings reveal a significant shift: for clinical note predictions, leading LLMs (e.g., DeepSeek-V3.1-Think, GPT-5) in zero-shot settings now decisively outperform finetuned BERT models. On structured EHRs, while specialized models excel with ample data, advanced LLMs (e.g., GPT-5, DeepSeek-V3.1-Think) show potent zero-shot capabilities, often surpassing conventional models in data-scarce settings. Notably, leading open-source LLMs can match or exceed proprietary counterparts. These results provide compelling evidence that modern LLMs are competitive tools for non-generative clinical prediction, particularly with unstructured text and offering data-efficient structured data options, thus necessitating a re-evaluation of model selection strategies. This research should serve as an important insight for medical informaticists, AI developers, and clinical researchers, potentially prompting a reassessment of current assumptions and inspiring new approaches to LLM application in predictive healthcare.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-26T06:09:10Z</published>
+    <arxiv:comment>Code: https://github.com/yhzhu99/ehr-llm-benchmark</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yinghao Zhu</name>
+    </author>
+    <author>
+      <name>Junyi Gao</name>
+    </author>
+    <author>
+      <name>Zixiang Wang</name>
+    </author>
+    <author>
+      <name>Weibin Liao</name>
+    </author>
+    <author>
+      <name>Xiaochen Zheng</name>
+    </author>
+    <author>
+      <name>Lifang Liang</name>
+    </author>
+    <author>
+      <name>Miguel O. Bernabeu</name>
+    </author>
+    <author>
+      <name>Yasha Wang</name>
+    </author>
+    <author>
+      <name>Lequan Yu</name>
+    </author>
+    <author>
+      <name>Chengwei Pan</name>
+    </author>
+    <author>
+      <name>Ewen M. Harrison</name>
+    </author>
+    <author>
+      <name>Liantao Ma</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.11407v1</id>
+    <title>Reproducible Synthetic Clinical Letters for Seizure Frequency Information Extraction</title>
+    <updated>2026-03-12T00:41:21Z</updated>
+    <link href="https://arxiv.org/abs/2603.11407v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.11407v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Seizure-frequency information is important for epilepsy research and clinical care, but it is usually recorded in variable free-text clinic letters that are hard to annotate and share. We developed a reproducible, privacy-preserving framework for extracting seizure frequency using fully synthetic yet task-faithful epilepsy letters. We defined a structured label scheme covering common descriptions of seizure burden, including explicit rates, ranges, clusters, seizure-free intervals, unknown frequency, and explicit no-seizure statements. A teacher language model generated NHS-style synthetic letters paired with normalized labels, rationales, and evidence spans. We fine-tuned several open-weight language models (4B-14B parameters) on these synthetic letters to extract seizure frequency from full documents, comparing direct numeric prediction with structured label prediction and testing evidence-grounded outputs. On a clinician-checked held-out set of real clinic letters, models trained only on synthetic data generalized well, and structured labels consistently outperformed direct numeric regression. With 15,000 synthetic training letters, models achieved micro-F1 scores up to 0.788 for fine-grained categories and 0.847 for pragmatic categories; a medically oriented 4B model achieved 0.787 and 0.858, respectively. Evidence-grounded outputs also supported rapid clinical verification and error analysis. These results show that synthetic, structured, evidence-grounded supervision can enable robust seizure-frequency extraction without sharing sensitive patient text and may generalize to other temporally complex clinical information extraction tasks.</summary>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-12T00:41:21Z</published>
+    <arxiv:primary_category term="cs.IR"/>
+    <author>
+      <name>Yujian Gan</name>
+    </author>
+    <author>
+      <name>Stephen H. Barlow</name>
+    </author>
+    <author>
+      <name>Ben Holgate</name>
+    </author>
+    <author>
+      <name>Joe Davies</name>
+    </author>
+    <author>
+      <name>James T. Teo</name>
+    </author>
+    <author>
+      <name>Joel S. Winston</name>
+    </author>
+    <author>
+      <name>Mark P. Richardson</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.15149v1</id>
+    <title>A Robust BERT-Based Deep Learning Model for Automated Cancer Type Extraction from Unstructured Pathology Reports</title>
+    <updated>2025-08-21T01:12:39Z</updated>
+    <link href="https://arxiv.org/abs/2508.15149v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.15149v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The accurate extraction of clinical information from electronic medical records is particularly critical to clinical research but require much trained expertise and manual labor. In this study we developed a robust system for automated extraction of the specific cancer types for the purpose of supporting precision oncology research. from pathology reports using a fine-tuned RoBERTa model. This model significantly outperformed the baseline model and a Large Language Model, Mistral 7B, achieving F1_Bertscore 0.98 and overall exact match of 80.61%. This fine-tuning approach demonstrates the potential for scalability that can integrate seamlessly into the molecular tumour board process. Fine-tuning domain-specific models for precision tasks in oncology, may pave the way for more efficient and accurate clinical information extraction.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-21T01:12:39Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Minh Tran</name>
+    </author>
+    <author>
+      <name>Jeffery C. Chan</name>
+    </author>
+    <author>
+      <name>Min Li Huang</name>
+    </author>
+    <author>
+      <name>Maya Kansara</name>
+    </author>
+    <author>
+      <name>John P. Grady</name>
+    </author>
+    <author>
+      <name>Christine E. Napier</name>
+    </author>
+    <author>
+      <name>Subotheni Thavaneswaran</name>
+    </author>
+    <author>
+      <name>Mandy L. Ballinger</name>
+    </author>
+    <author>
+      <name>David M. Thomas</name>
+    </author>
+    <author>
+      <name>Frank P. Lin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.04629v2</id>
+    <title>Entity Decomposition with Filtering: A Zero-Shot Clinical Named Entity Recognition Framework</title>
+    <updated>2025-02-19T20:51:20Z</updated>
+    <link href="https://arxiv.org/abs/2407.04629v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.04629v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical named entity recognition (NER) aims to retrieve important entities within clinical narratives. Recent works have demonstrated that large language models (LLMs) can achieve strong performance in this task. While previous works focus on proprietary LLMs, we investigate how open NER LLMs, trained specifically for entity recognition, perform in clinical NER. Our initial experiment reveals significant contrast in performance for some clinical entities and how a simple exploitment on entity types can alleviate this issue. In this paper, we introduce a novel framework, entity decomposition with filtering, or EDF. Our key idea is to decompose the entity recognition task into several retrievals of entity sub-types and then filter them. Our experimental results demonstrate the efficacies of our framework and the improvements across all metrics, models, datasets, and entity types. Our analysis also reveals substantial improvement in recognizing previously missed entities using entity decomposition. We further provide a comprehensive evaluation of our framework and an in-depth error analysis to pave future works.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-05T16:38:23Z</published>
+    <arxiv:comment>Accepted to NAACL 2025 Main Conference</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Reza Averly</name>
+    </author>
+    <author>
+      <name>Xia Ning</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.09367v1</id>
+    <title>Relation Extraction Capabilities of LLMs on Clinical Text: A Bilingual Evaluation for English and Turkish</title>
+    <updated>2026-01-14T10:49:46Z</updated>
+    <link href="https://arxiv.org/abs/2601.09367v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.09367v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The scarcity of annotated datasets for clinical information extraction in non-English languages hinders the evaluation of large language model (LLM)-based methods developed primarily in English. In this study, we present the first comprehensive bilingual evaluation of LLMs for the clinical Relation Extraction (RE) task in both English and Turkish. To facilitate this evaluation, we introduce the first English-Turkish parallel clinical RE dataset, derived and carefully curated from the 2010 i2b2/VA relation classification corpus. We systematically assess a diverse set of prompting strategies, including multiple in-context learning (ICL) and Chain-of-Thought (CoT) approaches, and compare their performance to fine-tuned baselines such as PURE. Furthermore, we propose Relation-Aware Retrieval (RAR), a novel in-context example selection method based on contrastive learning, that is specifically designed to capture both sentence-level and relation-level semantics. Our results show that prompting-based LLM approaches consistently outperform traditional fine-tuned models. Moreover, evaluations for English performed better than their Turkish counterparts across all evaluated LLMs and prompting techniques. Among ICL methods, RAR achieves the highest performance, with Gemini 1.5 Flash reaching a micro-F1 score of 0.906 in English and 0.888 in Turkish. Performance further improves to 0.918 F1 in English when RAR is combined with a structured reasoning prompt using the DeepSeek-V3 model. These findings highlight the importance of high-quality demonstration retrieval and underscore the potential of advanced retrieval and prompting techniques to bridge resource gaps in clinical natural language processing.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-14T10:49:46Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Aidana Aidynkyzy</name>
+    </author>
+    <author>
+      <name>Oğuz Dikenelli</name>
+    </author>
+    <author>
+      <name>Oylum Alatlı</name>
+    </author>
+    <author>
+      <name>Şebnem Bora</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.00022v1</id>
+    <title>Noise reduction in BERT NER models for clinical entity extraction</title>
+    <updated>2026-02-03T16:35:37Z</updated>
+    <link href="https://arxiv.org/abs/2603.00022v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.00022v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Precision is of utmost importance in the realm of clinical entity extraction from clinical notes and reports. Encoder Models fine-tuned for Named Entity Recognition (NER) are an efficient choice for this purpose, as they don't hallucinate. We pre-trained an in-house BERT over clinical data and then fine-tuned it for NER. These models performed well on recall but could not close upon the high precision range, needed for clinical models. To address this challenge, we developed a Noise Removal model that refines the output of NER. The NER model assigns token-level entity tags along with probability scores for each token. Our Noise Removal (NR) model then analyzes these probability sequences and classifies predictions as either weak or strong. A naïve approach might involve filtering predictions based on low probability values; however, this method is unreliable. Owing to the characteristics of the SoftMax function, Transformer based architectures often assign disproportionately high confidence scores even to uncertain or weak predictions, making simple thresholding ineffective. To address this issue, we adopted a supervised modeling strategy in which the NR model leverages advanced features such as the Probability Density Map (PDM). The PDM captures the Semantic-Pull effect observed within Transformer embeddings, an effect that manifests in the probability distributions of NER class predictions across token sequences. This approach enables the model to classify predictions as weak or strong with significantly improved accuracy. With these NR models we were able to reduce False Positives across various clinical NER models by 50\% to 90\%.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-03T16:35:37Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kuldeep Jiwani</name>
+    </author>
+    <author>
+      <name>Yash K Jeengar</name>
+    </author>
+    <author>
+      <name>Ayush Dhaka</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.16341v2</id>
+    <title>EHRCon: Dataset for Checking Consistency between Unstructured Notes and Structured Tables in Electronic Health Records</title>
+    <updated>2024-12-30T05:44:55Z</updated>
+    <link href="https://arxiv.org/abs/2406.16341v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.16341v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic Health Records (EHRs) are integral for storing comprehensive patient medical records, combining structured data (e.g., medications) with detailed clinical notes (e.g., physician notes). These elements are essential for straightforward data retrieval and provide deep, contextual insights into patient care. However, they often suffer from discrepancies due to unintuitive EHR system designs and human errors, posing serious risks to patient safety. To address this, we developed EHRCon, a new dataset and task specifically designed to ensure data consistency between structured tables and unstructured notes in EHRs. EHRCon was crafted in collaboration with healthcare professionals using the MIMIC-III EHR dataset, and includes manual annotations of 4,101 entities across 105 clinical notes checked against database entries for consistency. EHRCon has two versions, one using the original MIMIC-III schema, and another using the OMOP CDM schema, in order to increase its applicability and generalizability. Furthermore, leveraging the capabilities of large language models, we introduce CheckEHR, a novel framework for verifying the consistency between clinical notes and database tables. CheckEHR utilizes an eight-stage process and shows promising results in both few-shot and zero-shot settings. The code is available at https://github.com/dustn1259/EHRCon.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-24T06:26:50Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yeonsu Kwon</name>
+    </author>
+    <author>
+      <name>Jiho Kim</name>
+    </author>
+    <author>
+      <name>Gyubok Lee</name>
+    </author>
+    <author>
+      <name>Seongsu Bae</name>
+    </author>
+    <author>
+      <name>Daeun Kyung</name>
+    </author>
+    <author>
+      <name>Wonchul Cha</name>
+    </author>
+    <author>
+      <name>Tom Pollard</name>
+    </author>
+    <author>
+      <name>Alistair Johnson</name>
+    </author>
+    <author>
+      <name>Edward Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.22586v2</id>
+    <title>TabDLM: Free-Form Tabular Data Generation via Joint Numerical-Language Diffusion</title>
+    <updated>2026-05-11T21:05:21Z</updated>
+    <link href="https://arxiv.org/abs/2602.22586v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.22586v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Synthetic tabular data generation has attracted growing attention due to its importance for data augmentation, foundation models, and privacy. However, real-world tabular datasets increasingly contain free-form text fields (e.g., reviews or clinical notes) alongside structured numerical and categorical attributes. Generating such heterogeneous tables with joint modeling of different modalities remains challenging. Existing approaches broadly fall into two categories: diffusion-based methods and LLM-based methods. Diffusion models can capture complex dependencies over numerical and categorical features in continuous or discrete spaces, but extending them to open-ended text is nontrivial and often leads to degraded text quality. In contrast, LLM-based generators naturally produce fluent text, yet their discrete tokenization can distort precise or wide-range numerical values, hindering accurate modeling of both numbers and language. In this work, we propose TabDLM, a unified framework for free-form tabular data generation via a joint numerical-language diffusion model built on masked diffusion language models (MDLMs). TabDLM models textual and categorical features through masked diffusion, while modeling numerical features with a continuous diffusion process through learned specialized numeric tokens embedding; bidirectional attention then captures cross-modality interactions within a single model. Extensive experiments on diverse benchmarks demonstrate the effectiveness of TabDLM compared to strong diffusion- and LLM-based baselines.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-26T03:41:49Z</published>
+    <arxiv:comment>Preprint</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Donghong Cai</name>
+    </author>
+    <author>
+      <name>Jiarui Feng</name>
+    </author>
+    <author>
+      <name>Yanbo Wang</name>
+    </author>
+    <author>
+      <name>Da Zheng</name>
+    </author>
+    <author>
+      <name>Yixin Chen</name>
+    </author>
+    <author>
+      <name>Muhan Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.09153v1</id>
+    <title>Adapting Abstract Meaning Representation Parsing to the Clinical Narrative -- the SPRING THYME parser</title>
+    <updated>2024-05-15T07:32:43Z</updated>
+    <link href="https://arxiv.org/abs/2405.09153v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.09153v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper is dedicated to the design and evaluation of the first AMR parser tailored for clinical notes. Our objective was to facilitate the precise transformation of the clinical notes into structured AMR expressions, thereby enhancing the interpretability and usability of clinical text data at scale. Leveraging the colon cancer dataset from the Temporal Histories of Your Medical Events (THYME) corpus, we adapted a state-of-the-art AMR parser utilizing continuous training. Our approach incorporates data augmentation techniques to enhance the accuracy of AMR structure predictions. Notably, through this learning strategy, our parser achieved an impressive F1 score of 88% on the THYME corpus's colon cancer dataset. Moreover, our research delved into the efficacy of data required for domain adaptation within the realm of clinical notes, presenting domain adaptation data requirements for AMR parsing. This exploration not only underscores the parser's robust performance but also highlights its potential in facilitating a deeper understanding of clinical narratives through structured semantic representations.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-15T07:32:43Z</published>
+    <arxiv:comment>Accepted to the 6th Clinical NLP Workshop at NAACL, 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jon Z. Cai</name>
+    </author>
+    <author>
+      <name>Kristin Wright-Bettner</name>
+    </author>
+    <author>
+      <name>Martha Palmer</name>
+    </author>
+    <author>
+      <name>Guergana K. Savova</name>
+    </author>
+    <author>
+      <name>James H. Martin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2007.16127v1</id>
+    <title>Robust Benchmarking for Machine Learning of Clinical Entity Extraction</title>
+    <updated>2020-07-31T15:14:05Z</updated>
+    <link href="https://arxiv.org/abs/2007.16127v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2007.16127v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical studies often require understanding elements of a patient's narrative that exist only in free text clinical notes. To transform notes into structured data for downstream use, these elements are commonly extracted and normalized to medical vocabularies. In this work, we audit the performance of and indicate areas of improvement for state-of-the-art systems. We find that high task accuracies for clinical entity normalization systems on the 2019 n2c2 Shared Task are misleading, and underlying performance is still brittle. Normalization accuracy is high for common concepts (95.3%), but much lower for concepts unseen in training data (69.3%). We demonstrate that current approaches are hindered in part by inconsistencies in medical vocabularies, limitations of existing labeling schemas, and narrow evaluation techniques. We reformulate the annotation framework for clinical entity extraction to factor in these issues to allow for robust end-to-end system benchmarking. We evaluate concordance of annotations from our new framework between two annotators and achieve a Jaccard similarity of 0.73 for entity recognition and an agreement of 0.83 for entity normalization. We propose a path forward to address the demonstrated need for the creation of a reference standard to spur method development in entity recognition and normalization.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-07-31T15:14:05Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Monica Agrawal</name>
+    </author>
+    <author>
+      <name>Chloe O'Connell</name>
+    </author>
+    <author>
+      <name>Yasmin Fatemi</name>
+    </author>
+    <author>
+      <name>Ariel Levy</name>
+    </author>
+    <author>
+      <name>David Sontag</name>
+    </author>
+  </entry>
+</feed>

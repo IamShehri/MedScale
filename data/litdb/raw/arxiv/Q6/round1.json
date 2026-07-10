@@ -1,0 +1,1634 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/KunZSSETv6n4jzkknBtxMyoyNXY</id>
+  <title>arXiv Query: search_query=(all:"medical benchmark" OR all:"clinical benchmark" OR all:MedQA OR all:"clinical evaluation suite")&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:27Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=all:%22medical+benchmark%22+OR+(all:%22clinical+benchmark%22+OR+(all:MedQA+OR+all:%22clinical+evaluation+suite%22))&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>379</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2308.08833v2</id>
+    <title>CMB: A Comprehensive Medical Benchmark in Chinese</title>
+    <updated>2024-04-04T15:16:57Z</updated>
+    <link href="https://arxiv.org/abs/2308.08833v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2308.08833v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) provide a possibility to make a great breakthrough in medicine. The establishment of a standardized medical benchmark becomes a fundamental cornerstone to measure progression. However, medical environments in different regions have their local characteristics, e.g., the ubiquity and significance of traditional Chinese medicine within China. Therefore, merely translating English-based medical evaluation may result in \textit{contextual incongruities} to a local region. To solve the issue, we propose a localized medical benchmark called CMB, a Comprehensive Medical Benchmark in Chinese, designed and rooted entirely within the native Chinese linguistic and cultural framework. While traditional Chinese medicine is integral to this evaluation, it does not constitute its entirety. Using this benchmark, we have evaluated several prominent large-scale LLMs, including ChatGPT, GPT-4, dedicated Chinese LLMs, and LLMs specialized in the medical domain. We hope this benchmark provide first-hand experience in existing LLMs for medicine and also facilitate the widespread adoption and enhancement of medical LLMs within China. Our data and code are publicly available at https://github.com/FreedomIntelligence/CMB.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-08-17T07:51:23Z</published>
+    <arxiv:comment>Accepted to NAACL 2024 Main Conference</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xidong Wang</name>
+    </author>
+    <author>
+      <name>Guiming Hardy Chen</name>
+    </author>
+    <author>
+      <name>Dingjie Song</name>
+    </author>
+    <author>
+      <name>Zhiyi Zhang</name>
+    </author>
+    <author>
+      <name>Zhihong Chen</name>
+    </author>
+    <author>
+      <name>Qingying Xiao</name>
+    </author>
+    <author>
+      <name>Feng Jiang</name>
+    </author>
+    <author>
+      <name>Jianquan Li</name>
+    </author>
+    <author>
+      <name>Xiang Wan</name>
+    </author>
+    <author>
+      <name>Benyou Wang</name>
+    </author>
+    <author>
+      <name>Haizhou Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.20001v1</id>
+    <title>Beyond MedQA: Towards Real-world Clinical Decision Making in the Era of LLMs</title>
+    <updated>2025-10-22T20:06:10Z</updated>
+    <link href="https://arxiv.org/abs/2510.20001v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.20001v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) show promise for clinical use. They are often evaluated using datasets such as MedQA. However, Many medical datasets, such as MedQA, rely on simplified Question-Answering (Q\A) that underrepresents real-world clinical decision-making. Based on this, we propose a unifying paradigm that characterizes clinical decision-making tasks along two dimensions: Clinical Backgrounds and Clinical Questions. As the background and questions approach the real clinical environment, the difficulty increases. We summarize the settings of existing datasets and benchmarks along two dimensions. Then we review methods to address clinical decision-making, including training-time and test-time techniques, and summarize when they help. Next, we extend evaluation beyond accuracy to include efficiency, explainability. Finally, we highlight open challenges. Our paradigm clarifies assumptions, standardizes comparisons, and guides the development of clinically meaningful LLMs.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-22T20:06:10Z</published>
+    <arxiv:comment>13 pages, 3 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yunpeng Xiao</name>
+    </author>
+    <author>
+      <name>Carl Yang</name>
+    </author>
+    <author>
+      <name>Mark Mai</name>
+    </author>
+    <author>
+      <name>Xiao Hu</name>
+    </author>
+    <author>
+      <name>Kai Shu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.05464v2</id>
+    <title>LLM-MedQA: Enhancing Medical Question Answering through Case Studies in Large Language Models</title>
+    <updated>2025-01-18T05:53:51Z</updated>
+    <link href="https://arxiv.org/abs/2501.05464v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.05464v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Accurate and efficient question-answering systems are essential for delivering high-quality patient care in the medical field. While Large Language Models (LLMs) have made remarkable strides across various domains, they continue to face significant challenges in medical question answering, particularly in understanding domain-specific terminologies and performing complex reasoning. These limitations undermine their effectiveness in critical medical applications. To address these issues, we propose a novel approach incorporating similar case generation within a multi-agent medical question-answering (MedQA) system. Specifically, we leverage the Llama3.1:70B model, a state-of-the-art LLM, in a multi-agent architecture to enhance performance on the MedQA dataset using zero-shot learning. Our method capitalizes on the model's inherent medical knowledge and reasoning capabilities, eliminating the need for additional training data. Experimental results show substantial performance gains over existing benchmark models, with improvements of 7% in both accuracy and F1-score across various medical QA tasks. Furthermore, we examine the model's interpretability and reliability in addressing complex medical queries. This research not only offers a robust solution for medical question answering but also establishes a foundation for broader applications of LLMs in the medical domain.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-31T19:55:45Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hang Yang</name>
+    </author>
+    <author>
+      <name>Hao Chen</name>
+    </author>
+    <author>
+      <name>Hui Guo</name>
+    </author>
+    <author>
+      <name>Yineng Chen</name>
+    </author>
+    <author>
+      <name>Ching-Sheng Lin</name>
+    </author>
+    <author>
+      <name>Shu Hu</name>
+    </author>
+    <author>
+      <name>Jinrong Hu</name>
+    </author>
+    <author>
+      <name>Xi Wu</name>
+    </author>
+    <author>
+      <name>Xin Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.01553v2</id>
+    <title>MedQA-CS: Objective Structured Clinical Examination (OSCE)-Style Benchmark for Evaluating LLM Clinical Skills</title>
+    <updated>2026-01-18T16:20:03Z</updated>
+    <link href="https://arxiv.org/abs/2410.01553v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.01553v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Artificial intelligence (AI) and large language models (LLMs) in healthcare require advanced clinical skills (CS), yet current benchmarks fail to evaluate these comprehensively. We introduce MedQA-CS, an AI-SCE framework inspired by medical education's Objective Structured Clinical Examinations (OSCEs), to address this gap. MedQA-CS evaluates LLMs through two instruction-following tasks, LLM-as-medical-student and LLM-as-CS-examiner, designed to reflect real clinical scenarios. Our contributions include developing MedQA-CS, a comprehensive evaluation framework with publicly available data and expert annotations, and providing the quantitative and qualitative assessment of LLMs as reliable judges in CS evaluation. Our experiments show that MedQA-CS is a more challenging benchmark for evaluating clinical skills than traditional multiple-choice QA benchmarks (e.g., MedQA). Combined with existing benchmarks, MedQA-CS enables a more comprehensive evaluation of LLMs' clinical capabilities for both open- and closed-source LLMs.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-10-02T13:47:17Z</published>
+    <arxiv:comment>To appear in proceedings of the Main Conference of the European Chapter of the Association for Computational Linguistics (EACL) 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Zonghai Yao</name>
+    </author>
+    <author>
+      <name>Zihao Zhang</name>
+    </author>
+    <author>
+      <name>Chaolong Tang</name>
+    </author>
+    <author>
+      <name>Xingyu Bian</name>
+    </author>
+    <author>
+      <name>Youxia Zhao</name>
+    </author>
+    <author>
+      <name>Zhichao Yang</name>
+    </author>
+    <author>
+      <name>Junda Wang</name>
+    </author>
+    <author>
+      <name>Huixue Zhou</name>
+    </author>
+    <author>
+      <name>Won Seok Jang</name>
+    </author>
+    <author>
+      <name>Feiyun Ouyang</name>
+    </author>
+    <author>
+      <name>Hong Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2201.00466v2</id>
+    <title>RFormer: Transformer-based Generative Adversarial Network for Real Fundus Image Restoration on A New Clinical Benchmark</title>
+    <updated>2022-08-03T11:54:27Z</updated>
+    <link href="https://arxiv.org/abs/2201.00466v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2201.00466v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Ophthalmologists have used fundus images to screen and diagnose eye diseases. However, different equipments and ophthalmologists pose large variations to the quality of fundus images. Low-quality (LQ) degraded fundus images easily lead to uncertainty in clinical screening and generally increase the risk of misdiagnosis. Thus, real fundus image restoration is worth studying. Unfortunately, real clinical benchmark has not been explored for this task so far. In this paper, we investigate the real clinical fundus image restoration problem. Firstly, We establish a clinical dataset, Real Fundus (RF), including 120 low- and high-quality (HQ) image pairs. Then we propose a novel Transformer-based Generative Adversarial Network (RFormer) to restore the real degradation of clinical fundus images. The key component in our network is the Window-based Self-Attention Block (WSAB) which captures non-local self-similarity and long-range dependencies. To produce more visually pleasant results, a Transformer-based discriminator is introduced. Extensive experiments on our clinical benchmark show that the proposed RFormer significantly outperforms the state-of-the-art (SOTA) methods. In addition, experiments of downstream tasks such as vessel segmentation and optic disc/cup detection demonstrate that our proposed RFormer benefits clinical fundus image analysis and applications. The dataset, code, and models are publicly available at https://github.com/dengzhuo-AI/Real-Fundus</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-01-03T03:56:58Z</published>
+    <arxiv:comment>IEEE J-BHI 2022; The First Benchmark and First Transformer-based Method for Real Clinical Fundus Image Restoration</arxiv:comment>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Zhuo Deng</name>
+    </author>
+    <author>
+      <name>Yuanhao Cai</name>
+    </author>
+    <author>
+      <name>Lu Chen</name>
+    </author>
+    <author>
+      <name>Zheng Gong</name>
+    </author>
+    <author>
+      <name>Qiqi Bao</name>
+    </author>
+    <author>
+      <name>Xue Yao</name>
+    </author>
+    <author>
+      <name>Dong Fang</name>
+    </author>
+    <author>
+      <name>Shaochong Zhang</name>
+    </author>
+    <author>
+      <name>Lan Ma</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.19691v3</id>
+    <title>Scalable Stewardship of an LLM-Assisted Clinical Benchmark with Physician Oversight</title>
+    <updated>2026-04-13T08:00:46Z</updated>
+    <link href="https://arxiv.org/abs/2512.19691v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.19691v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reference labels for machine-learning benchmarks are increasingly synthesized with LLM assistance, but their reliability remains underexamined. We audit MedCalc-Bench, a clinical benchmark for medical score computation whose labels were partly derived with LLM assistance, and develop a scalable physician-in-the-loop stewardship pipeline to reassess them. At least 27% of test labels are likely erroneous or incomputable. On a 50-instance subset validated by physicians, our recomputed labels agree with physician ground truth 74% of the time (95% CI, 60-84%) versus 20% for the originals (95% CI, 11-33%). Using original labels to evaluate frontier LLMs underestimates accuracy by 16-23 percentage points. In a controlled reinforcement-learning experiment, a model trained on recomputed labels outperforms one trained on originals by 13.5 percentage points (95% CI, 10.6-16.6%) on physician-labeled instances, and this advantage extends to related medical tasks. LLM-assisted benchmarks can propagate systematic errors into both evaluation and post-training unless actively stewarded.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.AP" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-22T18:59:34Z</published>
+    <arxiv:comment>Github codebase: https://github.com/junzeye/validate-medcalc-labels</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Junze Ye</name>
+    </author>
+    <author>
+      <name>Daniel Tawfik</name>
+    </author>
+    <author>
+      <name>Alex J. Goodell</name>
+    </author>
+    <author>
+      <name>Nikhil V. Kotha</name>
+    </author>
+    <author>
+      <name>Mark K. Buyyounouski</name>
+    </author>
+    <author>
+      <name>Mohsen Bayati</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.01305v2</id>
+    <title>VM14K: First Vietnamese Medical Benchmark</title>
+    <updated>2025-06-13T12:40:58Z</updated>
+    <link href="https://arxiv.org/abs/2506.01305v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.01305v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical benchmarks are indispensable for evaluating the capabilities of language models in healthcare for non-English-speaking communities,therefore help ensuring the quality of real-life applications. However, not every community has sufficient resources and standardized methods to effectively build and design such benchmark, and available non-English medical data is normally fragmented and difficult to verify. We developed an approach to tackle this problem and applied it to create the first Vietnamese medical question benchmark, featuring 14,000 multiple-choice questions across 34 medical specialties. Our benchmark was constructed using various verifiable sources, including carefully curated medical exams and clinical records, and eventually annotated by medical experts. The benchmark includes four difficulty levels, ranging from foundational biological knowledge commonly found in textbooks to typical clinical case studies that require advanced reasoning. This design enables assessment of both the breadth and depth of language models' medical understanding in the target language thanks to its extensive coverage and in-depth subject-specific expertise. We release the benchmark in three parts: a sample public set (4k questions), a full public set (10k questions), and a private set (2k questions) used for leaderboard evaluation. Each set contains all medical subfields and difficulty levels. Our approach is scalable to other languages, and we open-source our data construction pipeline to support the development of future multilingual benchmarks in the medical domain.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-02T04:32:15Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Thong Nguyen</name>
+    </author>
+    <author>
+      <name>Duc Nguyen</name>
+    </author>
+    <author>
+      <name>Minh Dang</name>
+    </author>
+    <author>
+      <name>Thai Dao</name>
+    </author>
+    <author>
+      <name>Long Nguyen</name>
+    </author>
+    <author>
+      <name>Quan H. Nguyen</name>
+    </author>
+    <author>
+      <name>Dat Nguyen</name>
+    </author>
+    <author>
+      <name>Kien Tran</name>
+    </author>
+    <author>
+      <name>Minh Tran</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.12255v1</id>
+    <title>Shallow Robustness, Deep Vulnerabilities: Multi-Turn Evaluation of Medical LLMs</title>
+    <updated>2025-10-14T08:04:18Z</updated>
+    <link href="https://arxiv.org/abs/2510.12255v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.12255v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) are rapidly transitioning into medical clinical use, yet their reliability under realistic, multi-turn interactions remains poorly understood. Existing evaluation frameworks typically assess single-turn question answering under idealized conditions, overlooking the complexities of medical consultations where conflicting input, misleading context, and authority influence are common. We introduce MedQA-Followup, a framework for systematically evaluating multi-turn robustness in medical question answering. Our approach distinguishes between shallow robustness (resisting misleading initial context) and deep robustness (maintaining accuracy when answers are challenged across turns), while also introducing an indirect-direct axis that separates contextual framing (indirect) from explicit suggestion (direct). Using controlled interventions on the MedQA dataset, we evaluate five state-of-the-art LLMs and find that while models perform reasonably well under shallow perturbations, they exhibit severe vulnerabilities in multi-turn settings, with accuracy dropping from 91.2% to as low as 13.5% for Claude Sonnet 4. Counterintuitively, indirect, context-based interventions are often more harmful than direct suggestions, yielding larger accuracy drops across models and exposing a significant vulnerability for clinical deployment. Further compounding analyses reveal model differences, with some showing additional performance drops under repeated interventions while others partially recovering or even improving. These findings highlight multi-turn robustness as a critical but underexplored dimension for safe and reliable deployment of medical LLMs.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-14T08:04:18Z</published>
+    <arxiv:comment>Dataset and code: https://huggingface.co/datasets/dynamoai-ml/MedQA-USMLE-4-MultiTurnRobust ; https://github.com/bmanczak/MedQA-MultiTurnRobustness Accepted as a poster at NeurIPS 2025 Workshop on GenAI for Health: Potential, Trust, and Policy Compliance</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Blazej Manczak</name>
+    </author>
+    <author>
+      <name>Eric Lin</name>
+    </author>
+    <author>
+      <name>Francisco Eiras</name>
+    </author>
+    <author>
+      <name>James O' Neill</name>
+    </author>
+    <author>
+      <name>Vaikkunth Mugunthan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.18468v1</id>
+    <title>IMB: An Italian Medical Benchmark for Question Answering</title>
+    <updated>2025-10-21T09:45:59Z</updated>
+    <link href="https://arxiv.org/abs/2510.18468v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.18468v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Online medical forums have long served as vital platforms where patients seek professional healthcare advice, generating vast amounts of valuable knowledge. However, the informal nature and linguistic complexity of forum interactions pose significant challenges for automated question answering systems, especially when dealing with non-English languages. We present two comprehensive Italian medical benchmarks: \textbf{IMB-QA}, containing 782,644 patient-doctor conversations from 77 medical categories, and \textbf{IMB-MCQA}, comprising 25,862 multiple-choice questions from medical specialty examinations. We demonstrate how Large Language Models (LLMs) can be leveraged to improve the clarity and consistency of medical forum data while retaining their original meaning and conversational style, and compare a variety of LLM architectures on both open and multiple-choice question answering tasks. Our experiments with Retrieval Augmented Generation (RAG) and domain-specific fine-tuning reveal that specialized adaptation strategies can outperform larger, general-purpose models in medical question answering tasks. These findings suggest that effective medical AI systems may benefit more from domain expertise and efficient information retrieval than from increased model scale. We release both datasets and evaluation frameworks in our GitHub repository to support further research on multilingual medical question answering: https://github.com/PRAISELab-PicusLab/IMB.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-21T09:45:59Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>CLIC-it 2025: Eleventh Italian Conference on Computational Linguistics, Cagliari, Italy, September 24-26, 2025</arxiv:journal_ref>
+    <author>
+      <name>Antonio Romano</name>
+    </author>
+    <author>
+      <name>Giuseppe Riccio</name>
+    </author>
+    <author>
+      <name>Mariano Barone</name>
+    </author>
+    <author>
+      <name>Marco Postiglione</name>
+    </author>
+    <author>
+      <name>Vincenzo Moscato</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.19705v3</id>
+    <title>CollectiveSFT: Scaling Large Language Models for Chinese Medical Benchmark with Collective Instructions in Healthcare</title>
+    <updated>2024-09-28T02:05:29Z</updated>
+    <link href="https://arxiv.org/abs/2407.19705v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.19705v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapid progress in Large Language Models (LLMs) has prompted the creation of numerous benchmarks to evaluate their capabilities.This study focuses on the Comprehensive Medical Benchmark in Chinese (CMB), showcasing how dataset diversity and distribution in supervised fine-tuning (SFT) may enhance LLM performance.Remarkably, We successfully trained a smaller base model to achieve scores comparable to larger models, indicating that a diverse and well-distributed dataset can optimize performance regardless of model size.This study suggests that even smaller models may reach high performance levels with carefully curated and varied datasets. By integrating a wide range of instructional content, our approach addresses potential issues such as data quality inconsistencies. Our results imply that a broader spectrum of training data may enhance a model's ability to generalize and perform effectively across different medical scenarios, highlighting the importance of dataset quality and diversity in fine-tuning processes. We open-source the model for future research at https://github.com/CAS-SIAT-XinHai/CollectiveSFT</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-29T05:00:48Z</published>
+    <arxiv:comment>Technical Report</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jingwei Zhu</name>
+    </author>
+    <author>
+      <name>Minghuan Tan</name>
+    </author>
+    <author>
+      <name>Min Yang</name>
+    </author>
+    <author>
+      <name>Ruixue Li</name>
+    </author>
+    <author>
+      <name>Hamid Alinejad-Rokny</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.14088v3</id>
+    <title>MedEval: A Multi-Level, Multi-Task, and Multi-Domain Medical Benchmark for Language Model Evaluation</title>
+    <updated>2023-11-14T21:59:56Z</updated>
+    <link href="https://arxiv.org/abs/2310.14088v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.14088v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Curated datasets for healthcare are often limited due to the need of human annotations from experts. In this paper, we present MedEval, a multi-level, multi-task, and multi-domain medical benchmark to facilitate the development of language models for healthcare. MedEval is comprehensive and consists of data from several healthcare systems and spans 35 human body regions from 8 examination modalities. With 22,779 collected sentences and 21,228 reports, we provide expert annotations at multiple levels, offering a granular potential usage of the data and supporting a wide range of tasks. Moreover, we systematically evaluated 10 generic and domain-specific language models under zero-shot and finetuning settings, from domain-adapted baselines in healthcare to general-purposed state-of-the-art large language models (e.g., ChatGPT). Our evaluations reveal varying effectiveness of the two categories of language models across different tasks, from which we notice the importance of instruction tuning for few-shot usage of large language models. Our investigation paves the way toward benchmarking language models for healthcare and provides valuable insights into the strengths and limitations of adopting large language models in medical domains, informing their practical applications and future advancements.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-21T18:59:41Z</published>
+    <arxiv:comment>Accepted to EMNLP 2023. Camera-ready version: updated IRB, added more evaluation results on LLMs such as GPT4, LLaMa2, and LLaMa2-chat</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zexue He</name>
+    </author>
+    <author>
+      <name>Yu Wang</name>
+    </author>
+    <author>
+      <name>An Yan</name>
+    </author>
+    <author>
+      <name>Yao Liu</name>
+    </author>
+    <author>
+      <name>Eric Y. Chang</name>
+    </author>
+    <author>
+      <name>Amilcare Gentili</name>
+    </author>
+    <author>
+      <name>Julian McAuley</name>
+    </author>
+    <author>
+      <name>Chun-Nan Hsu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2311.04937v1</id>
+    <title>Multimodal Clinical Benchmark for Emergency Care (MC-BEC): A Comprehensive Benchmark for Evaluating Foundation Models in Emergency Medicine</title>
+    <updated>2023-11-07T20:56:19Z</updated>
+    <link href="https://arxiv.org/abs/2311.04937v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2311.04937v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We propose the Multimodal Clinical Benchmark for Emergency Care (MC-BEC), a comprehensive benchmark for evaluating foundation models in Emergency Medicine using a dataset of 100K+ continuously monitored Emergency Department visits from 2020-2022. MC-BEC focuses on clinically relevant prediction tasks at timescales from minutes to days, including predicting patient decompensation, disposition, and emergency department (ED) revisit, and includes a standardized evaluation framework with train-test splits and evaluation metrics. The multimodal dataset includes a wide range of detailed clinical data, including triage information, prior diagnoses and medications, continuously measured vital signs, electrocardiogram and photoplethysmograph waveforms, orders placed and medications administered throughout the visit, free-text reports of imaging studies, and information on ED diagnosis, disposition, and subsequent revisits. We provide performance baselines for each prediction task to enable the evaluation of multimodal, multitask models. We believe that MC-BEC will encourage researchers to develop more effective, generalizable, and accessible foundation models for multimodal clinical data.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-11-07T20:56:19Z</published>
+    <arxiv:comment>Thirty-seventh Conference on Neural Information Processing Systems Datasets and Benchmarks Track</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Emma Chen</name>
+    </author>
+    <author>
+      <name>Aman Kansal</name>
+    </author>
+    <author>
+      <name>Julie Chen</name>
+    </author>
+    <author>
+      <name>Boyang Tom Jin</name>
+    </author>
+    <author>
+      <name>Julia Rachel Reisler</name>
+    </author>
+    <author>
+      <name>David A Kim</name>
+    </author>
+    <author>
+      <name>Pranav Rajpurkar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.10367v1</id>
+    <title>LiveMedBench: A Contamination-Free Medical Benchmark for LLMs with Automated Rubric Evaluation</title>
+    <updated>2026-02-10T23:38:25Z</updated>
+    <link href="https://arxiv.org/abs/2602.10367v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.10367v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The deployment of Large Language Models (LLMs) in high-stakes clinical settings demands rigorous and reliable evaluation. However, existing medical benchmarks remain static, suffering from two critical limitations: (1) data contamination, where test sets inadvertently leak into training corpora, leading to inflated performance estimates; and (2) temporal misalignment, failing to capture the rapid evolution of medical knowledge. Furthermore, current evaluation metrics for open-ended clinical reasoning often rely on either shallow lexical overlap (e.g., ROUGE) or subjective LLM-as-a-Judge scoring, both inadequate for verifying clinical correctness. To bridge these gaps, we introduce LiveMedBench, a continuously updated, contamination-free, and rubric-based benchmark that weekly harvests real-world clinical cases from online medical communities, ensuring strict temporal separation from model training data. We propose a Multi-Agent Clinical Curation Framework that filters raw data noise and validates clinical integrity against evidence-based medical principles. For evaluation, we develop an Automated Rubric-based Evaluation Framework that decomposes physician responses into granular, case-specific criteria, achieving substantially stronger alignment with expert physicians than LLM-as-a-Judge. To date, LiveMedBench comprises 2,756 real-world cases spanning 38 medical specialties and multiple languages, paired with 16,702 unique evaluation criteria. Extensive evaluation of 38 LLMs reveals that even the best-performing model achieves only 39.2%, and 84% of models exhibit performance degradation on post-cutoff cases, confirming pervasive data contamination risks. Error analysis further identifies contextual application-not factual knowledge-as the dominant bottleneck, with 35-48% of failures stemming from the inability to tailor medical knowledge to patient-specific constraints.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-10T23:38:25Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Zhiling Yan</name>
+    </author>
+    <author>
+      <name>Dingjie Song</name>
+    </author>
+    <author>
+      <name>Zhe Fang</name>
+    </author>
+    <author>
+      <name>Yisheng Ji</name>
+    </author>
+    <author>
+      <name>Xiang Li</name>
+    </author>
+    <author>
+      <name>Quanzheng Li</name>
+    </author>
+    <author>
+      <name>Lichao Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.04325v2</id>
+    <title>Beyond the Leaderboard: Rethinking Medical Benchmarks for Large Language Models</title>
+    <updated>2026-04-29T05:46:18Z</updated>
+    <link href="https://arxiv.org/abs/2508.04325v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.04325v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) show significant potential in healthcare, prompting numerous benchmarks to evaluate their capabilities. However, concerns persist regarding the reliability of these benchmarks, which often lack clinical fidelity, robust data management, and safety-oriented evaluation metrics. To address these shortcomings, we introduce MedCheck, the first lifecycle-oriented assessment framework specifically designed for medical benchmarks. Our framework deconstructs a benchmark's development into five continuous stages, from design to governance, and provides a comprehensive checklist of 46 medically-tailored criteria. Using MedCheck, we conducted an in-depth empirical evaluation of 53 medical LLM benchmarks. Our analysis uncovers widespread, systemic issues, including a profound disconnect from clinical practice, a crisis of data integrity due to unmitigated contamination risks, and a systematic neglect of safety-critical evaluation dimensions like model robustness and uncertainty awareness. Based on these findings, MedCheck serves as both a diagnostic tool for existing benchmarks and an actionable guideline to foster a more standardized, reliable, and transparent approach to evaluating AI in healthcare.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-06T11:11:40Z</published>
+    <arxiv:comment>Accepted by ACL 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Wenting Chen</name>
+    </author>
+    <author>
+      <name>Guo Yu</name>
+    </author>
+    <author>
+      <name>Yiu-Fai Cheung</name>
+    </author>
+    <author>
+      <name>Meidan Ding</name>
+    </author>
+    <author>
+      <name>Jie Liu</name>
+    </author>
+    <author>
+      <name>Zizhan Ma</name>
+    </author>
+    <author>
+      <name>Wenxuan Wang</name>
+    </author>
+    <author>
+      <name>Linlin Shen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.24186v2</id>
+    <title>Measuring Competency, Not Performance: Item-Aware Evaluation Across Medical Benchmarks</title>
+    <updated>2026-04-06T07:24:03Z</updated>
+    <link href="https://arxiv.org/abs/2509.24186v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.24186v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Accuracy-based evaluation of Large Language Models (LLMs) measures benchmark-specific performance rather than underlying medical competency: it treats all questions as equally informative, conflates model ability with item characteristics, and thereby produces rankings that vary with benchmark choice. To address this, we introduce MedIRT, a psychometric evaluation framework grounded in Item Response Theory (IRT) that (1) jointly models latent competency and item-level difficulty and discrimination, and (2) includes benchmark integrity validation to ensure items within each topic measure a single, coherent underlying ability. We prospectively evaluate 71 diverse LLMs on a USMLE-aligned benchmark across 11 medical topics. As internal validation, MedIRT correctly predicts held-out LLM responses on unseen questions with 83.3% accuracy. As external validation, IRT-based rankings outperform accuracy-based rankings across 6 independent external medical benchmarks -- including expert preferences, holistic clinical tasks, safety judgments, and open-ended queries -- achieving 4 wins, 0 losses, and 18% lower variance. As a substantive finding, topic-level competency profiles expose striking domain-specific heterogeneity that aggregate accuracy masks. As a diagnostic tool, difficulty-tier analysis reveals two distinct response profiles (difficulty-sensitive responding and difficulty-insensitive responding) that require fundamentally different interventions. These results establish item-aware psychometric evaluation as a more valid and stable foundation for assessing LLMs in medicine, with potential implications for any high-stakes domain where benchmark integrity can be validated, and items vary meaningfully in difficulty and discrimination.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-29T02:06:13Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zhimeng Luo</name>
+    </author>
+    <author>
+      <name>Lixin Wu</name>
+    </author>
+    <author>
+      <name>Adam Frisch</name>
+    </author>
+    <author>
+      <name>Daqing He</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.02919v1</id>
+    <title>MultifacetEval: Multifaceted Evaluation to Probe LLMs in Mastering Medical Knowledge</title>
+    <updated>2024-06-05T04:15:07Z</updated>
+    <link href="https://arxiv.org/abs/2406.02919v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.02919v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have excelled across domains, also delivering notable performance on the medical evaluation benchmarks, such as MedQA. However, there still exists a significant gap between the reported performance and the practical effectiveness in real-world medical scenarios. In this paper, we aim to explore the causes of this gap by employing a multifaceted examination schema to systematically probe the actual mastery of medical knowledge by current LLMs. Specifically, we develop a novel evaluation framework MultifacetEval to examine the degree and coverage of LLMs in encoding and mastering medical knowledge at multiple facets (comparison, rectification, discrimination, and verification) concurrently. Based on the MultifacetEval framework, we construct two multifaceted evaluation datasets: MultiDiseK (by producing questions from a clinical disease knowledge base) and MultiMedQA (by rephrasing each question from a medical benchmark MedQA into multifaceted questions). The experimental results on these multifaceted datasets demonstrate that the extent of current LLMs in mastering medical knowledge is far below their performance on existing medical benchmarks, suggesting that they lack depth, precision, and comprehensiveness in mastering medical knowledge. Consequently, current LLMs are not yet ready for application in real-world medical tasks. The codes and datasets are available at https://github.com/THUMLP/MultifacetEval.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-05T04:15:07Z</published>
+    <arxiv:comment>Accepted by IJCAI 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yuxuan Zhou</name>
+    </author>
+    <author>
+      <name>Xien Liu</name>
+    </author>
+    <author>
+      <name>Chen Ning</name>
+    </author>
+    <author>
+      <name>Ji Wu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.01469v3</id>
+    <title>KorMedMCQA: Multi-Choice Question Answering Benchmark for Korean Healthcare Professional Licensing Examinations</title>
+    <updated>2024-12-09T06:52:13Z</updated>
+    <link href="https://arxiv.org/abs/2403.01469v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.01469v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present KorMedMCQA, the first Korean Medical Multiple-Choice Question Answering benchmark, derived from professional healthcare licensing examinations conducted in Korea between 2012 and 2024. The dataset contains 7,469 questions from examinations for doctor, nurse, pharmacist, and dentist, covering a wide range of medical disciplines. We evaluate the performance of 59 large language models, spanning proprietary and open-source models, multilingual and Korean-specialized models, and those fine-tuned for clinical applications. Our results show that applying Chain of Thought (CoT) reasoning can enhance the model performance by up to 4.5% compared to direct answering approaches. We also investigate whether MedQA, one of the most widely used medical benchmarks derived from the U.S. Medical Licensing Examination, can serve as a reliable proxy for evaluating model performance in other regions-in this case, Korea. Our correlation analysis between model scores on KorMedMCQA and MedQA reveals that these two benchmarks align no better than benchmarks from entirely different domains (e.g., MedQA and MMLU-Pro). This finding underscores the substantial linguistic and clinical differences between Korean and U.S. medical contexts, reinforcing the need for region-specific medical QA benchmarks. To support ongoing research in Korean healthcare AI, we publicly release the KorMedMCQA via Huggingface.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-03T10:31:49Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Sunjun Kweon</name>
+    </author>
+    <author>
+      <name>Byungjin Choi</name>
+    </author>
+    <author>
+      <name>Gyouk Chu</name>
+    </author>
+    <author>
+      <name>Junyeong Song</name>
+    </author>
+    <author>
+      <name>Daeun Hyeon</name>
+    </author>
+    <author>
+      <name>Sujin Gan</name>
+    </author>
+    <author>
+      <name>Jueon Kim</name>
+    </author>
+    <author>
+      <name>Minkyu Kim</name>
+    </author>
+    <author>
+      <name>Rae Woong Park</name>
+    </author>
+    <author>
+      <name>Edward Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.01191v1</id>
+    <title>Generalist Large Language Models Outperform Clinical Tools on Medical Benchmarks</title>
+    <updated>2025-12-01T02:14:43Z</updated>
+    <link href="https://arxiv.org/abs/2512.01191v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.01191v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Specialized clinical AI assistants are rapidly entering medical practice, often framed as safer or more reliable than general-purpose large language models (LLMs). Yet, unlike frontier models, these clinical tools are rarely subjected to independent, quantitative evaluation, creating a critical evidence gap despite their growing influence on diagnosis, triage, and guideline interpretation. We assessed two widely deployed clinical AI systems (OpenEvidence and UpToDate Expert AI) against three state-of-the-art generalist LLMs (GPT-5, Gemini 3 Pro, and Claude Sonnet 4.5) using a 1,000-item mini-benchmark combining MedQA (medical knowledge) and HealthBench (clinician-alignment) tasks. Generalist models consistently outperformed clinical tools, with GPT-5 achieving the highest scores, while OpenEvidence and UpToDate demonstrated deficits in completeness, communication quality, context awareness, and systems-based safety reasoning. These findings reveal that tools marketed for clinical decision support may often lag behind frontier LLMs, underscoring the urgent need for transparent, independent evaluation before deployment in patient-facing workflows.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-01T02:14:43Z</published>
+    <arxiv:comment>17 pages, 4 figures (2 regular, 2 supplemental)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Krithik Vishwanath</name>
+    </author>
+    <author>
+      <name>Mrigayu Ghosh</name>
+    </author>
+    <author>
+      <name>Anton Alyakin</name>
+    </author>
+    <author>
+      <name>Daniel Alexander Alber</name>
+    </author>
+    <author>
+      <name>Yindalon Aphinyanaphongs</name>
+    </author>
+    <author>
+      <name>Eric Karl Oermann</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.14353v1</id>
+    <title>CURE: Confidence-driven Unified Reasoning Ensemble Framework for Medical Question Answering</title>
+    <updated>2025-10-16T06:46:11Z</updated>
+    <link href="https://arxiv.org/abs/2510.14353v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.14353v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>High-performing medical Large Language Models (LLMs) typically require extensive fine-tuning with substantial computational resources, limiting accessibility for resource-constrained healthcare institutions. This study introduces a confidence-driven multi-model framework that leverages model diversity to enhance medical question answering without fine-tuning. Our framework employs a two-stage architecture: a confidence detection module assesses the primary model's certainty, and an adaptive routing mechanism directs low-confidence queries to Helper models with complementary knowledge for collaborative reasoning. We evaluate our approach using Qwen3-30B-A3B-Instruct, Phi-4 14B, and Gemma 2 12B across three medical benchmarks; MedQA, MedMCQA, and PubMedQA. Result demonstrate that our framework achieves competitive performance, with particularly strong results in PubMedQA (95.0\%) and MedMCQA (78.0\%). Ablation studies confirm that confidence-aware routing combined with multi-model collaboration substantially outperforms single-model approaches and uniform reasoning strategies. This work establishes that strategic model collaboration offers a practical, computationally efficient pathway to improve medical AI systems, with significant implications for democratizing access to advanced medical AI in resource-limited settings.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="physics.med-ph" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-16T06:46:11Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ziad Elshaer</name>
+    </author>
+    <author>
+      <name>Essam A. Rashed</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2402.19371v1</id>
+    <title>OpenMedLM: Prompt engineering can out-perform fine-tuning in medical question-answering with open-source large language models</title>
+    <updated>2024-02-29T17:19:39Z</updated>
+    <link href="https://arxiv.org/abs/2402.19371v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2402.19371v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLMs have become increasingly capable at accomplishing a range of specialized-tasks and can be utilized to expand equitable access to medical knowledge. Most medical LLMs have involved extensive fine-tuning, leveraging specialized medical data and significant, thus costly, amounts of computational power. Many of the top performing LLMs are proprietary and their access is limited to very few research groups. However, open-source (OS) models represent a key area of growth for medical LLMs due to significant improvements in performance and an inherent ability to provide the transparency and compliance required in healthcare. We present OpenMedLM, a prompting platform which delivers state-of-the-art (SOTA) performance for OS LLMs on medical benchmarks. We evaluated a range of OS foundation LLMs (7B-70B) on four medical benchmarks (MedQA, MedMCQA, PubMedQA, MMLU medical-subset). We employed a series of prompting strategies, including zero-shot, few-shot, chain-of-thought (random selection and kNN selection), and ensemble/self-consistency voting. We found that OpenMedLM delivers OS SOTA results on three common medical LLM benchmarks, surpassing the previous best performing OS models that leveraged computationally costly extensive fine-tuning. The model delivers a 72.6% accuracy on the MedQA benchmark, outperforming the previous SOTA by 2.4%, and achieves 81.7% accuracy on the MMLU medical-subset, establishing itself as the first OS LLM to surpass 80% accuracy on this benchmark. Our results highlight medical-specific emergent properties in OS LLMs which have not yet been documented to date elsewhere, and showcase the benefits of further leveraging prompt engineering to improve the performance of accessible LLMs for medical applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-02-29T17:19:39Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jenish Maharjan</name>
+    </author>
+    <author>
+      <name>Anurag Garikipati</name>
+    </author>
+    <author>
+      <name>Navan Preet Singh</name>
+    </author>
+    <author>
+      <name>Leo Cyrus</name>
+    </author>
+    <author>
+      <name>Mayank Sharma</name>
+    </author>
+    <author>
+      <name>Madalina Ciobanu</name>
+    </author>
+    <author>
+      <name>Gina Barnes</name>
+    </author>
+    <author>
+      <name>Rahul Thapa</name>
+    </author>
+    <author>
+      <name>Qingqing Mao</name>
+    </author>
+    <author>
+      <name>Ritankar Das</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1802.10279v1</id>
+    <title>Medical Exam Question Answering with Large-scale Reading Comprehension</title>
+    <updated>2018-02-28T06:27:37Z</updated>
+    <link href="https://arxiv.org/abs/1802.10279v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1802.10279v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reading and understanding text is one important component in computer aided diagnosis in clinical medicine, also being a major research problem in the field of NLP. In this work, we introduce a question-answering task called MedQA to study answering questions in clinical medicine using knowledge in a large-scale document collection. The aim of MedQA is to answer real-world questions with large-scale reading comprehension. We propose our solution SeaReader--a modular end-to-end reading comprehension model based on LSTM networks and dual-path attention architecture. The novel dual-path attention models information flow from two perspectives and has the ability to simultaneously read individual documents and integrate information across multiple documents. In experiments our SeaReader achieved a large increase in accuracy on MedQA over competing models. Additionally, we develop a series of novel techniques to demonstrate the interpretation of the question answering process in SeaReader.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2018-02-28T06:27:37Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xiao Zhang</name>
+    </author>
+    <author>
+      <name>Ji Wu</name>
+    </author>
+    <author>
+      <name>Zhiyang He</name>
+    </author>
+    <author>
+      <name>Xien Liu</name>
+    </author>
+    <author>
+      <name>Ying Su</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.04078v3</id>
+    <title>LLMEval-Med: A Real-world Clinical Benchmark for Medical LLMs with Physician Validation</title>
+    <updated>2025-08-31T14:41:06Z</updated>
+    <link href="https://arxiv.org/abs/2506.04078v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.04078v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Evaluating large language models (LLMs) in medicine is crucial because medical applications require high accuracy with little room for error. Current medical benchmarks have three main types: medical exam-based, comprehensive medical, and specialized assessments. However, these benchmarks have limitations in question design (mostly multiple-choice), data sources (often not derived from real clinical scenarios), and evaluation methods (poor assessment of complex reasoning). To address these issues, we present LLMEval-Med, a new benchmark covering five core medical areas, including 2,996 questions created from real-world electronic health records and expert-designed clinical scenarios. We also design an automated evaluation pipeline, incorporating expert-developed checklists into our LLM-as-Judge framework. Furthermore, our methodology validates machine scoring through human-machine agreement analysis, dynamically refining checklists and prompts based on expert feedback to ensure reliability. We evaluate 13 LLMs across three categories (specialized medical models, open-source models, and closed-source models) on LLMEval-Med, providing valuable insights for the safe and effective deployment of LLMs in medical domains. The dataset is released in https://github.com/llmeval/LLMEval-Med.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-04T15:43:14Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ming Zhang</name>
+    </author>
+    <author>
+      <name>Yujiong Shen</name>
+    </author>
+    <author>
+      <name>Zelin Li</name>
+    </author>
+    <author>
+      <name>Huayu Sha</name>
+    </author>
+    <author>
+      <name>Binze Hu</name>
+    </author>
+    <author>
+      <name>Yuhui Wang</name>
+    </author>
+    <author>
+      <name>Chenhao Huang</name>
+    </author>
+    <author>
+      <name>Shichun Liu</name>
+    </author>
+    <author>
+      <name>Jingqi Tong</name>
+    </author>
+    <author>
+      <name>Changhao Jiang</name>
+    </author>
+    <author>
+      <name>Mingxu Chai</name>
+    </author>
+    <author>
+      <name>Zhiheng Xi</name>
+    </author>
+    <author>
+      <name>Shihan Dou</name>
+    </author>
+    <author>
+      <name>Tao Gui</name>
+    </author>
+    <author>
+      <name>Qi Zhang</name>
+    </author>
+    <author>
+      <name>Xuanjing Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.12066v2</id>
+    <title>Language Models are Surprisingly Fragile to Drug Names in Biomedical Benchmarks</title>
+    <updated>2024-06-19T03:59:41Z</updated>
+    <link href="https://arxiv.org/abs/2406.12066v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.12066v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical knowledge is context-dependent and requires consistent reasoning across various natural language expressions of semantically equivalent phrases. This is particularly crucial for drug names, where patients often use brand names like Advil or Tylenol instead of their generic equivalents. To study this, we create a new robustness dataset, RABBITS, to evaluate performance differences on medical benchmarks after swapping brand and generic drug names using physician expert annotations.
+  We assess both open-source and API-based LLMs on MedQA and MedMCQA, revealing a consistent performance drop ranging from 1-10\%. Furthermore, we identify a potential source of this fragility as the contamination of test data in widely used pre-training datasets. All code is accessible at https://github.com/BittermanLab/RABBITS, and a HuggingFace leaderboard is available at https://huggingface.co/spaces/AIM-Harvard/rabbits-leaderboard.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-17T20:09:24Z</published>
+    <arxiv:comment>submitted for review, total 15 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jack Gallifant</name>
+    </author>
+    <author>
+      <name>Shan Chen</name>
+    </author>
+    <author>
+      <name>Pedro Moreira</name>
+    </author>
+    <author>
+      <name>Nikolaj Munch</name>
+    </author>
+    <author>
+      <name>Mingye Gao</name>
+    </author>
+    <author>
+      <name>Jackson Pond</name>
+    </author>
+    <author>
+      <name>Leo Anthony Celi</name>
+    </author>
+    <author>
+      <name>Hugo Aerts</name>
+    </author>
+    <author>
+      <name>Thomas Hartvigsen</name>
+    </author>
+    <author>
+      <name>Danielle Bitterman</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.11105v3</id>
+    <title>Enabling On-Device Medical AI Assistants via Input-Driven Saliency Adaptation</title>
+    <updated>2025-08-07T14:57:45Z</updated>
+    <link href="https://arxiv.org/abs/2506.11105v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.11105v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) have significant impact on the healthcare scenarios but remain prohibitively large for deployment in real-time, resource-constrained environments such as edge devices. In this work, we introduce a novel medical assistant system, optimized through our general-purpose compression framework, which tailors Large Language Models (LLMs) for deployment in specialized domains. By measuring neuron saliency on domain-specific data, our method can aggressively prune irrelevant neurons, reducing model size while preserving performance. Following pruning, we apply post-training quantization to further reduce the memory footprint, and evaluate the compressed model across medical benchmarks including MedMCQA, MedQA, and PubMedQA. We also deploy the 50\% compressed Gemma and the 67\% compressed LLaMA3 models on Jetson Orin Nano (18.7W peak) and Raspberry Pi 5 (6.3W peak), achieving real-time, energy-efficient inference under hardware constraints.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="eess.SY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-07T01:37:42Z</published>
+    <arxiv:comment>Accepted for publication in the Proceedings of IEEE BioCAS 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Uttej Kallakurik</name>
+    </author>
+    <author>
+      <name>Edward Humes</name>
+    </author>
+    <author>
+      <name>Rithvik Jonna</name>
+    </author>
+    <author>
+      <name>Xiaomin Lin</name>
+    </author>
+    <author>
+      <name>Tinoosh Mohsenin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2207.08143v4</id>
+    <title>Can large language models reason about medical questions?</title>
+    <updated>2023-12-24T11:17:23Z</updated>
+    <link href="https://arxiv.org/abs/2207.08143v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2207.08143v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Although large language models (LLMs) often produce impressive outputs, it remains unclear how they perform in real-world scenarios requiring strong reasoning skills and expert domain knowledge. We set out to investigate whether close- and open-source models (GPT-3.5, LLama-2, etc.) can be applied to answer and reason about difficult real-world-based questions. We focus on three popular medical benchmarks (MedQA-USMLE, MedMCQA, and PubMedQA) and multiple prompting scenarios: Chain-of-Thought (CoT, think step-by-step), few-shot and retrieval augmentation. Based on an expert annotation of the generated CoTs, we found that InstructGPT can often read, reason and recall expert knowledge. Last, by leveraging advances in prompt engineering (few-shot and ensemble methods), we demonstrated that GPT-3.5 not only yields calibrated predictive distributions, but also reaches the passing score on three datasets: MedQA-USMLE 60.2%, MedMCQA 62.7% and PubMedQA 78.2%. Open-source models are closing the gap: Llama-2 70B also passed the MedQA-USMLE with 62.5% accuracy.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-07-17T11:24:44Z</published>
+    <arxiv:comment>37 pages, 23 figures. v1: results using InstructGPT, v2.0: added the Codex experiments, v2.1: added the missing test MedMCQA results for Codex 5-shot CoT and using k=100 samples, v3.0: added results for open source models -- ready for publication (final version)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Valentin Liévin</name>
+    </author>
+    <author>
+      <name>Christoffer Egeberg Hother</name>
+    </author>
+    <author>
+      <name>Andreas Geert Motzfeldt</name>
+    </author>
+    <author>
+      <name>Ole Winther</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.11129v1</id>
+    <title>Trustworthy AI for Medicine: Continuous Hallucination Detection and Elimination with CHECK</title>
+    <updated>2025-06-10T17:12:28Z</updated>
+    <link href="https://arxiv.org/abs/2506.11129v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.11129v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) show promise in healthcare, but hallucinations remain a major barrier to clinical use. We present CHECK, a continuous-learning framework that integrates structured clinical databases with a classifier grounded in information theory to detect both factual and reasoning-based hallucinations. Evaluated on 1500 questions from 100 pivotal clinical trials, CHECK reduced LLama3.3-70B-Instruct hallucination rates from 31% to 0.3% - making an open source model state of the art. Its classifier generalized across medical benchmarks, achieving AUCs of 0.95-0.96, including on the MedQA (USMLE) benchmark and HealthBench realistic multi-turn medical questioning. By leveraging hallucination probabilities to guide GPT-4o's refinement and judiciously escalate compute, CHECK boosted its USMLE passing rate by 5 percentage points, achieving a state-of-the-art 92.1%. By suppressing hallucinations below accepted clinical error thresholds, CHECK offers a scalable foundation for safe LLM deployment in medicine and other high-stakes domains.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-10T17:12:28Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Carlos Garcia-Fernandez</name>
+    </author>
+    <author>
+      <name>Luis Felipe</name>
+    </author>
+    <author>
+      <name>Monique Shotande</name>
+    </author>
+    <author>
+      <name>Muntasir Zitu</name>
+    </author>
+    <author>
+      <name>Aakash Tripathi</name>
+    </author>
+    <author>
+      <name>Ghulam Rasool</name>
+    </author>
+    <author>
+      <name>Issam El Naqa</name>
+    </author>
+    <author>
+      <name>Vivek Rudrapatna</name>
+    </author>
+    <author>
+      <name>Gilmer Valdes</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1910.08636v1</id>
+    <title>The TCGA Meta-Dataset Clinical Benchmark</title>
+    <updated>2019-10-18T21:44:12Z</updated>
+    <link href="https://arxiv.org/abs/1910.08636v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1910.08636v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Machine learning is bringing a paradigm shift to healthcare by changing the process of disease diagnosis and prognosis in clinics and hospitals. This development equips doctors and medical staff with tools to evaluate their hypotheses and hence make more precise decisions. Although most current research in the literature seeks to develop techniques and methods for predicting one particular clinical outcome, this approach is far from the reality of clinical decision making in which you have to consider several factors simultaneously. In addition, it is difficult to follow the recent progress concretely as there is a lack of consistency in benchmark datasets and task definitions in the field of Genomics. To address the aforementioned issues, we provide a clinical Meta-Dataset derived from the publicly available data hub called The Cancer Genome Atlas Program (TCGA) that contains 174 tasks. We believe those tasks could be good proxy tasks to develop methods which can work on a few samples of gene expression data. Also, learning to predict multiple clinical variables using gene-expression data is an important task due to the variety of phenotypes in clinical problems and lack of samples for some of the rare variables. The defined tasks cover a wide range of clinical problems including predicting tumor tissue site, white cell count, histological type, family history of cancer, gender, and many others which we explain later in the paper. Each task represents an independent dataset. We use regression and neural network baselines for all the tasks using only 150 samples and compare their performance.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.QM" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-10-18T21:44:12Z</published>
+    <arxiv:comment>5 Pages, Submitted to MLCB 2019</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Mandana Samiei</name>
+    </author>
+    <author>
+      <name>Tobias Würfl</name>
+    </author>
+    <author>
+      <name>Tristan Deleu</name>
+    </author>
+    <author>
+      <name>Martin Weiss</name>
+    </author>
+    <author>
+      <name>Francis Dutil</name>
+    </author>
+    <author>
+      <name>Thomas Fevens</name>
+    </author>
+    <author>
+      <name>Geneviève Boucher</name>
+    </author>
+    <author>
+      <name>Sebastien Lemieux</name>
+    </author>
+    <author>
+      <name>Joseph Paul Cohen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2009.13081v1</id>
+    <title>What Disease does this Patient Have? A Large-scale Open Domain Question Answering Dataset from Medical Exams</title>
+    <updated>2020-09-28T05:07:51Z</updated>
+    <link href="https://arxiv.org/abs/2009.13081v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2009.13081v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Open domain question answering (OpenQA) tasks have been recently attracting more and more attention from the natural language processing (NLP) community. In this work, we present the first free-form multiple-choice OpenQA dataset for solving medical problems, MedQA, collected from the professional medical board exams. It covers three languages: English, simplified Chinese, and traditional Chinese, and contains 12,723, 34,251, and 14,123 questions for the three languages, respectively. We implement both rule-based and popular neural methods by sequentially combining a document retriever and a machine comprehension model. Through experiments, we find that even the current best method can only achieve 36.7\%, 42.0\%, and 70.1\% of test accuracy on the English, traditional Chinese, and simplified Chinese questions, respectively. We expect MedQA to present great challenges to existing OpenQA systems and hope that it can serve as a platform to promote much stronger OpenQA models from the NLP community in the future.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-09-28T05:07:51Z</published>
+    <arxiv:comment>Submitted to AAAI 2021</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Di Jin</name>
+    </author>
+    <author>
+      <name>Eileen Pan</name>
+    </author>
+    <author>
+      <name>Nassim Oufattole</name>
+    </author>
+    <author>
+      <name>Wei-Hung Weng</name>
+    </author>
+    <author>
+      <name>Hanyi Fang</name>
+    </author>
+    <author>
+      <name>Peter Szolovits</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.15894v1</id>
+    <title>Assessing The Potential Of Mid-Sized Language Models For Clinical QA</title>
+    <updated>2024-04-24T14:32:34Z</updated>
+    <link href="https://arxiv.org/abs/2404.15894v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.15894v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models, such as GPT-4 and Med-PaLM, have shown impressive performance on clinical tasks; however, they require access to compute, are closed-source, and cannot be deployed on device. Mid-size models such as BioGPT-large, BioMedLM, LLaMA 2, and Mistral 7B avoid these drawbacks, but their capacity for clinical tasks has been understudied. To help assess their potential for clinical use and help researchers decide which model they should use, we compare their performance on two clinical question-answering (QA) tasks: MedQA and consumer query answering. We find that Mistral 7B is the best performing model, winning on all benchmarks and outperforming models trained specifically for the biomedical domain. While Mistral 7B's MedQA score of 63.0% approaches the original Med-PaLM, and it often can produce plausible responses to consumer health queries, room for improvement still exists. This study provides the first head-to-head assessment of open source mid-sized models on clinical tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-24T14:32:34Z</published>
+    <arxiv:comment>25 pages, 8 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Elliot Bolton</name>
+    </author>
+    <author>
+      <name>Betty Xiong</name>
+    </author>
+    <author>
+      <name>Vijaytha Muralidharan</name>
+    </author>
+    <author>
+      <name>Joel Schamroth</name>
+    </author>
+    <author>
+      <name>Vivek Muralidharan</name>
+    </author>
+    <author>
+      <name>Christopher D. Manning</name>
+    </author>
+    <author>
+      <name>Roxana Daneshjou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.24236v2</id>
+    <title>Towards Transparent Reasoning: What Drives Faithfulness in Large Language Models?</title>
+    <updated>2025-11-03T10:31:57Z</updated>
+    <link href="https://arxiv.org/abs/2510.24236v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.24236v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) often produce explanations that do not faithfully reflect the factors driving their predictions. In healthcare settings, such unfaithfulness is especially problematic: explanations that omit salient clinical cues or mask spurious shortcuts can undermine clinician trust and lead to unsafe decision support. We study how inference and training-time choices shape explanation faithfulness, focusing on factors practitioners can control at deployment. We evaluate three LLMs (GPT-4.1-mini, LLaMA 70B, LLaMA 8B) on two datasets-BBQ (social bias) and MedQA (medical licensing questions), and manipulate the number and type of few-shot examples, prompting strategies, and training procedure. Our results show: (i) both the quantity and quality of few-shot examples significantly impact model faithfulness; (ii) faithfulness is sensitive to prompting design; (iii) the instruction-tuning phase improves measured faithfulness on MedQA. These findings offer insights into strategies for enhancing the interpretability and trustworthiness of LLMs in sensitive domains.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-28T09:43:49Z</published>
+    <arxiv:comment>39th Conference on Neural Information Processing Systems (NeurIPS 2025) Workshop: NeurIPS 2025 Workshop on Evaluating the Evolving LLM Lifecycle: Benchmarks, Emergent Abilities, and Scaling</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Teague McMillan</name>
+    </author>
+    <author>
+      <name>Gabriele Dominici</name>
+    </author>
+    <author>
+      <name>Martin Gjoreski</name>
+    </author>
+    <author>
+      <name>Marc Langheinrich</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2409.08523v2</id>
+    <title>Eir: Thai Medical Large Language Models</title>
+    <updated>2024-09-16T10:50:30Z</updated>
+    <link href="https://arxiv.org/abs/2409.08523v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2409.08523v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present Eir-8B, a large language model with 8 billion parameters, specifically designed to enhance the accuracy of handling medical tasks in the Thai language. This model focuses on providing clear and easy-to-understand answers for both healthcare professionals and patients, thereby improving the efficiency of diagnosis and treatment processes. Human evaluation was conducted to ensure that the model adheres to care standards and provides unbiased answers.
+  To prioritize data security, the model is deployed within the hospital's internal network, ensuring both high security and faster processing speeds. The internal API connection is secured with encryption and strict authentication measures to prevent data leaks and unauthorized access.
+  We evaluated several open-source large language models with 8 billion parameters on four medical benchmarks: MedQA, MedMCQA, PubMedQA, and the medical subset of MMLU. The best-performing baselines were used to develop Eir-8B. Our evaluation employed multiple questioning strategies, including zero-shot, few-shot, chain-of-thought reasoning, and ensemble/self-consistency voting methods. Our model outperformed commercially available Thai-language large language models by more than 10%. In addition, we developed enhanced model testing tailored for clinical use in Thai across 18 clinical tasks, where our model exceeded GPT-4o performance by more than 11%.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-09-13T04:06:00Z</published>
+    <arxiv:comment>typos corrected, and references added</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yutthakorn Thiprak</name>
+    </author>
+    <author>
+      <name>Rungtam Ngodngamthaweesuk</name>
+    </author>
+    <author>
+      <name>Songtam Ngodngamtaweesuk</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.16747v1</id>
+    <title>LiveClin: A Live Clinical Benchmark without Leakage</title>
+    <updated>2026-02-18T03:59:46Z</updated>
+    <link href="https://arxiv.org/abs/2602.16747v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.16747v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The reliability of medical LLM evaluation is critically undermined by data contamination and knowledge obsolescence, leading to inflated scores on static benchmarks. To address these challenges, we introduce LiveClin, a live benchmark designed for approximating real-world clinical practice. Built from contemporary, peer-reviewed case reports and updated biannually, LiveClin ensures clinical currency and resists data contamination. Using a verified AI-human workflow involving 239 physicians, we transform authentic patient cases into complex, multimodal evaluation scenarios that span the entire clinical pathway. The benchmark currently comprises 1,407 case reports and 6,605 questions. Our evaluation of 26 models on LiveClin reveals the profound difficulty of these real-world scenarios, with the top-performing model achieving a Case Accuracy of just 35.7%. In benchmarking against human experts, Chief Physicians achieved the highest accuracy, followed closely by Attending Physicians, with both surpassing most models. LiveClin thus provides a continuously evolving, clinically grounded framework to guide the development of medical LLMs towards closing this gap and achieving greater reliability and real-world utility. Our data and code are publicly available at https://github.com/AQ-MedAI/LiveClin.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-18T03:59:46Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Xidong Wang</name>
+    </author>
+    <author>
+      <name>Shuqi Guo</name>
+    </author>
+    <author>
+      <name>Yue Shen</name>
+    </author>
+    <author>
+      <name>Junying Chen</name>
+    </author>
+    <author>
+      <name>Jian Wang</name>
+    </author>
+    <author>
+      <name>Jinjie Gu</name>
+    </author>
+    <author>
+      <name>Ping Zhang</name>
+    </author>
+    <author>
+      <name>Lei Liu</name>
+    </author>
+    <author>
+      <name>Benyou Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.13010v3</id>
+    <title>Agentic Medical Knowledge Graphs Enhance Medical Question Answering: Bridging the Gap Between LLMs and Evolving Medical Knowledge</title>
+    <updated>2025-06-29T14:58:00Z</updated>
+    <link href="https://arxiv.org/abs/2502.13010v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.13010v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) have significantly advanced medical question-answering by leveraging extensive clinical data and medical literature. However, the rapid evolution of medical knowledge and the labor-intensive process of manually updating domain-specific resources pose challenges to the reliability of these systems. To address this, we introduce Agentic Medical Graph-RAG (AMG-RAG), a comprehensive framework that automates the construction and continuous updating of medical knowledge graphs, integrates reasoning, and retrieves current external evidence, such as PubMed and WikiSearch. By dynamically linking new findings and complex medical concepts, AMG-RAG not only improves accuracy but also enhances interpretability in medical queries.
+  Evaluations on the MEDQA and MEDMCQA benchmarks demonstrate the effectiveness of AMG-RAG, achieving an F1 score of 74.1 percent on MEDQA and an accuracy of 66.34 percent on MEDMCQA, outperforming both comparable models and those 10 to 100 times larger. Notably, these improvements are achieved without increasing computational overhead, highlighting the critical role of automated knowledge graph generation and external evidence retrieval in delivering up-to-date, trustworthy medical insights.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-18T16:29:45Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mohammad Reza Rezaei</name>
+    </author>
+    <author>
+      <name>Reza Saadati Fard</name>
+    </author>
+    <author>
+      <name>Jayson L. Parker</name>
+    </author>
+    <author>
+      <name>Rahul G. Krishnan</name>
+    </author>
+    <author>
+      <name>Milad Lankarany</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.13373v1</id>
+    <title>A Novel Hierarchical Integration Method for Efficient Model Merging in Medical LLMs</title>
+    <updated>2025-11-17T13:47:27Z</updated>
+    <link href="https://arxiv.org/abs/2511.13373v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.13373v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) face significant challenges in distributed healthcare, including consolidating specialized domain knowledge across institutions while maintaining privacy, reducing computational overhead, and preventing catastrophic forgetting during model updates.This paper presents a systematic evaluation of six parameter-space merging techniques applied to two architecturally compatible medical LLMs derived from the Mistral-7B base model. We introduce a novel hierarchical method that combines selective Optimal Transport (OT) alignment for attention layers with cosine similarity-weighted interpolation, designed to address permutation variance while minimizing computational overhead for edge deployment scenarios. Our study evaluates Task Arithmetic, Linear Averaging, DARE-TIES, DELLA, Breadcrumbs, and our Hierarchical approach across five medical benchmarks. Results demonstrate that architecturally compatible models benefit significantly from simple averaging methods, with Task Arithmetic achieving 45.80% accuracy on MedQA, outperforming complex pruning-based approaches. These findings offer critical insights for the deployment of distributed medical AI in resource-constrained IoT environments, where computational efficiency and model compatibility are paramount. Our work establishes that for architecturally compatible models, simple averaging provides a robust and computationally efficient baseline for knowledge consolidation, offering a pragmatic path forward for scalable medical AI systems.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-17T13:47:27Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Prakrit Timilsina</name>
+    </author>
+    <author>
+      <name>Anuj Nepal</name>
+    </author>
+    <author>
+      <name>Rajan Kadel</name>
+    </author>
+    <author>
+      <name>Robin Doss</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.01434v1</id>
+    <title>DrugClaw and DrugAudit: A Primary-Source-Grounded Agent and Authority-Aware Benchmark for Drug-Information Question Answering</title>
+    <updated>2026-05-31T20:11:05Z</updated>
+    <link href="https://arxiv.org/abs/2606.01434v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.01434v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Drug-information question answering is a high-stakes setting where hallucinated facts can mislead clinical decision-making and the provenance of each cited fact matters as much as the fact itself. We present DrugClaw, a multi-agent retrieval-augmented system that queries a registry of drug and pharmacovigilance skills via a reflection-driven state-machine workflow and returns answers grounded in primary regulatory or peer-reviewed records. We also contribute DrugAudit, a 3,772-item authority-aware benchmark with an evaluation panel that scores upstream-of-gold source match, token-level semantic snippet overlap, and citation faithfulness under a dual-judge LLM-as-judge protocol with inter-judge kappa = 0.88 (almost-perfect). Across DrugAudit plus drug-related subsets of MedQA (751) and PubMedQA (512), DrugClaw is top-1 on every column of the headline table: composite Evidence Index under both judges, judge-mediated answer correctness, primary-source rate (0.918, +10.1 pp over next-best), faithfulness (0.887, +5.9 pp), MedQA (0.920), and PubMedQA (0.693).</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-31T20:11:05Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Qing Wang</name>
+    </author>
+    <author>
+      <name>Bo Li</name>
+    </author>
+    <author>
+      <name>Jialu Liang</name>
+    </author>
+    <author>
+      <name>Daling Shi</name>
+    </author>
+    <author>
+      <name>Bob Zhang</name>
+    </author>
+    <author>
+      <name>Qianqian Song</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2308.14641v2</id>
+    <title>Challenges of GPT-3-based Conversational Agents for Healthcare</title>
+    <updated>2023-08-29T15:48:23Z</updated>
+    <link href="https://arxiv.org/abs/2308.14641v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2308.14641v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The potential to provide patients with faster information access while allowing medical specialists to concentrate on critical tasks makes medical domain dialog agents appealing. However, the integration of large-language models (LLMs) into these agents presents certain limitations that may result in serious consequences. This paper investigates the challenges and risks of using GPT-3-based models for medical question-answering (MedQA). We perform several evaluations contextualized in terms of standard medical principles. We provide a procedure for manually designing patient queries to stress-test high-risk limitations of LLMs in MedQA systems. Our analysis reveals that LLMs fail to respond adequately to these queries, generating erroneous medical information, unsafe recommendations, and content that may be considered offensive.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-08-28T15:12:34Z</published>
+    <arxiv:comment>12 pages, 9 Tables, accepted to RANLP 2023</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Fabian Lechner</name>
+    </author>
+    <author>
+      <name>Allison Lahnala</name>
+    </author>
+    <author>
+      <name>Charles Welch</name>
+    </author>
+    <author>
+      <name>Lucie Flek</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.12031v2</id>
+    <title>Clinical Camel: An Open Expert-Level Medical Language Model with Dialogue-Based Knowledge Encoding</title>
+    <updated>2023-08-17T17:19:02Z</updated>
+    <link href="https://arxiv.org/abs/2305.12031v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.12031v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present Clinical Camel, an open large language model (LLM) explicitly tailored for clinical research. Fine-tuned from LLaMA-2 using QLoRA, Clinical Camel achieves state-of-the-art performance across medical benchmarks among openly available medical LLMs. Leveraging efficient single-GPU training, Clinical Camel surpasses GPT-3.5 in five-shot evaluations on all assessed benchmarks, including 64.3% on the USMLE Sample Exam (compared to 58.5% for GPT-3.5), 77.9% on PubMedQA (compared to 60.2%), 60.7% on MedQA (compared to 53.6%), and 54.2% on MedMCQA (compared to 51.0%). In addition to these benchmarks, Clinical Camel demonstrates its broader capabilities, such as synthesizing plausible clinical notes. This work introduces dialogue-based knowledge encoding, a novel method to synthesize conversational data from dense medical texts. While benchmark results are encouraging, extensive and rigorous human evaluation across diverse clinical scenarios is imperative to ascertain safety before implementation. By openly sharing Clinical Camel, we hope to foster transparent and collaborative research, working towards the safe integration of LLMs within the healthcare domain. Significant challenges concerning reliability, bias, and the potential for outdated knowledge persist. Nonetheless, the transparency provided by an open approach reinforces the scientific rigor essential for future clinical applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-19T23:07:09Z</published>
+    <arxiv:comment>for model weights, see https://huggingface.co/wanglab/</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Augustin Toma</name>
+    </author>
+    <author>
+      <name>Patrick R. Lawler</name>
+    </author>
+    <author>
+      <name>Jimmy Ba</name>
+    </author>
+    <author>
+      <name>Rahul G. Krishnan</name>
+    </author>
+    <author>
+      <name>Barry B. Rubin</name>
+    </author>
+    <author>
+      <name>Bo Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.15944v1</id>
+    <title>AutoMedPrompt: A New Framework for Optimizing LLM Medical Prompts Using Textual Gradients</title>
+    <updated>2025-02-21T21:17:37Z</updated>
+    <link href="https://arxiv.org/abs/2502.15944v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.15944v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have demonstrated increasingly sophisticated performance in medical and other fields of knowledge. Traditional methods of creating specialist LLMs require extensive fine-tuning and training of models on large datasets. Recently, prompt engineering, instead of fine-tuning, has shown potential to boost the performance of general foundation models. However, prompting methods such as chain-of-thought (CoT) may not be suitable for all subspecialty, and k-shot approaches may introduce irrelevant tokens into the context space. We present AutoMedPrompt, which explores the use of textual gradients to elicit medically relevant reasoning through system prompt optimization. AutoMedPrompt leverages TextGrad's automatic differentiation via text to improve the ability of general foundation LLMs. We evaluated AutoMedPrompt on Llama 3, an open-source LLM, using several QA benchmarks, including MedQA, PubMedQA, and the nephrology subspecialty-specific NephSAP. Our results show that prompting with textual gradients outperforms previous methods on open-source LLMs and surpasses proprietary models such as GPT-4, Claude 3 Opus, and Med-PaLM 2. AutoMedPrompt sets a new state-of-the-art (SOTA) performance on PubMedQA with an accuracy of 82.6$\%$, while also outperforming previous prompting strategies on open-sourced models for MedQA (77.7$\%$) and NephSAP (63.8$\%$).</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-21T21:17:37Z</published>
+    <arxiv:comment>14 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Sean Wu</name>
+    </author>
+    <author>
+      <name>Michael Koo</name>
+    </author>
+    <author>
+      <name>Fabien Scalzo</name>
+    </author>
+    <author>
+      <name>Ira Kurtz</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.11733v2</id>
+    <title>MedCaseReasoning: Evaluating and learning diagnostic reasoning from clinical case reports</title>
+    <updated>2025-05-20T15:56:52Z</updated>
+    <link href="https://arxiv.org/abs/2505.11733v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.11733v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Doctors and patients alike increasingly use Large Language Models (LLMs) to diagnose clinical cases. However, unlike domains such as math or coding, where correctness can be objectively defined by the final answer, medical diagnosis requires both the outcome and the reasoning process to be accurate. Currently, widely used medical benchmarks like MedQA and MMLU assess only accuracy in the final answer, overlooking the quality and faithfulness of the clinical reasoning process. To address this limitation, we introduce MedCaseReasoning, the first open-access dataset for evaluating LLMs on their ability to align with clinician-authored diagnostic reasoning. The dataset includes 14,489 diagnostic question-and-answer cases, each paired with detailed reasoning statements derived from open-access medical case reports. We evaluate state-of-the-art reasoning LLMs on MedCaseReasoning and find significant shortcomings in their diagnoses and reasoning: for instance, the top-performing open-source model, DeepSeek-R1, achieves only 48% 10-shot diagnostic accuracy and mentions only 64% of the clinician reasoning statements (recall). However, we demonstrate that fine-tuning LLMs on the reasoning traces derived from MedCaseReasoning significantly improves diagnostic accuracy and clinical reasoning recall by an average relative gain of 29% and 41%, respectively. The open-source dataset, code, and models are available at https://github.com/kevinwu23/Stanford-MedCaseReasoning.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-16T22:34:36Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kevin Wu</name>
+    </author>
+    <author>
+      <name>Eric Wu</name>
+    </author>
+    <author>
+      <name>Rahul Thapa</name>
+    </author>
+    <author>
+      <name>Kevin Wei</name>
+    </author>
+    <author>
+      <name>Angela Zhang</name>
+    </author>
+    <author>
+      <name>Arvind Suresh</name>
+    </author>
+    <author>
+      <name>Jacqueline J. Tao</name>
+    </author>
+    <author>
+      <name>Min Woo Sun</name>
+    </author>
+    <author>
+      <name>Alejandro Lozano</name>
+    </author>
+    <author>
+      <name>James Zou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2303.17071v1</id>
+    <title>DERA: Enhancing Large Language Model Completions with Dialog-Enabled Resolving Agents</title>
+    <updated>2023-03-30T00:30:19Z</updated>
+    <link href="https://arxiv.org/abs/2303.17071v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2303.17071v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have emerged as valuable tools for many natural language understanding tasks. In safety-critical applications such as healthcare, the utility of these models is governed by their ability to generate outputs that are factually accurate and complete. In this work, we present dialog-enabled resolving agents (DERA). DERA is a paradigm made possible by the increased conversational abilities of LLMs, namely GPT-4. It provides a simple, interpretable forum for models to communicate feedback and iteratively improve output. We frame our dialog as a discussion between two agent types - a Researcher, who processes information and identifies crucial problem components, and a Decider, who has the autonomy to integrate the Researcher's information and makes judgments on the final output.
+  We test DERA against three clinically-focused tasks. For medical conversation summarization and care plan generation, DERA shows significant improvement over the base GPT-4 performance in both human expert preference evaluations and quantitative metrics. In a new finding, we also show that GPT-4's performance (70%) on an open-ended version of the MedQA question-answering (QA) dataset (Jin et al. 2021, USMLE) is well above the passing level (60%), with DERA showing similar performance. We release the open-ended MEDQA dataset at https://github.com/curai/curai-research/tree/main/DERA.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-03-30T00:30:19Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Varun Nair</name>
+    </author>
+    <author>
+      <name>Elliot Schumacher</name>
+    </author>
+    <author>
+      <name>Geoffrey Tso</name>
+    </author>
+    <author>
+      <name>Anitha Kannan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2005.11756v1</id>
+    <title>Reliability and Performance Assessment of Federated Learning on Clinical Benchmark Data</title>
+    <updated>2020-05-24T14:36:44Z</updated>
+    <link href="https://arxiv.org/abs/2005.11756v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2005.11756v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As deep learning have been applied in a clinical context, privacy concerns have increased because of the collection and processing of a large amount of personal data. Recently, federated learning (FL) has been suggested to protect personal privacy because it does not centralize data during the training phase. In this study, we assessed the reliability and performance of FL on benchmark datasets including MNIST and MIMIC-III. In addition, we attempted to verify FL on datasets that simulated a realistic clinical data distribution. We implemented FL that uses a client and server architecture and tested client and server FL on modified MNIST and MIMIC-III datasets. FL delivered reliable performance on both imbalanced and extremely skewed distributions (i.e., the difference of the number of patients and the characteristics of patients in each hospital). Therefore, FL can be suitable to protect privacy when applied to medical data.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-05-24T14:36:44Z</published>
+    <arxiv:comment>14 pages, 5 tables, 1 Supplementary Table, 2 Supplementary Figure</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>GeunHyeong Lee</name>
+    </author>
+    <author>
+      <name>Soo-Yong Shin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.21594v1</id>
+    <title>Gazal-R1: Achieving State-of-the-Art Medical Reasoning with Parameter-Efficient Two-Stage Training</title>
+    <updated>2025-06-18T09:44:21Z</updated>
+    <link href="https://arxiv.org/abs/2506.21594v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.21594v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present Gazal-R1, a 32-billion-parameter language model that achieves state-of-the-art performance in medical reasoning while providing transparent, step-by-step explanations for clinical decision-making. Built upon Qwen3 32B, our model demonstrates that strategic training can enable mid-sized models to outperform significantly larger counterparts in specialized domains. We developed a novel two-stage training pipeline: first, supervised fine-tuning on a carefully curated dataset of 107,033 synthetic medical reasoning examples that teaches structured clinical thinking, enhanced by advanced parameter-efficient techniques including Weight-Decomposed Low-Rank Adaptation (DoRA) and Rank-Stabilized LoRA (rsLoRA); second, reinforcement learning using Group Relative Policy Optimization (GRPO) with a sophisticated multi-component reward system that refines accuracy, format adherence, and reasoning quality. Gazal-R1 achieves exceptional performance across medical benchmarks, scoring 87.1% on MedQA, 81.6% on MMLU Pro (Medical), and 79.6% on PubMedQA, surpassing models up to 12x larger. Beyond its strong empirical results, this work provides detailed insights into the challenges of training reasoning-capable models in specialized domains, including issues with reward hacking, training instability, and the fundamental tension between factual recall and detailed reasoning. Our methodology offers a reproducible framework for developing high-capability, domain-specific language models that balance performance, efficiency, and explainability.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-18T09:44:21Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ahmed M. Adly</name>
+    </author>
+    <author>
+      <name>Mostafa Samy</name>
+    </author>
+    <author>
+      <name>Amr Fawzy</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.09019v2</id>
+    <title>MedMobile: A mobile-sized language model with clinical capabilities</title>
+    <updated>2025-11-12T21:09:25Z</updated>
+    <link href="https://arxiv.org/abs/2410.09019v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.09019v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Language models (LMs) have demonstrated expert-level reasoning and recall abilities in medicine. However, computational costs and privacy concerns are mounting barriers to wide-scale implementation. To address these significant limitations, we introduce a parsimonious adaptation of phi-3-mini, MedMobile, a 3.8 billion parameter LM capable of running on a mobile device, for medical applications. We perform a careful set of pipeline additions and demonstrate that chain of thought, ensembling, and fine-tuning lead to the greatest performance gains, while unexpectedly retrieval augmented generation fails to demonstrate significant improvements. We evaluate the efficiency of our pipeline on the MultiMedQA and MedBullets. We demonstrate that MedMobile scores 75.7% on the MedQA (USMLE), surpassing the passing mark for licensed physicians (~60%) and rivaling scores of models 100 times its size. Across the entirety of the MultiMedQA, MedMobile achieves SOTA performance for models with less than 5B parameters and represents the smallest model to pass the MedQA (USMLE). MedMobile holds promise to democratize access to language models in medicine, bolstering lower compute needs and fast inference speeds. With the ability to combat the biggest barriers to entry for language models in medicine, we hope that MedMobile is a critical step forward in developing clinically relevant language models.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-10-11T17:32:59Z</published>
+    <arxiv:comment>24 pages, 7 figures (4 main, 3 supplementary)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Krithik Vishwanath</name>
+    </author>
+    <author>
+      <name>Jaden Stryker</name>
+    </author>
+    <author>
+      <name>Anton Alyakin</name>
+    </author>
+    <author>
+      <name>Daniel Alexander Alber</name>
+    </author>
+    <author>
+      <name>Eric Karl Oermann</name>
+    </author>
+    <arxiv:doi>10.1136/bmjdhai-2025-000068</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1136/bmjdhai-2025-000068" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.22419v2</id>
+    <title>Knowledge-Graph Grounding Helps LLMs Only for Out-of-Training Knowledge: A Controlled Study on Clinical Question Answering</title>
+    <updated>2026-06-23T14:56:47Z</updated>
+    <link href="https://arxiv.org/abs/2606.22419v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.22419v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>A recent Nature Medicine study reports that general-purpose frontier LLMs outperform specialized retrieval-augmented clinical tools on medical benchmarks, and that retrieval can hurt strong models. We ask the natural follow-up: does structured knowledge-graph (KG) grounding change this, and when does grounding help at all? We contribute two results. First, a reproduction: the study's headline HealthBench score (~88) is the Consensus variant, not full HealthBench, where frontier models and ideal completions both score ~46-47 under a physician-calibrated grader (agreement 82.5%); we reproduce GPT-5.2 Consensus =90.9 and flag a score-deflating grader bug. Second, a knowledge-boundary result. Using a graph+vector engine (samyama-graph) over the public biomedical KG PrimeKG, neither naive triple retrieval nor an agentic natural-language-to-Cypher loop (82% successful queries) improves MedQA across a weak-to-strong model ladder (all |Delta| &lt;= 3.4). On a synthetic counterfactual KG, and on a hybrid benchmark mixing known and novel facts, the identical pipeline lifts out-of-training accuracy from chance to ~100% (+68 to +79) while adding nothing on known facts (a no-LLM arm answers both). Across three regimes (no-knowledge, graph-aided, hybrid), grounding helps only insofar as the decisive fact lies outside the model's training -- public-KG facts are redundant, private and novel data are where it pays -- matching the study's institutional-data caveat.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DB" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-21T10:12:17Z</published>
+    <arxiv:comment>9 pages. Code: https://github.com/samyama-ai/clinical-llm-graphrag</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Madhulatha Mandarapu</name>
+    </author>
+    <author>
+      <name>Sandeep Kunkunuru</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2409.14302v2</id>
+    <title>Reliable and diverse evaluation of LLM medical knowledge mastery</title>
+    <updated>2024-10-02T15:17:35Z</updated>
+    <link href="https://arxiv.org/abs/2409.14302v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2409.14302v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Mastering medical knowledge is crucial for medical-specific LLMs. However, despite the existence of medical benchmarks like MedQA, a unified framework that fully leverages existing knowledge bases to evaluate LLMs' mastery of medical knowledge is still lacking. In the study, we propose a novel framework PretexEval that dynamically generates reliable and diverse test samples to evaluate LLMs for any given medical knowledge base. We notice that test samples produced directly from knowledge bases by templates or LLMs may introduce factual errors and also lack diversity. To address these issues, we introduce a novel schema into our proposed evaluation framework that employs predicate equivalence transformations to produce a series of variants for any given medical knowledge point. Finally, these produced predicate variants are converted into textual language, resulting in a series of reliable and diverse test samples to evaluate whether LLMs fully master the given medical factual knowledge point. Here, we use our proposed framework to systematically investigate the mastery of medical factual knowledge of 12 well-known LLMs, based on two knowledge bases that are crucial for clinical diagnosis and treatment. The evaluation results illustrate that current LLMs still exhibit significant deficiencies in fully mastering medical knowledge, despite achieving considerable success on some famous public benchmarks. These new findings provide valuable insights for developing medical-specific LLMs, highlighting that current LLMs urgently need to strengthen their comprehensive and in-depth mastery of medical knowledge before being applied to real-world medical scenarios.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-09-22T03:13:38Z</published>
+    <arxiv:comment>20 pages, 11 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yuxuan Zhou</name>
+    </author>
+    <author>
+      <name>Xien Liu</name>
+    </author>
+    <author>
+      <name>Chen Ning</name>
+    </author>
+    <author>
+      <name>Xiao Zhang</name>
+    </author>
+    <author>
+      <name>Ji Wu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.08999v4</id>
+    <title>Learning When to Sample: Confidence-Aware Selective Sampling for Efficient Chain-of-Thought Reasoning</title>
+    <updated>2026-06-21T19:23:29Z</updated>
+    <link href="https://arxiv.org/abs/2603.08999v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.08999v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) can achieve strong reasoning performance through chain-of-thought (CoT) reasoning, yet they often generate unnecessarily long reasoning paths that incur high inference cost. Self-consistency-based approaches push accuracy higher still, but they require sampling and aggregating multiple reasoning trajectories, leading to substantial computational overhead. In this paper, we introduce a confidence-aware selective sampling framework that, at inference time, analyzes a single reasoning trajectory to adaptively determine whether to rely on that trajectory alone or trigger multi-path sampling. The framework uses trajectory-level numeric features and sentence-level linguistic features extracted from reasoning states to guide selective multi-path reasoning. We train it on MedQA and evaluate it in-domain on MedQA and under calibration-only transfer on MathQA, MedMCQA, and MMLU, without further fine-tuning. Experimental results show that the proposed framework maintains comparable performance to full and efficient multi-path reasoning baselines, with accuracy changes of $-0.41 \pm 0.58$ and $-0.31 \pm 0.58$ percentage points, respectively, while reducing token usage by $71.7 \pm 5.0%$ and $36.6 \pm 9.1%$. These findings demonstrate that reasoning trajectories contain rich signals for uncertainty estimation, enabling a simple, transferable mechanism to balance accuracy and efficiency in LLM reasoning.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-09T22:34:06Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Juming Xiong</name>
+    </author>
+    <author>
+      <name>Kevin Guo</name>
+    </author>
+    <author>
+      <name>Congning Ni</name>
+    </author>
+    <author>
+      <name>Weixin Liu</name>
+    </author>
+    <author>
+      <name>Chao Yan</name>
+    </author>
+    <author>
+      <name>Katherine Brown</name>
+    </author>
+    <author>
+      <name>Avinash Baidya</name>
+    </author>
+    <author>
+      <name>Xiang Gao</name>
+    </author>
+    <author>
+      <name>Bradley Malin</name>
+    </author>
+    <author>
+      <name>Zhijun Yin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.06508v3</id>
+    <title>A Clinical Benchmark of Public Self-Supervised Pathology Foundation Models</title>
+    <updated>2024-07-11T16:16:37Z</updated>
+    <link href="https://arxiv.org/abs/2407.06508v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.06508v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The use of self-supervised learning (SSL) to train pathology foundation models has increased substantially in the past few years. Notably, several models trained on large quantities of clinical data have been made publicly available in recent months. This will significantly enhance scientific research in computational pathology and help bridge the gap between research and clinical deployment. With the increase in availability of public foundation models of different sizes, trained using different algorithms on different datasets, it becomes important to establish a benchmark to compare the performance of such models on a variety of clinically relevant tasks spanning multiple organs and diseases. In this work, we present a collection of pathology datasets comprising clinical slides associated with clinically relevant endpoints including cancer diagnoses and a variety of biomarkers generated during standard hospital operation from two medical centers. We leverage these datasets to systematically assess the performance of public pathology foundation models and provide insights into best practices for training new foundation models and selecting appropriate pretrained models.</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-09T02:33:13Z</published>
+    <arxiv:comment>arXiv admin note: text overlap with arXiv:2310.07033</arxiv:comment>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Gabriele Campanella</name>
+    </author>
+    <author>
+      <name>Shengjia Chen</name>
+    </author>
+    <author>
+      <name>Ruchika Verma</name>
+    </author>
+    <author>
+      <name>Jennifer Zeng</name>
+    </author>
+    <author>
+      <name>Aryeh Stock</name>
+    </author>
+    <author>
+      <name>Matt Croken</name>
+    </author>
+    <author>
+      <name>Brandon Veremis</name>
+    </author>
+    <author>
+      <name>Abdulkadir Elmas</name>
+    </author>
+    <author>
+      <name>Kuan-lin Huang</name>
+    </author>
+    <author>
+      <name>Ricky Kwan</name>
+    </author>
+    <author>
+      <name>Jane Houldsworth</name>
+    </author>
+    <author>
+      <name>Adam J. Schoenfeld</name>
+    </author>
+    <author>
+      <name>Chad Vanderbilt</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.13793v4</id>
+    <title>Med-REFL: Medical Reasoning Enhancement via Self-Corrected Fine-grained Reflection</title>
+    <updated>2026-02-25T12:16:37Z</updated>
+    <link href="https://arxiv.org/abs/2506.13793v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.13793v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large reasoning models excel in domains like mathematics where intermediate reasoning is straightforward to verify, but struggle to self-correct in medicine fields where evaluating intermediate reasoning is cumbersome and expensive. This verification bottleneck hinders the development of reliable AI reasoners for high-stakes application. Here we propose Med-REFL, a novel framework that learns fine-grained reflection without human labels or model distillation. Med-REFL introduces a deterministic structural assessment of the reasoning space to automatically generate preference data for reflection. By globally evaluating all explored reasoning paths in a tree-of-thoughts, our method quantifies the value of corrective actions, enabling the automated construction of direct preference optimization pairs. This trains the model to recognize and amend its own reasoning fallacies. Extensive experiments show Med-REFL delivers robust gains across diverse models architectures and medical benchmarks, boosting a general-purpose Llama3.1-8B by +5.82% and the state-of-the-art Huatuo-o1 by +4.13% on the MedQA benchmark. Our Med-REFL-8B achieves state-of-the-art performance among 7-8B models while even competing with models twice its size. Crucially, targeted ablations prove its success generalizes to other domains such as logical reasoning and mitigates the `fake reflection' phenomenon in LRMs. Ultimately, our framework provides a scalable solution to the verification bottleneck, paving the way for more reliable AI reasoners in high-stakes domains like medicine. Med-REFL has been made publicly available in https://github.com/TianYin123/Med-REFL.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-11T14:58:38Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Zongxian Yang</name>
+    </author>
+    <author>
+      <name>Jiayu Qian</name>
+    </author>
+    <author>
+      <name>Zegao Peng</name>
+    </author>
+    <author>
+      <name>Haoyu Zhang</name>
+    </author>
+    <author>
+      <name>Yu-An Huang</name>
+    </author>
+    <author>
+      <name>KC Tan</name>
+    </author>
+    <author>
+      <name>Zhi-An Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.23075v2</id>
+    <title>Second Opinion Matters: Towards Adaptive Clinical AI via the Consensus of Expert Model Ensemble</title>
+    <updated>2025-06-20T18:24:46Z</updated>
+    <link href="https://arxiv.org/abs/2505.23075v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.23075v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Despite the growing clinical adoption of large language models (LLMs), current approaches heavily rely on single model architectures. To overcome risks of obsolescence and rigid dependence on single model systems, we present a novel framework, termed the Consensus Mechanism. Mimicking clinical triage and multidisciplinary clinical decision-making, the Consensus Mechanism implements an ensemble of specialized medical expert agents enabling improved clinical decision making while maintaining robust adaptability. This architecture enables the Consensus Mechanism to be optimized for cost, latency, or performance, purely based on its interior model configuration.
+  To rigorously evaluate the Consensus Mechanism, we employed three medical evaluation benchmarks: MedMCQA, MedQA, and MedXpertQA Text, and the differential diagnosis dataset, DDX+. On MedXpertQA, the Consensus Mechanism achieved an accuracy of 61.0% compared to 53.5% and 45.9% for OpenAI's O3 and Google's Gemini 2.5 Pro. Improvement was consistent across benchmarks with an increase in accuracy on MedQA ($Δ\mathrm{Accuracy}_{\mathrm{consensus\text{-}O3}} = 3.4\%$) and MedMCQA ($Δ\mathrm{Accuracy}_{\mathrm{consensus\text{-}O3}} = 9.1\%$). These accuracy gains extended to differential diagnosis generation, where our system demonstrated improved recall and precision (F1$_\mathrm{consensus}$ = 0.326 vs. F1$_{\mathrm{O3\text{-}high}}$ = 0.2886) and a higher top-1 accuracy for DDX (Top1$_\mathrm{consensus}$ = 52.0% vs. Top1$_{\mathrm{O3\text{-}high}}$ = 45.2%).</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-29T04:29:22Z</published>
+    <arxiv:comment>23 pages, 11 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Amit Kumthekar</name>
+    </author>
+    <author>
+      <name>Zion Tilley</name>
+    </author>
+    <author>
+      <name>Henry Duong</name>
+    </author>
+    <author>
+      <name>Bhargav Patel</name>
+    </author>
+    <author>
+      <name>Michael Magnoli</name>
+    </author>
+    <author>
+      <name>Ahmed Omar</name>
+    </author>
+    <author>
+      <name>Ahmed Nasser</name>
+    </author>
+    <author>
+      <name>Chaitanya Gharpure</name>
+    </author>
+    <author>
+      <name>Yevgen Reztzov</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.15419v1</id>
+    <title>Let LLMs Judge Each Other: Multi-Agent Peer-Reviewed Reasoning for Medical Question Answering</title>
+    <updated>2026-06-13T18:09:44Z</updated>
+    <link href="https://arxiv.org/abs/2606.15419v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.15419v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Objective: To enhance the accuracy, interpretability, and robustness of large language models (LLMs) in medical question answering (MedQA).
+  Method: We designed a multi-agent peer-reviewed reasoning method in which multiple LLM agents independently generate chain-of-thought reasoning with candidate answers, then act as peer reviewers to evaluate each other's reasoning for factual correctness and logical soundness. The highest-rated reasoning chain is selected to produce the final answer. Experiments were conducted with five state-of-the-art LLMs (Llama-3.1-8B, Qwen2.5-7B, Phi-4, DeepSeek-LLM-7B, GPT-oss-20B) on three benchmark datasets: HeadQA, MedQA-USMLE, and PubMedQA. Performance was compared against single-model chain-of-thought reasoning and chain-of-thought-based majority voting.
+  Results: Peer-reviewed reasoning consistently outperformed both baselines. The best model combination achieved an average accuracy of 0.820 across datasets, exceeding the strongest single model (0.777) and majority voting ensembles (up to 0.789). The method also scaled effectively with more participating models, while peer assessments reliably distinguished high- from low-quality reasoning chains.
+  Conclusion: The proposed multi-agent peer-reviewed reasoning method enables LLMs to act as both solvers and evaluators, yielding superior performance in MedQA. By emphasizing reasoning quality rather than answer agreement alone, this approach improves accuracy, interpretability, and robustness, offering a promising direction for trustworthy biomedical AI systems.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-13T18:09:44Z</published>
+    <arxiv:comment>Accepted by the Journal of the American Medical Informatics Association</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zaifu Zhan</name>
+    </author>
+    <author>
+      <name>Shuang Zhou</name>
+    </author>
+    <author>
+      <name>Rui Zhang</name>
+    </author>
+  </entry>
+</feed>

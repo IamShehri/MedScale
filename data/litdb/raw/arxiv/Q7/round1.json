@@ -1,0 +1,1330 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/WlY1sTjOWAO0csPAYMiCwC+Pip4</id>
+  <title>arXiv Query: search_query=(all:Synthea OR all:"synthetic patient" OR all:"synthetic EHR" OR all:"synthetic clinical data")&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:32Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=all:Synthea+OR+(all:%22synthetic+patient%22+OR+(all:%22synthetic+EHR%22+OR+all:%22synthetic+clinical+data%22))&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>107</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2507.21123v1</id>
+    <title>Leveraging Generative AI to Enhance Synthea Module Development</title>
+    <updated>2025-07-18T17:44:35Z</updated>
+    <link href="https://arxiv.org/abs/2507.21123v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.21123v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper explores the use of large language models (LLMs) to assist in the development of new disease modules for Synthea, an open-source synthetic health data generator. Incorporating LLMs into the module development process has the potential to reduce development time, reduce required expertise, expand model diversity, and improve the overall quality of synthetic patient data. We demonstrate four ways that LLMs can support Synthea module creation: generating a disease profile, generating a disease module from a disease profile, evaluating an existing Synthea module, and refining an existing module. We introduce the concept of progressive refinement, which involves iteratively evaluating the LLM-generated module by checking its syntactic correctness and clinical accuracy, and then using that information to modify the module. While the use of LLMs in this context shows promise, we also acknowledge the challenges and limitations, such as the need for human oversight, the importance of rigorous testing and validation, and the potential for inaccuracies in LLM-generated content. The paper concludes with recommendations for future research and development to fully realize the potential of LLM-aided synthetic data creation.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-18T17:44:35Z</published>
+    <arxiv:comment>Title: Leveraging Generative AI to Enhance Synthea Module Development Word Count: [Approximately 12,000 words] Figures: 3 Tables: 3 Supplementary Material: Extensive appendices with prompts and disease profiles</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Mark A. Kramer</name>
+    </author>
+    <author>
+      <name>Aanchal Mathur</name>
+    </author>
+    <author>
+      <name>Caroline E. Adams</name>
+    </author>
+    <author>
+      <name>Jason A. Walonoski</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.14721v2</id>
+    <title>Automatic Extraction of Rules for Generating Synthetic Patient Data From Real-World Population Data Using Glioblastoma as an Example</title>
+    <updated>2025-12-18T09:10:07Z</updated>
+    <link href="https://arxiv.org/abs/2512.14721v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.14721v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The generation of synthetic data is a promising technology to make medical data available for secondary use in a privacy-compliant manner. A popular method for creating realistic patient data is the rule-based Synthea data generator. Synthea generates data based on rules describing the lifetime of a synthetic patient. These rules typically express the probability of a condition occurring, such as a disease, depending on factors like age. Since they only contain statistical information, rules usually have no specific data protection requirements. However, creating meaningful rules can be a very complex process that requires expert knowledge and realistic sample data. In this paper, we introduce and evaluate an approach to automatically generate Synthea rules based on statistics from tabular data, which we extracted from cancer reports. As an example use case, we created a Synthea module for glioblastoma from a real-world dataset and used it to generate a synthetic dataset. Compared to the original dataset, the synthetic data reproduced known disease courses and mostly retained the statistical properties. Overall, synthetic patient data holds great potential for privacy-preserving research. The data can be used to formulate hypotheses and to develop prototypes, but medical interpretation should consider the specific limitations as with any currently available approach.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-09T09:41:37Z</published>
+    <arxiv:comment>16 pages, 8 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Arno Appenzeller</name>
+    </author>
+    <author>
+      <name>Nick Terzer</name>
+    </author>
+    <author>
+      <name>André Homeyer</name>
+    </author>
+    <author>
+      <name>Jan-Philipp Redlich</name>
+    </author>
+    <author>
+      <name>Sabine Luttmann</name>
+    </author>
+    <author>
+      <name>Friedrich Feuerhake</name>
+    </author>
+    <author>
+      <name>Nadine S. Schaadt</name>
+    </author>
+    <author>
+      <name>Timm Intemann</name>
+    </author>
+    <author>
+      <name>Sarah Teuber-Hanselmann</name>
+    </author>
+    <author>
+      <name>Stefan Nikolin</name>
+    </author>
+    <author>
+      <name>Joachim Weis</name>
+    </author>
+    <author>
+      <name>Klaus Kraywinkel</name>
+    </author>
+    <author>
+      <name>Pascal Birnstill</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.06990v1</id>
+    <title>Accelerating Reproducible Research in Synthetic EHR Generation</title>
+    <updated>2026-06-05T07:28:26Z</updated>
+    <link href="https://arxiv.org/abs/2606.06990v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.06990v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The generation of high-fidelity synthetic Electronic Health Records (EHR) is crucial for advancing medical research while preserving patient privacy. However, head-to-head comparison of existing generative models is hindered by disjointed codebases, incompatible data loaders, conflicting library dependencies, and inconsistent evaluation protocols. To address these gaps, we introduce a lightweight, end-to-end benchmarking framework for reproducible synthetic EHR evaluation, organized as a unified pipeline spanning data ingestion, standardized model training, and architecture-agnostic evaluation. Our current implementation targets the generation of longitudinal ICD diagnosis codes -- the most commonly studied modality in this literature -- and is built on the community-maintained PyHealth library. We reimplement and unify strong baselines (MedGAN, CorGAN, PromptEHR, HALO) under full ICD-9 vocabulary granularity, and add a lightweight GPT-2 baseline from the general-purpose sequence-modeling literature. We contribute a rigorous, architecture-agnostic privacy-utility evaluation suite that applies identically to GAN- and transformer-based generators, and report bootstrapped confidence intervals across all metrics. We further analyze the poor long-tailed performance of existing models and discuss the extensibility of our framework beyond diagnosis codes. By lowering the engineering barrier to running, extending, and evaluating under a single pipeline, we introduce a starting point for community-driven reproducibility and benchmarking synthetic EHR models.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-05T07:28:26Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jalen Jiang</name>
+    </author>
+    <author>
+      <name>Chufan Gao</name>
+    </author>
+    <author>
+      <name>Ethan Rasmussen</name>
+    </author>
+    <author>
+      <name>Stephen Z. Xie</name>
+    </author>
+    <author>
+      <name>Jimeng Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.06720v1</id>
+    <title>From Statistical Fidelity to Clinical Consistency: Scalable Generation and Auditing of Synthetic Patient Trajectories</title>
+    <updated>2026-03-06T00:17:59Z</updated>
+    <link href="https://arxiv.org/abs/2603.06720v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.06720v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Access to electronic health records (EHRs) for digital health research is often limited by privacy regulations and institutional barriers. Synthetic EHRs have been proposed as a way to enable safe and sovereign data sharing; however, existing methods may produce records that capture overall statistical properties of real data but present inconsistencies across clinical processes and observations. We developed an integrated pipeline to make synthetic patient trajectories clinically consistent through two synergistic steps: high-fidelity generation and scalable auditing. Using the MIMIC-IV database, we trained a knowledge-grounded generative model that represents nearly 32,000 distinct clinical events, including demographics, laboratory measurements, medications, procedures, and diagnoses, while enforcing structural integrity. To support clinical consistency at scale, we incorporated an automated auditing module leveraging large language models to filter out clinical inconsistencies (e.g., contraindicated medications) that escape probabilistic generation. We generated 18,071 synthetic patient records derived from a source cohort of 180,712 real patients. While synthetic clinical event probabilities demonstrated robust agreement (mean bias effectively 0.00) and high correlation (R2=0.99) with the real counterparts, review of a random sample of synthetic records (N=20) by three clinicians identified inconsistencies in 45-60% of them. Automated auditing reduced the difference between real and synthetic data (Cohen's effect size d between 0.59 and 1.60 before auditing, and between 0.18 and 0.67 after auditing). Downstream models trained on audited data matched or even exceeded real-data performance. We found no evidence of privacy risks, with membership inference performance indistinguishable from random guessing (F1-score=0.51).</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-06T00:17:59Z</published>
+    <arxiv:comment>23 pages, 8 figures, 6 tables; Code:https://github.com/jameszhou-gl/Coogee</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Guanglin Zhou</name>
+    </author>
+    <author>
+      <name>Armin Catic</name>
+    </author>
+    <author>
+      <name>Motahare Shabestari</name>
+    </author>
+    <author>
+      <name>Matthew Young</name>
+    </author>
+    <author>
+      <name>Chaiquan Li</name>
+    </author>
+    <author>
+      <name>Katrina Poppe</name>
+    </author>
+    <author>
+      <name>Sebastiano Barbieri</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.02510v3</id>
+    <title>Fairness-Optimized Synthetic EHR Generation for Arbitrary Downstream Predictive Tasks</title>
+    <updated>2025-06-27T14:11:59Z</updated>
+    <link href="https://arxiv.org/abs/2406.02510v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.02510v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Among various aspects of ensuring the responsible design of AI tools for healthcare applications, addressing fairness concerns has been a key focus area. Specifically, given the wide spread of electronic health record (EHR) data and their huge potential to inform a wide range of clinical decision support tasks, improving fairness in this category of health AI tools is of key importance. While such a broad problem (mitigating fairness in EHR-based AI models) has been tackled using various methods, task- and model-agnostic methods are noticeably rare. In this study, we aimed to target this gap by presenting a new pipeline that generates synthetic EHR data, which is not only consistent with (faithful to) the real EHR data but also can reduce the fairness concerns (defined by the end-user) in the downstream tasks, when combined with the real data. We demonstrate the effectiveness of our proposed pipeline across various downstream tasks and two different EHR datasets. Our proposed pipeline can add a widely applicable and complementary tool to the existing toolbox of methods to address fairness in health AI applications, such as those modifying the design of a downstream model. The codebase for our project is available at https://github.com/healthylaife/FairSynth</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-04T17:29:21Z</published>
+    <arxiv:comment>The paper has been accepted at the IEEE/ACM conference on Connected Health: Applications, Systems and Engineering Technologies (CHASE) 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Mirza Farhan Bin Tarek</name>
+    </author>
+    <author>
+      <name>Raphael Poulain</name>
+    </author>
+    <author>
+      <name>Rahmatollah Beheshti</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.05153v2</id>
+    <title>A text-to-tabular approach to generate synthetic patient data using LLMs</title>
+    <updated>2025-06-24T13:24:58Z</updated>
+    <link href="https://arxiv.org/abs/2412.05153v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.05153v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Access to large-scale high-quality healthcare databases is key to accelerate medical research and make insightful discoveries about diseases. However, access to such data is often limited by patient privacy concerns, data sharing restrictions and high costs. To overcome these limitations, synthetic patient data has emerged as an alternative. However, synthetic data generation (SDG) methods typically rely on machine learning (ML) models trained on original data, leading back to the data scarcity problem. We propose an approach to generate synthetic tabular patient data that does not require access to the original data, but only a description of the desired database. We leverage prior medical knowledge and in-context learning capabilities of large language models (LLMs) to generate realistic patient data, even in a low-resource setting. We quantitatively evaluate our approach against state-of-the-art SDG models, using fidelity, privacy, and utility metrics. Our results show that while LLMs may not match the performance of state-of-the-art models trained on the original data, they effectively generate realistic patient data with well-preserved clinical correlations. An ablation study highlights key elements of our prompt contributing to high-quality synthetic patient data generation. This approach, which is easy to use and does not require original data or advanced ML skills, is particularly valuable for quickly generating custom-designed patient data, supporting project implementation and providing educational resources.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-06T16:10:40Z</published>
+    <arxiv:comment>12 pages, 3 figures. Accepted to the 2025 IEEE International Conference on Healthcare Informatics (IEEE ICHI 2025), 2025, Rende (CS), Calabria, Italy</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Margaux Tornqvist</name>
+    </author>
+    <author>
+      <name>Jean-Daniel Zucker</name>
+    </author>
+    <author>
+      <name>Tristan Fauvel</name>
+    </author>
+    <author>
+      <name>Nicolas Lambert</name>
+    </author>
+    <author>
+      <name>Mathilde Berthelot</name>
+    </author>
+    <author>
+      <name>Antoine Movschin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.07557v1</id>
+    <title>Validated Synthetic Patient Generation for Small Longitudinal Cohorts: Coagulation Dynamics Across Pregnancy</title>
+    <updated>2026-04-08T19:56:24Z</updated>
+    <link href="https://arxiv.org/abs/2604.07557v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.07557v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Small longitudinal clinical cohorts, common in maternal health, rare diseases, and early-phase trials, limit computational modeling: too few patients to train reliable models, yet too costly and slow to expand through additional enrollment. We present multiplicity-weighted Stochastic Attention (SA), a generative framework based on modern Hopfield network theory that addresses this gap. SA embeds real patient profiles as memory patterns in a continuous energy landscape and generates novel synthetic patients via Langevin dynamics that interpolate between stored patterns while preserving the geometry of the original cohort. Per-pattern multiplicity weights enable targeted amplification of rare clinical subgroups at inference time without retraining. We applied SA to a longitudinal coagulation dataset from 23 pregnant patients spanning 72 biochemical features across 3 visits (pre-pregnancy baseline, first trimester, and third trimester), including rare subgroups such as polycystic ovary syndrome and preeclampsia. Synthetic patients generated by SA were statistically, structurally, and mechanistically indistinguishable from their real counterparts across multiple independent validation tests, including an ordinary differential equation model of the coagulation cascade. A downstream utility test further showed that a mechanistic model calibrated entirely on synthetic patients predicted held-out real patient outcomes as well as one calibrated on real data. These results demonstrate that SA can produce clinically useful synthetic cohorts from very small longitudinal datasets, enabling data-augmented modeling in small-cohort settings.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.QM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-08T19:56:24Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jeffrey D. Varner</name>
+    </author>
+    <author>
+      <name>Maria Cristina Bravo</name>
+    </author>
+    <author>
+      <name>Carole McBride</name>
+    </author>
+    <author>
+      <name>Thomas Orfeo</name>
+    </author>
+    <author>
+      <name>Ira Bernstein</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.19941v1</id>
+    <title>Synthetic Patients: Simulating Difficult Conversations with Multimodal Generative AI for Medical Education</title>
+    <updated>2024-05-30T11:02:08Z</updated>
+    <link href="https://arxiv.org/abs/2405.19941v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.19941v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Problem: Effective patient-centered communication is a core competency for physicians. However, both seasoned providers and medical trainees report decreased confidence in leading conversations on sensitive topics such as goals of care or end-of-life discussions. The significant administrative burden and the resources required to provide dedicated training in leading difficult conversations has been a long-standing problem in medical education.
+  Approach: In this work, we present a novel educational tool designed to facilitate interactive, real-time simulations of difficult conversations in a video-based format through the use of multimodal generative artificial intelligence (AI). Leveraging recent advances in language modeling, computer vision, and generative audio, this tool creates realistic, interactive scenarios with avatars, or "synthetic patients." These synthetic patients interact with users throughout various stages of medical care using a custom-built video chat application, offering learners the chance to practice conversations with patients from diverse belief systems, personalities, and ethnic backgrounds.
+  Outcomes: While the development of this platform demanded substantial upfront investment in labor, it offers a highly-realistic simulation experience with minimal financial investment. For medical trainees, this educational tool can be implemented within programs to simulate patient-provider conversations and can be incorporated into existing palliative care curriculum to provide a scalable, high-fidelity simulation environment for mastering difficult conversations.
+  Next Steps: Future developments will explore enhancing the authenticity of these encounters by working with patients to incorporate their histories and personalities, as well as employing the use of AI-generated evaluations to offer immediate, constructive feedback to learners post-simulation.</summary>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-30T11:02:08Z</published>
+    <arxiv:primary_category term="cs.HC"/>
+    <author>
+      <name>Simon N. Chu</name>
+    </author>
+    <author>
+      <name>Alex J. Goodell</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.28346v1</id>
+    <title>PySynthea: A Python-Native Framework for Scalable Synthetic Healthcare Data Generation</title>
+    <updated>2026-06-02T15:20:55Z</updated>
+    <link href="https://arxiv.org/abs/2606.28346v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.28346v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Synthetic healthcare data is increasingly important for research, education, and machine learning development where access to real patient data is limited by privacy and governance constraints. While Synthea provides a widely adopted framework for generating realistic longitudinal electronic health record data, its current implementation presents adoption barriers for many researchers and data scientists due to deployment complexity and limited integration with modern Python-based workflows.
+  This paper introduces PySynthea, a Python-native reimplementation of Synthea designed to improve accessibility, extensibility, and interoperability within the scientific Python ecosystem. The framework provides modular synthetic patient generation, configurable healthcare simulation pipelines, and support for standard healthcare data formats while integrating naturally with tools such as pandas and machine learning workflows. By reducing operational complexity and aligning synthetic data generation with the dominant data science ecosystem, PySynthea aims to accelerate experimentation and broaden the use of synthetic healthcare data in research and applied AI development. The code in this github repository https://github.com/TIET-AI/tietai-synthea.</summary>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-02T15:20:55Z</published>
+    <arxiv:comment>22 pages, 2 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CY"/>
+    <author>
+      <name>Roberto Cruz</name>
+    </author>
+    <author>
+      <name>David Rey-Blanco</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1703.06490v3</id>
+    <title>Generating Multi-label Discrete Patient Records using Generative Adversarial Networks</title>
+    <updated>2018-01-11T20:41:54Z</updated>
+    <link href="https://arxiv.org/abs/1703.06490v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1703.06490v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Access to electronic health record (EHR) data has motivated computational advances in medical research. However, various concerns, particularly over privacy, can limit access to and collaborative use of EHR data. Sharing synthetic EHR data could mitigate risk. In this paper, we propose a new approach, medical Generative Adversarial Network (medGAN), to generate realistic synthetic patient records. Based on input real patient records, medGAN can generate high-dimensional discrete variables (e.g., binary and count features) via a combination of an autoencoder and generative adversarial networks. We also propose minibatch averaging to efficiently avoid mode collapse, and increase the learning efficiency with batch normalization and shortcut connections. To demonstrate feasibility, we showed that medGAN generates synthetic patient records that achieve comparable performance to real data on many experiments including distribution statistics, predictive modeling tasks and a medical expert review. We also empirically observe a limited privacy risk in both identity and attribute disclosure using medGAN.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2017-03-19T18:56:37Z</published>
+    <arxiv:comment>Accepted at Machine Learning in Health Care (MLHC) 2017</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Edward Choi</name>
+    </author>
+    <author>
+      <name>Siddharth Biswal</name>
+    </author>
+    <author>
+      <name>Bradley Malin</name>
+    </author>
+    <author>
+      <name>Jon Duke</name>
+    </author>
+    <author>
+      <name>Walter F. Stewart</name>
+    </author>
+    <author>
+      <name>Jimeng Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.05521v2</id>
+    <title>SM3-Text-to-Query: Synthetic Multi-Model Medical Text-to-Query Benchmark</title>
+    <updated>2024-11-14T09:28:49Z</updated>
+    <link href="https://arxiv.org/abs/2411.05521v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.05521v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic health records (EHRs) are stored in various database systems with different database models on heterogeneous storage architectures, such as relational databases, document stores, or graph databases. These different database models have a big impact on query complexity and performance. While this has been a known fact in database research, its implications for the growing number of Text-to-Query systems have surprisingly not been investigated so far. In this paper, we present SM3-Text-to-Query, the first multi-model medical Text-to-Query benchmark based on synthetic patient data from Synthea, following the SNOMED-CT taxonomy -- a widely used knowledge graph ontology covering medical terminology. SM3-Text-to-Query provides data representations for relational databases (PostgreSQL), document stores (MongoDB), and graph databases (Neo4j and GraphDB (RDF)), allowing the evaluation across four popular query languages, namely SQL, MQL, Cypher, and SPARQL. We systematically and manually develop 408 template questions, which we augment to construct a benchmark of 10K diverse natural language question/query pairs for these four query languages (40K pairs overall). On our dataset, we evaluate several common in-context-learning (ICL) approaches for a set of representative closed and open-source LLMs. Our evaluation sheds light on the trade-offs between database models and query languages for different ICL strategies and LLMs. Last, SM3-Text-to-Query is easily extendable to additional query languages or real, standard-based patient databases.</summary>
+    <category term="cs.DB" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-08T12:27:13Z</published>
+    <arxiv:comment>NeurIPS 2024 Track Datasets and Benchmarks</arxiv:comment>
+    <arxiv:primary_category term="cs.DB"/>
+    <author>
+      <name>Sithursan Sivasubramaniam</name>
+    </author>
+    <author>
+      <name>Cedric Osei-Akoto</name>
+    </author>
+    <author>
+      <name>Yi Zhang</name>
+    </author>
+    <author>
+      <name>Kurt Stockinger</name>
+    </author>
+    <author>
+      <name>Jonathan Fuerst</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.16363v2</id>
+    <title>Subpopulation-Specific Synthetic EHR for Better Mortality Prediction</title>
+    <updated>2024-03-11T14:18:30Z</updated>
+    <link href="https://arxiv.org/abs/2305.16363v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.16363v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic health records (EHR) often contain different rates of representation of certain subpopulations (SP). Factors like patient demographics, clinical condition prevalence, and medical center type contribute to this underrepresentation. Consequently, when training machine learning models on such datasets, the models struggle to generalize well and perform poorly on underrepresented SPs. To address this issue, we propose a novel ensemble framework that utilizes generative models. Specifically, we train a GAN-based synthetic data generator for each SP and incorporate synthetic samples into each SP training set. Ultimately, we train SP-specific prediction models. To properly evaluate this method, we design an evaluation pipeline with 2 real-world use case datasets, queried from the MIMIC database. Our approach shows increased model performance over underrepresented SPs. Our code and models are given as supplementary and will be made available on a public repository.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-25T09:22:12Z</published>
+    <arxiv:comment>10 pages, 4 figures, submitted to AIME 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Oriel Perets</name>
+    </author>
+    <author>
+      <name>Nadav Rappoport</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.19511v1</id>
+    <title>Improving Clinical NLP Performance through Language Model-Generated Synthetic Clinical Data</title>
+    <updated>2024-03-28T15:44:18Z</updated>
+    <link href="https://arxiv.org/abs/2403.19511v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.19511v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative models have been showing potential for producing data in mass. This study explores the enhancement of clinical natural language processing performance by utilizing synthetic data generated from advanced language models. Promising results show feasible applications in such a high-stakes domain.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-28T15:44:18Z</published>
+    <arxiv:comment>submitted to review</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Shan Chen</name>
+    </author>
+    <author>
+      <name>Jack Gallifant</name>
+    </author>
+    <author>
+      <name>Marco Guevara</name>
+    </author>
+    <author>
+      <name>Yanjun Gao</name>
+    </author>
+    <author>
+      <name>Majid Afshar</name>
+    </author>
+    <author>
+      <name>Timothy Miller</name>
+    </author>
+    <author>
+      <name>Dmitriy Dligach</name>
+    </author>
+    <author>
+      <name>Danielle S. Bitterman</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2109.02543v1</id>
+    <title>Generation of Synthetic Electronic Health Records Using a Federated GAN</title>
+    <updated>2021-09-06T15:29:15Z</updated>
+    <link href="https://arxiv.org/abs/2109.02543v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2109.02543v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Sensitive medical data is often subject to strict usage constraints. In this paper, we trained a generative adversarial network (GAN) on real-world electronic health records (EHR). It was then used to create a data-set of "fake" patients through synthetic data generation (SDG) to circumvent usage constraints. This real-world data was tabular, binary, intensive care unit (ICU) patient diagnosis data. The entire data-set was split into separate data silos to mimic real-world scenarios where multiple ICU units across different hospitals may have similarly structured data-sets within their own organisations but do not have access to each other's data-sets. We implemented federated learning (FL) to train separate GANs locally at each organisation, using their unique data silo and then combining the GANs into a single central GAN, without any siloed data ever being exposed. This global, central GAN was then used to generate the synthetic patients data-set. We performed an evaluation of these synthetic patients with statistical measures and through a structured review by a group of medical professionals. It was shown that there was no significant reduction in the quality of the synthetic EHR when we moved between training a single central model and training on separate data silos with individual models before combining them into a central model. This was true for both the statistical evaluation (Root Mean Square Error (RMSE) of 0.0154 for single-source vs. RMSE of 0.0169 for dual-source federated) and also for the medical professionals' evaluation (no quality difference between EHR generated from a single source and EHR generated from multiple sources).</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-09-06T15:29:15Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>John Weldon</name>
+    </author>
+    <author>
+      <name>Tomas Ward</name>
+    </author>
+    <author>
+      <name>Eoin Brophy</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2302.04355v1</id>
+    <title>MedDiff: Generating Electronic Health Records using Accelerated Denoising Diffusion Model</title>
+    <updated>2023-02-08T22:06:34Z</updated>
+    <link href="https://arxiv.org/abs/2302.04355v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2302.04355v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Due to patient privacy protection concerns, machine learning research in healthcare has been undeniably slower and limited than in other application domains. High-quality, realistic, synthetic electronic health records (EHRs) can be leveraged to accelerate methodological developments for research purposes while mitigating privacy concerns associated with data sharing. The current state-of-the-art model for synthetic EHR generation is generative adversarial networks, which are notoriously difficult to train and can suffer from mode collapse. Denoising Diffusion Probabilistic Models, a class of generative models inspired by statistical thermodynamics, have recently been shown to generate high-quality synthetic samples in certain domains. It is unknown whether these can generalize to generation of large-scale, high-dimensional EHRs. In this paper, we present a novel generative model based on diffusion models that is the first successful application on electronic health records. Our model proposes a mechanism to perform class-conditional sampling to preserve label information. We also introduce a new sampling strategy to accelerate the inference speed. We empirically show that our model outperforms existing state-of-the-art synthetic EHR generation methods.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-02-08T22:06:34Z</published>
+    <arxiv:comment>12 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Huan He</name>
+    </author>
+    <author>
+      <name>Shifan Zhao</name>
+    </author>
+    <author>
+      <name>Yuanzhe Xi</name>
+    </author>
+    <author>
+      <name>Joyce C Ho</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.07421v1</id>
+    <title>SynthEHR-Eviction: Enhancing Eviction SDoH Detection with LLM-Augmented Synthetic EHR Data</title>
+    <updated>2025-07-10T04:31:01Z</updated>
+    <link href="https://arxiv.org/abs/2507.07421v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.07421v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Eviction is a significant yet understudied social determinants of health (SDoH), linked to housing instability, unemployment, and mental health. While eviction appears in unstructured electronic health records (EHRs), it is rarely coded in structured fields, limiting downstream applications. We introduce SynthEHR-Eviction, a scalable pipeline combining LLMs, human-in-the-loop annotation, and automated prompt optimization (APO) to extract eviction statuses from clinical notes. Using this pipeline, we created the largest public eviction-related SDoH dataset to date, comprising 14 fine-grained categories. Fine-tuned LLMs (e.g., Qwen2.5, LLaMA3) trained on SynthEHR-Eviction achieved Macro-F1 scores of 88.8% (eviction) and 90.3% (other SDoH) on human validated data, outperforming GPT-4o-APO (87.8%, 87.3%), GPT-4o-mini-APO (69.1%, 78.1%), and BioBERT (60.7%, 68.3%), while enabling cost-effective deployment across various model sizes. The pipeline reduces annotation effort by over 80%, accelerates dataset creation, enables scalable eviction detection, and generalizes to other information extraction tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-10T04:31:01Z</published>
+    <arxiv:comment>Equal contribution for the first two authors</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zonghai Yao</name>
+    </author>
+    <author>
+      <name>Youxia Zhao</name>
+    </author>
+    <author>
+      <name>Avijit Mitra</name>
+    </author>
+    <author>
+      <name>David A. Levy</name>
+    </author>
+    <author>
+      <name>Emily Druhl</name>
+    </author>
+    <author>
+      <name>Jack Tsai</name>
+    </author>
+    <author>
+      <name>Hong Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2208.10415v1</id>
+    <title>NLDS-QL: From natural language data science questions to queries on graphs: analysing patients conditions &amp; treatments</title>
+    <updated>2022-08-22T15:53:39Z</updated>
+    <link href="https://arxiv.org/abs/2208.10415v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2208.10415v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper introduces NLDS-QL, a translator of data science questions expressed in natural language (NL) into data science queries on graph databases. Our translator is based on a simplified NL described by a grammar that specifies sentences combining keywords to refer to operations on graphs with the vocabulary of the graph schema. The demonstration proposed in this paper shows NLDS-QL in action within a scenario to explore and analyse a graph base on patient diagnoses generated with the open-source Synthea.</summary>
+    <category term="cs.DB" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-08-22T15:53:39Z</published>
+    <arxiv:primary_category term="cs.DB"/>
+    <author>
+      <name>Genoveva Vargas-Solar</name>
+    </author>
+    <author>
+      <name>Karim Dao</name>
+    </author>
+    <author>
+      <name>Mirian Halfeld Ferrari Alves</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2312.14646v1</id>
+    <title>Collaborative Synthesis of Patient Records through Multi-Visit Health State Inference</title>
+    <updated>2023-12-22T12:28:29Z</updated>
+    <link href="https://arxiv.org/abs/2312.14646v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2312.14646v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic health records (EHRs) have become the foundation of machine learning applications in healthcare, while the utility of real patient records is often limited by privacy and security concerns. Synthetic EHR generation provides an additional perspective to compensate for this limitation. Most existing methods synthesize new records based on real EHR data, without consideration of different types of events in EHR data, which cannot control the event combinations in line with medical common sense. In this paper, we propose MSIC, a Multi-visit health Status Inference model for Collaborative EHR synthesis to address these limitations. First, we formulate the synthetic EHR generation process as a probabilistic graphical model and tightly connect different types of events by modeling the latent health states. Then, we derive a health state inference method tailored for the multi-visit scenario to effectively utilize previous records to synthesize current and future records. Furthermore, we propose to generate medical reports to add textual descriptions for each medical event, providing broader applications for synthesized EHR data. For generating different paragraphs in each visit, we incorporate a multi-generator deliberation framework to collaborate the message passing of multiple generators and employ a two-phase decoding strategy to generate high-quality reports. Our extensive experiments on the widely used benchmarks, MIMIC-III and MIMIC-IV, demonstrate that MSIC advances state-of-the-art results on the quality of synthetic data while maintaining low privacy risks.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-12-22T12:28:29Z</published>
+    <arxiv:comment>Accepted at AAAI 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Hongda Sun</name>
+    </author>
+    <author>
+      <name>Hongzhan Lin</name>
+    </author>
+    <author>
+      <name>Rui Yan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.15290v6</id>
+    <title>Reliable Generation of Privacy-preserving Synthetic Electronic Health Record Time Series via Diffusion Models</title>
+    <updated>2024-12-02T11:46:33Z</updated>
+    <link href="https://arxiv.org/abs/2310.15290v6" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.15290v6" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic Health Records (EHRs) are rich sources of patient-level data, offering valuable resources for medical data analysis. However, privacy concerns often restrict access to EHRs, hindering downstream analysis. Current EHR de-identification methods are flawed and can lead to potential privacy leakage. Additionally, existing publicly available EHR databases are limited, preventing the advancement of medical research using EHR. This study aims to overcome these challenges by generating realistic and privacy-preserving synthetic electronic health records (EHRs) time series efficiently. We introduce a new method for generating diverse and realistic synthetic EHR time series data using Denoising Diffusion Probabilistic Models (DDPM). We conducted experiments on six databases: Medical Information Mart for Intensive Care III and IV (MIMIC-III/IV), the eICU Collaborative Research Database (eICU), and non-EHR datasets on Stocks and Energy. We compared our proposed method with eight existing methods. Our results demonstrate that our approach significantly outperforms all existing methods in terms of data fidelity while requiring less training effort. Additionally, data generated by our method yields a lower discriminative accuracy compared to other baseline methods, indicating the proposed method can generate data with less privacy risk. The proposed diffusion-model-based method can reliably and efficiently generate synthetic EHR time series, which facilitates the downstream medical data analysis. Our numerical results show the superiority of the proposed method over all other existing methods.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-23T18:56:01Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Muhang Tian</name>
+    </author>
+    <author>
+      <name>Bernie Chen</name>
+    </author>
+    <author>
+      <name>Allan Guo</name>
+    </author>
+    <author>
+      <name>Shiyi Jiang</name>
+    </author>
+    <author>
+      <name>Anru R. Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.06996v2</id>
+    <title>Generating Multi-Table Time Series EHR from Latent Space with Minimal Preprocessing</title>
+    <updated>2026-03-02T05:29:43Z</updated>
+    <link href="https://arxiv.org/abs/2507.06996v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.06996v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic Health Records (EHR) are time-series relational databases that record patient interactions and medical events over time, serving as a critical resource for healthcare research and applications. However, privacy concerns and regulatory restrictions limit the sharing and utilization of such sensitive data, necessitating the generation of synthetic EHR datasets. Unlike previous EHR synthesis methods, which typically generate medical records consisting of expert-chosen features (e.g. a few vital signs or structured codes only), we introduce RawMed, the first framework to synthesize multi-table, time-series EHR data that closely resembles raw EHRs. Using text-based representation and compression techniques, RawMed captures complex structures and temporal dynamics with minimal preprocessing. We also propose a new evaluation framework for multi-table time-series synthetic EHRs, assessing distributional similarity, inter-table relationships, temporal dynamics, and privacy. Validated on two open-source EHR datasets, RawMed outperforms baseline models in fidelity and utility. The code is available at https://github.com/eunbyeol-cho/RawMed.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-09T16:22:22Z</published>
+    <arxiv:comment>Accepted at NeurIPS 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Eunbyeol Cho</name>
+    </author>
+    <author>
+      <name>Jiyoun Kim</name>
+    </author>
+    <author>
+      <name>Minjae Lee</name>
+    </author>
+    <author>
+      <name>Sungjin Park</name>
+    </author>
+    <author>
+      <name>Edward Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1808.06444v1</id>
+    <title>Synthetic Patient Generation: A Deep Learning Approach Using Variational Autoencoders</title>
+    <updated>2018-08-20T13:36:07Z</updated>
+    <link href="https://arxiv.org/abs/1808.06444v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1808.06444v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Artificial Intelligence in healthcare is a new and exciting frontier and the possibilities are endless. With deep learning approaches beating human performances in many areas, the logical next step is to attempt their application in the health space. For these and other Machine Learning approaches to produce good results and have their potential realized, the need for, and importance of, large amounts of accurate data is second to none. This is a challenge faced by many industries and more so in the healthcare space. We present an approach of using Variational Autoencoders (VAE's) as an approach to generating more data for training deeper networks, as well as uncovering underlying patterns in diagnoses and the patients suffering from them. By training a VAE, on available data, it was able to learn the latent distribution of the patient features given the diagnosis. It is then possible, after training, to sample from the learnt latent distribution to generate new accurate patient records given the patient diagnosis.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2018-08-20T13:36:07Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ally Salim</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2006.03423v1</id>
+    <title>Generation of Differentially Private Heterogeneous Electronic Health Records</title>
+    <updated>2020-06-05T13:21:46Z</updated>
+    <link href="https://arxiv.org/abs/2006.03423v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2006.03423v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic Health Records (EHRs) are commonly used by the machine learning community for research on problems specifically related to health care and medicine. EHRs have the advantages that they can be easily distributed and contain many features useful for e.g. classification problems. What makes EHR data sets different from typical machine learning data sets is that they are often very sparse, due to their high dimensionality, and often contain heterogeneous (mixed) data types. Furthermore, the data sets deal with sensitive information, which limits the distribution of any models learned using them, due to privacy concerns. For these reasons, using EHR data in practice presents a real challenge. In this work, we explore using Generative Adversarial Networks to generate synthetic, heterogeneous EHRs with the goal of using these synthetic records in place of existing data sets for downstream classification tasks. We will further explore applying differential privacy (DP) preserving optimization in order to produce DP synthetic EHR data sets, which provide rigorous privacy guarantees, and are therefore shareable and usable in the real world. The performance (measured by AUROC, AUPRC and accuracy) of our model's synthetic, heterogeneous data is very close to the original data set (within 3 - 5% of the baseline) for the non-DP model when tested in a binary classification task. Using strong $(1, 10^{-5})$ DP, our model still produces data useful for machine learning tasks, albeit incurring a roughly 17% performance penalty in our tested classification task. We additionally perform a sub-population analysis and find that our model does not introduce any bias into the synthetic EHR data compared to the baseline in either male/female populations, or the 0-18, 19-50 and 51+ age groups in terms of classification performance for either the non-DP or DP variant.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-06-05T13:21:46Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Kieran Chin-Cheong</name>
+    </author>
+    <author>
+      <name>Thomas Sutter</name>
+    </author>
+    <author>
+      <name>Julia E. Vogt</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.09951v1</id>
+    <title>Generating synthetic electronic health record data using agent-based models to evaluate machine learning robustness under mass casualty incidents</title>
+    <updated>2026-05-11T04:00:42Z</updated>
+    <link href="https://arxiv.org/abs/2605.09951v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.09951v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>ML models in healthcare are typically evaluated using curated real-world EHR data. A key limitation of such evaluations is that they may fail to assess the robustness of ML models to changes in the data at deployment, which is a common issue because EHR data used for ML model development cannot capture all such changes. Mass casualty incidents (MCIs) caused by disasters are critical instances where this will be an issue, as they induce rare, uncertain, and novel changes to routine system conditions. Because real-world EHR data from MCIs are often limited or unavailable, assessing ML robustness under such conditions before deployment remains challenging. Here, we propose an agent-based modelling approach for generating synthetic EHR data to evaluate the robustness of ML models under MCI scenarios. We use real-world EHR data to develop and calibrate an agent-based model (ABM) of an emergency department (ED) that explicitly models patient arrivals, resource capacity, and clinical workflow. By changing these system conditions to reflect plausible MCI scenarios, the ED model generates synthetic versions of the real-world EHR data that exhibit shifts in system behaviour. Using these synthetic data, we test ML models for predicting length of stay. We observed consistent declines in recall under MCI conditions relative to baseline system conditions, resulting in an increase in the number of patients with prolonged length of stay that were missed by the ML models. These results highlight the impact of changes in system conditions on patient outcomes, EHR data, and ML model performance. Our work establishes ABM-based synthetic EHR data generation as a proactive and systematic approach for evaluating the robustness of ML models under MCI or other system conditions not captured in real-world EHR data, supporting the safer and more effective deployment of ML models in healthcare systems.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-11T04:00:42Z</published>
+    <arxiv:comment>14 pages, 1 figure; accepted at CHIL 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Roben Delos Reyes</name>
+    </author>
+    <author>
+      <name>Daniel Capurro</name>
+    </author>
+    <author>
+      <name>Nicholas Geard</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.23515v1</id>
+    <title>Training a Large Language Model for Medical Coding Using Privacy-Preserving Synthetic Clinical Data</title>
+    <updated>2026-03-06T02:02:49Z</updated>
+    <link href="https://arxiv.org/abs/2603.23515v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.23515v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Improving the accuracy and reliability of medical coding reduces clinician burnout and supports revenue cycle processes, freeing providers to focus more on patient care. However, automating the assignment of ICD-10-CM and CPT codes from clinical documentation remains a challenge due to heterogeneous records, nuanced coding guidelines, and long-tail distributions. Large language models have been proposed to help or automate specific medical coding tasks. However, foundation models are not explicitly trained for medical coding and zero-shot coding has yielded poor results. We investigate whether a modern open-weight foundation model can be adapted for an expert-level medical coding task using privacy-preserving synthetic training data derived from electronic health records. We fine-tune Llama 3-70B on pairs of clinical notes and gold codes generated from EHR-grounded templates and coding policies, then evaluate exact-code prediction for ICD-10-CM and CPT. A zero-shot baseline with the unadapted model achieved an F1 score of 0.18 for exact code match. After fine-tuning on the synthetic corpus, exact-match F1 exceeded 0.70, representing a large absolute gain across both code systems. Notably, performance remained high on complex categories that often require multi-step clinical reasoning and code composition, including Advanced Illness and Frailty classes, and the model retained its performance on medical comprehension tasks. These results indicate that synthetic, policy-aware data can efficiently teach a general-purpose large language model to support precise medical coding without exposing protected health information. The approach offers a practical path for training coding agents safely and iteratively on specific tasks that represent real-world populations.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-06T02:02:49Z</published>
+    <arxiv:comment>20 pages, 6 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>John Cook</name>
+    </author>
+    <author>
+      <name>Michael Wyatt</name>
+    </author>
+    <author>
+      <name>Peng Wei</name>
+    </author>
+    <author>
+      <name>Iris Chin</name>
+    </author>
+    <author>
+      <name>Santosh Gupta</name>
+    </author>
+    <author>
+      <name>Van Zyl Van Vuuren</name>
+    </author>
+    <author>
+      <name>Richie Siburian</name>
+    </author>
+    <author>
+      <name>Amanda Spicer</name>
+    </author>
+    <author>
+      <name>Kristen Viviano</name>
+    </author>
+    <author>
+      <name>Alda Cami</name>
+    </author>
+    <author>
+      <name>Raunaq Malhotra</name>
+    </author>
+    <author>
+      <name>Zhewei Yao</name>
+    </author>
+    <author>
+      <name>Jeff Rasley</name>
+    </author>
+    <author>
+      <name>Gaurav Kaushik</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2208.08655v2</id>
+    <title>Generating Synthetic Clinical Data that Capture Class Imbalanced Distributions with Generative Adversarial Networks: Example using Antiretroviral Therapy for HIV</title>
+    <updated>2023-01-20T05:20:24Z</updated>
+    <link href="https://arxiv.org/abs/2208.08655v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2208.08655v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical data usually cannot be freely distributed due to their highly confidential nature and this hampers the development of machine learning in the healthcare domain. One way to mitigate this problem is by generating realistic synthetic datasets using generative adversarial networks (GANs). However, GANs are known to suffer from mode collapse thus creating outputs of low diversity. This lowers the quality of the synthetic healthcare data, and may cause it to omit patients of minority demographics or neglect less common clinical practices. In this paper, we extend the classic GAN setup with an additional variational autoencoder (VAE) and include an external memory to replay latent features observed from the real samples to the GAN generator. Using antiretroviral therapy for human immunodeficiency virus (ART for HIV) as a case study, we show that our extended setup overcomes mode collapse and generates a synthetic dataset that accurately describes severely imbalanced class distributions commonly found in real-world clinical variables. In addition, we demonstrate that our synthetic dataset is associated with a very low patient disclosure risk, and that it retains a high level of utility from the ground truth dataset to support the development of downstream machine learning algorithms.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-08-18T06:19:46Z</published>
+    <arxiv:comment>In the near future, we will make our codes and synthetic datasets publicly available to facilitate future research. Follow us on https://healthgym.ai/</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Nicholas I-Hsien Kuo</name>
+    </author>
+    <author>
+      <name>Federico Garcia</name>
+    </author>
+    <author>
+      <name>Anders Sönnerborg</name>
+    </author>
+    <author>
+      <name>Maurizio Zazzi</name>
+    </author>
+    <author>
+      <name>Michael Böhm</name>
+    </author>
+    <author>
+      <name>Rolf Kaiser</name>
+    </author>
+    <author>
+      <name>Mark Polizzotto</name>
+    </author>
+    <author>
+      <name>Louisa Jorm</name>
+    </author>
+    <author>
+      <name>Sebastiano Barbieri</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.11078v2</id>
+    <title>Patient-Zero: Scaling Synthetic Patient Agents to Real-World Distributions without Real Patient Data</title>
+    <updated>2026-01-06T13:16:06Z</updated>
+    <link href="https://arxiv.org/abs/2509.11078v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.11078v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Synthetic data generation with Large Language Models (LLMs) has emerged as a promising solution in the medical domain to mitigate data scarcity and privacy constraints. However, existing approaches remain constrained by their derivative nature, relying on real-world records, which pose privacy risks and distribution biases. Furthermore, current patient agents face the Stability-Plasticity Dilemma, struggling to maintain clinical consistency during dynamic inquiries. To address these challenges, we introduce Patient-Zero, a novel framework for ab initio patient simulation that requires no real medical records. Our Medically-Aligned Hierarchical Synthesis framework generates comprehensive and diverse patient records from abstract clinical guidelines via stratified attribute permutation. To support rigorous clinical interaction, we design a Dual-Track Cognitive Memory System to enable agents dynamically update memory while preserving logical consistency and persona adherence. Extensive evaluations show that Patient-Zero establishes a new state-of-the-art in both data quality and interaction fidelity. In human expert evaluations, senior licensed physicians judge our synthetic data to be statistically indistinguishable from real human-authored data and higher in clinical quality. Furthermore, downstream medical reasoning model trained on our synthetic dataset shows substantial performance gains (MedQA +24.0%; MMLU +14.5%), demonstrating the practical utility of our framework.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-14T03:56:00Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Yunghwei Lai</name>
+    </author>
+    <author>
+      <name>Ziyue Wang</name>
+    </author>
+    <author>
+      <name>Weizhi Ma</name>
+    </author>
+    <author>
+      <name>Yang Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.05438v1</id>
+    <title>EXR: An Interactive Immersive EHR Visualization in Extended Reality</title>
+    <updated>2025-12-05T05:28:36Z</updated>
+    <link href="https://arxiv.org/abs/2512.05438v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.05438v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper presents the design and implementation of an Extended Reality (XR) platform for immersive, interactive visualization of Electronic Health Records (EHRs). The system extends beyond conventional 2D interfaces by visualizing both structured and unstructured patient data into a shared 3D environment, enabling intuitive exploration and real-time collaboration. The modular infrastructure integrates FHIR-based EHR data with volumetric medical imaging and AI-generated segmentation, ensuring interoperability with modern healthcare systems. The platform's capabilities are demonstrated using synthetic EHR datasets and computed tomography (CT)-derived spine models processed through an AI-powered segmentation pipeline. This work suggests that such integrated XR solutions could form the foundation for next-generation clinical decision-support tools, where advanced data infrastructures are directly accessible in an interactive and spatially rich environment.</summary>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-05T05:28:36Z</published>
+    <arxiv:comment>11 pages, 6 figures. Preprint version. This paper has been accepted to IEEE ICIR 2025. This is the author-prepared version and not the final published version. The final version will appear in IEEE Xplo</arxiv:comment>
+    <arxiv:primary_category term="cs.HC"/>
+    <author>
+      <name>Benoit Marteau</name>
+    </author>
+    <author>
+      <name>Shaun Q. Y. Tan</name>
+    </author>
+    <author>
+      <name>Jieru Li</name>
+    </author>
+    <author>
+      <name>Andrew Hornback</name>
+    </author>
+    <author>
+      <name>Yishan Zhong</name>
+    </author>
+    <author>
+      <name>Shaunna Wang</name>
+    </author>
+    <author>
+      <name>Christian Lowson</name>
+    </author>
+    <author>
+      <name>Jason Woloff</name>
+    </author>
+    <author>
+      <name>Joshua M. Pahys</name>
+    </author>
+    <author>
+      <name>Steven W. Hwang</name>
+    </author>
+    <author>
+      <name>Coleman Hilton</name>
+    </author>
+    <author>
+      <name>May D. Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.10108v1</id>
+    <title>Scaling Arabic Medical Chatbots Using Synthetic Data: Enhancing Generative AI with Synthetic Patient Records</title>
+    <updated>2025-09-12T09:58:11Z</updated>
+    <link href="https://arxiv.org/abs/2509.10108v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.10108v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The development of medical chatbots in Arabic is significantly constrained by the scarcity of large-scale, high-quality annotated datasets. While prior efforts compiled a dataset of 20,000 Arabic patient-doctor interactions from social media to fine-tune large language models (LLMs), model scalability and generalization remained limited. In this study, we propose a scalable synthetic data augmentation strategy to expand the training corpus to 100,000 records. Using advanced generative AI systems ChatGPT-4o and Gemini 2.5 Pro we generated 80,000 contextually relevant and medically coherent synthetic question-answer pairs grounded in the structure of the original dataset. These synthetic samples were semantically filtered, manually validated, and integrated into the training pipeline. We fine-tuned five LLMs, including Mistral-7B and AraGPT2, and evaluated their performance using BERTScore metrics and expert-driven qualitative assessments. To further analyze the effectiveness of synthetic sources, we conducted an ablation study comparing ChatGPT-4o and Gemini-generated data independently. The results showed that ChatGPT-4o data consistently led to higher F1-scores and fewer hallucinations across all models. Overall, our findings demonstrate the viability of synthetic augmentation as a practical solution for enhancing domain-specific language models in-low resource medical NLP, paving the way for more inclusive, scalable, and accurate Arabic healthcare chatbot systems.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-12T09:58:11Z</published>
+    <arxiv:comment>Accepted in AICCSA 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Abdulrahman Allam</name>
+    </author>
+    <author>
+      <name>Seif Ahmed</name>
+    </author>
+    <author>
+      <name>Ali Hamdi</name>
+    </author>
+    <author>
+      <name>Khaled Shaban</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.13800v1</id>
+    <title>Enhancing Clinical Decision Support and EHR Insights through LLMs and the Model Context Protocol: An Open-Source MCP-FHIR Framework</title>
+    <updated>2025-06-13T04:07:19Z</updated>
+    <link href="https://arxiv.org/abs/2506.13800v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.13800v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Enhancing clinical decision support (CDS), reducing documentation burdens, and improving patient health literacy remain persistent challenges in digital health. This paper presents an open-source, agent-based framework that integrates Large Language Models (LLMs) with HL7 FHIR data via the Model Context Protocol (MCP) for dynamic extraction and reasoning over electronic health records (EHRs). Built on the established MCP-FHIR implementation, the framework enables declarative access to diverse FHIR resources through JSON-based configurations, supporting real-time summarization, interpretation, and personalized communication across multiple user personas, including clinicians, caregivers, and patients. To ensure privacy and reproducibility, the framework is evaluated using synthetic EHR data from the SMART Health IT sandbox (https://r4.smarthealthit.org/), which conforms to the FHIR R4 standard. Unlike traditional approaches that rely on hardcoded retrieval and static workflows, the proposed method delivers scalable, explainable, and interoperable AI-powered EHR applications. The agentic architecture further supports multiple FHIR formats, laying a robust foundation for advancing personalized digital health solutions.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-13T04:07:19Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Abul Ehtesham</name>
+    </author>
+    <author>
+      <name>Aditi Singh</name>
+    </author>
+    <author>
+      <name>Saket Kumar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2303.05656v3</id>
+    <title>EHRDiff: Exploring Realistic EHR Synthesis with Diffusion Models</title>
+    <updated>2024-03-24T02:43:55Z</updated>
+    <link href="https://arxiv.org/abs/2303.05656v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2303.05656v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic health records (EHR) contain a wealth of biomedical information, serving as valuable resources for the development of precision medicine systems. However, privacy concerns have resulted in limited access to high-quality and large-scale EHR data for researchers, impeding progress in methodological development. Recent research has delved into synthesizing realistic EHR data through generative modeling techniques, where a majority of proposed methods relied on generative adversarial networks (GAN) and their variants for EHR synthesis. Despite GAN-based methods attaining state-of-the-art performance in generating EHR data, these approaches are difficult to train and prone to mode collapse. Recently introduced in generative modeling, diffusion models have established cutting-edge performance in image generation, but their efficacy in EHR data synthesis remains largely unexplored. In this study, we investigate the potential of diffusion models for EHR data synthesis and introduce a novel method, EHRDiff. Through extensive experiments, EHRDiff establishes new state-of-the-art quality for synthetic EHR data, protecting private information in the meanwhile.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-03-10T02:15:58Z</published>
+    <arxiv:comment>Accepted by TMLR, preprint of camera-ready version</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Hongyi Yuan</name>
+    </author>
+    <author>
+      <name>Songchi Zhou</name>
+    </author>
+    <author>
+      <name>Sheng Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2110.01160v1</id>
+    <title>Beyond Topics: Discovering Latent Healthcare Objectives from Event Sequences</title>
+    <updated>2021-10-04T02:52:14Z</updated>
+    <link href="https://arxiv.org/abs/2110.01160v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2110.01160v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>A meaningful understanding of clinical protocols and patient pathways helps improve healthcare outcomes. Electronic health records (EHR) reflect real-world treatment behaviours that are used to enhance healthcare management but present challenges; protocols and pathways are often loosely defined and with elements frequently not recorded in EHRs, complicating the enhancement. To solve this challenge, healthcare objectives associated with healthcare management activities can be indirectly observed in EHRs as latent topics. Topic models, such as Latent Dirichlet Allocation (LDA), are used to identify latent patterns in EHR data. However, they do not examine the ordered nature of EHR sequences, nor do they appraise individual events in isolation. Our novel approach, the Categorical Sequence Encoder (CaSE) addresses these shortcomings. The sequential nature of EHRs is captured by CaSE's event-level representations, revealing latent healthcare objectives. In synthetic EHR sequences, CaSE outperforms LDA by up to 37% at identifying healthcare objectives. In the real-world MIMIC-III dataset, CaSE identifies meaningful representations that could critically enhance protocol and pathway development.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-10-04T02:52:14Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Adrian Caruana</name>
+    </author>
+    <author>
+      <name>Madhushi Bandara</name>
+    </author>
+    <author>
+      <name>Daniel Catchpoole</name>
+    </author>
+    <author>
+      <name>Paul J Kennedy</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2203.07018v2</id>
+    <title>A review of Generative Adversarial Networks for Electronic Health Records: applications, evaluation measures and data sources</title>
+    <updated>2022-12-14T15:38:08Z</updated>
+    <link href="https://arxiv.org/abs/2203.07018v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2203.07018v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic Health Records (EHRs) are a valuable asset to facilitate clinical research and point of care applications; however, many challenges such as data privacy concerns impede its optimal utilization. Deep generative models, particularly, Generative Adversarial Networks (GANs) show great promise in generating synthetic EHR data by learning underlying data distributions while achieving excellent performance and addressing these challenges. This work aims to review the major developments in various applications of GANs for EHRs and provides an overview of the proposed methodologies. For this purpose, we combine perspectives from healthcare applications and machine learning techniques in terms of source datasets and the fidelity and privacy evaluation of the generated synthetic datasets. We also compile a list of the metrics and datasets used by the reviewed works, which can be utilized as benchmarks for future research in the field. We conclude by discussing challenges in GANs for EHRs development and proposing recommended practices. We hope that this work motivates novel research development directions in the intersection of healthcare and machine learning.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-03-14T11:56:47Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ghadeer Ghosheh</name>
+    </author>
+    <author>
+      <name>Jin Li</name>
+    </author>
+    <author>
+      <name>Tingting Zhu</name>
+    </author>
+    <arxiv:doi>10.1145/3636424</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3636424" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.16081v1</id>
+    <title>Veritas-RPM: Provenance-Guided Multi-Agent False Positive Suppression for Remote Patient Monitoring</title>
+    <updated>2026-04-17T14:07:19Z</updated>
+    <link href="https://arxiv.org/abs/2604.16081v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.16081v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present Veritas-RPM, a provenance-guided multi-agent architecture comprising five processing layers: VeritasAgent (ground-truth assembly), SentinelLayer (anomaly detection), DirectorAgent (specialist routing), six domain Specialist Agents, and MetaSentinelAgent (conflict resolution and final decision). We construct a 98-case synthetic taxonomy of false-positive scenarios derived from documented RPM patterns. Synthetic patient epochs (n = 530) were generated directly from taxonomy parameters and processed through the pipeline. Ground-truth labels are known for all cases. Performance is reported as True Suppression Rate (TSR), False Escalation Rate (FER), and Indeterminate Rate (INDR).</summary>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-17T14:07:19Z</published>
+    <arxiv:primary_category term="cs.MA"/>
+    <author>
+      <name>Aswini Misro</name>
+    </author>
+    <author>
+      <name>Vikash Sharma</name>
+    </author>
+    <author>
+      <name>Shreyank N Gowda</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.06267v1</id>
+    <title>RareGraph-Synth: Knowledge-Guided Diffusion Models for Generating Privacy-Preserving Synthetic Patient Trajectories in Ultra-Rare Diseases</title>
+    <updated>2025-10-06T03:59:09Z</updated>
+    <link href="https://arxiv.org/abs/2510.06267v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.06267v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We propose RareGraph-Synth, a knowledge-guided, continuous-time diffusion framework that generates realistic yet privacy-preserving synthetic electronic-health-record (EHR) trajectories for ultra-rare diseases. RareGraph-Synth unifies five public resources: Orphanet/Orphadata, the Human Phenotype Ontology (HPO), the GARD rare-disease KG, PrimeKG, and the FDA Adverse Event Reporting System (FAERS) into a heterogeneous knowledge graph comprising approximately 8 M typed edges. Meta-path scores extracted from this 8-million-edge KG modulate the per-token noise schedule in the forward stochastic differential equation, steering generation toward biologically plausible lab-medication-adverse-event co-occurrences while retaining score-based diffusion model stability. The reverse denoiser then produces timestamped sequences of lab-code, medication-code, and adverse-event-flag triples that contain no protected health information. On simulated ultra-rare-disease cohorts, RareGraph-Synth lowers categorical Maximum Mean Discrepancy by 40 percent relative to an unguided diffusion baseline and by greater than 60 percent versus GAN counterparts, without sacrificing downstream predictive utility. A black-box membership-inference evaluation using the DOMIAS attacker yields AUROC approximately 0.53, well below the 0.55 safe-release threshold and substantially better than the approximately 0.61 plus or minus 0.03 observed for non-KG baselines, demonstrating strong resistance to re-identification. These results suggest that integrating biomedical knowledge graphs directly into diffusion noise schedules can simultaneously enhance fidelity and privacy, enabling safer data sharing for rare-disease research.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-06T03:59:09Z</published>
+    <arxiv:comment>6 pages, 2 figures, 2 tables. Submitted to IEEE International Conference on Data Science and Advanced Analytics (DSAA)</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Khartik Uppalapati</name>
+    </author>
+    <author>
+      <name>Shakeel Abdulkareem</name>
+    </author>
+    <author>
+      <name>Bora Yimenicioglu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.03787v2</id>
+    <title>Adaptive Identification and Modeling of Clinical Pathways with Process Mining</title>
+    <updated>2026-06-12T14:30:16Z</updated>
+    <link href="https://arxiv.org/abs/2512.03787v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.03787v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical pathways are specialized healthcare plans that model patient treatment procedures. They are developed to provide criteria-based progression and standardize patient treatment, thereby improving care, reducing resource use, and accelerating patient recovery. However, manual modeling of these pathways based on clinical guidelines and domain expertise is difficult and may not reflect the actual best practices for different variations or combinations of diseases. We propose a two-phase modeling method using process mining, which extends the knowledge base of clinical pathways by leveraging conformance checking diagnostics. In the first phase, historical data of a given disease is collected to capture treatment in the form of a process model. In the second phase, new data is compared against the reference model to verify conformance. Based on the conformance checking results, the knowledge base can be expanded with more specific models tailored to new variants or disease combinations. We demonstrate our approach using Synthea, a benchmark dataset simulating patient treatments for SARS-CoV-2 infections with varying COVID-19 complications. The results show that our method enables expanding the knowledge base of clinical pathways with sufficient precision, peaking to 95.62% AUC while maintaining an arc-degree simplicity of 67.11%.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-03T13:37:37Z</published>
+    <arxiv:comment>Accepted to the 41st ACM/SIGAPP Symposium On Applied Computing (ACM SAC 2026)</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Francesco Vitale</name>
+    </author>
+    <author>
+      <name>Nicola Mazzocca</name>
+    </author>
+    <arxiv:doi>10.1145/3748522.3779942</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3748522.3779942" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2208.01230v1</id>
+    <title>A Multifaceted Benchmarking of Synthetic Electronic Health Record Generation Models</title>
+    <updated>2022-08-02T03:44:45Z</updated>
+    <link href="https://arxiv.org/abs/2208.01230v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2208.01230v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Synthetic health data have the potential to mitigate privacy concerns when sharing data to support biomedical research and the development of innovative healthcare applications. Modern approaches for data generation based on machine learning, generative adversarial networks (GAN) methods in particular, continue to evolve and demonstrate remarkable potential. Yet there is a lack of a systematic assessment framework to benchmark methods as they emerge and determine which methods are most appropriate for which use cases. In this work, we introduce a generalizable benchmarking framework to appraise key characteristics of synthetic health data with respect to utility and privacy metrics. We apply the framework to evaluate synthetic data generation methods for electronic health records (EHRs) data from two large academic medical centers with respect to several use cases. The results illustrate that there is a utility-privacy tradeoff for sharing synthetic EHR data. The results further indicate that no method is unequivocally the best on all criteria in each use case, which makes it evident why synthetic data generation methods need to be assessed in context.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-08-02T03:44:45Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Chao Yan</name>
+    </author>
+    <author>
+      <name>Yao Yan</name>
+    </author>
+    <author>
+      <name>Zhiyu Wan</name>
+    </author>
+    <author>
+      <name>Ziqi Zhang</name>
+    </author>
+    <author>
+      <name>Larsson Omberg</name>
+    </author>
+    <author>
+      <name>Justin Guinney</name>
+    </author>
+    <author>
+      <name>Sean D. Mooney</name>
+    </author>
+    <author>
+      <name>Bradley A. Malin</name>
+    </author>
+    <arxiv:doi>10.1038/s41467-022-35295-1</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1038/s41467-022-35295-1" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.00028v1</id>
+    <title>Genetics-Driven Personalized Disease Progression Model</title>
+    <updated>2025-02-24T21:45:14Z</updated>
+    <link href="https://arxiv.org/abs/2503.00028v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.00028v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modeling disease progression through multiple stages is critical for clinical decision-making for chronic diseases, e.g., cancer, diabetes, chronic kidney diseases, and so on. Existing approaches often model the disease progression as a uniform trajectory pattern at the population level. However, chronic diseases are highly heterogeneous and often have multiple progression patterns depending on a patient's individual genetics and environmental effects due to lifestyles. We propose a personalized disease progression model to jointly learn the heterogeneous progression patterns and groups of genetic profiles. In particular, an end-to-end pipeline is designed to simultaneously infer the characteristics of patients from genetic markers using a variational autoencoder and how it drives the disease progressions using an RNN-based state-space model based on clinical observations. Our proposed model shows improvement on real-world and synthetic clinical data.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-24T21:45:14Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Haoyu Yang</name>
+    </author>
+    <author>
+      <name>Sanjoy Dey</name>
+    </author>
+    <author>
+      <name>Pablo Meyer</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.18430v3</id>
+    <title>MCRAGE: Synthetic Healthcare Data for Fairness</title>
+    <updated>2024-03-20T16:32:42Z</updated>
+    <link href="https://arxiv.org/abs/2310.18430v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.18430v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In the field of healthcare, electronic health records (EHR) serve as crucial training data for developing machine learning models for diagnosis, treatment, and the management of healthcare resources. However, medical datasets are often imbalanced in terms of sensitive attributes such as race/ethnicity, gender, and age. Machine learning models trained on class-imbalanced EHR datasets perform significantly worse in deployment for individuals of the minority classes compared to those from majority classes, which may lead to inequitable healthcare outcomes for minority groups. To address this challenge, we propose Minority Class Rebalancing through Augmentation by Generative modeling (MCRAGE), a novel approach to augment imbalanced datasets using samples generated by a deep generative model. The MCRAGE process involves training a Conditional Denoising Diffusion Probabilistic Model (CDDPM) capable of generating high-quality synthetic EHR samples from underrepresented classes. We use this synthetic data to augment the existing imbalanced dataset, resulting in a more balanced distribution across all classes, which can be used to train less biased downstream models. We measure the performance of MCRAGE versus alternative approaches using Accuracy, F1 score and AUROC of these downstream models. We provide theoretical justification for our method in terms of recent convergence results for DDPMs.</summary>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-27T19:02:22Z</published>
+    <arxiv:comment>Keywords: synthetic electronic health records, conditional denoising diffusion probabilistic model, healthcare AI, tabular data, fairness, synthetic data. This paper is the result of work completed at the 2023 Emory University Department of Mathematics REU/RET program under the direction of Project Advisor Dr. Xi Yuanzhe. This work is sponsored by NSF DMS 2051019</arxiv:comment>
+    <arxiv:primary_category term="stat.ML"/>
+    <author>
+      <name>Keira Behal</name>
+    </author>
+    <author>
+      <name>Jiayi Chen</name>
+    </author>
+    <author>
+      <name>Caleb Fikes</name>
+    </author>
+    <author>
+      <name>Sophia Xiao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2408.06285v1</id>
+    <title>Synthetic Patient-Physician Dialogue Generation from Clinical Notes Using LLM</title>
+    <updated>2024-08-12T16:49:22Z</updated>
+    <link href="https://arxiv.org/abs/2408.06285v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2408.06285v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical dialogue systems (MDS) enhance patient-physician communication, improve healthcare accessibility, and reduce costs. However, acquiring suitable data to train these systems poses significant challenges. Privacy concerns prevent the use of real conversations, necessitating synthetic alternatives. Synthetic dialogue generation from publicly available clinical notes offers a promising solution to this issue, providing realistic data while safeguarding privacy. Our approach, SynDial, uses a single LLM iteratively with zero-shot prompting and a feedback loop to generate and refine high-quality synthetic dialogues. The feedback consists of weighted evaluation scores for similarity and extractiveness. The iterative process ensures dialogues meet predefined thresholds, achieving superior extractiveness as a result of the feedback loop. Additionally, evaluation shows that the generated dialogues excel in factuality metric compared to the baselines and has comparable diversity scores with GPT4.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-08-12T16:49:22Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Trisha Das</name>
+    </author>
+    <author>
+      <name>Dina Albassam</name>
+    </author>
+    <author>
+      <name>Jimeng Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.17979v1</id>
+    <title>SIFOTL: A Principled, Statistically-Informed Fidelity-Optimization Method for Tabular Learning</title>
+    <updated>2025-07-23T23:00:24Z</updated>
+    <link href="https://arxiv.org/abs/2507.17979v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.17979v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Identifying the factors driving data shifts in tabular datasets is a significant challenge for analysis and decision support systems, especially those focusing on healthcare. Privacy rules restrict data access, and noise from complex processes hinders analysis. To address this challenge, we propose SIFOTL (Statistically-Informed Fidelity-Optimization Method for Tabular Learning) that (i) extracts privacy-compliant data summary statistics, (ii) employs twin XGBoost models to disentangle intervention signals from noise with assistance from LLMs, and (iii) merges XGBoost outputs via a Pareto-weighted decision tree to identify interpretable segments responsible for the shift. Unlike existing analyses which may ignore noise or require full data access for LLM-based analysis, SIFOTL addresses both challenges using only privacy-safe summary statistics. Demonstrating its real-world efficacy, for a MEPS panel dataset mimicking a new Medicare drug subsidy, SIFOTL achieves an F1 score of 0.85, substantially outperforming BigQuery Contribution Analysis (F1=0.46) and statistical tests (F1=0.20) in identifying the segment receiving the subsidy. Furthermore, across 18 diverse EHR datasets generated based on Synthea ABM, SIFOTL sustains F1 scores of 0.86-0.96 without noise and &gt;= 0.75 even with injected observational noise, whereas baseline average F1 scores range from 0.19-0.67 under the same tests. SIFOTL, therefore, provides an interpretable, privacy-conscious workflow that is empirically robust to observational noise.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-23T23:00:24Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Shubham Mohole</name>
+    </author>
+    <author>
+      <name>Sainyam Galhotra</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.19212v1</id>
+    <title>EHRTutor: Enhancing Patient Understanding of Discharge Instructions</title>
+    <updated>2023-10-30T00:46:03Z</updated>
+    <link href="https://arxiv.org/abs/2310.19212v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.19212v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models have shown success as a tutor in education in various fields. Educating patients about their clinical visits plays a pivotal role in patients' adherence to their treatment plans post-discharge. This paper presents EHRTutor, an innovative multi-component framework leveraging the Large Language Model (LLM) for patient education through conversational question-answering. EHRTutor first formulates questions pertaining to the electronic health record discharge instructions. It then educates the patient through conversation by administering each question as a test. Finally, it generates a summary at the end of the conversation. Evaluation results using LLMs and domain experts have shown a clear preference for EHRTutor over the baseline. Moreover, EHRTutor also offers a framework for generating synthetic patient education dialogues that can be used for future in-house system training.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-30T00:46:03Z</published>
+    <arxiv:comment>To appear in NeurIPS'23 Workshop on Generative AI for Education (GAIED)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zihao Zhang</name>
+    </author>
+    <author>
+      <name>Zonghai Yao</name>
+    </author>
+    <author>
+      <name>Huixue Zhou</name>
+    </author>
+    <author>
+      <name>Feiyun ouyang</name>
+    </author>
+    <author>
+      <name>Hong Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.10538v1</id>
+    <title>DualAlign: Generating Clinically Grounded Synthetic Data</title>
+    <updated>2025-09-05T18:04:38Z</updated>
+    <link href="https://arxiv.org/abs/2509.10538v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.10538v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Synthetic clinical data are increasingly important for advancing AI in healthcare, given strict privacy constraints on real-world EHRs, limited availability of annotated rare-condition data, and systemic biases in observational datasets. While large language models (LLMs) can generate fluent clinical text, producing synthetic data that is both realistic and clinically meaningful remains challenging. We introduce DualAlign, a framework that enhances statistical fidelity and clinical plausibility through dual alignment: (1) statistical alignment, which conditions generation on patient demographics and risk factors; and (2) semantic alignment, which incorporates real-world symptom trajectories to guide content generation. Using Alzheimer's disease (AD) as a case study, DualAlign produces context-grounded symptom-level sentences that better reflect real-world clinical documentation. Fine-tuning an LLaMA 3.1-8B model with a combination of DualAlign-generated and human-annotated data yields substantial performance gains over models trained on gold data alone or unguided synthetic baselines. While DualAlign does not fully capture longitudinal complexity, it offers a practical approach for generating clinically grounded, privacy-preserving synthetic data to support low-resource clinical text analysis.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-05T18:04:38Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Rumeng Li</name>
+    </author>
+    <author>
+      <name>Xun Wang</name>
+    </author>
+    <author>
+      <name>Hong Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2401.13756v1</id>
+    <title>NLICE: Synthetic Medical Record Generation for Effective Primary Healthcare Differential Diagnosis</title>
+    <updated>2024-01-24T19:17:45Z</updated>
+    <link href="https://arxiv.org/abs/2401.13756v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2401.13756v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper offers a systematic method for creating medical knowledge-grounded patient records for use in activities involving differential diagnosis. Additionally, an assessment of machine learning models that can differentiate between various conditions based on given symptoms is also provided. We use a public disease-symptom data source called SymCat in combination with Synthea to construct the patients records. In order to increase the expressive nature of the synthetic data, we use a medically-standardized symptom modeling method called NLICE to augment the synthetic data with additional contextual information for each condition. In addition, Naive Bayes and Random Forest models are evaluated and compared on the synthetic data. The paper shows how to successfully construct SymCat-based and NLICE-based datasets. We also show results for the effectiveness of using the datasets to train predictive disease models. The SymCat-based dataset is able to train a Naive Bayes and Random Forest model yielding a 58.8% and 57.1% Top-1 accuracy score, respectively. In contrast, the NLICE-based dataset improves the results, with a Top-1 accuracy of 82.0% and Top-5 accuracy values of more than 90% for both models. Our proposed data generation approach solves a major barrier to the application of artificial intelligence methods in the healthcare domain. Our novel NLICE symptom modeling approach addresses the incomplete and insufficient information problem in the current binary symptom representation approach. The NLICE code is open sourced at https://github.com/guozhuoran918/NLICE.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-01-24T19:17:45Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Zaid Al-Ars</name>
+    </author>
+    <author>
+      <name>Obinna Agba</name>
+    </author>
+    <author>
+      <name>Zhuoran Guo</name>
+    </author>
+    <author>
+      <name>Christiaan Boerkamp</name>
+    </author>
+    <author>
+      <name>Ziyaad Jaber</name>
+    </author>
+    <author>
+      <name>Tareq Jaber</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.08686v1</id>
+    <title>Knowledge Graph-based Retrieval-Augmented Generation for Schema Matching</title>
+    <updated>2025-01-15T09:32:37Z</updated>
+    <link href="https://arxiv.org/abs/2501.08686v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.08686v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Traditional similarity-based schema matching methods are incapable of resolving semantic ambiguities and conflicts in domain-specific complex mapping scenarios due to missing commonsense and domain-specific knowledge. The hallucination problem of large language models (LLMs) also makes it challenging for LLM-based schema matching to address the above issues. Therefore, we propose a Knowledge Graph-based Retrieval-Augmented Generation model for Schema Matching, referred to as the KG-RAG4SM. In particular, KG-RAG4SM introduces novel vector-based, graph traversal-based, and query-based graph retrievals, as well as a hybrid approach and ranking schemes that identify the most relevant subgraphs from external large knowledge graphs (KGs). We showcase that KG-based retrieval-augmented LLMs are capable of generating more accurate results for complex matching cases without any re-training. Our experimental results show that KG-RAG4SM outperforms the LLM-based state-of-the-art (SOTA) methods (e.g., Jellyfish-8B) by 35.89% and 30.50% in terms of precision and F1 score on the MIMIC dataset, respectively; KG-RAG4SM with GPT-4o-mini outperforms the pre-trained language model (PLM)-based SOTA methods (e.g., SMAT) by 69.20% and 21.97% in terms of precision and F1 score on the Synthea dataset, respectively. The results also demonstrate that our approach is more efficient in end-to-end schema matching, and scales to retrieve from large KGs. Our case studies on the dataset from the real-world schema matching scenario exhibit that the hallucination problem of LLMs for schema matching is well mitigated by our solution.</summary>
+    <category term="cs.DB" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-01-15T09:32:37Z</published>
+    <arxiv:comment>Under Review</arxiv:comment>
+    <arxiv:primary_category term="cs.DB"/>
+    <author>
+      <name>Chuangtao Ma</name>
+    </author>
+    <author>
+      <name>Sriom Chakrabarti</name>
+    </author>
+    <author>
+      <name>Arijit Khan</name>
+    </author>
+    <author>
+      <name>Bálint Molnár</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1807.03876v2</id>
+    <title>Deep learning for comprehensive forecasting of Alzheimer's Disease progression</title>
+    <updated>2018-11-07T18:57:03Z</updated>
+    <link href="https://arxiv.org/abs/1807.03876v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1807.03876v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Most approaches to machine learning from electronic health data can only predict a single endpoint. Here, we present an alternative that uses unsupervised deep learning to simulate detailed patient trajectories. We use data comprising 18-month trajectories of 44 clinical variables from 1908 patients with Mild Cognitive Impairment or Alzheimer's Disease to train a model for personalized forecasting of disease progression. We simulate synthetic patient data including the evolution of each sub-component of cognitive exams, laboratory tests, and their associations with baseline clinical characteristics, generating both predictions and their confidence intervals. Our unsupervised model predicts changes in total ADAS-Cog scores with the same accuracy as specifically trained supervised models and identifies sub-components associated with word recall as predictive of progression. The ability to simultaneously simulate dozens of patient characteristics is a crucial step towards personalized medicine for Alzheimer's Disease.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.QM" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2018-07-10T21:42:17Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Charles K. Fisher</name>
+    </author>
+    <author>
+      <name>Aaron M. Smith</name>
+    </author>
+    <author>
+      <name>Jonathan R. Walsh</name>
+    </author>
+    <author>
+      <name>the Coalition Against Major Diseases</name>
+    </author>
+    <arxiv:doi>10.1038/s41598-019-49656-2</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1038/s41598-019-49656-2" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2211.01761v1</id>
+    <title>PromptEHR: Conditional Electronic Healthcare Records Generation with Prompt Learning</title>
+    <updated>2022-10-11T14:48:15Z</updated>
+    <link href="https://arxiv.org/abs/2211.01761v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2211.01761v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Accessing longitudinal multimodal Electronic Healthcare Records (EHRs) is challenging due to privacy concerns, which hinders the use of ML for healthcare applications. Synthetic EHRs generation bypasses the need to share sensitive real patient records. However, existing methods generate single-modal EHRs by unconditional generation or by longitudinal inference, which falls short of low flexibility and makes unrealistic EHRs. In this work, we propose to formulate EHRs generation as a text-to-text translation task by language models (LMs), which suffices to highly flexible event imputation during generation. We also design prompt learning to control the generation conditioned by numerical and categorical demographic features. We evaluate synthetic EHRs quality by two perplexity measures accounting for their longitudinal pattern (longitudinal imputation perplexity, lpl) and the connections cross modalities (cross-modality imputation perplexity, mpl). Moreover, we utilize two adversaries: membership and attribute inference attacks for privacy-preserving evaluation. Experiments on MIMIC-III data demonstrate the superiority of our methods on realistic EHRs generation (53.1\% decrease of lpl and 45.3\% decrease of mpl on average compared to the best baselines) with low privacy risks. Software is available at https://github.com/RyanWangZf/PromptEHR.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-10-11T14:48:15Z</published>
+    <arxiv:comment>EMNLP 2022</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zifeng Wang</name>
+    </author>
+    <author>
+      <name>Jimeng Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.19014v1</id>
+    <title>Prior-informed optimization of treatment recommendation via bandit algorithms trained on large language model-processed historical records</title>
+    <updated>2025-10-21T18:57:00Z</updated>
+    <link href="https://arxiv.org/abs/2510.19014v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.19014v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Current medical practice depends on standardized treatment frameworks and empirical methodologies that neglect individual patient variations, leading to suboptimal health outcomes. We develop a comprehensive system integrating Large Language Models (LLMs), Conditional Tabular Generative Adversarial Networks (CTGAN), T-learner counterfactual models, and contextual bandit approaches to provide customized, data-informed clinical recommendations. The approach utilizes LLMs to process unstructured medical narratives into structured datasets (93.2% accuracy), uses CTGANs to produce realistic synthetic patient data (55% accuracy via two-sample verification), deploys T-learners to forecast patient-specific treatment responses (84.3% accuracy), and integrates prior-informed contextual bandits to enhance online therapeutic selection by effectively balancing exploration of new possibilities with exploitation of existing knowledge. Testing on stage III colon cancer datasets revealed that our KernelUCB approach obtained 0.60-0.61 average reward scores across 5,000 rounds, exceeding other reference methods. This comprehensive system overcomes cold-start limitations in online learning environments, improves computational effectiveness, and constitutes notable progress toward individualized medicine adapted to specific patient characteristics.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-21T18:57:00Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Saman Nessari</name>
+    </author>
+    <author>
+      <name>Ali Bozorgi-Amiri</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.04281v2</id>
+    <title>Generating Synthetic Electronic Health Record Data: a Methodological Scoping Review with Benchmarking on Phenotype Data and Open-Source Software</title>
+    <updated>2025-06-03T21:38:16Z</updated>
+    <link href="https://arxiv.org/abs/2411.04281v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.04281v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We conduct a scoping review of existing approaches for synthetic EHR data generation, and benchmark major methods with proposed open-source software to offer recommendations for practitioners. We search three academic databases for our scoping review. Methods are benchmarked on open-source EHR datasets, MIMIC-III/IV. Seven existing methods covering major categories and two baseline methods are implemented and compared. Evaluation metrics concern data fidelity, downstream utility, privacy protection, and computational cost. 42 studies are identified and classified into five categories. Seven open-source methods covering all categories are selected, trained on MIMIC-III, and evaluated on MIMIC-III or MIMIC-IV for transportability considerations. Among them, GAN-based methods demonstrate competitive performance in fidelity and utility on MIMIC-III; rule-based methods excel in privacy protection. Similar findings are observed on MIMIC-IV, except that GAN-based methods further outperform the baseline methods in preserving fidelity. A Python package, "SynthEHRella", is provided to integrate various choices of approaches and evaluation metrics, enabling more streamlined exploration and evaluation of multiple methods. We found that method choice is governed by the relative importance of the evaluation metrics in downstream use cases. We provide a decision tree to guide the choice among the benchmarked methods. Based on the decision tree, GAN-based methods excel when distributional shifts exist between the training and testing populations. Otherwise, CorGAN and MedGAN are most suitable for association modeling and predictive modeling, respectively. Future research should prioritize enhancing fidelity of the synthetic data while controlling privacy exposure, and comprehensive benchmarking of longitudinal or conditional generation methods.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-06T21:59:19Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Xingran Chen</name>
+    </author>
+    <author>
+      <name>Zhenke Wu</name>
+    </author>
+    <author>
+      <name>Xu Shi</name>
+    </author>
+    <author>
+      <name>Hyunghoon Cho</name>
+    </author>
+    <author>
+      <name>Bhramar Mukherjee</name>
+    </author>
+    <arxiv:doi>10.1093/jamia/ocaf082</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1093/jamia/ocaf082" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.18497v1</id>
+    <title>Ghost Vectors: Soft-Deleted Embeddings Remain Reconstructible in HNSW Vector Databases</title>
+    <updated>2026-06-16T21:15:49Z</updated>
+    <link href="https://arxiv.org/abs/2606.18497v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.18497v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Retrieval-augmented generation (RAG) allows large language models to access external and private corpora for factual, domain-specific responses. Modern RAG pipelines use hierarchical navigable small world (HNSW) vector databases for efficient similarity search. When a user requests data deletion, the systems typically only mark the record as deleted, leaving the embedding on disk physically unchanged. This soft-delete operation raises compliance concerns under data-erasure and retention requirements such as GDPR Article 17 and HIPAA. Analysis on three HNSW implementations confirms that deleted vectors remain physically recoverable by accessing the raw index files at the storage layer, bypassing API access. Using the Vec2Text inversion model without domain-specific fine-tuning, we show this vulnerability on multiple real-world datasets and data modalities. On Wikipedia biographical living persons dataset (BLP), we successfully recover 25.5% of exact person names and 46.4% of geographic locations (ROUGE-L 0.185). Recovery reaches 100% for both patient age and gender markers (ROUGE-L 0.290) on highly structured, sensitive data (NIH Synthea dataset). On soft-deleted image embeddings, we show 100% tissue classification on histopathology patches (p=1.02e-07) and top-1 identity recovery reaches 99% on facial embeddings (p&lt;0.01). This work introduces Epoch Key Rotation, which encrypts vectors and discards the key upon deletion. Epoch key rotation reduces observed PII recovery to 0% and completes in 2.5 ms for 500 deleted vectors (approximately 0.005 ms/record). Additionally, it generates an ECDSA-signed cryptographic proof as an auditable record of the deletion event.</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-16T21:15:49Z</published>
+    <arxiv:comment>13 pages, 5 figures, 12 tables. Prepared for submission</arxiv:comment>
+    <arxiv:primary_category term="cs.CR"/>
+    <author>
+      <name>Chandranil Chakraborttii</name>
+    </author>
+    <author>
+      <name>Jackeline García Alvarado</name>
+    </author>
+    <author>
+      <name>Sitora Abdulofizova</name>
+    </author>
+    <author>
+      <name>Shivanshu Dwivedi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.21056v1</id>
+    <title>A flexible parametric approach to synthetic patients generation using health data</title>
+    <updated>2024-12-30T16:18:14Z</updated>
+    <link href="https://arxiv.org/abs/2412.21056v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.21056v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Enhancing reproducibility and data accessibility is essential to scientific research. However, ensuring data privacy while achieving these goals is challenging, especially in the medical field, where sensitive data are often commonplace. One possible solution is to use synthetic data that mimic real-world datasets. This approach may help to streamline therapy evaluation and enable quicker access to innovative treatments. We propose using a method based on sequential conditional regressions, such as in a fully conditional specification (FCS) approach, along with flexible parametric survival models to accurately replicate covariate patterns and survival times. To make our approach available to a wide audience of users, we have developed user-friendly functions in R and Python to implement it. We also provide an example application to registry data on patients affected by Creutzfeld-Jacob disease. The results show the potentialities of the proposed method in mirroring observed multivariate distributions and survival outcomes.</summary>
+    <category term="stat.ME" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-30T16:18:14Z</published>
+    <arxiv:comment>18 pages, 3 figures</arxiv:comment>
+    <arxiv:primary_category term="stat.ME"/>
+    <author>
+      <name>Marta Cipriani</name>
+    </author>
+    <author>
+      <name>Lorenzo Di Rocco</name>
+    </author>
+    <author>
+      <name>Maria Puopolo</name>
+    </author>
+    <author>
+      <name>Marco Alfò</name>
+    </author>
+    <arxiv:doi>10.1007/s10260-025-00800-5</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1007/s10260-025-00800-5" title="doi"/>
+  </entry>
+</feed>

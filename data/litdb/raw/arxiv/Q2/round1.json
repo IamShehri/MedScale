@@ -1,0 +1,1407 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/L+GAiq0iNQ4uPW1WPzPfK8y8U3E</id>
+  <title>arXiv Query: search_query=(all:FHIR OR all:"HL7 FHIR") AND (all:"language model" OR all:LLM OR all:generation OR all:validation)&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:12Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=(all:FHIR+OR+all:%22HL7+FHIR%22)+AND+(all:%22language+model%22+OR+(all:LLM+OR+(all:generation+OR+all:validation)))&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>49</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2507.03067v1</id>
+    <title>Large Language Models for Automating Clinical Data Standardization: HL7 FHIR Use Case</title>
+    <updated>2025-07-03T17:32:57Z</updated>
+    <link href="https://arxiv.org/abs/2507.03067v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.03067v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>For years, semantic interoperability standards have sought to streamline the exchange of clinical data, yet their deployment remains time-consuming, resource-intensive, and technically challenging. To address this, we introduce a semi-automated approach that leverages large language models specifically GPT-4o and Llama 3.2 405b to convert structured clinical datasets into HL7 FHIR format while assessing accuracy, reliability, and security. Applying our method to the MIMIC-IV database, we combined embedding techniques, clustering algorithms, and semantic retrieval to craft prompts that guide the models in mapping each tabular field to its corresponding FHIR resource. In an initial benchmark, resource identification achieved a perfect F1-score, with GPT-4o outperforming Llama 3.2 thanks to the inclusion of FHIR resource schemas within the prompt. Under real-world conditions, accuracy dipped slightly to 94 %, but refinements to the prompting strategy restored robust mappings. Error analysis revealed occasional hallucinations of non-existent attributes and mismatches in granularity, which more detailed prompts can mitigate. Overall, our study demonstrates the feasibility of context-aware, LLM-driven transformation of clinical data into HL7 FHIR, laying the groundwork for semi-automated interoperability workflows. Future work will focus on fine-tuning models with specialized medical corpora, extending support to additional standards such as HL7 CDA and OMOP, and developing an interactive interface to enable expert validation and iterative refinement.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-03T17:32:57Z</published>
+    <arxiv:comment>10 pages, 2 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Alvaro Riquelme</name>
+    </author>
+    <author>
+      <name>Pedro Costa</name>
+    </author>
+    <author>
+      <name>Catalina Martinez</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.07706v2</id>
+    <title>FHIR-RAG-MEDS: Integrating HL7 FHIR with Retrieval-Augmented Large Language Models for Enhanced Medical Decision Support</title>
+    <updated>2026-02-26T07:39:32Z</updated>
+    <link href="https://arxiv.org/abs/2509.07706v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.07706v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In this study, we propose FHIR-RAG-MEDS system that aims to integrate Health Level 7 Fast Healthcare Interoperability Resources (HL7 FHIR) with a Retrieval-Augmented Generation (RAG)-based system to improve personalized medical decision support on evidence-based clinical guidelines, emphasizing the need for research in practical applications. In the evolving landscape of medical decision support systems, integrating advanced technologies such as RAG and HL7 FHIR can significantly enhance clinical decision-making processes. Despite the potential of these technologies, there is limited research on their integration in practical applications.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-09T13:10:49Z</published>
+    <arxiv:comment>23 pages, submitted to Journal AI specifically to the special issue "LLMs and AI Agents in Biomedical and Health Sciences", under review</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <arxiv:journal_ref>AI as part of the Special Issue LLMs and AI Agents in Biomedical and Health Sciences, 2 July 2026</arxiv:journal_ref>
+    <author>
+      <name>Yildiray Kabak</name>
+    </author>
+    <author>
+      <name>Gokce B. Laleci Erturkmen</name>
+    </author>
+    <author>
+      <name>Mert Gencturk</name>
+    </author>
+    <author>
+      <name>Tuncay Namli</name>
+    </author>
+    <author>
+      <name>A. Anil Sinaci</name>
+    </author>
+    <author>
+      <name>Ruben Alcantud Corcoles</name>
+    </author>
+    <author>
+      <name>Cristina Gomez Ballesteros</name>
+    </author>
+    <author>
+      <name>Pedro Abizanda</name>
+    </author>
+    <author>
+      <name>Asuman Dogac</name>
+    </author>
+    <arxiv:doi>10.3390/ai7070246</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.3390/ai7070246" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2103.07589v1</id>
+    <title>Application of HL7 FHIR in a Microservice Architecture for Patient Navigation on Registration and Appointments</title>
+    <updated>2021-03-13T01:20:32Z</updated>
+    <link href="https://arxiv.org/abs/2103.07589v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2103.07589v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic Health Record Systems (EHR-S) are commonly developed in monolithic architectures. This architectural style presents greater complexity and demands more effort when we think of interoperability. A solution proposal is the creation of Microservices that use HL7 FHIR as an interoperability strategy. In this sense, it is presented the development of a prototype, based on a microservices architecture, to act in a real scenario of Patient Navigation (PN). The problem was subdivided into 3 steps: definition of architecture, development and construction of an interface to simulate the role of the navigator. The Patient and Appointment microservices are capable of synchronous communication to query and record information. In general, the implemented architectural style not only isolates information domains but can receive data from multiple sources while maintaining essential functionality. This type of approach plays a crucial role in a hospital environment, specifically in PN, highlighting the importance of the standard and expanding the possibilities for further research to be conducted.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-03-13T01:20:32Z</published>
+    <arxiv:comment>8 pages, 14 figures, 3rd ICSE Workshop on Software Engineering for Healthcare, Collocated to ICSE'21</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Giovani Nícolas Bettoni</name>
+    </author>
+    <author>
+      <name>Thafarel Camargo</name>
+    </author>
+    <author>
+      <name>Bruno Gomes Tavares dos Santos</name>
+    </author>
+    <author>
+      <name>Cecília Dias Flores</name>
+    </author>
+    <author>
+      <name>Filipe Santana Da Silva</name>
+    </author>
+    <arxiv:doi>10.1109/SEH52539.2021.00015</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1109/SEH52539.2021.00015" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.19319v2</id>
+    <title>FHIR-AgentBench: Benchmarking LLM Agents for Realistic Interoperable EHR Question Answering</title>
+    <updated>2025-11-13T06:35:10Z</updated>
+    <link href="https://arxiv.org/abs/2509.19319v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.19319v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The recent shift toward the Health Level Seven Fast Healthcare Interoperability Resources (HL7 FHIR) standard opens a new frontier for clinical AI, demanding LLM agents to navigate complex, resource-based data models instead of conventional structured health data. However, existing benchmarks have lagged behind this transition, lacking the realism needed to evaluate recent LLMs on interoperable clinical data. To bridge this gap, we introduce FHIR-AgentBench, a benchmark that grounds 2,931 real-world clinical questions in the HL7 FHIR standard. Using this benchmark, we systematically evaluate agentic frameworks, comparing different data retrieval strategies (direct FHIR API calls vs. specialized tools), interaction patterns (single-turn vs. multi-turn), and reasoning strategies (natural language vs. code generation). Our experiments highlight the practical challenges of retrieving data from intricate FHIR resources and the difficulty of reasoning over them, both of which critically affect question answering performance. We publicly release the FHIR-AgentBench dataset and evaluation suite (https://github.com/glee4810/FHIR-AgentBench) to promote reproducible research and the development of robust, reliable LLM agents for clinical applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-12T06:52:55Z</published>
+    <arxiv:comment>ML4H 2025 Proceedings</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Gyubok Lee</name>
+    </author>
+    <author>
+      <name>Elea Bach</name>
+    </author>
+    <author>
+      <name>Eric Yang</name>
+    </author>
+    <author>
+      <name>Tom Pollard</name>
+    </author>
+    <author>
+      <name>Alistair Johnson</name>
+    </author>
+    <author>
+      <name>Edward Choi</name>
+    </author>
+    <author>
+      <name>Yugang jia</name>
+    </author>
+    <author>
+      <name>Jong Ha Lee</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.30295v3</id>
+    <title>MedCase-Structured: A Text-to-FHIR Dataset for Benchmarking Diagnostic Reasoning in Clinically Realistic EHR Settings</title>
+    <updated>2026-07-01T21:27:24Z</updated>
+    <link href="https://arxiv.org/abs/2605.30295v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.30295v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) show promise for clinical reasoning and decision support, but evaluation in structured, electronic health record-congruent settings remains limited. Existing benchmarks often rely on static datasets or unstructured inputs that do not reflect the interoperable data formats used in clinical systems. We introduce a reusable pipeline for generating terminology-grounded HL7 FHIR R4 bundles from unstructured text, enabling controllable evaluation of clinical decision support systems over structured inputs. The pipeline combines staged LLM generation with terminology-grounded validation and repair to eliminate hallucinated codes and enforce structural and semantic consistency. Applying this approach to MedCaseReasoning, we construct MedCase-Structured, a synthetic dataset of 1,732 FHIR bundles derived from clinician-authored diagnostic cases, producing complete, valid bundles for 97.1% of attempted cases. Evaluation on MedCase-Structured reveals consistently lower diagnostic accuracy for LLMs on structured FHIR inputs than with plain text, highlighting the importance of deployment-aligned benchmarking.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-28T17:42:43Z</published>
+    <arxiv:comment>Accepted to ICML 2026 Structured Data for Health Workshop</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Valentina Bui Muti</name>
+    </author>
+    <author>
+      <name>Eugénie Dulout</name>
+    </author>
+    <author>
+      <name>Ziquan Fu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.13800v1</id>
+    <title>Enhancing Clinical Decision Support and EHR Insights through LLMs and the Model Context Protocol: An Open-Source MCP-FHIR Framework</title>
+    <updated>2025-06-13T04:07:19Z</updated>
+    <link href="https://arxiv.org/abs/2506.13800v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.13800v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Enhancing clinical decision support (CDS), reducing documentation burdens, and improving patient health literacy remain persistent challenges in digital health. This paper presents an open-source, agent-based framework that integrates Large Language Models (LLMs) with HL7 FHIR data via the Model Context Protocol (MCP) for dynamic extraction and reasoning over electronic health records (EHRs). Built on the established MCP-FHIR implementation, the framework enables declarative access to diverse FHIR resources through JSON-based configurations, supporting real-time summarization, interpretation, and personalized communication across multiple user personas, including clinicians, caregivers, and patients. To ensure privacy and reproducibility, the framework is evaluated using synthetic EHR data from the SMART Health IT sandbox (https://r4.smarthealthit.org/), which conforms to the FHIR R4 standard. Unlike traditional approaches that rely on hardcoded retrieval and static workflows, the proposed method delivers scalable, explainable, and interoperable AI-powered EHR applications. The agentic architecture further supports multiple FHIR formats, laying a robust foundation for advancing personalized digital health solutions.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-13T04:07:19Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Abul Ehtesham</name>
+    </author>
+    <author>
+      <name>Aditi Singh</name>
+    </author>
+    <author>
+      <name>Saket Kumar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2402.01711v1</id>
+    <title>LLM on FHIR -- Demystifying Health Records</title>
+    <updated>2024-01-25T17:45:34Z</updated>
+    <link href="https://arxiv.org/abs/2402.01711v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2402.01711v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Objective: To enhance health literacy and accessibility of health information for a diverse patient population by developing a patient-centered artificial intelligence (AI) solution using large language models (LLMs) and Fast Healthcare Interoperability Resources (FHIR) application programming interfaces (APIs). Materials and Methods: The research involved developing LLM on FHIR, an open-source mobile application allowing users to interact with their health records using LLMs. The app is built on Stanford's Spezi ecosystem and uses OpenAI's GPT-4. A pilot study was conducted with the SyntheticMass patient dataset and evaluated by medical experts to assess the app's effectiveness in increasing health literacy. The evaluation focused on the accuracy, relevance, and understandability of the LLM's responses to common patient questions. Results: LLM on FHIR demonstrated varying but generally high degrees of accuracy and relevance in providing understandable health information to patients. The app effectively translated medical data into patient-friendly language and was able to adapt its responses to different patient profiles. However, challenges included variability in LLM responses and the need for precise filtering of health data. Discussion and Conclusion: LLMs offer significant potential in improving health literacy and making health records more accessible. LLM on FHIR, as a pioneering application in this field, demonstrates the feasibility and challenges of integrating LLMs into patient care. While promising, the implementation and pilot also highlight risks such as inconsistent responses and the importance of replicable output. Future directions include better resource identification mechanisms and executing LLMs on-device to enhance privacy and reduce costs.</summary>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-01-25T17:45:34Z</published>
+    <arxiv:comment>Pre-print of the paper submitted to the Call for Papers for the Special Focus Issue on ChatGPT and Large Language Models (LLMs) in Biomedicine and Health at the Journal of the American Medical Informatics Association: https://academic.oup.com/jamia/pages/call-for-papers-for-special-focus-issue</arxiv:comment>
+    <arxiv:primary_category term="cs.CY"/>
+    <author>
+      <name>Paul Schmiedmayer</name>
+    </author>
+    <author>
+      <name>Adrit Rao</name>
+    </author>
+    <author>
+      <name>Philipp Zagar</name>
+    </author>
+    <author>
+      <name>Vishnu Ravi</name>
+    </author>
+    <author>
+      <name>Aydin Zahedivash</name>
+    </author>
+    <author>
+      <name>Arash Fereydooni</name>
+    </author>
+    <author>
+      <name>Oliver Aalami</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.12261v2</id>
+    <title>Infherno: End-to-end Agent-based FHIR Resource Synthesis from Free-form Clinical Notes</title>
+    <updated>2026-03-19T16:52:38Z</updated>
+    <link href="https://arxiv.org/abs/2507.12261v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.12261v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>For clinical data integration and healthcare services, the HL7 FHIR standard has established itself as a desirable format for interoperability between complex health data. Previous attempts at automating the translation from free-form clinical notes into structured FHIR resources address narrowly defined tasks and rely on modular approaches or LLMs with instruction tuning and constrained decoding. As those solutions frequently suffer from limited generalizability and structural inconformity, we propose an end-to-end framework powered by LLM agents, code execution, and healthcare terminology database tools to address these issues. Our solution, called Infherno, is designed to adhere to the FHIR document schema and competes well with a human baseline in predicting FHIR resources from unstructured text. The implementation features a front end for custom and synthetic data and both local and proprietary models, supporting clinical data integration processes and interoperability across institutions. Gemini 2.5-Pro excels in our evaluation on synthetic and clinical datasets, yet ambiguity and feasibility of collecting ground-truth data remain open problems.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-16T14:06:51Z</published>
+    <arxiv:comment>EACL 2026 System Demonstrations | Code: https://github.com/j-frei/Infherno | Demo: https://infherno.misit-augsburg.de</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Johann Frei</name>
+    </author>
+    <author>
+      <name>Nils Feldhus</name>
+    </author>
+    <author>
+      <name>Lisa Raithel</name>
+    </author>
+    <author>
+      <name>Roland Roller</name>
+    </author>
+    <author>
+      <name>Alexander Meyer</name>
+    </author>
+    <author>
+      <name>Frank Kramer</name>
+    </author>
+    <arxiv:doi>10.18653/v1/2026.eacl-demo.13</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.18653/v1/2026.eacl-demo.13" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.12989v1</id>
+    <title>Enhancing Health Data Interoperability with Large Language Models: A FHIR Study</title>
+    <updated>2023-09-19T20:09:35Z</updated>
+    <link href="https://arxiv.org/abs/2310.12989v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.12989v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In this study, we investigated the ability of the large language model (LLM) to enhance healthcare data interoperability. We leveraged the LLM to convert clinical texts into their corresponding FHIR resources. Our experiments, conducted on 3,671 snippets of clinical text, demonstrated that the LLM not only streamlines the multi-step natural language processing and human calibration processes but also achieves an exceptional accuracy rate of over 90% in exact matches when compared to human annotations.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-09-19T20:09:35Z</published>
+    <arxiv:comment>Submitted to 2024 AMIA IS</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yikuan Li</name>
+    </author>
+    <author>
+      <name>Hanyin Wang</name>
+    </author>
+    <author>
+      <name>Halid Yerebakan</name>
+    </author>
+    <author>
+      <name>Yoshihisa Shinagawa</name>
+    </author>
+    <author>
+      <name>Yuan Luo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.05847v2</id>
+    <title>Schema-Grounded LLM Extraction for FHIR Patient Digital Twins</title>
+    <updated>2026-05-22T20:05:45Z</updated>
+    <link href="https://arxiv.org/abs/2601.05847v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.05847v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We revisit the problem of constructing interoperable patient digital twins from unstructured electronic health records (EHRs) and argue that the task is better cast not as a cascade of extraction modules but as constrained generation of a valid FHIR bundle. We introduce SG-LLM, a schema-grounded LLM extractor that (i) augments the prompt with candidate SNOMED-CT, RxNorm, and LOINC codes retrieved through a SapBERT index, (ii) decodes under a JSON Schema derived directly from FHIR R4 StructureDefinitions, and (iii) closes a validator-in-the-loop repair stage whose diagnostics are fed back as structured error messages. We argue that the twin's usefulness, not only span-level F1, is the right object of evaluation, and operationalize this with a clinical-utility experiment that measures the gap in 30-day readmission AUROC between classifiers trained on SG-LLM-generated FHIR bundles versus expert-curated ones. On MIMIC-IV and n2c2 2018 Track 2 benchmarks, SG-LLM matches or exceeds strong joint-extraction and vanilla-LLM baselines while producing substantially more valid bundles. Ablations isolate the contributions of retrieval, schema constraint, and the repair loop. All code, prompts, and schemas are released.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-09T15:20:11Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Rafael Brens</name>
+    </author>
+    <author>
+      <name>Yuqiao Meng</name>
+    </author>
+    <author>
+      <name>Luoxi Tang</name>
+    </author>
+    <author>
+      <name>Zhaohan Xi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.01668v2</id>
+    <title>EHRSummarizer: A Privacy-Aware, FHIR-Native Reference Architecture for Source-Grounded EHR Summarization</title>
+    <updated>2026-05-26T15:51:39Z</updated>
+    <link href="https://arxiv.org/abs/2601.01668v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.01668v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinicians routinely navigate fragmented electronic health record (EHR) interfaces to assemble a coherent picture of a patient's problems, medications, recent encounters, and longitudinal trends. This manuscript describes EHRSummarizer, a privacy-aware, FHIR-native reference architecture for structured EHR summarization. The architecture retrieves a targeted set of high-yield HL7 FHIR R4 resources, normalizes them into a clinical context package, and uses a constrained summarization stage to produce source-grounded summaries intended to support chart review. The architecture further clarifies missing-data status handling, medication-status ambiguity, controlled use of narrative clinical documents when available, and future source-to-summary traceability. The manuscript describes a reference architecture and prototype behavior rather than a validated clinical intervention, autonomous clinical decision-support system, or evidence of clinical benefit. Prototype demonstrations on synthetic and test FHIR environments illustrate end-to-end behavior and output formats; however, this manuscript does not report clinical outcomes, controlled workflow studies, or benchmark results. We outline an evaluation plan centered on faithfulness, omission risk, temporal correctness, usability, privacy, and operational monitoring to guide future institutional assessment.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-04T21:10:42Z</published>
+    <arxiv:comment>15 pages, 2 figures, 2 tables. Version 2 clarifies missing-data status handling, medication-status ambiguity, controlled narrative-document handling, source-grounded resource grouping, and future source-to-summary traceability</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Houman Kazemzadeh</name>
+    </author>
+    <author>
+      <name>Nima Minaifar</name>
+    </author>
+    <author>
+      <name>Kamyar Naderi</name>
+    </author>
+    <author>
+      <name>Sho Tabibzadeh</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.21113v1</id>
+    <title>Planner-Auditor Twin: Agentic Discharge Planning with FHIR-Based LLM Planning, Guideline Recall, Optional Caching and Self-Improvement</title>
+    <updated>2026-01-28T23:04:11Z</updated>
+    <link href="https://arxiv.org/abs/2601.21113v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.21113v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Objective: Large language models (LLMs) show promise for clinical discharge planning, but their use is constrained by hallucination, omissions, and miscalibrated confidence. We introduce a self-improving, cache-optional Planner-Auditor framework that improves safety and reliability by decoupling generation from deterministic validation and targeted replay.
+  Materials and Methods: We implemented an agentic, retrospective, FHIR-native evaluation pipeline using MIMIC-IV-on-FHIR. For each patient, the Planner (LLM) generates a structured discharge action plan with an explicit confidence estimate. The Auditor is a deterministic module that evaluates multi-task coverage, tracks calibration (Brier score, ECE proxies), and monitors action-distribution drift. The framework supports two-tier self-improvement: (i) within-episode regeneration when enabled, and (ii) cross-episode discrepancy buffering with replay for high-confidence, low-coverage cases.
+  Results: While context caching improved performance over baseline, the self-improvement loop was the primary driver of gains, increasing task coverage from 32% to 86%. Calibration improved substantially, with reduced Brier/ECE and fewer high-confidence misses. Discrepancy buffering further corrected persistent high-confidence omissions during replay.
+  Discussion: Feedback-driven regeneration and targeted replay act as effective control mechanisms to reduce omissions and improve confidence reliability in structured clinical planning. Separating an LLM Planner from a rule-based, observational Auditor enables systematic reliability measurement and safer iteration without model retraining.
+  Conclusion: The Planner-Auditor framework offers a practical pathway toward safer automated discharge planning using interoperable FHIR data access and deterministic auditing, supported by reproducible ablations and reliability-focused evaluation.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-28T23:04:11Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Kaiyuan Wu</name>
+    </author>
+    <author>
+      <name>Aditya Nagori</name>
+    </author>
+    <author>
+      <name>Rishikesan Kamaleswaran</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.05822v2</id>
+    <title>Improving Clinical Data Accessibility Through Automated FHIR Data Transformation Tools</title>
+    <updated>2026-05-22T21:16:43Z</updated>
+    <link href="https://arxiv.org/abs/2601.05822v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.05822v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The Fast Healthcare Interoperability Resources (FHIR) standard has emerged as a widely adopted specification for exchanging structured clinical data across healthcare systems. However, raw FHIR resources are often complex, verbose, and difficult for clinicians and analysts to interpret without specialized tooling. This paper presents a lightweight, browser-based system that improves the accessibility of FHIR data by automatically transforming raw JSON resources into human-readable PDF and Excel reports, along with interactive data visualizations. The system supports both remote retrieval of FHIR resources from server endpoints and the upload of local FHIR JSON files, enabling both online and offline analysis. Using a modular React architecture with jsPDF, xlsx, and Recharts, the tool parses, normalizes, visualizes, and exports FHIR data in an intuitive format. Evaluation results demonstrate that the system enhances interpretability and usability while preserving the semantic integrity of FHIR structures. Limitations and future extensions, including expanded FHIR profile support and clinical validation, are discussed.</summary>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-09T14:52:40Z</published>
+    <arxiv:primary_category term="cs.HC"/>
+    <author>
+      <name>Adarsh Pawar</name>
+    </author>
+    <author>
+      <name>Yuqiao Meng</name>
+    </author>
+    <author>
+      <name>Luoxi Tang</name>
+    </author>
+    <author>
+      <name>Zhaohan Xi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.21076v1</id>
+    <title>Serialisation Strategy Matters: How FHIR Data Format Affects LLM Medication Reconciliation</title>
+    <updated>2026-04-22T20:39:35Z</updated>
+    <link href="https://arxiv.org/abs/2604.21076v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.21076v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medication reconciliation at clinical handoffs is a high-stakes, error-prone process. Large language models are increasingly proposed to assist with this task using FHIR-structured patient records, but a fundamental and largely unstudied variable is how the FHIR data is serialised before being passed to the model. We present the first systematic comparison of four FHIR serialisation strategies (Raw JSON, Markdown Table, Clinical Narrative, and Chronological Timeline) across five open-weight models (Phi-3.5-mini, Mistral-7B, BioMistral-7B, Llama-3.1-8B, Llama-3.3-70B) on a controlled benchmark of 200 synthetic patients, totalling 4,000 inference runs. We find that serialisation strategy has a large, statistically significant effect on performance for models up to 8B parameters: Clinical Narrative outperforms Raw JSON by up to 19 F1 points for Mistral-7B (r = 0.617, p &lt; 10^{-10}). This advantage reverses at 70B, where Raw JSON achieves the best mean F1 of 0.9956. In all 20 model and strategy combinations, mean precision exceeds mean recall: omission is the dominant failure mode, with models more often missing an active medication than fabricating one, which changes how clinical safety auditing priorities should be set. Smaller models plateau at roughly 7-10 concurrent active medications, leaving polypharmacy patients, the patients most at risk from reconciliation errors, systematically underserved. BioMistral-7B, a domain-pretrained model without instruction tuning, produces zero usable output in all conditions, showing that domain pretraining alone is not sufficient for structured extraction. These results offer practical, evidence-based format recommendations for clinical LLM deployment: Clinical Narrative for models up to 8B, Raw JSON for 70B and above. The complete pipeline is reproducible on open-source tools running on an AWS g6e.xlarge instance (NVIDIA L40S, 48 GB VRAM).</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-22T20:39:35Z</published>
+    <arxiv:comment>14 pages, 7 figures, independent research</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Sanjoy Pator</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.14126v1</id>
+    <title>Reinforcement Learning for Tool-Calling Agents in Fast Healthcare Interoperability Resources (FHIR)</title>
+    <updated>2026-05-13T21:27:21Z</updated>
+    <link href="https://arxiv.org/abs/2605.14126v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.14126v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Fast Healthcare Interoperability Resources (FHIR) is the dominant standard for interoperable exchange of healthcare data. In FHIR, electronic health records form a directed graph of resources. Answering clinically meaningful questions over FHIR requires agents to perform multi-step reasoning, filtering, and aggregation across multiple resource types. Prior work shows that even tool-augmented LLM agents (retrieval, code execution, multi-turn planning) often select the wrong resources or violate traversal constraints. We study this problem in the context of FHIR-AgentBench, a benchmark for realistic question answering over real-world hospital data, and frame reasoning on FHIR as a sequential decision-making problem over a queryable structured graph. We implement a multi-turn CodeAct agent and post-train it with reinforcement learning using a custom harness and tools. A LLM Judge provides execution-grounded rewards. Compared to prompt-based, closed-model baselines, RL post-training improves performance while enforcing data-integrity constraints. Empirically, our approach improves answer correctness from 50% (o4-mini) to 77% on FHIR-AgentBench using a smaller and cheaper Qwen3-8B model. We present an end-to-end post-training pipeline (environment building, harness construction, model training and custom evaluation) that reliably improves multi-turn reasoning over structured clinical graphs.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-13T21:27:21Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Marius S. Knorr</name>
+    </author>
+    <author>
+      <name>Robert Müller</name>
+    </author>
+    <author>
+      <name>Jan P. Bremer</name>
+    </author>
+    <author>
+      <name>Nils Schweingruber</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.05407v3</id>
+    <title>H-AdminSim: A Multi-Agent Simulator for Realistic Hospital Administrative Workflows with FHIR Integration</title>
+    <updated>2026-04-15T05:24:11Z</updated>
+    <link href="https://arxiv.org/abs/2602.05407v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.05407v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Hospital administration departments handle a wide range of operational tasks and, in large hospitals, process over 10,000 requests per day, driving growing interest in LLM-based automation. However, prior work has focused primarily on patient-physician interactions or isolated administrative subtasks, failing to capture the complexity of real administrative workflows. To address this gap, we propose H-AdminSim, a comprehensive simulation framework that combines realistic data generation with multi-agent-based simulation of hospital administrative workflows. These tasks are quantitatively evaluated using detailed rubrics, enabling systematic comparison of LLMs. Through FHIR integration, H-AdminSim provides a unified and interoperable environment for testing administrative workflows across heterogeneous hospital settings, serving as a standardized testbed for assessing the feasibility and performance of LLM-driven administrative automation.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-05T07:44:56Z</published>
+    <arxiv:comment>Accepted at CHIL 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jun-Min Lee</name>
+    </author>
+    <author>
+      <name>Meong Hi Son</name>
+    </author>
+    <author>
+      <name>Edward Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.23479v2</id>
+    <title>FHIRPath-QA: Executable Question Answering over FHIR Electronic Health Records</title>
+    <updated>2026-03-24T18:12:30Z</updated>
+    <link href="https://arxiv.org/abs/2602.23479v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.23479v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Though patients are increasingly granted digital access to their electronic health records (EHRs), existing interfaces may not support precise, trustworthy answers to patient-specific questions. Large language models (LLM) show promise in clinical question answering (QA), but retrieval-based approaches are computationally inefficient, prone to hallucination, and difficult to deploy over real-life EHRs. This work introduces FHIRPath-QA, the first open dataset and benchmark for patient-specific QA that includes open-standard FHIRPath queries over real-world clinical data. A text-to-FHIRPath QA paradigm is proposed that shifts reasoning from free-text generation to FHIRPath query synthesis. For o4-mini, this reduced average token usage by 391x relative to retrieval-first prompting (629,829 vs 1,609 tokens per question) and lowered failure rates from 0.36 to 0.09 on clinician-phrased questions. Built on MIMIC-IV on FHIR Demo, the dataset pairs over 14k natural language questions in patient and clinician phrasing with validated FHIRPath queries and answers. Empirically, the evaluated LLMs achieve at most 42% accuracy, highlighting the challenge of the task, but benefit strongly from supervised fine-tuning, with query synthesis accuracy improving from 27% to 79% for 4o-mini. These results highlight that text-to-FHIRPath synthesis has the potential to serve as a practical foundation for safe, efficient, and interoperable consumer health applications, and the FHIRPath-QA dataset and benchmark serve as a starting point for future research on the topic. The full dataset and generation code can be accessed at: https://github.com/mooshifrew/fhirpath-qa.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-26T20:14:21Z</published>
+    <arxiv:comment>Accepted to LREC 2026 CL4Health Workshop</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Michael Frew</name>
+    </author>
+    <author>
+      <name>Nishit Bheda</name>
+    </author>
+    <author>
+      <name>Bryan Tripp</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.15449v1</id>
+    <title>Transfer Learning for FHIR Questionnaire Terminology Binding</title>
+    <updated>2026-06-13T19:46:44Z</updated>
+    <link href="https://arxiv.org/abs/2606.15449v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.15449v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic prior authorization workflows require FHIR Questionnaire items to carry LOINC codes, yet most items in the HL7 Da Vinci CDS-Library lack these bindings. We treat this as a retrieval problem: given a Questionnaire item's text, find the correct LOINC code in a pool of 97,314 active codes. We compare six methods (TF-IDF, frozen MiniLM, BioBERT, BioLORD, contrastively fine-tuned MiniLM, and a TF-IDF+GPT reranker) on a 54-item evaluation set spanning three query styles (natural question, medium, and terse). No single method wins on every metric. BioLORD, a frozen encoder pre-trained on biomedical ontology definitions, has the best top-rank accuracy (R@1 = 0.185, MRR = 0.246) despite seeing no task-specific data, while a contrastive fine-tune on raw LHC-Forms pairs takes R@5 (0.389) and R@10 (0.426). A distribution-shift ablation shows why the fine-tune in our main table is not the strongest one: adding GPT-generated paraphrases to the raw pairs drops R@5 from 0.389 to 0.296, so the augmented union underperforms raw-only training on every metric except R@1. Performance peaks at 5k training pairs. Error analysis on BioLORD's R@1 failures shows that wrong-specificity and ambiguous-text cases together account for 59% of errors.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-13T19:46:44Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Maxim Gorshkov</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.06089v1</id>
+    <title>Leveraging LLMs for Unstructured Claims Data Analysis</title>
+    <updated>2026-06-04T12:26:20Z</updated>
+    <link href="https://arxiv.org/abs/2606.06089v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.06089v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Actuaries rely primarily on structured numerical data for reserving and ratemaking, while valuable predictive information in unstructured text including medical records, adjuster notes, and call transcripts remains largely unused. Manual processing of these documents is time-consuming, inconsistent across reviewers, and unscalable. We present a proof-of-concept framework using large language models (LLMs) to extract structured actuarial variables from unstructured claims data.
+  We implement a two-stage processing architecture separating document-level extraction (Stage 1) from claim-level synthesis (Stage 2). A modular four-script Python pipeline processes synthetic FHIR-based claims data and real claims documents, extracting 36 actuarial variables across reserving, ratemaking, and claims management categories. We validate 14 core variables using two independent clinical expert reviewers scoring 20 synthetic claims on a five-point Likert rubric, achieving mean scores above 4.0 and a weighted kappa of 0.53. Integration with chain ladder reserving demonstrates practical actuarial value: severity-segmented analysis reduced reserve estimation error from 6.5% to 4.0%. The open-source implementation includes audit trails and confidence scoring, providing a replicable foundation for LLM-based actuarial variable extraction in property-casualty insurance.</summary>
+    <category term="q-fin.MF" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="econ.GN" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-fin.RM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-04T12:26:20Z</published>
+    <arxiv:comment>41 pages, 6 figures, 3 tables. Code available at https://github.com/mdsight/llm-claims-analysis . Technical Specification Requirement included as Appendix D. Funded by the Casualty Actuarial Society Artificial Intelligence Working Group</arxiv:comment>
+    <arxiv:primary_category term="q-fin.MF"/>
+    <author>
+      <name>Robert D. Lieberthal</name>
+      <arxiv:affiliation>Lieberthal and Associates, LLC</arxiv:affiliation>
+    </author>
+    <author>
+      <name>Richard Tran</name>
+      <arxiv:affiliation>MDSight, LLC</arxiv:affiliation>
+    </author>
+    <author>
+      <name>Vietbao Phan</name>
+      <arxiv:affiliation>Thomas Jefferson University</arxiv:affiliation>
+    </author>
+    <author>
+      <name>Jawand Singh</name>
+      <arxiv:affiliation>Lieberthal and Associates, LLC</arxiv:affiliation>
+      <arxiv:affiliation>William and Mary University</arxiv:affiliation>
+    </author>
+    <author>
+      <name>Elizabeth Sottung</name>
+      <arxiv:affiliation>Thomas Jefferson University</arxiv:affiliation>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.13687v1</id>
+    <title>Question Answering on Patient Medical Records with Private Fine-Tuned LLMs</title>
+    <updated>2025-01-23T14:13:56Z</updated>
+    <link href="https://arxiv.org/abs/2501.13687v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.13687v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Healthcare systems continuously generate vast amounts of electronic health records (EHRs), commonly stored in the Fast Healthcare Interoperability Resources (FHIR) standard. Despite the wealth of information in these records, their complexity and volume make it difficult for users to retrieve and interpret crucial health insights. Recent advances in Large Language Models (LLMs) offer a solution, enabling semantic question answering (QA) over medical data, allowing users to interact with their health records more effectively. However, ensuring privacy and compliance requires edge and private deployments of LLMs.
+  This paper proposes a novel approach to semantic QA over EHRs by first identifying the most relevant FHIR resources for a user query (Task1) and subsequently answering the query based on these resources (Task2). We explore the performance of privately hosted, fine-tuned LLMs, evaluating them against benchmark models such as GPT-4 and GPT-4o. Our results demonstrate that fine-tuned LLMs, while 250x smaller in size, outperform GPT-4 family models by 0.55% in F1 score on Task1 and 42% on Meteor Task in Task2. Additionally, we examine advanced aspects of LLM usage, including sequential fine-tuning, model self-evaluation (narcissistic evaluation), and the impact of training data size on performance. The models and datasets are available here: https://huggingface.co/genloop</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-01-23T14:13:56Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Sara Kothari</name>
+    </author>
+    <author>
+      <name>Ayush Gupta</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.25120v1</id>
+    <title>Evidence-Linked Radiology Reporting: A Human-Supervised Reference Architecture for Structured Imaging Intelligence</title>
+    <updated>2026-05-24T15:07:14Z</updated>
+    <link href="https://arxiv.org/abs/2605.25120v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.25120v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Radiology reports remain the primary mechanism by which imaging findings are communicated to clinical teams. However, much of the structured information behind these reports, including measurements, image evidence, prior comparisons, lesion identity, uncertainty, and terminology, often remains trapped in free text or fragmented across picture archiving and communication systems, radiology information systems, reporting workstations, worksheets, advanced visualization tools, and electronic health records. This paper proposes a human-supervised, evidence-linked reference architecture for structured radiology reporting. The framework combines exam-specific templates, speech-to-structure processing, measurement and segmentation capture, controlled AI-assisted drafting, and standards-based interoperability using DICOM, DICOM Structured Reporting, DICOM Segmentation, HL7 FHIR, RadLex, SNOMED CT, LOINC, and UCUM. The system is positioned not as an autonomous report generator, but as a structured intelligence layer for enterprise imaging that supports reviewed reporting, longitudinal comparison, clinical data reuse, governance, and integration with PACS, RIS, EHR, analytics, and registry workflows. The paper also discusses modality-specific deployment considerations, clinical safety risks, validation requirements, cybersecurity, privacy, quality management, and regulatory boundaries for AI-assisted radiology reporting systems.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-24T15:07:14Z</published>
+    <arxiv:comment>Technical report, 27 pages, 2 figures, 12 tables, 1 listing; reference architecture paper; does not report clinical outcomes or validated diagnostic performance</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Houman Kazemzadeh</name>
+    </author>
+    <author>
+      <name>Kamyar Naderi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.08247v1</id>
+    <title>AeroSpectra Sentinel: An Auditable LLM Prompt-Chaining Decision-Support Workflow for Acute Asthma Risk Assessment from Respiratory Sounds and Clinical Signals</title>
+    <updated>2026-06-06T16:11:45Z</updated>
+    <link href="https://arxiv.org/abs/2606.08247v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.08247v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Acute asthma risk assessment requires rapid interpretation of respiratory sounds, oxygenation, airflow limitation, speech ability, work of breathing, mental status, and response to reliever therapy. Conventional audio-only classifiers can detect wheeze-like patterns but often lack transparent clinical reasoning and safe escalation logic. This paper presents AeroSpectra Sentinel, a client-side research prototype and decision-support workflow that combines short-time Fourier transform (STFT) respiratory sound analysis, lightweight machine-learning screening, clinical feature fusion, and a five-stage large language model (LLM) prompt-chaining process. The workflow separates signal acquisition, preprocessing, acoustic feature extraction, ML screening, clinical guardrails, and FHIR-ready reporting. We evaluated the audio screening component on a public respiratory sound dataset containing 1,211 WAV recordings from five labels. Using a stratified subset of 584 recordings, a random forest achieved 91.10% binary accuracy and 78.69% F1-score for asthma-vs-non-asthma screening, while a feature-based multilayer perceptron achieved 89.73% accuracy and 78.26% F1-score. A compact log-spectrogram CNN achieved 73.29% accuracy and 55.17% F1-score. Multiclass classification achieved 77.40% accuracy and 77.23% macro-F1. To evaluate the LLM workflow, we conducted a scenario-based audit on 40 simulated clinical vignettes comparing one-shot prompting, prompt chaining, prompt chaining with guardrails, and prompt chaining with guardrails plus FHIR schema validation. The guardrail-plus-schema variant achieved the strongest simulated safety and documentation consistency. AeroSpectra Sentinel is intended as a research prototype, not as a diagnostic medical device or clinically validated risk-assessment product.</summary>
+    <category term="eess.AS" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="eess.SP" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-06T16:11:45Z</published>
+    <arxiv:comment>10 pages, 8 figures, 5 tables, 14 equations</arxiv:comment>
+    <arxiv:primary_category term="eess.AS"/>
+    <author>
+      <name>Aueaphum Aueawatthanaphisut</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.00644v1</id>
+    <title>Efficient Standardization of Clinical Notes using Large Language Models</title>
+    <updated>2024-12-31T20:52:40Z</updated>
+    <link href="https://arxiv.org/abs/2501.00644v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.00644v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinician notes are a rich source of patient information but often contain inconsistencies due to varied writing styles, colloquialisms, abbreviations, medical jargon, grammatical errors, and non-standard formatting. These inconsistencies hinder the extraction of meaningful data from electronic health records (EHRs), posing challenges for quality improvement, population health, precision medicine, decision support, and research.
+  We present a large language model approach to standardizing a corpus of 1,618 clinical notes. Standardization corrected an average of $4.9 +/- 1.8$ grammatical errors, $3.3 +/- 5.2$ spelling errors, converted $3.1 +/- 3.0$ non-standard terms to standard terminology, and expanded $15.8 +/- 9.1$ abbreviations and acronyms per note. Additionally, notes were re-organized into canonical sections with standardized headings. This process prepared notes for key concept extraction, mapping to medical ontologies, and conversion to interoperable data formats such as FHIR.
+  Expert review of randomly sampled notes found no significant data loss after standardization. This proof-of-concept study demonstrates that standardization of clinical notes can improve their readability, consistency, and usability, while also facilitating their conversion into interoperable data formats.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-31T20:52:40Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Daniel B. Hier</name>
+    </author>
+    <author>
+      <name>Michael D. Carrithers</name>
+    </author>
+    <author>
+      <name>Thanh Son Do</name>
+    </author>
+    <author>
+      <name>Tayo Obafemi-Ajayi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2409.12171v1</id>
+    <title>Semantic Interoperability on Blockchain by Generating Smart Contracts Based on Knowledge Graphs</title>
+    <updated>2024-09-11T13:46:24Z</updated>
+    <link href="https://arxiv.org/abs/2409.12171v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2409.12171v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Background: Health 3.0 allows decision making to be based on longitudinal data from multiple institutions, from across the patient's healthcare journey. In such a distributed setting, blockchain smart contracts can act as neutral intermediaries to implement trustworthy decision making.
+  Objective: In a distributed setting, transmitted data will be structured using standards (such as HL7 FHIR) for semantic interoperability. In turn, the smart contract will require interoperability with this standard, implement a complex communication setup (e.g., using oracles), and be developed using blockchain languages (e.g., Solidity). We propose the encoding of smart contract logic using a high-level semantic Knowledge Graph, using concepts from the domain standard. We then deploy this semantic KG on blockchain.
+  Methods: Off-chain, a code generation pipeline compiles the KG into a concrete smart contract, which is then deployed on-chain. Our pipeline targets an intermediary bridge representation, which can be transpiled into a specific blockchain language. Our choice avoids on-chain rule engines, with unpredictable and likely higher computational cost; it is thus in line with the economic rules of blockchain.
+  Results: We applied our code generation approach to generate smart contracts for 3 health insurance cases from Medicare. We discuss the suitability of our approach - the need for a neutral intermediary - for a number of healthcare use cases. Our evaluation finds that the generated contracts perform well in terms of correctness and execution cost ("gas") on blockchain.
+  Conclusions: We showed that it is feasible to automatically generate smart contract code based on a semantic KG, in a way that respects the economic rules of blockchain. Future work includes studying the use of Large Language Models (LLM) in our approach, and evaluations on other blockchains.</summary>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-09-11T13:46:24Z</published>
+    <arxiv:primary_category term="cs.CR"/>
+    <author>
+      <name>William Van Woensel</name>
+    </author>
+    <author>
+      <name>Oshani Seneviratne</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2009.10318v2</id>
+    <title>Public Health Informatics: Proposing Causal Sequence of Death Using Neural Machine Translation</title>
+    <updated>2021-03-09T19:43:37Z</updated>
+    <link href="https://arxiv.org/abs/2009.10318v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2009.10318v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Each year there are nearly 57 million deaths around the world, with over 2.7 million in the United States. Timely, accurate and complete death reporting is critical in public health, as institutions and government agencies rely on death reports to analyze vital statistics and to formulate responses to communicable diseases. Inaccurate death reporting may result in potential misdirection of public health policies. Determining the causes of death is, nevertheless, challenging even for experienced physicians. To facilitate physicians in accurately reporting causes of death, we present an advanced AI approach to determine a chronically ordered sequence of clinical conditions that lead to death, based on decedent's last hospital discharge record. The sequence of clinical codes on the death report is named as causal chain of death, coded in the tenth revision of International Statistical Classification of Diseases (ICD-10); in line with the ICD-9-CM Official Guidelines for Coding and Reporting, the priority-ordered clinical conditions on the discharge record are coded in ICD-9. We identify three challenges in proposing the causal chain of death: two versions of coding system in clinical codes, medical domain knowledge conflict, and data interoperability. To overcome the first challenge in this sequence-to-sequence problem, we apply neural machine translation models to generate target sequence. Along with three accuracy metrics, we evaluate the quality of generated sequences with the BLEU (BiLingual Evaluation Understudy) score and achieve 16.04 out of 100. To address the second challenge, we incorporate expert-verified medical domain knowledge as constraint in generating output sequence to exclude infeasible causal chains. Lastly, we demonstrate the usability of our work in a Fast Healthcare Interoperability Resources (FHIR) interface to address the third challenge.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-09-22T04:56:23Z</published>
+    <arxiv:comment>11 pages, 8 figures, 8 tables. Updates: (1) Added Section II: Recent Work (2) Added three accuracy evaluation criteria (3) Re-run experiments of OpenNMT and updated the results and discussion in Section VI: Results and Discussion (4) Finished FHIR mobile app and updated Section VII: FHIR Interface (5) Revised Section VIII: Conclusion accordingly</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Yuanda Zhu</name>
+    </author>
+    <author>
+      <name>Ying Sha</name>
+    </author>
+    <author>
+      <name>Hang Wu</name>
+    </author>
+    <author>
+      <name>Mai Li</name>
+    </author>
+    <author>
+      <name>Ryan A. Hoffman</name>
+    </author>
+    <author>
+      <name>May D. Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.16674v2</id>
+    <title>Design and Implementation of a Scalable Clinical Data Warehouse for Resource-Constrained Healthcare Systems</title>
+    <updated>2025-05-02T19:32:31Z</updated>
+    <link href="https://arxiv.org/abs/2502.16674v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.16674v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Centralized electronic health record repositories are critical for advancing disease surveillance, public health research, and evidence-based policymaking. However, developing countries face persistent challenges in achieving this due to fragmented healthcare data sources, inconsistent record-keeping practices, and the absence of standardized patient identifiers, limiting reliable record linkage, compromise data interoperability, and limit scalability-obstacles exacerbated by infrastructural constraints and privacy concerns. To address these barriers, this study proposes a scalable, privacy-preserving clinical data warehouse, NCDW, designed for heterogeneous EHR integration in resource-limited settings and tested with 1.16 million clinical records. The framework incorporates a wrapper-based data acquisition layer for secure, automated ingestion of multisource health data and introduces a soundex algorithm to resolve patient identity mismatches in the absence of unique IDs. A modular data mart is designed for disease-specific analytics, demonstrated through a dengue fever case study in Bangladesh, integrating clinical, demographic, and environmental data for outbreak prediction and resource planning. Quantitative assessment of the data mart underscores its utility in strengthening national decision-support systems, highlighting the model's adaptability for infectious disease management. Comparative evaluation of database technologies reveals NoSQL outperforms relational SQL by 40-69% in complex query processing, while system load estimates validate the architecture's capacity to manage 19 million daily records (34TB over 5 years). The framework can be adapted to various healthcare settings across developing nations by modifying the ingestion layer to accommodate standards like ICD-11 and HL7 FHIR, facilitating interoperability for managing infectious diseases (i.e., COVID, tuberculosis).</summary>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-23T18:19:30Z</published>
+    <arxiv:comment>Accepted at the 47th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), July 14-17, 2025, Copenhagen, Denmark</arxiv:comment>
+    <arxiv:primary_category term="cs.IR"/>
+    <author>
+      <name>Shovito Barua Soumma</name>
+    </author>
+    <author>
+      <name>Fahim Shahriar</name>
+    </author>
+    <author>
+      <name>Umme Niraj Mahi</name>
+    </author>
+    <author>
+      <name>Md Hasin Abrar</name>
+    </author>
+    <author>
+      <name>Md Abdur Rahman Fahad</name>
+    </author>
+    <author>
+      <name>Abu Sayed Md. Latiful Hoque</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.06902v1</id>
+    <title>Empowering Locally Deployable Medical Agent via State Enhanced Logical Skills for FHIR-based Clinical Tasks</title>
+    <updated>2026-03-06T21:42:14Z</updated>
+    <link href="https://arxiv.org/abs/2603.06902v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.06902v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>While Large Language Models demonstrate immense potential as proactive Medical Agents, their real-world deployment is severely bottlenecked by data scarcity under privacy constraints. To overcome this, we propose State-Enhanced Logical-Skill Memory (SELSM), a training-free framework that distills simulated clinical trajectories into entity-agnostic operational rules within an abstract skill space. During inference, a Query-Anchored Two-Stage Retrieval mechanism dynamically fetches these entity-agnostic logical priors to guide the agent's step-by-step reasoning, effectively resolving the state polysemy problem. Evaluated on MedAgentBench -- the only authoritative high-fidelity virtual EHR sandbox benchmarked with real clinical data -- SELSM substantially elevates the zero-shot capabilities of locally deployable foundation models (30B--32B parameters). Notably, on the Qwen3-30B-A3B backbone, our framework completely eliminates task chain breakdowns to achieve a 100\% completion rate, boosting the overall success rate by an absolute 22.67\% and significantly outperforming existing memory-augmented baselines. This study demonstrates that equipping models with a dynamically updatable, state-enhanced cognitive scaffold is a privacy-preserving and computationally efficient pathway for local adaptation of AI agents to clinical information systems. While currently validated on FHIR-based EHR interactions as an initial step, the entity-agnostic design of SELSM provides a principled foundation toward broader clinical deployment.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-06T21:42:14Z</published>
+    <arxiv:comment>10 pages, 5 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Wanrong Yang</name>
+    </author>
+    <author>
+      <name>Zhengliang Liu</name>
+    </author>
+    <author>
+      <name>Yuan Li</name>
+    </author>
+    <author>
+      <name>Bingjie Yan</name>
+    </author>
+    <author>
+      <name>Lingfang Li</name>
+    </author>
+    <author>
+      <name>Mingguang He</name>
+    </author>
+    <author>
+      <name>Dominik Wojtczak</name>
+    </author>
+    <author>
+      <name>Yalin Zheng</name>
+    </author>
+    <author>
+      <name>Danli Shi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.14567v3</id>
+    <title>EHRMamba: Towards Generalizable and Scalable Foundation Models for Electronic Health Records</title>
+    <updated>2024-11-15T00:24:00Z</updated>
+    <link href="https://arxiv.org/abs/2405.14567v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.14567v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformers have significantly advanced the modeling of Electronic Health Records (EHR), yet their deployment in real-world healthcare is limited by several key challenges. Firstly, the quadratic computational cost and insufficient context length of these models hinder hospitals' ability in processing the extensive medical histories typical in EHR data. Additionally, existing models employ separate finetuning for each clinical task, complicating maintenance in healthcare environments. Moreover, these models focus exclusively on either clinical prediction or EHR forecasting, lacking proficiency in both tasks. To overcome these limitations, we introduce EHRMamba, a robust foundation model built on the Mamba architecture. EHRMamba can process sequences up to 300% longer than previous models due to its linear computational cost. We also introduce a novel approach to Multitask Prompted Finetuning (MPF) for EHR data, which enables EHRMamba to simultaneously learn multiple clinical tasks in a single finetuning phase, significantly enhancing deployment and cross-task generalization. Furthermore, our model leverages the HL7 FHIR data standard to simplify integration into existing hospital systems. Alongside EHRMamba, we open-source Odyssey, a toolkit designed to support the development and deployment of EHR foundation models, with an emphasis on data standardization and interpretability. Our evaluations on the MIMIC-IV dataset demonstrate that EHRMamba advances state-of-the-art performance across 6 major clinical tasks and excels in EHR forecasting, marking a significant leap forward in the field.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-23T13:43:29Z</published>
+    <arxiv:comment>17 Pages, 4 Figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Adibvafa Fallahpour</name>
+    </author>
+    <author>
+      <name>Mahshid Alinoori</name>
+    </author>
+    <author>
+      <name>Wenqian Ye</name>
+    </author>
+    <author>
+      <name>Xu Cao</name>
+    </author>
+    <author>
+      <name>Arash Afkanpour</name>
+    </author>
+    <author>
+      <name>Amrit Krishnan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.27045v1</id>
+    <title>Detecting Clinical Discrepancies in Health Coaching Agents: A Dual-Stream Memory and Reconciliation Architecture</title>
+    <updated>2026-04-29T17:59:28Z</updated>
+    <link href="https://arxiv.org/abs/2604.27045v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.27045v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As Large Language Model (LLM) agents transition from single-session tools to persistent systems managing longitudinal healthcare journeys, their memory architectures face a critical challenge: reconciling two imperfect sources of truth. The patient's evolving self-report is current but prone to recall bias, while the Electronic Health Record (EHR) is medically validated but frequently stale. General-purpose agent memory systems optimize for coherence by overwriting older facts with the user's latest statement, a pattern that risks safety failures when applied to clinical data. We introduce a Dual-Stream Memory Architecture that strictly separates the patient narrative from the structured clinical record (FHIR), governed by a dedicated Reconciliation Engine that evaluates every extracted memory against the patient's FHIR profile and classifies discrepancies by type, severity, and the specific FHIR resources involved. We evaluate this architecture on 26 patients across 675 longitudinal wellness coaching sessions, using a hybrid dataset that interleaves real provider-patient transcripts with synthetic, FHIR-grounded clinical scenarios. In isolated testing, the engine detects 84.4% of designed clinical discrepancies with 86.7% safety-critical recall. By coupling extraction and reconciliation evaluation on the same data, we directly quantify a 13.6% error cascade, tracing the degradation to clinical details lost during memory extraction from unstructured conversation rather than to downstream classification errors. These findings establish that validating patient-reported memories against clinical records is both feasible and necessary for safe deployment of longitudinal health agents.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-29T17:59:28Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Samuel L Pugh</name>
+    </author>
+    <author>
+      <name>Eric Yang</name>
+    </author>
+    <author>
+      <name>Alexander Muir Sutherland</name>
+    </author>
+    <author>
+      <name>Alessandra Breschi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.14654v2</id>
+    <title>MedAgentBench: A Realistic Virtual EHR Environment to Benchmark Medical LLM Agents</title>
+    <updated>2025-02-12T05:32:07Z</updated>
+    <link href="https://arxiv.org/abs/2501.14654v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.14654v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recent large language models (LLMs) have demonstrated significant advancements, particularly in their ability to serve as agents thereby surpassing their traditional role as chatbots. These agents can leverage their planning and tool utilization capabilities to address tasks specified at a high level. However, a standardized dataset to benchmark the agent capabilities of LLMs in medical applications is currently lacking, making the evaluation of LLMs on complex tasks in interactive healthcare environments challenging. To address this gap, we introduce MedAgentBench, a broad evaluation suite designed to assess the agent capabilities of large language models within medical records contexts. MedAgentBench encompasses 300 patient-specific clinically-derived tasks from 10 categories written by human physicians, realistic profiles of 100 patients with over 700,000 data elements, a FHIR-compliant interactive environment, and an accompanying codebase. The environment uses the standard APIs and communication infrastructure used in modern EMR systems, so it can be easily migrated into live EMR systems. MedAgentBench presents an unsaturated agent-oriented benchmark that current state-of-the-art LLMs exhibit some ability to succeed at. The best model (Claude 3.5 Sonnet v2) achieves a success rate of 69.67%. However, there is still substantial space for improvement which gives the community a next direction to optimize. Furthermore, there is significant variation in performance across task categories. MedAgentBench establishes this and is publicly available at https://github.com/stanfordmlgroup/MedAgentBench , offering a valuable framework for model developers to track progress and drive continuous improvements in the agent capabilities of large language models within the medical domain.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-01-24T17:21:01Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Yixing Jiang</name>
+    </author>
+    <author>
+      <name>Kameron C. Black</name>
+    </author>
+    <author>
+      <name>Gloria Geng</name>
+    </author>
+    <author>
+      <name>Danny Park</name>
+    </author>
+    <author>
+      <name>James Zou</name>
+    </author>
+    <author>
+      <name>Andrew Y. Ng</name>
+    </author>
+    <author>
+      <name>Jonathan H. Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.13378v3</id>
+    <title>Governance-Ready Small Language Models for Medical Imaging: Prompting, Abstention, and PACS Integration</title>
+    <updated>2025-11-17T19:06:02Z</updated>
+    <link href="https://arxiv.org/abs/2508.13378v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.13378v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Small Language Models (SLMs) are a practical option for narrow, workflow-relevant medical imaging utilities where privacy, latency, and cost dominate. We present a governance-ready recipe that combines prompt scaffolds, calibrated abstention, and standards-compliant integration into Picture Archiving and Communication Systems (PACS). Our focus is the assistive task of AP/PA view tagging for chest radiographs. Using four deployable SLMs (Qwen2.5-VL, MiniCPM-V, Gemma 7B, LLaVA 7B) on NIH Chest X-ray, we provide illustrative evidence: reflection-oriented prompts benefit lighter models, whereas stronger baselines are less sensitive. Beyond accuracy, we operationalize abstention, expected calibration error, and oversight burden, and we map outputs to DICOM tags, HL7 v2 messages, and FHIR ImagingStudy. The contribution is a prompt-first deployment framework, an operations playbook for calibration, logging, and change management, and a clear pathway from pilot utilities to reader studies without over-claiming clinical validation. We additionally specify a human-factors RACI, stratified calibration for dataset shift, and an auditable evidence pack to support local governance reviews.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-18T21:48:45Z</published>
+    <arxiv:comment>Under Review</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yiting Wang</name>
+    </author>
+    <author>
+      <name>Ziwei Wang</name>
+    </author>
+    <author>
+      <name>Di Zhu</name>
+    </author>
+    <author>
+      <name>Jiachen Zhong</name>
+    </author>
+    <author>
+      <name>Weiyi Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.29668v1</id>
+    <title>GRASP: Gated Regression-Aware Skill Proposer for Self-Improving LLM Agents</title>
+    <updated>2026-05-28T09:30:09Z</updated>
+    <link href="https://arxiv.org/abs/2605.29668v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.29668v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM agents acting in structured environments fail in operational rather than conversational ways, and reliability depends on procedural knowledge of the environment. Prior self-improvement methods accumulate natural-language guidance without checking that each new item preserves previously correct behavior, so a note that fixes one trajectory can silently regress another. We introduce GRASP (Gated Regression-Aware Skill Proposer), which treats agent improvement as a sequence of edits to a bounded skill library, admitting each candidate only if it produces a net improvement on a balanced held-out probe under a hard regression budget. We evaluate GRASP across five base models (gpt-oss-120b, DeepSeek V4 Flash, Gemini 3.1 Flash Lite, GPT-4.1, GPT-5.4) on two FHIR-based clinical benchmarks. On MedAgentBench, GRASP lifts gpt-oss-120b from 40.6% to 88.8%, exceeds the strongest of five self-improvement baselines by 21.0 points, and improves every other base model by 17.2 to 40.3 points. Ablations attribute the gain to comparative proposal generation, the acceptance gate, and the hard regression budget rather than to skill writing itself, which without validation is no better than using no skills. The mechanism generalizes beyond the clinical domain, improving agents on three of four non-clinical environments and remaining flat only where the action space is open-ended. Frozen libraries transfer across models, where skills from a stronger model improve weaker executors beyond what they learn for themselves while the reverse does not, an asymmetry that no ungated baseline reproduces.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-28T09:30:09Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Johannes Moll</name>
+    </author>
+    <author>
+      <name>Jean-Philippe Corbeil</name>
+    </author>
+    <author>
+      <name>Jiazhen Pan</name>
+    </author>
+    <author>
+      <name>Martin Hadamitzky</name>
+    </author>
+    <author>
+      <name>Daniel Rueckert</name>
+    </author>
+    <author>
+      <name>Lisa Adams</name>
+    </author>
+    <author>
+      <name>Keno Bressem</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.19826v1</id>
+    <title>Novel Development of LLM Driven mCODE Data Model for Improved Clinical Trial Matching to Enable Standardization and Interoperability in Oncology Research</title>
+    <updated>2024-10-18T17:31:35Z</updated>
+    <link href="https://arxiv.org/abs/2410.19826v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.19826v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Each year, the lack of efficient data standardization and interoperability in cancer care contributes to the severe lack of timely and effective diagnosis, while constantly adding to the burden of cost, with cancer costs nationally reaching over $208 billion in 2023 alone. Traditional methods regarding clinical trial enrollment and clinical care in oncology are often manual, time-consuming, and lack a data-driven approach. This paper presents a novel framework to streamline standardization, interoperability, and exchange of cancer domains and enhance the integration of oncology-based EHRs across disparate healthcare systems. This paper utilizes advanced LLMs and Computer Engineering to streamline cancer clinical trials and discovery. By utilizing FHIR's resource-based approach and LLM-generated mCODE profiles, we ensure timely, accurate, and efficient sharing of patient information across disparate healthcare systems. Our methodology involves transforming unstructured patient treatment data, PDFs, free-text information, and progress notes into enriched mCODE profiles, facilitating seamless integration with our novel AI and ML-based clinical trial matching engine. The results of this study show a significant improvement in data standardization, with accuracy rates of our trained LLM peaking at over 92% with datasets consisting of thousands of patient data. Additionally, our LLM demonstrated an accuracy rate of 87% for SNOMED-CT, 90% for LOINC, and 84% for RxNorm codes. This trumps the current status quo, with LLMs such as GPT-4 and Claude's 3.5 peaking at an average of 77%. This paper successfully underscores the potential of our standardization and interoperability framework, paving the way for more efficient and personalized cancer treatment.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-10-18T17:31:35Z</published>
+    <arxiv:comment>18 pages, 13 figures, accessible and published at: The Young Researcher Fall 2024 Volume 8, Number 2(Special Edition in Collaboration with Harvard Undergraduate Openbio Laboratory); Pages 28-45</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <arxiv:journal_ref>The Young Researcher, 8(1), 28-45 (2024)</arxiv:journal_ref>
+    <author>
+      <name>Aarsh Shekhar</name>
+    </author>
+    <author>
+      <name>Mincheol Kim</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.05365v1</id>
+    <title>MCP-AI: Protocol-Driven Intelligence Framework for Autonomous Reasoning in Healthcare</title>
+    <updated>2025-12-05T02:02:22Z</updated>
+    <link href="https://arxiv.org/abs/2512.05365v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.05365v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Healthcare AI systems have historically faced challenges in merging contextual reasoning, long-term state management, and human-verifiable workflows into a cohesive framework. This paper introduces a completely innovative architecture and concept: combining the Model Context Protocol (MCP) with a specific clinical application, known as MCP-AI. This integration allows intelligent agents to reason over extended periods, collaborate securely, and adhere to authentic clinical logic, representing a significant shift away from traditional Clinical Decision Support Systems (CDSS) and prompt-based Large Language Models (LLMs). As healthcare systems become more complex, the need for autonomous, context-aware clinical reasoning frameworks has become urgent. We present MCP-AI, a novel architecture for explainable medical decision-making built upon the Model Context Protocol (MCP) a modular, executable specification for orchestrating generative and descriptive AI agents in real-time workflows. Each MCP file captures clinical objectives, patient context, reasoning state, and task logic, forming a reusable and auditable memory object. Unlike conventional CDSS or stateless prompt-based AI systems, MCP-AI supports adaptive, longitudinal, and collaborative reasoning across care settings. MCP-AI is validated through two use cases: (1) diagnostic modeling of Fragile X Syndrome with comorbid depression, and (2) remote coordination for Type 2 Diabetes and hypertension. In either scenario, the protocol facilitates physician-in-the-loop validation, streamlines clinical processes, and guarantees secure transitions of AI responsibilities between healthcare providers. The system connects with HL7/FHIR interfaces and adheres to regulatory standards, such as HIPAA and FDA SaMD guidelines. MCP-AI provides a scalable basis for interpretable, composable, and safety-oriented AI within upcoming clinical environments.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.QM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-05T02:02:22Z</published>
+    <arxiv:comment>6 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <arxiv:journal_ref>IEEE ICMLA 2025</arxiv:journal_ref>
+    <author>
+      <name>Zag ElSayed</name>
+    </author>
+    <author>
+      <name>Craig Erickson</name>
+    </author>
+    <author>
+      <name>Ernest Pedapati</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.22331v1</id>
+    <title>SepsisAI Orchestrator: A Containerized and Scalable Platform for Deploying AI Models and Real-Time Monitoring in Early Sepsis Detection</title>
+    <updated>2026-05-21T11:19:31Z</updated>
+    <link href="https://arxiv.org/abs/2605.22331v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.22331v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Despite strong predictive results in the clinical machine learning literature, the translation of these models into bedside use remains limited by systems-level barriers: heterogeneous data representations, the absence of standardized deployment workflows, and a mismatch between research prototypes and the concurrency and latency requirements of hospital environments. We present the SepsisAI-Orchestrator, an open-source modular platform that addresses this deployment gap for early sepsis detection. The platform integrates HL7 FHIR-inspired Clinical Document Architecture (CDA) preprocessing, NoSQL storage, a containerized LightGBM classifier served via REST APIs, and a Streamlit clinical dashboard, orchestrated with Docker and Kubernetes. A previously validated LightGBM model (F1 0.87-0.94 on PhysioNet 2019) is reused without modification; the contribution lies in the surrounding infrastructure and its empirical characterization under load. Using k6 with 50-1000 concurrent virtual users, we find that replica count must be matched to the physical CPU thread count of the host: scaling from 3 to 12 replicas on a 12-thread CPU reduces p95 latency from 3.3s to 1.41s (57.3% reduction) and eliminates all request failures, while over-provisioning to 24 or 48 replicas degrades performance due to scheduler contention. To our knowledge this U-shaped scaling behavior has not been quantified previously for clinical AI inference workloads. We do not claim prospective clinical validation. Source code and deployment manifests are available at https://github.com/nucleusai/sepsisai-orchestrator.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-21T11:19:31Z</published>
+    <arxiv:comment>13 pages, 5 figures. Submitted to BioCARLA 2025 Workshop</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Santiago Ospitia</name>
+    </author>
+    <author>
+      <name>John Sanabria</name>
+    </author>
+    <author>
+      <name>John Garcia-Henao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.01086v2</id>
+    <title>MedBeads: An Agent-Native, Immutable Data Substrate for Trustworthy Medical AI</title>
+    <updated>2026-05-22T22:49:28Z</updated>
+    <link href="https://arxiv.org/abs/2602.01086v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.01086v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Background: As of 2026, Large Language Models (LLMs) demonstrate expert-level medical knowledge. However, deploying them as autonomous "Clinical Agents" remains limited. Current Electronic Medical Records (EMRs) and standards like FHIR are designed for human review, creating a "Context Mismatch": AI agents receive fragmented data and must rely on probabilistic inference (e.g., RAG) to reconstruct patient history. This approach causes hallucinations and hinders auditability. Methods: We propose MedBeads, an agent-native data infrastructure where clinical events are immutable "Beads"--nodes in a Merkle Directed Acyclic Graph (DAG)--cryptographically referencing causal predecessors. This "write-once, read-many" architecture makes tampering mathematically detectable. We implemented a prototype with a Go Core Engine, Python middleware for LLM integration, and a React-based visualization interface. Results: We successfully implemented the workflow using synthetic data. The FHIR-to-DAG conversion transformed flat resources into a causally-linked graph. Our Breadth-First Search (BFS) Context Retrieval algorithm traverses relevant subgraphs with O(V+E) complexity, enabling real-time decision support. Tamper-evidence is guaranteed by design: any modification breaks the cryptographic chain. The visualization aids clinician understanding through explicit causal links. Conclusion: MedBeads addresses the "Context Mismatch" by shifting from probabilistic search to deterministic graph traversal, and from mutable records to immutable chains, providing the substrate for "Trustworthy Medical AI." It guarantees the context the AI receives is deterministic and tamper-evident, while the LLM determines interpretation. The structured Bead format serves as a token-efficient "AI-native language." We release MedBeads as open-source software to accelerate agent-native data standards.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DB" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-01T08:03:20Z</published>
+    <arxiv:comment>19 pages, 5 figures. Code available at https://github.com/medbeads/medbeads</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Takahito Nakajima</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.25970v2</id>
+    <title>PathWISE: Multi-Agent Cancer Pathway Triaging Ontology Learning from Clinical Flowcharts</title>
+    <updated>2026-06-03T23:11:59Z</updated>
+    <link href="https://arxiv.org/abs/2605.25970v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.25970v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical pathways are disseminated as visual flowcharts where spatial topology, arrow direction, colour coding, and font weight encode critical triage logic that remains inaccessible to computational systems. We present PathWISE, a five-phase pipeline combining four LLM-based agents with a deterministic depth-first search auditor and a Java compiler critic, transforming these non-computable artefacts into validated, executable HL7 Clinical Quality Language (CQL) libraries deployable as FHIR CDS Hooks services. Purpose-built agents extract flowchart structure into a typed directed graph, perform deterministic path enumeration, conduct a structured semantic audit of every node's computability, generate terminology-constrained CQL definitions verified by the official Java CQL-to-ELM compiler, and produce routing logic covering 100% of enumerated patient journeys. Demonstrated across five UK NHS cancer pathways (colorectal, lung, skin, upper GI, and breast), PathWISE audits up to 183 nodes (182 under the Hybrid configuration), identifies 544 structured governance findings across four issue categories, achieves 100% syntactic compilation success, with UNCOMPUTABLE nodes receiving false placeholders that preserve compilability while surfacing governance gaps for clinical review, and produces zero hallucinated terminology codes for dictionary-covered concepts. Critically, PathWISE confines non-deterministic LLM inference to knowledge extraction while deterministic graph mathematics and a standard compiler underpin every verification step.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-25T15:47:07Z</published>
+    <arxiv:comment>13 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Sofiat Abioye</name>
+    </author>
+    <author>
+      <name>Ufaq Khan</name>
+    </author>
+    <author>
+      <name>Shazad Ashraf</name>
+    </author>
+    <author>
+      <name>Mohammed Adil Butt</name>
+    </author>
+    <author>
+      <name>Andrew D. Beggs</name>
+    </author>
+    <author>
+      <name>Adam Byfield</name>
+    </author>
+    <author>
+      <name>Anusha Jose</name>
+    </author>
+    <author>
+      <name>Junaid Qadir</name>
+    </author>
+    <author>
+      <name>Muhammad Bilal</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.18650v1</id>
+    <title>NutriOrion: A Hierarchical Multi-Agent Framework for Personalized Nutrition Intervention Grounded in Clinical Guidelines</title>
+    <updated>2026-02-20T22:55:29Z</updated>
+    <link href="https://arxiv.org/abs/2602.18650v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.18650v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Personalized nutrition intervention for patients with multimorbidity is critical for improving health outcomes, yet remains challenging because it requires the simultaneous integration of heterogeneous clinical conditions, medications, and dietary guidelines. Single-agent large language models (LLMs) often suffer from context overload and attention dilution when processing such high-dimensional patient profiles. We introduce NutriOrion, a hierarchical multi-agent framework with a parallel-then-sequential reasoning topology. NutriOrion decomposes nutrition planning into specialized domain agents with isolated contexts to mitigate anchoring bias, followed by a conditional refinement stage. The framework includes a multi-objective prioritization algorithm to resolve conflicting dietary requirements and a safety constraint mechanism that injects pharmacological contraindications as hard negative constraints during synthesis, ensuring clinical validity by construction rather than post-hoc filtering. For clinical interoperability, NutriOrion maps synthesized insights into the ADIME standard and FHIR R4 resources. Evaluated on 330 stroke patients with multimorbidity, NutriOrion outperforms multiple baselines, including GPT-4.1 and alternative multi-agent architectures. It achieves a 12.1 percent drug-food interaction violation rate, demonstrates strong personalization with negative correlations (-0.26 to -0.35) between patient biomarkers and recommended risk nutrients, and yields clinically meaningful dietary improvements, including a 167 percent increase in fiber and a 27 percent increase in potassium, alongside reductions in sodium (9 percent) and sugars (12 percent).</summary>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-20T22:55:29Z</published>
+    <arxiv:primary_category term="cs.MA"/>
+    <author>
+      <name>Junwei Wu</name>
+    </author>
+    <author>
+      <name>Runze Yan</name>
+    </author>
+    <author>
+      <name>Hanqi Luo</name>
+    </author>
+    <author>
+      <name>Darren Liu</name>
+    </author>
+    <author>
+      <name>Minxiao Wang</name>
+    </author>
+    <author>
+      <name>Kimberly L. Townsend</name>
+    </author>
+    <author>
+      <name>Lydia S. Hartwig</name>
+    </author>
+    <author>
+      <name>Derek Milketinas</name>
+    </author>
+    <author>
+      <name>Xiao Hu</name>
+    </author>
+    <author>
+      <name>Carl Yang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.08755v1</id>
+    <title>Turn: A Language for Agentic Computation</title>
+    <updated>2026-03-07T09:10:09Z</updated>
+    <link href="https://arxiv.org/abs/2603.08755v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.08755v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present \textbf{Turn}, a compiled, actor-based programming language -- statically typed for schema inference, dynamically typed at the value level -- for agentic software: programs that reason and act autonomously by delegating inference to large language models (LLMs). Existing approaches augment general-purpose languages with frameworks, encoding critical invariants (bounded context, typed inference output, credential isolation, durable state) as application-level conventions rather than language guarantees.
+  Turn introduces five language-level constructs that address this gap. \emph{Cognitive Type Safety} makes LLM inference a typed primitive: the compiler generates a JSON Schema from a struct definition and the VM validates model output before binding. The \emph{confidence operator} enables deterministic control flow gated on model certainty. Turn's \emph{actor-based process model}, derived from Erlang, gives each agent an isolated context window, persistent memory, and mailbox. A \emph{capability-based identity system} returns opaque, unforgeable handles from the VM host, ensuring raw credentials never enter agent memory. Finally, \emph{compile-time schema absorption} (\texttt{use schema::&lt;protocol&gt;}) synthesizes typed API bindings from external specifications at compile time; the \texttt{openapi} adapter is shipped with \texttt{graphql}, \texttt{fhir}, and \texttt{mcp} in active development.
+  We describe the language design, type rules, schema semantics, and a Rust-based bytecode VM, and evaluate Turn against representative agentic workloads. Turn is open source at https://github.com/ekizito96/Turn.</summary>
+    <category term="cs.PL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-07T09:10:09Z</published>
+    <arxiv:primary_category term="cs.PL"/>
+    <author>
+      <name>Muyukani Kizito</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1912.00423v1</id>
+    <title>Semantic Enrichment of Streaming Healthcare Data</title>
+    <updated>2019-12-01T15:06:44Z</updated>
+    <link href="https://arxiv.org/abs/1912.00423v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1912.00423v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In the past decade, the healthcare industry has made significant advances in the digitization of patient information. However, a lack of interoperability among healthcare systems still imposes a high cost to patients, hospitals, and insurers. Currently, most systems pass messages using idiosyncratic messaging standards that require specialized knowledge to interpret. This increases the cost of systems integration and often puts more advanced uses of data out of reach. In this project, we demonstrate how two open standards, FHIR and RDF, can be combined both to integrate data from disparate sources in real-time and make that data queryable and susceptible to automated inference. To validate the effectiveness of the semantic engine, we perform simulations of real-time data feeds and demonstrate how they can be combined and used by client-side applications with no knowledge of the underlying sources.</summary>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-12-01T15:06:44Z</published>
+    <arxiv:comment>11 pages, 9 figures, adapted from masters project</arxiv:comment>
+    <arxiv:primary_category term="cs.IR"/>
+    <author>
+      <name>Daniel Cotter</name>
+    </author>
+    <author>
+      <name>V. K. Cody Bumgardner</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.21496v1</id>
+    <title>HealthCraft: A Reinforcement Learning Safety Environment for Emergency Medicine</title>
+    <updated>2026-04-18T03:40:24Z</updated>
+    <link href="https://arxiv.org/abs/2605.21496v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.21496v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Frontier language models are being deployed into clinical workflows faster than the infrastructure to evaluate them safely. Static medical-QA benchmarks miss the failure modes that matter in emergency medicine: trajectory-level safety collapse, tool misuse, and capitulation under sustained clinical pressure. We present HealthCraft, the first public reinforcement-learning environment that rewards trajectory-level safety under realistic emergency-medicine conditions, adapted from Corecraft. It is built on a FHIR R4 world state with 14 entity types and 3,987 seed entities, exposes 24 MCP tools, and defines a dual-layer rubric that zeroes reward whenever any safety-critical criterion is violated. We release 195 tasks across six categories, graded against 2,255 binary criteria (515 safety-critical); a post-hoc 10-task negative-class slate extends this to 205 tasks and 2,337 criteria. V8 results on two frontier models show Claude Opus 4.6 at Pass@1 24.8% [21.5-28.4] and GPT-5.4 at 12.6% [10.2-15.6], with safety-failure rates of 27.5% and 34.0%. On multi-step workflows - the closest proxy to real emergency care - performance collapses to near zero (Claude 1.0%, GPT-5.4 0.0%) despite partial competence on individual steps. Six infrastructure bugs fixed between pilots v2 and v8 re-ordered which model "looks stronger," evidence that infrastructure fidelity is part of the measurement. A deterministic LLM-judge overlay bounds evaluator noise, and a 60-run negative-class smoke pilot shows the reward signal is not drop-in training-safe: restraint criteria pass at 0.929 prevalence, a gameability an eval harness can tolerate but a training reward cannot. We scaffold coupling to a Megatron+SGLang+GRPO loop per Corecraft Section 5.2 and leave training-reward ablations as future work. Environment, tasks, rubrics, and harness are released under Apache 2.0.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-18T03:40:24Z</published>
+    <arxiv:comment>16 pages, 5 figures, 6 tables. Code, task suite, and Docker bundle: https://github.com/GOATnote-Inc/healthcraft</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Brandon Dent</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.20776v1</id>
+    <title>Formally Verified Code Synthesis for Structured Data Translation in a Medical Internet of Things</title>
+    <updated>2026-06-18T16:12:29Z</updated>
+    <link href="https://arxiv.org/abs/2606.20776v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.20776v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In this work we present a LLM powered, evolutionary code synthesis system for structured data translation in a Medical Internet of Things settings. A key challenge in this domain is ensuring that the synthesized code is trustworthy and reliable. To this end, we integrate a formal verification step into our code synthesis pipeline to ensure that any generated code is guaranteed to satisfy predefined requirements. In particular, we present a case study of integrating a novel device (a pulse oximeter) into the existing network of devices. Our system generates a formally verified translation between the device's JSON schema and the Fast Healthcare Interoperability Resources (FHIR) format used by the wider system. This formal verification stage ensures structured data translated by the generated code will always be in the target output schema. We provide a set of experimental results which demonstrate that our system is able to consistently generate correct translation at low cost.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-18T16:12:29Z</published>
+    <arxiv:comment>Spotlight Paper at the Workshop on Structured Data for Health at ICML 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Colin Samplawski</name>
+    </author>
+    <author>
+      <name>Adam D. Cobb</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.25816v1</id>
+    <title>Beyond Long Context: When Semantics Matter More than Tokens</title>
+    <updated>2025-10-29T16:41:44Z</updated>
+    <link href="https://arxiv.org/abs/2510.25816v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.25816v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Electronic Health Records (EHR) store clinical documentation as base64 encoded attachments in FHIR DocumentReference resources, which makes semantic question answering difficult. Traditional vector database methods often miss nuanced clinical relationships. The Clinical Entity Augmented Retrieval (CLEAR) method, introduced by Lopez et al. 2025, uses entity aware retrieval and achieved improved performance with an F1 score of 0.90 versus 0.86 for embedding based retrieval, while using over 70 percent fewer tokens. We developed a Clinical Notes QA Evaluation Platform to validate CLEAR against zero shot large context inference and traditional chunk based retrieval augmented generation. The platform was tested on 12 clinical notes ranging from 10,000 to 65,000 tokens representing realistic EHR content. CLEAR achieved a 58.3 percent win rate, an average semantic similarity of 0.878, and used 78 percent fewer tokens than wide context processing. The largest performance gains occurred on long notes, with a 75 percent win rate for documents exceeding 65,000 tokens. These findings confirm that entity aware retrieval improves both efficiency and accuracy in clinical natural language processing. The evaluation framework provides a reusable and transparent benchmark for assessing clinical question answering systems where semantic precision and computational efficiency are critical.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-29T16:41:44Z</published>
+    <arxiv:comment>12 pages, 5 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Tarun Kumar Chawdhury</name>
+    </author>
+    <author>
+      <name>Jon D. Duke</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.13702v1</id>
+    <title>Enhancing Transparency and Traceability in Healthcare AI: The AI Product Passport</title>
+    <updated>2025-12-04T08:35:22Z</updated>
+    <link href="https://arxiv.org/abs/2512.13702v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.13702v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Objective: To develop the AI Product Passport, a standards-based framework improving transparency, traceability, and compliance in healthcare AI via lifecycle-based documentation. Materials and Methods: The AI Product Passport was developed within the AI4HF project, focusing on heart failure AI tools. We analyzed regulatory frameworks (EU AI Act, FDA guidelines) and existing standards to design a relational data model capturing metadata across AI lifecycle phases: study definition, dataset preparation, model generation/evaluation, deployment/monitoring, and passport generation. MLOps/ModelOps concepts were integrated for operational relevance. Co-creation involved feedback from AI4HF consortium and a Lisbon workshop with 21 diverse stakeholders, evaluated via Mentimeter polls. The open-source platform was implemented with Python libraries for automated provenance tracking. Results: The AI Product Passport was designed based on existing standards and methods with well-defined lifecycle management and role-based access. Its implementation is a web-based platform with a relational data model supporting auditable documentation. It generates machine- and human-readable reports, customizable for stakeholders. It aligns with FUTURE-AI principles (Fairness, Universality, Traceability, Usability, Robustness, Explainability), ensuring fairness, traceability, and usability. Exported passports detail model purpose, data provenance, performance, and deployment context. GitHub-hosted backend/frontend codebases enhance accessibility. Discussion and Conclusion: The AI Product Passport addresses transparency gaps in healthcare AI, meeting regulatory and ethical demands. Its open-source nature and alignment with standards foster trust and adaptability. Future enhancements include FAIR data principles and FHIR integration for improved interoperability, promoting responsible AI deployment.</summary>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-04T08:35:22Z</published>
+    <arxiv:comment>A total of 33 pages: First 16 pages for the manuscript and the remaining 17 pages for the supplementary user guide of the graphical user interface</arxiv:comment>
+    <arxiv:primary_category term="cs.CY"/>
+    <author>
+      <name>A. Anil Sinaci</name>
+    </author>
+    <author>
+      <name>Senan Postaci</name>
+    </author>
+    <author>
+      <name>Dogukan Cavdaroglu</name>
+    </author>
+    <author>
+      <name>Machteld J. Boonstra</name>
+    </author>
+    <author>
+      <name>Okan Mercan</name>
+    </author>
+    <author>
+      <name>Kerem Yilmaz</name>
+    </author>
+    <author>
+      <name>Gokce B. Laleci Erturkmen</name>
+    </author>
+    <author>
+      <name>Folkert W. Asselbergs</name>
+    </author>
+    <author>
+      <name>Karim Lekadir</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.03331v1</id>
+    <title>Intelligent Healthcare Ecosystems: Optimizing the Iron Triangle of Healthcare (Access, Cost, Quality)</title>
+    <updated>2025-10-01T20:10:57Z</updated>
+    <link href="https://arxiv.org/abs/2510.03331v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.03331v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The United States spends nearly 17% of GDP on healthcare yet continues to face uneven access and outcomes. This well-known trade-off among cost, quality, and access - the "iron triangle" - motivates a system-level redesign. This paper proposes an Intelligent Healthcare Ecosystem (iHE): an integrated, data-driven framework that uses generative AI and large language models, federated learning, interoperability standards (FHIR, TEFCA), and digital twins to improve access and quality while lowering cost. We review historical spending trends, waste, and international comparisons; introduce a value equation that jointly optimizes access, quality, and cost; and synthesize evidence on the enabling technologies and operating model for iHE. Methods follow a narrative review of recent literature and policy reports. Results outline core components (AI decision support, interoperability, telehealth, automation) and show how iHE can reduce waste, personalize care, and support value-based payment while addressing privacy, bias, and adoption challenges. We argue that a coordinated iHE can bend - if not break - the iron triangle, moving the system toward care that is more accessible, affordable, and high quality.</summary>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-01T20:10:57Z</published>
+    <arxiv:comment>8 pages, 4 figures, formatted per MDPI guidelines, APA-style numbered references</arxiv:comment>
+    <arxiv:primary_category term="cs.CY"/>
+    <author>
+      <name>Vivek Acharya</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2010.00509v1</id>
+    <title>Cardea: An Open Automated Machine Learning Framework for Electronic Health Records</title>
+    <updated>2020-10-01T15:58:13Z</updated>
+    <link href="https://arxiv.org/abs/2010.00509v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2010.00509v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>An estimated 180 papers focusing on deep learning and EHR were published between 2010 and 2018. Despite the common workflow structure appearing in these publications, no trusted and verified software framework exists, forcing researchers to arduously repeat previous work. In this paper, we propose Cardea, an extensible open-source automated machine learning framework encapsulating common prediction problems in the health domain and allows users to build predictive models with their own data. This system relies on two components: Fast Healthcare Interoperability Resources (FHIR) -- a standardized data structure for electronic health systems -- and several AUTOML frameworks for automated feature engineering, model selection, and tuning. We augment these components with an adaptive data assembler and comprehensive data- and model- auditing capabilities. We demonstrate our framework via 5 prediction tasks on MIMIC-III and Kaggle datasets, which highlight Cardea's human competitiveness, flexibility in problem definition, extensive feature generation capability, adaptable automatic data assembler, and its usability.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-10-01T15:58:13Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Sarah Alnegheimish</name>
+    </author>
+    <author>
+      <name>Najat Alrashed</name>
+    </author>
+    <author>
+      <name>Faisal Aleissa</name>
+    </author>
+    <author>
+      <name>Shahad Althobaiti</name>
+    </author>
+    <author>
+      <name>Dongyu Liu</name>
+    </author>
+    <author>
+      <name>Mansour Alsaleh</name>
+    </author>
+    <author>
+      <name>Kalyan Veeramachaneni</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.05438v1</id>
+    <title>EXR: An Interactive Immersive EHR Visualization in Extended Reality</title>
+    <updated>2025-12-05T05:28:36Z</updated>
+    <link href="https://arxiv.org/abs/2512.05438v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.05438v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper presents the design and implementation of an Extended Reality (XR) platform for immersive, interactive visualization of Electronic Health Records (EHRs). The system extends beyond conventional 2D interfaces by visualizing both structured and unstructured patient data into a shared 3D environment, enabling intuitive exploration and real-time collaboration. The modular infrastructure integrates FHIR-based EHR data with volumetric medical imaging and AI-generated segmentation, ensuring interoperability with modern healthcare systems. The platform's capabilities are demonstrated using synthetic EHR datasets and computed tomography (CT)-derived spine models processed through an AI-powered segmentation pipeline. This work suggests that such integrated XR solutions could form the foundation for next-generation clinical decision-support tools, where advanced data infrastructures are directly accessible in an interactive and spatially rich environment.</summary>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-05T05:28:36Z</published>
+    <arxiv:comment>11 pages, 6 figures. Preprint version. This paper has been accepted to IEEE ICIR 2025. This is the author-prepared version and not the final published version. The final version will appear in IEEE Xplo</arxiv:comment>
+    <arxiv:primary_category term="cs.HC"/>
+    <author>
+      <name>Benoit Marteau</name>
+    </author>
+    <author>
+      <name>Shaun Q. Y. Tan</name>
+    </author>
+    <author>
+      <name>Jieru Li</name>
+    </author>
+    <author>
+      <name>Andrew Hornback</name>
+    </author>
+    <author>
+      <name>Yishan Zhong</name>
+    </author>
+    <author>
+      <name>Shaunna Wang</name>
+    </author>
+    <author>
+      <name>Christian Lowson</name>
+    </author>
+    <author>
+      <name>Jason Woloff</name>
+    </author>
+    <author>
+      <name>Joshua M. Pahys</name>
+    </author>
+    <author>
+      <name>Steven W. Hwang</name>
+    </author>
+    <author>
+      <name>Coleman Hilton</name>
+    </author>
+    <author>
+      <name>May D. Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1801.07860v3</id>
+    <title>Scalable and accurate deep learning for electronic health records</title>
+    <updated>2018-05-11T12:16:50Z</updated>
+    <link href="https://arxiv.org/abs/1801.07860v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1801.07860v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Predictive modeling with electronic health record (EHR) data is anticipated to drive personalized medicine and improve healthcare quality. Constructing predictive statistical models typically requires extraction of curated predictor variables from normalized EHR data, a labor-intensive process that discards the vast majority of information in each patient's record. We propose a representation of patients' entire, raw EHR records based on the Fast Healthcare Interoperability Resources (FHIR) format. We demonstrate that deep learning methods using this representation are capable of accurately predicting multiple medical events from multiple centers without site-specific data harmonization. We validated our approach using de-identified EHR data from two U.S. academic medical centers with 216,221 adult patients hospitalized for at least 24 hours. In the sequential format we propose, this volume of EHR data unrolled into a total of 46,864,534,945 data points, including clinical notes. Deep learning models achieved high accuracy for tasks such as predicting in-hospital mortality (AUROC across sites 0.93-0.94), 30-day unplanned readmission (AUROC 0.75-0.76), prolonged length of stay (AUROC 0.85-0.86), and all of a patient's final discharge diagnoses (frequency-weighted AUROC 0.90). These models outperformed state-of-the-art traditional predictive models in all cases. We also present a case-study of a neural-network attribution system, which illustrates how clinicians can gain some transparency into the predictions. We believe that this approach can be used to create accurate and scalable predictions for a variety of clinical scenarios, complete with explanations that directly highlight evidence in the patient's chart.</summary>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2018-01-24T05:06:43Z</published>
+    <arxiv:comment>Published version from https://www.nature.com/articles/s41746-018-0029-1</arxiv:comment>
+    <arxiv:primary_category term="cs.CY"/>
+    <arxiv:journal_ref>npj Digital Medicine 1:18 (2018)</arxiv:journal_ref>
+    <author>
+      <name>Alvin Rajkomar</name>
+    </author>
+    <author>
+      <name>Eyal Oren</name>
+    </author>
+    <author>
+      <name>Kai Chen</name>
+    </author>
+    <author>
+      <name>Andrew M. Dai</name>
+    </author>
+    <author>
+      <name>Nissan Hajaj</name>
+    </author>
+    <author>
+      <name>Peter J. Liu</name>
+    </author>
+    <author>
+      <name>Xiaobing Liu</name>
+    </author>
+    <author>
+      <name>Mimi Sun</name>
+    </author>
+    <author>
+      <name>Patrik Sundberg</name>
+    </author>
+    <author>
+      <name>Hector Yee</name>
+    </author>
+    <author>
+      <name>Kun Zhang</name>
+    </author>
+    <author>
+      <name>Gavin E. Duggan</name>
+    </author>
+    <author>
+      <name>Gerardo Flores</name>
+    </author>
+    <author>
+      <name>Michaela Hardt</name>
+    </author>
+    <author>
+      <name>Jamie Irvine</name>
+    </author>
+    <author>
+      <name>Quoc Le</name>
+    </author>
+    <author>
+      <name>Kurt Litsch</name>
+    </author>
+    <author>
+      <name>Jake Marcus</name>
+    </author>
+    <author>
+      <name>Alexander Mossin</name>
+    </author>
+    <author>
+      <name>Justin Tansuwan</name>
+    </author>
+    <author>
+      <name>De Wang</name>
+    </author>
+    <author>
+      <name>James Wexler</name>
+    </author>
+    <author>
+      <name>Jimbo Wilson</name>
+    </author>
+    <author>
+      <name>Dana Ludwig</name>
+    </author>
+    <author>
+      <name>Samuel L. Volchenboum</name>
+    </author>
+    <author>
+      <name>Katherine Chou</name>
+    </author>
+    <author>
+      <name>Michael Pearson</name>
+    </author>
+    <author>
+      <name>Srinivasan Madabushi</name>
+    </author>
+    <author>
+      <name>Nigam H. Shah</name>
+    </author>
+    <author>
+      <name>Atul J. Butte</name>
+    </author>
+    <author>
+      <name>Michael Howell</name>
+    </author>
+    <author>
+      <name>Claire Cui</name>
+    </author>
+    <author>
+      <name>Greg Corrado</name>
+    </author>
+    <author>
+      <name>Jeff Dean</name>
+    </author>
+    <arxiv:doi>10.1038/s41746-018-0029-1</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1038/s41746-018-0029-1" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.10160v1</id>
+    <title>CSSDM Ontology to Enable Continuity of Care Data Interoperability</title>
+    <updated>2025-01-17T12:48:48Z</updated>
+    <link href="https://arxiv.org/abs/2501.10160v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.10160v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapid advancement of digital technologies and recent global pandemic scenarios have led to a growing focus on how these technologies can enhance healthcare service delivery and workflow to address crises. Action plans that consolidate existing digital transformation programs are being reviewed to establish core infrastructure and foundations for sustainable healthcare solutions. Reforming health and social care to personalize home care, for example, can help avoid treatment in overcrowded acute hospital settings and improve the experiences and outcomes for both healthcare professionals and service users. In this information-intensive domain, addressing the interoperability challenge through standards-based roadmaps is crucial for enabling effective connections between health and social care services. This approach facilitates safe and trustworthy data workflows between different healthcare system providers. In this paper, we present a methodology for extracting, transforming, and loading data through a semi-automated process using a Common Semantic Standardized Data Model (CSSDM) to create personalized healthcare knowledge graph (KG). The CSSDM is grounded in the formal ontology of ISO 13940 ContSys and incorporates FHIR-based specifications to support structural attributes for generating KGs. We propose that the CSSDM facilitates data harmonization and linking, offering an alternative approach to interoperability. This approach promotes a novel form of collaboration between companies developing health information systems and cloud-enabled health services. Consequently, it provides multiple stakeholders with access to high-quality data and information sharing.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-01-17T12:48:48Z</published>
+    <arxiv:comment>6 pages, 5 figures, Published in: 2024 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Subhashis Das</name>
+    </author>
+    <author>
+      <name>Debashis Naskar</name>
+    </author>
+    <author>
+      <name>Sara Rodriguez Gonzalez</name>
+    </author>
+    <author>
+      <name>Pamela Hussey</name>
+    </author>
+    <arxiv:doi>10.1109/BIBM62325.2024.10822860</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1109/BIBM62325.2024.10822860" title="doi"/>
+  </entry>
+</feed>

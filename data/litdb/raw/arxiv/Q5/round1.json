@@ -1,0 +1,1360 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/62UbNJ3+OmGY/WuK2BVp0/sZzc4</id>
+  <title>arXiv Query: search_query=(all:QLoRA OR all:LoRA OR all:"parameter-efficient fine-tuning") AND (all:clinical OR all:biomedical OR all:medical)&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:24Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=(all:QLoRA+OR+(all:LoRA+OR+all:%22parameter-efficient+fine-tuning%22))+AND+(all:clinical+OR+(all:biomedical+OR+all:medical))&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>396</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2603.21970v1</id>
+    <title>Parameter-Efficient Fine-Tuning for Medical Text Summarization: A Comparative Study of Lora, Prompt Tuning, and Full Fine-Tuning</title>
+    <updated>2026-03-23T13:35:11Z</updated>
+    <link href="https://arxiv.org/abs/2603.21970v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.21970v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Fine-tuning large language models for domain-specific tasks such as medical text summarization demands substantial computational resources. Parameter-efficient fine-tuning (PEFT) methods offer promising alternatives by updating only a small fraction of parameters. This paper compares three adaptation approaches-Low-Rank Adaptation (LoRA), Prompt Tuning, and Full Fine-Tuning-across the Flan-T5 model family on the PubMed medical summarization dataset. Through experiments with multiple random seeds, we demonstrate that LoRA consistently outperforms full fine-tuning, achieving 43.52 +/- 0.18 ROUGE-1 on Flan-T5-Large with only 0.6% trainable parameters compared to 40.67 +/- 0.21 for full fine-tuning. Sensitivity analyses examine the impact of LoRA rank and prompt token count. Our findings suggest the low-rank constraint provides beneficial regularization, challenging assumptions about the necessity of full parameter updates. Code is available at https://github.com/eracoding/llm-medical-summarization</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-23T13:35:11Z</published>
+    <arxiv:comment>9 pages, 5 figures, presented at 6th International Conference on NLP &amp; Text Mining (NLTM 2026), March 21-22, Sydney, Australia. Published in Computer Science &amp; Information Technology (CS &amp; IT), pp. 01-09, 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Computer Science &amp; Information Technology (CS &amp; IT) 16(06), 01-09 (2026)</arxiv:journal_ref>
+    <author>
+      <name>Ulugbek Shernazarov</name>
+    </author>
+    <author>
+      <name>Rostislav Svitsov</name>
+    </author>
+    <author>
+      <name>Bin Shi</name>
+    </author>
+    <arxiv:doi>10.5121/csit.2026.160601</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.5121/csit.2026.160601" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.10750v1</id>
+    <title>LDP: Parameter-Efficient Fine-Tuning of Multimodal LLM for Medical Report Generation</title>
+    <updated>2025-12-11T15:43:33Z</updated>
+    <link href="https://arxiv.org/abs/2512.10750v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.10750v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Colonoscopic polyp diagnosis is pivotal for early colorectal cancer detection, yet traditional automated reporting suffers from inconsistencies and hallucinations due to the scarcity of high-quality multimodal medical data. To bridge this gap, we propose LDP, a novel framework leveraging multimodal large language models (MLLMs) for professional polyp diagnosis report generation. Specifically, we curate MMEndo, a multimodal endoscopic dataset comprising expert-annotated colonoscopy image-text pairs. We fine-tune the Qwen2-VL-7B backbone using Parameter-Efficient Fine-Tuning (LoRA) and align it with clinical standards via Direct Preference Optimization (DPO). Extensive experiments show that our LDP outperforms existing baselines on both automated metrics and rigorous clinical expert evaluations (achieving a Physician Score of 7.2/10), significantly reducing training computational costs by 833x compared to full fine-tuning. The proposed solution offers a scalable, clinically viable path for primary healthcare, with additional validation on the IU-XRay dataset confirming its robustness.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-11T15:43:33Z</published>
+    <arxiv:comment>Work in progress</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Tianyu Zhou</name>
+    </author>
+    <author>
+      <name>Junyi Tang</name>
+    </author>
+    <author>
+      <name>Zehui Li</name>
+    </author>
+    <author>
+      <name>Dahong Qian</name>
+    </author>
+    <author>
+      <name>Suncheng Xiang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2307.03042v3</id>
+    <title>Parameter-Efficient Fine-Tuning of LLaMA for the Clinical Domain</title>
+    <updated>2024-06-09T17:00:36Z</updated>
+    <link href="https://arxiv.org/abs/2307.03042v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2307.03042v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Adapting pretrained language models to novel domains, such as clinical applications, traditionally involves retraining their entire set of parameters. Parameter-Efficient Fine-Tuning (PEFT) techniques for fine-tuning language models significantly reduce computational requirements by selectively fine-tuning small subsets of parameters. In this study, we propose a two-step PEFT framework and evaluate it in the clinical domain. Our approach combines a specialised PEFT adapter layer designed for clinical domain adaptation with another adapter specialised for downstream tasks. We evaluate the framework on multiple clinical outcome prediction datasets, comparing it to clinically trained language models. Our framework achieves a better AUROC score averaged across all clinical downstream tasks compared to clinical language models. In particular, we observe large improvements of 4-5% AUROC in large-scale multilabel classification tasks, such as diagnoses and procedures classification. To our knowledge, this study is the first to provide an extensive empirical analysis of the interplay between PEFT techniques and domain adaptation in an important real-world domain of clinical applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-07-06T15:06:41Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Aryo Pradipta Gema</name>
+    </author>
+    <author>
+      <name>Pasquale Minervini</name>
+    </author>
+    <author>
+      <name>Luke Daines</name>
+    </author>
+    <author>
+      <name>Tom Hope</name>
+    </author>
+    <author>
+      <name>Beatrice Alex</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.23822v1</id>
+    <title>Parameter-Efficient Fine-Tuning Medical Multimodal Large Language Models for Medical Visual Grounding</title>
+    <updated>2024-10-31T11:07:26Z</updated>
+    <link href="https://arxiv.org/abs/2410.23822v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.23822v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multimodal Large Language Models (MLLMs) inherit the superior text understanding capabilities of LLMs and extend these capabilities to multimodal scenarios. These models achieve excellent results in the general domain of multimodal tasks. However, in the medical domain, the substantial training costs and the requirement for extensive medical data pose challenges to the development of medical MLLMs. Furthermore, due to the free-text form of answers, tasks such as visual grounding that need to produce output in a prescribed form become difficult for MLLMs. So far, there have been no medical MLLMs works in medical visual grounding area. For the medical vision grounding task, which involves identifying locations in medical images based on short text descriptions, we propose Parameter-efficient Fine-tuning medical multimodal large language models for Medcial Visual Grounding (PFMVG). To validate the performance of the model, we evaluate it on a public benchmark dataset for medical visual grounding, where it achieves competitive results, and significantly outperforming GPT-4v. Our code will be open sourced after peer review.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-10-31T11:07:26Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Jinlong He</name>
+    </author>
+    <author>
+      <name>Pengfei Li</name>
+    </author>
+    <author>
+      <name>Gang Liu</name>
+    </author>
+    <author>
+      <name>Shenjun Zhong</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2401.12215v1</id>
+    <title>Less Could Be Better: Parameter-efficient Fine-tuning Advances Medical Vision Foundation Models</title>
+    <updated>2024-01-22T18:59:07Z</updated>
+    <link href="https://arxiv.org/abs/2401.12215v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2401.12215v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Parameter-efficient fine-tuning (PEFT) that was initially developed for exploiting pre-trained large language models has recently emerged as an effective approach to perform transfer learning on computer vision tasks. However, the effectiveness of PEFT on medical vision foundation models is still unclear and remains to be explored. As a proof of concept, we conducted a detailed empirical study on applying PEFT to chest radiography foundation models. Specifically, we delved into LoRA, a representative PEFT method, and compared it against full-parameter fine-tuning (FFT) on two self-supervised radiography foundation models across three well-established chest radiograph datasets. Our results showed that LoRA outperformed FFT in 13 out of 18 transfer learning tasks by at most 2.9% using fewer than 1% tunable parameters. Combining LoRA with foundation models, we set up new state-of-the-art on a range of data-efficient learning tasks, such as an AUROC score of 80.6% using 1% labeled data on NIH ChestX-ray14. We hope this study can evoke more attention from the community in the use of PEFT for transfer learning on medical imaging tasks. Code and models are available at https://github.com/RL4M/MED-PEFT.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-01-22T18:59:07Z</published>
+    <arxiv:comment>Technical report</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Chenyu Lian</name>
+    </author>
+    <author>
+      <name>Hong-Yu Zhou</name>
+    </author>
+    <author>
+      <name>Yizhou Yu</name>
+    </author>
+    <author>
+      <name>Liansheng Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.03499v1</id>
+    <title>NAS-LoRA: Empowering Parameter-Efficient Fine-Tuning for Visual Foundation Models with Searchable Adaptation</title>
+    <updated>2025-12-03T06:47:56Z</updated>
+    <link href="https://arxiv.org/abs/2512.03499v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.03499v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The Segment Anything Model (SAM) has emerged as a powerful visual foundation model for image segmentation. However, adapting SAM to specific downstream tasks, such as medical and agricultural imaging, remains a significant challenge. To address this, Low-Rank Adaptation (LoRA) and its variants have been widely employed to enhancing SAM's adaptation performance on diverse domains. Despite advancements, a critical question arises: can we integrate inductive bias into the model? This is particularly relevant since the Transformer encoder in SAM inherently lacks spatial priors within image patches, potentially hindering the acquisition of high-level semantic information. In this paper, we propose NAS-LoRA, a new Parameter-Efficient Fine-Tuning (PEFT) method designed to bridge the semantic gap between pre-trained SAM and specialized domains. Specifically, NAS-LoRA incorporates a lightweight Neural Architecture Search (NAS) block between the encoder and decoder components of LoRA to dynamically optimize the prior knowledge integrated into weight updates. Furthermore, we propose a stage-wise optimization strategy to help the ViT encoder balance weight updates and architectural adjustments, facilitating the gradual learning of high-level semantic information. Various Experiments demonstrate our NAS-LoRA improves existing PEFT methods, while reducing training cost by 24.14% without increasing inference cost, highlighting the potential of NAS in enhancing PEFT for visual foundation models.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-03T06:47:56Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Renqi Chen</name>
+    </author>
+    <author>
+      <name>Haoyang Su</name>
+    </author>
+    <author>
+      <name>Shixiang Tang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.17877v1</id>
+    <title>Sparsity- and Hybridity-Inspired Visual Parameter-Efficient Fine-Tuning for Medical Diagnosis</title>
+    <updated>2024-05-28T06:56:39Z</updated>
+    <link href="https://arxiv.org/abs/2405.17877v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.17877v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The success of Large Vision Models (LVMs) is accompanied by vast data volumes, which are prohibitively expensive in medical diagnosis.To address this, recent efforts exploit Parameter-Efficient Fine-Tuning (PEFT), which trains a small number of weights while freezing the rest.However, they typically assign trainable weights to the same positions in LVMs in a heuristic manner, regardless of task differences, making them suboptimal for professional applications like medical diagnosis.To address this, we statistically reveal the nature of sparsity and hybridity during diagnostic-targeted fine-tuning, i.e., a small portion of key weights significantly impacts performance, and these key weights are hybrid, including both task-specific and task-agnostic parts.Based on this, we propose a novel Sparsity- and Hybridity-inspired Parameter Efficient Fine-Tuning (SH-PEFT).It selects and trains a small portion of weights based on their importance, which is innovatively estimated by hybridizing both task-specific and task-agnostic strategies.Validated on six medical datasets of different modalities, we demonstrate that SH-PEFT achieves state-of-the-art performance in transferring LVMs to medical diagnosis in terms of accuracy. By tuning around 0.01% number of weights, it outperforms full model fine-tuning.Moreover, SH-PEFT also achieves comparable performance to other models deliberately optimized for specific medical tasks.Extensive experiments demonstrate the effectiveness of each design and reveal that large model transfer holds great potential in medical diagnosis.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-28T06:56:39Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Mingyuan Liu</name>
+    </author>
+    <author>
+      <name>Lu Xu</name>
+    </author>
+    <author>
+      <name>Shengnan Liu</name>
+    </author>
+    <author>
+      <name>Jicong Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.18339v2</id>
+    <title>When MOE Meets LLMs: Parameter Efficient Fine-tuning for Multi-task Medical Applications</title>
+    <updated>2024-05-31T07:56:08Z</updated>
+    <link href="https://arxiv.org/abs/2310.18339v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.18339v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The recent surge in Large Language Models (LLMs) has garnered significant attention across numerous fields. Fine-tuning is often required to fit general LLMs for a specific domain, like the web-based healthcare system. However, two problems arise during fine-tuning LLMs for medical applications. One is the task variety problem, which involves distinct tasks in real-world medical scenarios. The variety often leads to sub-optimal fine-tuning for data imbalance and seesaw problems. Besides, the large amount of parameters in LLMs leads to huge time and computation consumption by fine-tuning. To address these two problems, we propose a novel parameter efficient fine-tuning framework for multi-task medical applications, dubbed as MOELoRA. The designed framework aims to absorb both the benefits of mixture-of-expert (MOE) for multi-task learning and low-rank adaptation (LoRA) for parameter efficient fine-tuning. For unifying MOE and LoRA, we devise multiple experts as the trainable parameters, where each expert consists of a pair of low-rank matrices to retain the small size of trainable parameters. Then, a task-motivated gate function for all MOELoRA layers is proposed, which can control the contributions of each expert and produce distinct parameters for various tasks. We conduct experiments on a multi-task medical dataset, indicating MOELoRA outperforms the existing parameter efficient fine-tuning methods. The code is available online.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-21T17:18:09Z</published>
+    <arxiv:comment>accepted by SIGIR'24</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Qidong Liu</name>
+    </author>
+    <author>
+      <name>Xian Wu</name>
+    </author>
+    <author>
+      <name>Xiangyu Zhao</name>
+    </author>
+    <author>
+      <name>Yuanshao Zhu</name>
+    </author>
+    <author>
+      <name>Derong Xu</name>
+    </author>
+    <author>
+      <name>Feng Tian</name>
+    </author>
+    <author>
+      <name>Yefeng Zheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.18434v2</id>
+    <title>Benchmarking Foundation Models and Parameter-Efficient Fine-Tuning for Prognosis Prediction in Medical Imaging</title>
+    <updated>2025-11-05T09:33:35Z</updated>
+    <link href="https://arxiv.org/abs/2506.18434v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.18434v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Despite the significant potential of Foundation Models (FMs) in medical imaging, their application to prognosis prediction remains challenging due to data scarcity, class imbalance, and task complexity, which limit their clinical adoption. This study introduces the first structured benchmark to assess the robustness and efficiency of transfer learning strategies for FMs compared with convolutional neural networks (CNNs) in predicting COVID-19 patient outcomes from chest X-rays. The goal is to systematically compare finetuning strategies, both classical and parameter efficient, under realistic clinical constraints related to data scarcity and class imbalance, offering empirical guidance for AI deployment in clinical workflows. Four publicly available COVID-19 chest X-ray datasets were used, covering mortality, severity, and ICU admission, with varying sample sizes and class imbalances. CNNs pretrained on ImageNet and FMs pretrained on general or biomedical datasets were adapted using full finetuning, linear probing, and parameter-efficient methods. Models were evaluated under full data and few shot regimes using the Matthews Correlation Coefficient (MCC) and Precision Recall AUC (PR-AUC), with cross validation and class weighted losses. CNNs with full fine-tuning performed robustly on small, imbalanced datasets, while FMs with Parameter-Efficient Fine-Tuning (PEFT), particularly LoRA and BitFit, achieved competitive results on larger datasets. Severe class imbalance degraded PEFT performance, whereas balanced data mitigated this effect. In few-shot settings, FMs showed limited generalization, with linear probing yielding the most stable results. No single fine-tuning strategy proved universally optimal: CNNs remain dependable for low-resource scenarios, whereas FMs benefit from parameter-efficient methods when data are sufficient.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-23T09:16:04Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <arxiv:journal_ref>Computer Methods and Programs in Biomedicine, Vol. 275, 2026</arxiv:journal_ref>
+    <author>
+      <name>Filippo Ruffini</name>
+    </author>
+    <author>
+      <name>Elena Mulero Ayllon</name>
+    </author>
+    <author>
+      <name>Linlin Shen</name>
+    </author>
+    <author>
+      <name>Paolo Soda</name>
+    </author>
+    <author>
+      <name>Valerio Guarrasi</name>
+    </author>
+    <arxiv:doi>10.1016/j.cmpb.2025.109196</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1016/j.cmpb.2025.109196" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.08252v4</id>
+    <title>Parameter-Efficient Fine-Tuning for Medical Image Analysis: The Missed Opportunity</title>
+    <updated>2024-06-10T15:11:40Z</updated>
+    <link href="https://arxiv.org/abs/2305.08252v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.08252v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Foundation models have significantly advanced medical image analysis through the pre-train fine-tune paradigm. Among various fine-tuning algorithms, Parameter-Efficient Fine-Tuning (PEFT) is increasingly utilized for knowledge transfer across diverse tasks, including vision-language and text-to-image generation. However, its application in medical image analysis is relatively unexplored due to the lack of a structured benchmark for evaluating PEFT methods. This study fills this gap by evaluating 17 distinct PEFT algorithms across convolutional and transformer-based networks on image classification and text-to-image generation tasks using six medical datasets of varying size, modality, and complexity. Through a battery of over 700 controlled experiments, our findings demonstrate PEFT's effectiveness, particularly in low data regimes common in medical imaging, with performance gains of up to 22% in discriminative and generative tasks. These recommendations can assist the community in incorporating PEFT into their workflows and facilitate fair comparisons of future PEFT methods, ensuring alignment with advancements in other areas of machine learning and AI.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-14T21:18:18Z</published>
+    <arxiv:comment>Accepted as Oral Presentation at MIDL 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Raman Dutt</name>
+    </author>
+    <author>
+      <name>Linus Ericsson</name>
+    </author>
+    <author>
+      <name>Pedro Sanchez</name>
+    </author>
+    <author>
+      <name>Sotirios A. Tsaftaris</name>
+    </author>
+    <author>
+      <name>Timothy Hospedales</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2303.17051v4</id>
+    <title>Towards Foundation Models and Few-Shot Parameter-Efficient Fine-Tuning for Volumetric Organ Segmentation</title>
+    <updated>2025-05-09T15:20:57Z</updated>
+    <link href="https://arxiv.org/abs/2303.17051v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2303.17051v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The recent popularity of foundation models and the pre-train-and-adapt paradigm, where a large-scale model is transferred to downstream tasks, is gaining attention for volumetric medical image segmentation. However, current transfer learning strategies devoted to full fine-tuning for transfer learning may require significant resources and yield sub-optimal results when the labeled data of the target task is scarce. This makes its applicability in real clinical settings challenging since these institutions are usually constrained on data and computational resources to develop proprietary solutions. To address this challenge, we formalize Few-Shot Efficient Fine-Tuning (FSEFT), a novel and realistic scenario for adapting medical image segmentation foundation models. This setting considers the key role of both data- and parameter-efficiency during adaptation. Building on a foundation model pre-trained on open-access CT organ segmentation sources, we propose leveraging Parameter-Efficient Fine-Tuning and black-box Adapters to address such challenges. Furthermore, novel efficient adaptation methodologies are introduced in this work, which include Spatial black-box Adapters that are more appropriate for dense prediction tasks and constrained transductive inference, leveraging task-specific prior knowledge. Our comprehensive transfer learning experiments confirm the suitability of foundation models in medical image segmentation and unveil the limitations of popular fine-tuning strategies in few-shot scenarios.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-03-29T22:50:05Z</published>
+    <arxiv:comment>Accepted in Medical Image Analysis. The pre-trained model and adaptation code is available at: https://github.com/jusiro/fewshot-finetuning</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Julio Silva-Rodríguez</name>
+    </author>
+    <author>
+      <name>Jose Dolz</name>
+    </author>
+    <author>
+      <name>Ismail Ben Ayed</name>
+    </author>
+    <arxiv:doi>10.1016/j.media.2025.103596</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1016/j.media.2025.103596" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.08285v3</id>
+    <title>Parameter-Efficient Fine-Tuning with Layer Pruning on Free-Text Sequence-to-Sequence Modeling</title>
+    <updated>2023-05-19T01:29:08Z</updated>
+    <link href="https://arxiv.org/abs/2305.08285v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.08285v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The increasing size of language models raises great research interests in parameter-efficient fine-tuning such as LoRA that freezes the pre-trained model, and injects small-scale trainable parameters for multiple downstream tasks (e.g., summarization, question answering and translation). To further enhance the efficiency of fine-tuning, we propose a framework that integrates LoRA and structured layer pruning. The integrated framework is validated on two created deidentified medical report summarization datasets based on MIMIC-IV-Note and two public medical dialogue datasets. By tuning 0.6% parameters of the original model and pruning over 30% Transformer-layers, our framework can reduce 50% of GPU memory usage and speed up 100% of the training phase, while preserving over 92% generation qualities on free-text sequence-to-sequence tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-15T00:21:08Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yunqi Zhu</name>
+    </author>
+    <author>
+      <name>Xuebing Yang</name>
+    </author>
+    <author>
+      <name>Yuanyuan Wu</name>
+    </author>
+    <author>
+      <name>Wensheng Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.05055v3</id>
+    <title>FairTune: Optimizing Parameter Efficient Fine Tuning for Fairness in Medical Image Analysis</title>
+    <updated>2024-01-17T14:59:30Z</updated>
+    <link href="https://arxiv.org/abs/2310.05055v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.05055v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Training models with robust group fairness properties is crucial in ethically sensitive application areas such as medical diagnosis. Despite the growing body of work aiming to minimise demographic bias in AI, this problem remains challenging. A key reason for this challenge is the fairness generalisation gap: High-capacity deep learning models can fit all training data nearly perfectly, and thus also exhibit perfect fairness during training. In this case, bias emerges only during testing when generalisation performance differs across subgroups. This motivates us to take a bi-level optimisation perspective on fair learning: Optimising the learning strategy based on validation fairness. Specifically, we consider the highly effective workflow of adapting pre-trained models to downstream medical imaging tasks using parameter-efficient fine-tuning (PEFT) techniques. There is a trade-off between updating more parameters, enabling a better fit to the task of interest vs. fewer parameters, potentially reducing the generalisation gap. To manage this tradeoff, we propose FairTune, a framework to optimise the choice of PEFT parameters with respect to fairness. We demonstrate empirically that FairTune leads to improved fairness on a range of medical imaging datasets. The code is available at https://github.com/Raman1121/FairTune</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-08T07:41:15Z</published>
+    <arxiv:comment>Accepted in ICLR 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Raman Dutt</name>
+    </author>
+    <author>
+      <name>Ondrej Bohdal</name>
+    </author>
+    <author>
+      <name>Sotirios A. Tsaftaris</name>
+    </author>
+    <author>
+      <name>Timothy Hospedales</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.11573v1</id>
+    <title>Probing the Efficacy of Federated Parameter-Efficient Fine-Tuning of Vision Transformers for Medical Image Classification</title>
+    <updated>2024-07-16T10:28:50Z</updated>
+    <link href="https://arxiv.org/abs/2407.11573v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.11573v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>With the advent of large pre-trained transformer models, fine-tuning these models for various downstream tasks is a critical problem. Paucity of training data, the existence of data silos, and stringent privacy constraints exacerbate this fine-tuning problem in the medical imaging domain, creating a strong need for algorithms that enable collaborative fine-tuning of pre-trained models. Moreover, the large size of these models necessitates the use of parameter-efficient fine-tuning (PEFT) to reduce the communication burden in federated learning. In this work, we systematically investigate various federated PEFT strategies for adapting a Vision Transformer (ViT) model (pre-trained on a large natural image dataset) for medical image classification. Apart from evaluating known PEFT techniques, we introduce new federated variants of PEFT algorithms such as visual prompt tuning (VPT), low-rank decomposition of visual prompts, stochastic block attention fine-tuning, and hybrid PEFT methods like low-rank adaptation (LoRA)+VPT. Moreover, we perform a thorough empirical analysis to identify the optimal PEFT method for the federated setting and understand the impact of data distribution on federated PEFT, especially for out-of-domain (OOD) and non-IID data. The key insight of this study is that while most federated PEFT methods work well for in-domain transfer, there is a substantial accuracy vs. efficiency trade-off when dealing with OOD and non-IID scenarios, which is commonly the case in medical imaging. Specifically, every order of magnitude reduction in fine-tuned/exchanged parameters can lead to a 4% drop in accuracy. Thus, the initial model choice is crucial for federated PEFT. It is preferable to use medical foundation models learned from in-domain medical image data (if available) rather than general vision models.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-16T10:28:50Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Naif Alkhunaizi</name>
+    </author>
+    <author>
+      <name>Faris Almalik</name>
+    </author>
+    <author>
+      <name>Rouqaiah Al-Refai</name>
+    </author>
+    <author>
+      <name>Muzammal Naseer</name>
+    </author>
+    <author>
+      <name>Karthik Nandakumar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.31432v3</id>
+    <title>Clinically Structured Rank-Gated LoRA for Cross-Benchmark Medical Question Answering</title>
+    <updated>2026-07-02T08:43:43Z</updated>
+    <link href="https://arxiv.org/abs/2606.31432v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.31432v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical multiple-choice question answering requires parameter-efficient adaptation across heterogeneous knowledge domains and reasoning operations. A medication question, a diagnostic decision, a public-health item, and a nursing-action item may require different low-rank updates, while some recall items should preserve the base model's representation with only mild adapter intervention. We propose BiRG-LoRA, a single-adapter rank-gated LoRA method for medical question answering. BiRG-LoRA keeps one LoRA module per target layer but makes its rank dimension input-conditioned: for each question, a biaxial gate combines hidden semantic evidence with specialty/profession priors, clinical-operation priors, and their interaction to select a sparse top-$k$ subset of rank atoms. A scalar injection coefficient further controls the strength of the selected adapter update. Under a matched Qwen3-8B CMB-source protocol, BiRG-LoRA achieves the highest four-benchmark macro-average accuracy among trainable PEFT baselines and matched routing controls: 69.31% averaged over CMB, CMExam, MedQA, and MedMCQA. It improves over MoELoRA by 0.89 percentage points while using 28.1% fewer trainable parameters; a paired, benchmark-stratified bootstrap over final predictions gives a 95% confidence interval of [0.42, 1.37] for this macro-average gain. Basic controls show that BiRG-LoRA also improves over vanilla LoRA r16 and active-rank-matched LoRA r4 by 0.83 macro points, and an evaluation-time weak-axis perturbation check suggests that performance is not brittle to moderate tag noise. The results support a bounded claim: clinically structured rank allocation improves cross-benchmark medical QA under a matched single-seed protocol, while training-seed variance remains future work.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-30T09:59:05Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hao Gong</name>
+    </author>
+    <author>
+      <name>Ruilin Gong</name>
+    </author>
+    <author>
+      <name>Yining Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.16769v1</id>
+    <title>GLT-PEFT: Gated Lie-Tucker Parameter-Efficient Fine-Tuning for Alzheimer's Disease Diagnosis with Hippocampal Segmentation Pretraining</title>
+    <updated>2026-05-16T02:43:44Z</updated>
+    <link href="https://arxiv.org/abs/2605.16769v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.16769v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Parameter-efficient fine-tuning (PEFT) has emerged as a promising paradigm for adapting pretrained models under limited data conditions. However, most existing PEFT methods are designed for matrix-structured parameters and are not well suited for high-dimensional convolutional kernels in medical imaging models. Moreover, they typically rely on additive updates and lack mechanisms to preserve the geometric structure of pretrained parameters, while multiplicative (geometry-aware) updates are difficult to integrate within a unified framework. To address this issue, this paper proposes GLT-PEFT, a gated Lie-Tucker parameter-efficient fine-tuning framework for Alzheimer's disease (AD) diagnosis. The proposed approach transfers a hippocampal segmentation pretrained model to a downstream classification task. Tucker decomposition enables tensor-aware low-rank adaptation of 3D convolutional kernels, while Lie group-based transformations provide structure-preserving multiplicative updates. A gating mechanism further reconciles additive and multiplicative update forms, resulting in a unified and more stable fine-tuning strategy. Extensive experiments demonstrate that GLT-PEFT achieves effective cross-task transfer while significantly reducing trainable parameters, highlighting its effectiveness for efficient and robust adaptation in medical imaging models.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-16T02:43:44Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Guanghua He</name>
+    </author>
+    <author>
+      <name>Hancan Zhu</name>
+    </author>
+    <author>
+      <name>Gaohang Yu</name>
+    </author>
+    <author>
+      <name>An Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.12178v1</id>
+    <title>Evolution of meta's llama models and parameter-efficient fine-tuning of large language models: a survey</title>
+    <updated>2025-10-14T06:12:44Z</updated>
+    <link href="https://arxiv.org/abs/2510.12178v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.12178v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This review surveys the rapid evolution of Meta AI's LLaMA (Large Language Model Meta AI) series - from LLaMA 1 through LLaMA 4 and the specialized parameter-efficient fine-tuning (PEFT) methods developed for these models. We first describe the LLaMA family of foundation models (7B-65B to 288B parameters), their architectures (including native multimodal and Mixtureof-Experts variants), and key performance characteristics. We then describe and discuss the concept of PEFT, which adapts large pre-trained models by updating only a small subset of parameters, and review five PEFT methods that have been applied to LLaMA: LoRA (Low-Rank Adaptation), LLaMA-Adapter V1 and V2, LLaMA-Excitor, and QLoRA (Quantized LoRA). We discuss each method's mechanism, parameter savings, and example application to LLaMA (e.g., instruction tuning, multimodal tasks). We provide structured discussion and analysis of model and adapter architectures, parameter counts, and benchmark results (including examples where fine-tuned LLaMA models outperform larger baselines). Finally, we examine real-world use cases where LLaMA-based models and PEFT have been successfully applied (e.g., legal and medical domains), and we discuss ongoing challenges and future research directions (such as scaling to even larger contexts and improving robustness). This survey paper provides a one-stop resource for ML researchers and practitioners interested in LLaMA models and efficient fine-tuning strategies.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-14T06:12:44Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Abdulhady Abas Abdullah</name>
+    </author>
+    <author>
+      <name>Arkaitz Zubiaga</name>
+    </author>
+    <author>
+      <name>Seyedali Mirjalili</name>
+    </author>
+    <author>
+      <name>Amir H. Gandomi</name>
+    </author>
+    <author>
+      <name>Fatemeh Daneshfar</name>
+    </author>
+    <author>
+      <name>Mohammadsadra Amini</name>
+    </author>
+    <author>
+      <name>Alan Salam Mohammed</name>
+    </author>
+    <author>
+      <name>Hadi Veisi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.07517v1</id>
+    <title>Parameter Efficient Fine Tuning for Multi-scanner PET to PET Reconstruction</title>
+    <updated>2024-07-10T10:12:26Z</updated>
+    <link href="https://arxiv.org/abs/2407.07517v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.07517v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reducing scan time in Positron Emission Tomography (PET) imaging while maintaining high-quality images is crucial for minimizing patient discomfort and radiation exposure. Due to the limited size of datasets and distribution discrepancy across scanners in medical imaging, fine-tuning in a parameter-efficient and effective manner is on the rise. Motivated by the potential of Parameter-Efficient Fine-Tuning (PEFT), we aim to address these issues by effectively leveraging PEFT to improve limited data and GPU resource issues in multi-scanner setups. In this paper, we introduce PETITE, Parameter-Efficient Fine-Tuning for MultI-scanner PET to PET REconstruction that uses fewer than 1% of the parameters. To the best of our knowledge, this study is the first to systematically explore the efficacy of diverse PEFT techniques in medical imaging reconstruction tasks via prevalent encoder-decoder-type deep models. This investigation, in particular, brings intriguing insights into PETITE as we show further improvements by treating encoder and decoder separately and mixing different PEFT methods, namely, Mix-PEFT. Using multi-scanner PET datasets comprised of five different scanners, we extensively test the cross-scanner PET scan time reduction performances (i.e., a model pre-trained on one scanner is fine-tuned on a different scanner) of 21 feasible Mix-PEFT combinations to derive optimal PETITE. We show that training with less than 1% parameters using PETITE performs on par with full fine-tuning (i.e., 100% parameter)</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-10T10:12:26Z</published>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Yumin Kim</name>
+    </author>
+    <author>
+      <name>Gayoon Choi</name>
+    </author>
+    <author>
+      <name>Seong Jae Hwang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.16055v2</id>
+    <title>SALT: Parameter-Efficient Fine-Tuning via Singular Value Adaptation with Low-Rank Transformation</title>
+    <updated>2025-08-30T12:23:32Z</updated>
+    <link href="https://arxiv.org/abs/2503.16055v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.16055v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The complex nature of medical image segmentation calls for models that are specifically designed to capture detailed, domain-specific features. Large foundation models offer considerable flexibility, yet the cost of fine-tuning these models remains a significant barrier. Parameter-Efficient Fine-Tuning (PEFT) methods, such as Low-Rank Adaptation (LoRA), efficiently update model weights with low-rank matrices but may suffer from underfitting when the chosen rank is insufficient to capture domain-specific nuances. Conversely, full-rank Singular Value Decomposition (SVD) based methods provide comprehensive updates by modifying all singular values, yet they often lack flexibility and exhibit variable performance across datasets. We propose SALT (Singular Value Adaptation with Low-Rank Transformation), a method that selectively adapts the most influential singular values using trainable scale and shift parameters while complementing this with a low-rank update for the remaining subspace. This hybrid approach harnesses the advantages of both LoRA and SVD, enabling effective adaptation without relying on increasing model size or depth. Evaluated on 5 challenging medical datasets, ranging from as few as 20 samples to 1000, SALT outperforms state-of-the-art PEFT (LoRA and SVD) by 2% to 5% in Dice with only 3.9% trainable parameters, demonstrating robust adaptation even in low-resource settings. The code for SALT is available at: https://github.com/BioMedIA-MBZUAI/SALT</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-20T11:42:41Z</published>
+    <arxiv:comment>BMVC 2025</arxiv:comment>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Abdelrahman Elsayed</name>
+    </author>
+    <author>
+      <name>Sarim Hashmi</name>
+    </author>
+    <author>
+      <name>Mohammed Elseiagy</name>
+    </author>
+    <author>
+      <name>Hu Wang</name>
+    </author>
+    <author>
+      <name>Mohammad Yaqub</name>
+    </author>
+    <author>
+      <name>Ibrahim Almakky</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.26008v1</id>
+    <title>FairLLaVA: Fairness-Aware Parameter-Efficient Fine-Tuning for Large Vision-Language Assistants</title>
+    <updated>2026-03-27T01:55:14Z</updated>
+    <link href="https://arxiv.org/abs/2603.26008v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.26008v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>While powerful in image-conditioned generation, multimodal large language models (MLLMs) can display uneven performance across demographic groups, highlighting fairness risks. In safety-critical clinical settings, such disparities risk producing unequal diagnostic narratives and eroding trust in AI-assisted decision-making. While fairness has been studied extensively in vision-only and language-only models, its impact on MLLMs remains largely underexplored. To address these biases, we introduce FairLLaVA, a parameter-efficient fine-tuning method that mitigates group disparities in visual instruction tuning without compromising overall performance. By minimizing the mutual information between target attributes, FairLLaVA regularizes the model's representations to be demographic-invariant. The method can be incorporated as a lightweight plug-in, maintaining efficiency with low-rank adapter fine-tuning, and provides an architecture-agnostic approach to fair visual instruction following. Extensive experiments on large-scale chest radiology report generation and dermoscopy visual question answering benchmarks show that FairLLaVA consistently reduces inter-group disparities while improving both equity-scaled clinical performance and natural language generation quality across diverse medical imaging modalities. Code can be accessed at https://github.com/bhosalems/FairLLaVA.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-27T01:55:14Z</published>
+    <arxiv:comment>Accepted to CVPR 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Mahesh Bhosale</name>
+    </author>
+    <author>
+      <name>Abdul Wasi</name>
+    </author>
+    <author>
+      <name>Shantam Srivastava</name>
+    </author>
+    <author>
+      <name>Shifa Latif</name>
+    </author>
+    <author>
+      <name>Tianyu Luan</name>
+    </author>
+    <author>
+      <name>Mingchen Gao</name>
+    </author>
+    <author>
+      <name>David Doermann</name>
+    </author>
+    <author>
+      <name>Xuan Gong</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2307.05162v1</id>
+    <title>SuryaKiran at MEDIQA-Sum 2023: Leveraging LoRA for Clinical Dialogue Summarization</title>
+    <updated>2023-07-11T10:38:58Z</updated>
+    <link href="https://arxiv.org/abs/2307.05162v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2307.05162v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Finetuning Large Language Models helps improve the results for domain-specific use cases. End-to-end finetuning of large language models is time and resource intensive and has high storage requirements to store the finetuned version of the large language model. Parameter Efficient Fine Tuning (PEFT) methods address the time and resource challenges by keeping the large language model as a fixed base and add additional layers, which the PEFT methods finetune. This paper demonstrates the evaluation results for one such PEFT method Low Rank Adaptation (LoRA), for Clinical Dialogue Summarization. The evaluation results show that LoRA works at par with end-to-end finetuning for a large language model. The paper presents the evaluations done for solving both the Subtask A and B from ImageCLEFmedical {https://www.imageclef.org/2023/medical}</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-07-11T10:38:58Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kunal Suri</name>
+    </author>
+    <author>
+      <name>Prakhar Mishra</name>
+    </author>
+    <author>
+      <name>Saumajit Saha</name>
+    </author>
+    <author>
+      <name>Atul Singh</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.03406v1</id>
+    <title>Lightweight Clinical Decision Support System using QLoRA-Fine-Tuned LLMs and Retrieval-Augmented Generation</title>
+    <updated>2025-05-06T10:31:54Z</updated>
+    <link href="https://arxiv.org/abs/2505.03406v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.03406v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This research paper investigates the application of Large Language Models (LLMs) in healthcare, specifically focusing on enhancing medical decision support through Retrieval-Augmented Generation (RAG) integrated with hospital-specific data and fine-tuning using Quantized Low-Rank Adaptation (QLoRA). The system utilizes Llama 3.2-3B-Instruct as its foundation model. By embedding and retrieving context-relevant healthcare information, the system significantly improves response accuracy. QLoRA facilitates notable parameter efficiency and memory optimization, preserving the integrity of medical information through specialized quantization techniques. Our research also shows that our model performs relatively well on various medical benchmarks, indicating that it can be used to make basic medical suggestions. This paper details the system's technical components, including its architecture, quantization methods, and key healthcare applications such as enhanced disease prediction from patient symptoms and medical history, treatment suggestions, and efficient summarization of complex medical reports. We touch on the ethical considerations-patient privacy, data security, and the need for rigorous clinical validation-as well as the practical challenges of integrating such systems into real-world healthcare workflows. Furthermore, the lightweight quantized weights ensure scalability and ease of deployment even in low-resource hospital environments. Finally, the paper concludes with an analysis of the broader impact of LLMs on healthcare and outlines future directions for LLMs in medical settings.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-06T10:31:54Z</published>
+    <arxiv:comment>12 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mohammad Shoaib Ansari</name>
+    </author>
+    <author>
+      <name>Mohd Sohail Ali Khan</name>
+    </author>
+    <author>
+      <name>Shubham Revankar</name>
+    </author>
+    <author>
+      <name>Aditya Varma</name>
+    </author>
+    <author>
+      <name>Anil S. Mokhade</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.21739v1</id>
+    <title>A Federated Learning-Friendly Approach for Parameter-Efficient Fine-Tuning of SAM in 3D Segmentation</title>
+    <updated>2024-07-31T16:48:06Z</updated>
+    <link href="https://arxiv.org/abs/2407.21739v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.21739v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Adapting foundation models for medical image analysis requires finetuning them on a considerable amount of data because of extreme distribution shifts between natural (source) data used for pretraining and medical (target) data. However, collecting task-specific medical data for such finetuning at a central location raises many privacy concerns. Although Federated learning (FL) provides an effective means for training on private decentralized data, communication costs in federating large foundation models can quickly become a significant bottleneck, impacting the solution's scalability. In this work, we address this problem of efficient communication while ensuring effective learning in FL by combining the strengths of Parameter-Efficient Fine-tuning (PEFT) with FL. Specifically, we study plug-and-play Low-Rank Adapters (LoRA) in a federated manner to adapt the Segment Anything Model (SAM) for 3D medical image segmentation. Unlike prior works that utilize LoRA and finetune the entire decoder, we critically analyze the contribution of each granular component of SAM on finetuning performance. Thus, we identify specific layers to be federated that are very efficient in terms of communication cost while producing on-par accuracy. Our experiments show that retaining the parameters of the SAM model (including most of the decoder) in their original state during adaptation is beneficial because fine-tuning on small datasets tends to distort the inherent capabilities of the underlying foundation model. On Fed-KiTS, our approach decreases communication cost (~48x) compared to full fine-tuning while increasing performance (~6% Dice score) in 3D segmentation tasks. Our approach performs similar to SAMed while achieving ~2.8x reduction in communication and parameters to be finetuned. We further validate our approach with experiments on Fed-IXI and Prostate MRI datasets.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-31T16:48:06Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Mothilal Asokan</name>
+    </author>
+    <author>
+      <name>Joseph Geo Benjamin</name>
+    </author>
+    <author>
+      <name>Mohammad Yaqub</name>
+    </author>
+    <author>
+      <name>Karthik Nandakumar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.05822v1</id>
+    <title>Self-Auditing Parameter-Efficient Fine-Tuning for Few-Shot 3D Medical Image Segmentation</title>
+    <updated>2026-03-06T02:17:12Z</updated>
+    <link href="https://arxiv.org/abs/2603.05822v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.05822v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Adapting foundation models to new clinical sites remains challenging in practice. Domain shift and scarce annotations must be handled by experts, yet many clinical groups do not have ready access to skilled AI engineers to tune adapter designs and training recipes. As a result, adaptation cycles can stretch from weeks to months, particularly in few-shot settings. Existing PEFT methods either require manual adapter configuration or automated searches that are computationally infeasible in few-shot 3D settings. We propose SEA-PEFT (SElf-Auditing Parameter-Efficient Fine-Tuning) to automate this process. SEA-PEFT treats adapter configuration as an online allocation problem solved during fine-tuning rather than through manual, fixed-topology choices. SEA-PEFT uses a search-audit-allocate loop that trains active adapters, estimates each adapter's Dice utility by momentarily toggling it off, and then reselects the active set under a parameter budget using a greedy knapsack allocator. Exponential Moving Average and Interquartile Range smoothing, together with a Finite-State Ranking controller, stabilize the loop and improve reliability in high-noise few-shot regimes. On TotalSegmentator and FLARE'22, SEA-PEFT improves mean Dice by 2.4--2.8 points over the strongest fixed-topology PEFT baselines across 1/5/10-shot settings while training &lt;1% of parameters. For reproducibility purposes, we made our code publicly available at https://github.com/tsly123/SEA_PEFT</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-06T02:17:12Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Son Thai Ly</name>
+    </author>
+    <author>
+      <name>Hien V. Nguyen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.11673v1</id>
+    <title>Contrastive Regularization over LoRA for Multimodal Biomedical Image Incremental Learning</title>
+    <updated>2025-08-08T01:10:06Z</updated>
+    <link href="https://arxiv.org/abs/2508.11673v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.11673v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multimodal Biomedical Image Incremental Learning (MBIIL) is essential for handling diverse tasks and modalities in the biomedical domain, as training separate models for each modality or task significantly increases inference costs. Existing incremental learning methods focus on task expansion within a single modality, whereas MBIIL seeks to train a unified model incrementally across modalities. The MBIIL faces two challenges: I) How to preserve previously learned knowledge during incremental updates? II) How to effectively leverage knowledge acquired from existing modalities to support new modalities? To address these challenges, we propose MSLoRA-CR, a method that fine-tunes Modality-Specific LoRA modules while incorporating Contrastive Regularization to enhance intra-modality knowledge sharing and promote inter-modality knowledge differentiation. Our approach builds upon a large vision-language model (LVLM), keeping the pretrained model frozen while incrementally adapting new LoRA modules for each modality or task. Experiments on the incremental learning of biomedical images demonstrate that MSLoRA-CR outperforms both the state-of-the-art (SOTA) approach of training separate models for each modality and the general incremental learning method (incrementally fine-tuning LoRA). Specifically, MSLoRA-CR achieves a 1.88% improvement in overall performance compared to unconstrained incremental learning methods while maintaining computational efficiency. Our code is publicly available at https://github.com/VentusAislant/MSLoRA_CR.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-08T01:10:06Z</published>
+    <arxiv:comment>10 pages, 3 figures, submitted to ACM Multimedia 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Haojie Zhang</name>
+    </author>
+    <author>
+      <name>Yixiong Liang</name>
+    </author>
+    <author>
+      <name>Hulin Kuang</name>
+    </author>
+    <author>
+      <name>Lihui Cen</name>
+    </author>
+    <author>
+      <name>Zhe Qu</name>
+    </author>
+    <author>
+      <name>Yigang Cen</name>
+    </author>
+    <author>
+      <name>Min Zeng</name>
+    </author>
+    <author>
+      <name>Shichao Kan</name>
+    </author>
+    <arxiv:doi>10.1145/3746027.3754917</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3746027.3754917" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.17079v1</id>
+    <title>ACE-LoRA: Graph-Attentive Context Enhancement for Parameter-Efficient Adaptation of Medical Vision-Language Models</title>
+    <updated>2026-03-17T19:06:33Z</updated>
+    <link href="https://arxiv.org/abs/2603.17079v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.17079v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The success of CLIP-like vision-language models (VLMs) on natural images has inspired medical counterparts, yet existing approaches largely fall into two extremes: specialist models trained on single-domain data, which capture domain-specific details but generalize poorly, and generalist medical VLMs trained on multi-domain data, which retain broad semantics but dilute fine-grained diagnostic cues. Bridging this specialization-generalization trade-off remains challenging. To address this problem, we propose ACE-LoRA, a parameter-efficient adaptation framework for generalist medical VLMs that maintains robust zero-shot generalization. ACE-LoRA integrates Low-Rank Adaptation (LoRA) modules into frozen image-text encoders and introduces an Attention-based Context Enhancement Hypergraph Neural Network (ACE-HGNN) module that captures higher-order contextual interactions beyond pairwise similarity to enrich global representations with localized diagnostic cues, addressing a key limitation of prior Parameter-Efficient Fine-Tuning (PEFT) methods that overlook fine-grained details. To further enhance cross-modal alignment, we formulate a label-guided InfoNCE loss to effectively suppress false negatives between semantically related image-text pairs. Despite adding only 0.95M trainable parameters, ACE-LoRA consistently outperforms state-of-the-art medical VLMs and PEFT baselines across zero-shot classification, segmentation, and detection benchmarks spanning multiple domains. Our code is available at https://github.com/icon-lab/ACE-LoRA.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-17T19:06:33Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>M. Arda Aydın</name>
+    </author>
+    <author>
+      <name>Melih B. Yilmaz</name>
+    </author>
+    <author>
+      <name>Aykut Koç</name>
+    </author>
+    <author>
+      <name>Tolga Çukur</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2409.00884v1</id>
+    <title>A Novel Hybrid Parameter-Efficient Fine-Tuning Approach for Hippocampus Segmentation and Alzheimer's Disease Diagnosis</title>
+    <updated>2024-09-02T00:52:00Z</updated>
+    <link href="https://arxiv.org/abs/2409.00884v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2409.00884v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deep learning methods have significantly advanced medical image segmentation, yet their success hinges on large volumes of manually annotated data, which require specialized expertise for accurate labeling. Additionally, these methods often demand substantial computational resources, particularly for three-dimensional medical imaging tasks. Consequently, applying deep learning techniques for medical image segmentation with limited annotated data and computational resources remains a critical challenge. In this paper, we propose a novel parameter-efficient fine-tuning strategy, termed HyPS, which employs a hybrid parallel and serial architecture. HyPS updates a minimal subset of model parameters, thereby retaining the pre-trained model's original knowledge tructure while enhancing its ability to learn specific features relevant to downstream tasks. We apply this strategy to the state-of-the-art SwinUNETR model for medical image segmentation. Initially, the model is pre-trained on the BraTs2021 dataset, after which the HyPS method is employed to transfer it to three distinct hippocampus datasets.Extensive experiments demonstrate that HyPS outperforms baseline methods, especially in scenarios with limited training samples. Furthermore, based on the segmentation results, we calculated the hippocampal volumes of subjects from the ADNI dataset and combined these with metadata to classify disease types. In distinguishing Alzheimer's disease (AD) from cognitively normal (CN) individuals, as well as early mild cognitive impairment (EMCI) from late mild cognitive impairment (LMCI), HyPS achieved classification accuracies of 83.78% and 64.29%, respectively. These findings indicate that the HyPS method not only facilitates effective hippocampal segmentation using pre-trained models but also holds potential for aiding Alzheimer's disease detection. Our code is publicly available.</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-09-02T00:52:00Z</published>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Wangang Cheng</name>
+    </author>
+    <author>
+      <name>Guanghua He</name>
+    </author>
+    <author>
+      <name>Keli Hu</name>
+    </author>
+    <author>
+      <name>Mingyu Fang</name>
+    </author>
+    <author>
+      <name>Liang Dong</name>
+    </author>
+    <author>
+      <name>Zhong Li</name>
+    </author>
+    <author>
+      <name>Hancan Zhu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.12031v2</id>
+    <title>Clinical Camel: An Open Expert-Level Medical Language Model with Dialogue-Based Knowledge Encoding</title>
+    <updated>2023-08-17T17:19:02Z</updated>
+    <link href="https://arxiv.org/abs/2305.12031v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.12031v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present Clinical Camel, an open large language model (LLM) explicitly tailored for clinical research. Fine-tuned from LLaMA-2 using QLoRA, Clinical Camel achieves state-of-the-art performance across medical benchmarks among openly available medical LLMs. Leveraging efficient single-GPU training, Clinical Camel surpasses GPT-3.5 in five-shot evaluations on all assessed benchmarks, including 64.3% on the USMLE Sample Exam (compared to 58.5% for GPT-3.5), 77.9% on PubMedQA (compared to 60.2%), 60.7% on MedQA (compared to 53.6%), and 54.2% on MedMCQA (compared to 51.0%). In addition to these benchmarks, Clinical Camel demonstrates its broader capabilities, such as synthesizing plausible clinical notes. This work introduces dialogue-based knowledge encoding, a novel method to synthesize conversational data from dense medical texts. While benchmark results are encouraging, extensive and rigorous human evaluation across diverse clinical scenarios is imperative to ascertain safety before implementation. By openly sharing Clinical Camel, we hope to foster transparent and collaborative research, working towards the safe integration of LLMs within the healthcare domain. Significant challenges concerning reliability, bias, and the potential for outdated knowledge persist. Nonetheless, the transparency provided by an open approach reinforces the scientific rigor essential for future clinical applications.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-19T23:07:09Z</published>
+    <arxiv:comment>for model weights, see https://huggingface.co/wanglab/</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Augustin Toma</name>
+    </author>
+    <author>
+      <name>Patrick R. Lawler</name>
+    </author>
+    <author>
+      <name>Jimmy Ba</name>
+    </author>
+    <author>
+      <name>Rahul G. Krishnan</name>
+    </author>
+    <author>
+      <name>Barry B. Rubin</name>
+    </author>
+    <author>
+      <name>Bo Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2602.15874v1</id>
+    <title>P-RAG: Prompt-Enhanced Parametric RAG with LoRA and Selective CoT for Biomedical and Multi-Hop QA</title>
+    <updated>2026-02-02T03:42:45Z</updated>
+    <link href="https://arxiv.org/abs/2602.15874v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2602.15874v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) demonstrate remarkable capabilities but remain limited by their reliance on static training data. Retrieval-Augmented Generation (RAG) addresses this constraint by retrieving external knowledge during inference, though it still depends heavily on knowledge base quality. To explore potential improvements, we evaluated three RAG variants-Standard RAG, DA-RAG, and our proposed Prompt-Enhanced Parametric RAG (P-RAG), a hybrid architecture that integrates parametric knowledge within the LLM and retrieved evidence, guided by Chain-of-Thought (CoT) prompting and Low-Rank Adaptation (LoRA) fine-tuning-on both general and biomedical datasets. Using LLaMA-3.2-1B-Instruct fine-tuned via LoRA, we evaluate on PubMedQA and 2WikiMultihopQA. P-RAG outperforms Standard RAG on PubMedQA by 10.47 percentage points in F1 (93.33% vs. 82.86%; 12.64% relative). On 2WikiMultihopQA, P-RAG nearly doubles the overall score vs. Standard RAG (33.44% vs. 17.83%) and achieves 44.03% on the Compare subset (with 42.74% Bridge, 21.84% Inference, 8.60% Compose). CoT prompting substantially improves multi-hop reasoning but yields mixed results for simpler, single-hop queries. These findings underscore P-RAG's potential for accurate, scalable, and contextually adaptive biomedical question answering. Our contributions include: (1) LoRA-based fine-tuning of LLaMA-3.2-1B-Instruct for biomedical QA, (2) introduction of P-RAG with Chain-of-Thought prompting, and (3) state-of-the-art results on PubMedQA and 2WikiMultihopQA.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-02T03:42:45Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Proceedings of International Conference on Computing and Data Science Symposium: Application of Machine Learning in Engineering, 2025</arxiv:journal_ref>
+    <author>
+      <name>Xingda Lyu</name>
+    </author>
+    <author>
+      <name>Gongfu Lyu</name>
+    </author>
+    <author>
+      <name>Zitai Yan</name>
+    </author>
+    <author>
+      <name>Yuxin Jiang</name>
+    </author>
+    <arxiv:doi>10.54254/2755-2721/2025.AST28253</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.54254/2755-2721/2025.AST28253" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.13506v2</id>
+    <title>Parameter Efficient Fine Tuning: A Comprehensive Analysis Across Applications</title>
+    <updated>2024-04-23T21:28:26Z</updated>
+    <link href="https://arxiv.org/abs/2404.13506v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.13506v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rise of deep learning has marked significant progress in fields such as computer vision, natural language processing, and medical imaging, primarily through the adaptation of pre-trained models for specific tasks. Traditional fine-tuning methods, involving adjustments to all parameters, face challenges due to high computational and memory demands. This has led to the development of Parameter Efficient Fine-Tuning (PEFT) techniques, which selectively update parameters to balance computational efficiency with performance. This review examines PEFT approaches, offering a detailed comparison of various strategies highlighting applications across different domains, including text generation, medical imaging, protein modeling, and speech synthesis. By assessing the effectiveness of PEFT methods in reducing computational load, speeding up training, and lowering memory usage, this paper contributes to making deep learning more accessible and adaptable, facilitating its wider application and encouraging innovation in model optimization. Ultimately, the paper aims to contribute towards insights into PEFT's evolving landscape, guiding researchers and practitioners in overcoming the limitations of conventional fine-tuning approaches.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-21T02:26:15Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Charith Chandra Sai Balne</name>
+    </author>
+    <author>
+      <name>Sreyoshi Bhaduri</name>
+    </author>
+    <author>
+      <name>Tamoghna Roy</name>
+    </author>
+    <author>
+      <name>Vinija Jain</name>
+    </author>
+    <author>
+      <name>Aman Chadha</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.01314v1</id>
+    <title>Can Smaller LLMs do better? Unlocking Cross-Domain Potential through Parameter-Efficient Fine-Tuning for Text Summarization</title>
+    <updated>2025-09-01T09:58:52Z</updated>
+    <link href="https://arxiv.org/abs/2509.01314v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.01314v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs), being generic task solvers, are versatile. However, despite the vast amount of data they are trained on, there are speculations about their adaptation capabilities to a new domain. Additionally, the simple fine-tuning of the model to incorporate knowledge of a new domain is computationally expensive and time-consuming. This becomes more challenging when the domain in question is also low-resource, and labeled data is unavailable. We leverage parameter-efficient fine-tuning techniques (PEFTs) on high-resource datasets to address these challenges to improve performance on unseen low-resource domains. Throughout our experiments, we evaluate whether intrinsic linguistic commonalities between datasets can be leveraged for efficient domain adaptation. We benchmark six PEFTs with \texttt{Llama-3-8B-Instruct} on 14 training datasets from the Scientific, Medical, Legal, and News domains for a Text Summarization task. Our experiments show that for low-resource domains, inference using Within-Domain Adapters can achieve better performance than Few-Shot as well as a much larger \texttt{Llama-3-70B-Instruct}. Lastly, in the absence of Within-Domain Adapters, we explore the concept of using Cross-Domain Adapters as well as the strategic combinations of adapters to leverage intrinsic language similarities across domains, facilitating better adaptability and performance in low-resource settings.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-01T09:58:52Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Anum Afzal</name>
+    </author>
+    <author>
+      <name>Mehul Kumawat</name>
+    </author>
+    <author>
+      <name>Florian Matthes</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.01164v2</id>
+    <title>Med-LEGO: Editing and Adapting toward Generalist Medical Image Diagnosis</title>
+    <updated>2025-06-27T01:51:38Z</updated>
+    <link href="https://arxiv.org/abs/2503.01164v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.01164v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The adoption of visual foundation models has become a common practice in computer-aided diagnosis (CAD). While these foundation models provide a viable solution for creating generalist medical AI, privacy concerns make it difficult to pre-train or continuously update such models across multiple domains and datasets, leading many studies to focus on specialist models. To address this challenge, we propose Med-LEGO, a training-free framework that enables the seamless integration or updating of a generalist CAD model by combining multiple specialist models, similar to assembling LEGO bricks. Med-LEGO enhances LoRA (low-rank adaptation) by incorporating singular value decomposition (SVD) to efficiently capture the domain expertise of each specialist model with minimal additional parameters. By combining these adapted weights through simple operations, Med-LEGO allows for the easy integration or modification of specific diagnostic capabilities without the need for original data or retraining. Finally, the combined model can be further adapted to new diagnostic tasks, making it a versatile generalist model. Our extensive experiments demonstrate that Med-LEGO outperforms existing methods in both cross-domain and in-domain medical tasks while using only 0.18% of full model parameters. These merged models show better convergence and generalization to new tasks, providing an effective path toward generalist medical AI.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-03T04:27:11Z</published>
+    <arxiv:comment>Medical Image Computing and Computer Assisted Intervention (MICCAI) 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yitao Zhu</name>
+    </author>
+    <author>
+      <name>Yuan Yin</name>
+    </author>
+    <author>
+      <name>Jiaming Li</name>
+    </author>
+    <author>
+      <name>Mengjie Xu</name>
+    </author>
+    <author>
+      <name>Zihao Zhao</name>
+    </author>
+    <author>
+      <name>Honglin Xiong</name>
+    </author>
+    <author>
+      <name>Sheng Wang</name>
+    </author>
+    <author>
+      <name>Qian Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2408.15011v2</id>
+    <title>Pre-training Everywhere: Parameter-Efficient Fine-Tuning for Medical Image Analysis via Target Parameter Pre-training</title>
+    <updated>2025-06-05T13:19:43Z</updated>
+    <link href="https://arxiv.org/abs/2408.15011v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2408.15011v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Parameter-efficient fine-tuning (PEFT) techniques have emerged to address overfitting and high computational costs associated with fully fine-tuning in self-supervised learning. Mainstream PEFT methods add a few trainable parameters while keeping the pre-trained backbone parameters fixed. These methods achieve comparative, and often superior, performance to fully fine-tuning, demonstrating the powerful representation ability of the pre-trained backbone. Despite this success, these methods typically ignore the initialization of the new parameters, often relying solely on random initialization. We argue that if pre-training is significantly beneficial, it should be applied to all parameters requiring representational capacity. Motivated by this, we propose Target Parameter Pre-training (TPP), a simple yet effective fine-tuning framework. TPP pre-trains target parameters, i.e., the new parameters introduced during fine-tuning, in an additional stage before PEFT. During this stage, the pre-trained backbone parameters are frozen, and only the new parameters are trainable. A defined pretext task encourages the new parameters to learn specific representations of downstream data. Subsequently, when PEFT is employed, the pre-trained new parameters are loaded to enhance fine-tuning efficiency. The proposed TPP framework is versatile, allowing integration with various pre-trained backbones, pretext tasks, and PEFT methods. We evaluated the fine-tuning performance of our method on seven public datasets, covering four modalities and two task types. The results demonstrate that TPP can be easily integrated into existing PEFT methods, significantly improving performance.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-08-27T12:48:46Z</published>
+    <arxiv:comment>14 pages, 4 figures, 11 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Xingliang Lei</name>
+    </author>
+    <author>
+      <name>Yiwen Ye</name>
+    </author>
+    <author>
+      <name>Zhisong Wang</name>
+    </author>
+    <author>
+      <name>Ziyang Chen</name>
+    </author>
+    <author>
+      <name>Minglei Shu</name>
+    </author>
+    <author>
+      <name>Weidong Cai</name>
+    </author>
+    <author>
+      <name>Yanning Zhang</name>
+    </author>
+    <author>
+      <name>Yong Xia</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.19299v3</id>
+    <title>The Impact of LoRA Adapters on LLMs for Clinical Text Classification Under Computational and Data Constraints</title>
+    <updated>2025-07-28T12:20:24Z</updated>
+    <link href="https://arxiv.org/abs/2407.19299v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.19299v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Fine-tuning Large Language Models (LLMs) for clinical Natural Language Processing (NLP) poses significant challenges due to domain gap, limited data, and stringent hardware constraints. In this study, we evaluate four adapter techniques-Adapter, Lightweight, TinyAttention, and Gated Residual Network (GRN) - equivalent to Low-Rank Adaptation (LoRA), for clinical note classification under real-world, resource-constrained conditions. All experiments were conducted on a single NVIDIA Quadro P620 GPU (2 GB VRAM, 512 CUDA cores, 1.386 TFLOPS FP32), limiting batch sizes to &lt;8 sequences and maximum sequence length to 256 tokens. Our clinical corpus comprises only 580 000 tokens, several orders of magnitude smaller than standard LLM pre-training datasets. We fine-tuned three biomedical pre-trained LLMs (CamemBERT-bio, AliBERT, DrBERT) and two lightweight Transformer models trained from scratch. Results show that 1) adapter structures provide no consistent gains when fine-tuning biomedical LLMs under these constraints, and 2) simpler Transformers, with minimal parameter counts and training times under six hours, outperform adapter-augmented LLMs, which required over 1000 GPU-hours. Among adapters, GRN achieved the best metrics (accuracy, precision, recall, F1 = 0.88). These findings demonstrate that, in low-resource clinical settings with limited data and compute, lightweight Transformers trained from scratch offer a more practical and efficient solution than large LLMs, while GRN remains a viable adapter choice when minimal adaptation is needed.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="eess.SP" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-27T16:48:03Z</published>
+    <arxiv:comment>Accepted for publication in the IEEE Access</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Thanh-Dung Le</name>
+    </author>
+    <author>
+      <name>Ti Ti Nguyen</name>
+    </author>
+    <author>
+      <name>Vu Nguyen Ha</name>
+    </author>
+    <author>
+      <name>Symeon Chatzinotas</name>
+    </author>
+    <author>
+      <name>Philippe Jouvet</name>
+    </author>
+    <author>
+      <name>Rita Noumeir</name>
+    </author>
+    <arxiv:doi>10.1109/ACCESS.2025.3582037</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1109/ACCESS.2025.3582037" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.29375v1</id>
+    <title>TriageRA-CCF: Source-Side Clinical Confidence and Coverage Signals for Adaptive Rank Budgeting in Medical LLMs</title>
+    <updated>2026-06-28T12:52:07Z</updated>
+    <link href="https://arxiv.org/abs/2606.29375v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.29375v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical large language models are commonly adapted with a fixed low-rank budget, even though medical questions differ substantially in confidence, clinical coverage, and cross-domain difficulty. We study adaptive rank budgeting for parameter-efficient medical question answering: for each question, the adapter decides whether to activate a small, medium, or large subset of LoRA rank channels. The central challenge is that a naive adaptive budget router can collapse to unstable choices or spend capacity without improving shifted benchmarks. We propose TriageRA-CCF, a source-side teacher for adaptive rank-budgeted LoRA. It combines three signals computed only from source training data: base-model answer confidence, metadata-cell clinical coverage, and a counterfactual close-miss proxy. These signals supervise a straight-through budget router over active ranks {2,4,8}, together with budget-cost, entropy, and rank-balance regularization. Under a matched CMB-source training protocol, TriageRA-CCF achieves the best average accuracy among LoRA, DoRA, and MoELoRA baselines on both Qwen3-8B and Llama3.1-8B. The gains are modest and non-uniform across benchmarks: +0.21 average points over the strongest external baseline on Qwen3-8B and +0.16 on Llama3.1-8B. Component ablations show that confidence, coverage, and counterfactual signals all provide useful budget supervision, but their combination is not monotonically best on every backbone.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-28T12:52:07Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Shucan Ji</name>
+    </author>
+    <author>
+      <name>Yining Huang</name>
+    </author>
+    <author>
+      <name>Hongliang Guo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.19739v1</id>
+    <title>Comparative Analysis of LoRA-Adapted Embedding Models for Clinical Cardiology Text Representation</title>
+    <updated>2025-11-24T21:57:09Z</updated>
+    <link href="https://arxiv.org/abs/2511.19739v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.19739v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Domain-specific text embeddings are critical for clinical natural language processing, yet systematic comparisons across model architectures remain limited. This study evaluates ten transformer-based embedding models adapted for cardiology through Low-Rank Adaptation (LoRA) fine-tuning on 106,535 cardiology text pairs derived from authoritative medical textbooks. Results demonstrate that encoder-only architectures, particularly BioLinkBERT, achieve superior domain-specific performance (separation score: 0.510) compared to larger decoder-based models, while requiring significantly fewer computational resources. The findings challenge the assumption that larger language models necessarily produce better domain-specific embeddings and provide practical guidance for clinical NLP system development. All models, training code, and evaluation datasets are publicly available to support reproducible research in medical informatics.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-24T21:57:09Z</published>
+    <arxiv:comment>25 pages, 13 figures, 5 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Richard J. Young</name>
+    </author>
+    <author>
+      <name>Alice M. Matthews</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.16647v1</id>
+    <title>Point, Detect, Count: Multi-Task Medical Image Understanding with Instruction-Tuned Vision-Language Models</title>
+    <updated>2025-05-22T13:18:44Z</updated>
+    <link href="https://arxiv.org/abs/2505.16647v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.16647v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We investigate fine-tuning Vision-Language Models (VLMs) for multi-task medical image understanding, focusing on detection, localization, and counting of findings in medical images. Our objective is to evaluate whether instruction-tuned VLMs can simultaneously improve these tasks, with the goal of enhancing diagnostic accuracy and efficiency. Using MedMultiPoints, a multimodal dataset with annotations from endoscopy (polyps and instruments) and microscopy (sperm cells), we reformulate each task into instruction-based prompts suitable for vision-language reasoning. We fine-tune Qwen2.5-VL-7B-Instruct using Low-Rank Adaptation (LoRA) across multiple task combinations. Results show that multi-task training improves robustness and accuracy. For example, it reduces the Count Mean Absolute Error (MAE) and increases Matching Accuracy in the Counting + Pointing task. However, trade-offs emerge, such as more zero-case point predictions, indicating reduced reliability in edge cases despite overall performance gains. Our study highlights the potential of adapting general-purpose VLMs to specialized medical tasks via prompt-driven fine-tuning. This approach mirrors clinical workflows, where radiologists simultaneously localize, count, and describe findings - demonstrating how VLMs can learn composite diagnostic reasoning patterns. The model produces interpretable, structured outputs, offering a promising step toward explainable and versatile medical AI. Code, model weights, and scripts will be released for reproducibility at https://github.com/simula/PointDetectCount.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-22T13:18:44Z</published>
+    <arxiv:comment>Accepted as a full paper at the 38th IEEE International Symposium on Computer-Based Medical Systems (CBMS) 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Sushant Gautam</name>
+    </author>
+    <author>
+      <name>Michael A. Riegler</name>
+    </author>
+    <author>
+      <name>Pål Halvorsen</name>
+    </author>
+    <arxiv:doi>10.1109/CBMS65348.2025.00090</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1109/CBMS65348.2025.00090" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.00421v1</id>
+    <title>MedRECT: A Medical Reasoning Benchmark for Error Correction in Clinical Texts</title>
+    <updated>2025-11-01T06:19:34Z</updated>
+    <link href="https://arxiv.org/abs/2511.00421v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.00421v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) show increasing promise in medical applications, but their ability to detect and correct errors in clinical texts -- a prerequisite for safe deployment -- remains under-evaluated, particularly beyond English. We introduce MedRECT, a cross-lingual benchmark (Japanese/English) that formulates medical error handling as three subtasks: error detection, error localization (sentence extraction), and error correction. MedRECT is built with a scalable, automated pipeline from the Japanese Medical Licensing Examinations (JMLE) and a curated English counterpart, yielding MedRECT-ja (663 texts) and MedRECT-en (458 texts) with comparable error/no-error balance. We evaluate 9 contemporary LLMs spanning proprietary, open-weight, and reasoning families. Key findings: (i) reasoning models substantially outperform standard architectures, with up to 13.5% relative improvement in error detection and 51.0% in sentence extraction; (ii) cross-lingual evaluation reveals 5-10% performance gaps from English to Japanese, with smaller disparities for reasoning models; (iii) targeted LoRA fine-tuning yields asymmetric improvements in error correction performance (Japanese: +0.078, English: +0.168) while preserving reasoning capabilities; and (iv) our fine-tuned model exceeds human expert performance on structured medical error correction tasks. To our knowledge, MedRECT is the first comprehensive cross-lingual benchmark for medical error correction, providing a reproducible framework and resources for developing safer medical LLMs across languages.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-01T06:19:34Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Naoto Iwase</name>
+    </author>
+    <author>
+      <name>Hiroki Okuyama</name>
+    </author>
+    <author>
+      <name>Junichiro Iwasawa</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.04655v2</id>
+    <title>FT-MDT: Extracting Decision Trees from Medical Texts via a Novel Low-rank Adaptation Method</title>
+    <updated>2025-10-29T03:11:50Z</updated>
+    <link href="https://arxiv.org/abs/2510.04655v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.04655v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Knowledge of the medical decision process, which can be modeled as medical decision trees (MDTs), is critical to building clinical decision support systems. However, current MDT construction methods rely heavily on time-consuming and laborious manual annotation. To address this challenge, we propose PI-LoRA (Path-Integrated LoRA), a novel low-rank adaptation method for automatically extracting MDTs from clinical guidelines and textbooks. We integrate gradient path information to capture synergistic effects between different modules, enabling more effective and reliable rank allocation. This framework ensures that the most critical modules receive appropriate rank allocations while less important ones are pruned, resulting in a more efficient and accurate model for extracting medical decision trees from clinical texts. Extensive experiments on medical guideline datasets demonstrate that our PI-LoRA method significantly outperforms existing parameter-efficient fine-tuning approaches for the Text2MDT task, achieving better accuracy with substantially reduced model complexity. The proposed method achieves state-of-the-art results while maintaining a lightweight architecture, making it particularly suitable for clinical decision support systems where computational resources may be limited.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-06T09:59:55Z</published>
+    <arxiv:comment>Accepted by EMNLP-2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yuheng Li</name>
+    </author>
+    <author>
+      <name>Jiechao Gao</name>
+    </author>
+    <author>
+      <name>Wei Han</name>
+    </author>
+    <author>
+      <name>Wenwen Ouyang</name>
+    </author>
+    <author>
+      <name>Wei Zhu</name>
+    </author>
+    <author>
+      <name>Hui Yi Leong</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2607.05625v1</id>
+    <title>Cross-Contextual Vision-Language Adaptation with LoRA for Personalized Severe Adverse Event Detection in Clinical Wound Monitoring</title>
+    <updated>2026-07-06T20:32:30Z</updated>
+    <link href="https://arxiv.org/abs/2607.05625v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2607.05625v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Wound monitoring is a critical yet underserved clinical challenge, where timely identification of severe adverse events (SAEs) such as infection, tissue deterioration, and delayed healing can significantly impact patient outcomes. While vision-language models (VLMs) show strong multimodal reasoning, they often lack domain-specific grounding to integrate wound imagery with heterogeneous clinical information, and provide limited mechanisms for detecting cases that diverge from the training distribution. We present a multimodal framework for automated wound monitoring and SAE detection. Our approach leverages paired clinical notes and wound descriptions capturing visual characteristics such as appearance, surrounding skin condition, color changes, and signs of inflammation or healing progression, encoded through a dual-stream Low-Rank Adaptation (LoRA) framework built on a frozen BiomedCLIP backbone. We introduce a cross-contextual LoRA fusion mechanism enabling information exchange between clinical semantics and visual wound descriptors, producing context-aware multimodal representations without full model fine-tuning. To identify personalized SAEs, we propose a wound-specific out-of-distribution (OOD) detection framework combining semantic matching, visual typicality, caption-text alignment, and caption-visual alignment into a unified SAE (OOD) score. To capture healing dynamics, we incorporate covariate consistency and temporal drift penalties that leverage changes in wound characteristics across visits. Experiments on a longitudinal wound dataset collected through clinical visits show promising performance on both wound healing assessment and SAE detection, highlighting the potential of semantically enriched, temporally aware vision-language systems for clinical wound monitoring and early risk identification.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-07-06T20:32:30Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Aditi Naiknaware</name>
+    </author>
+    <author>
+      <name>Jian Sun</name>
+    </author>
+    <author>
+      <name>Aminreza Khandan</name>
+    </author>
+    <author>
+      <name>Shengyang Huang</name>
+    </author>
+    <author>
+      <name>Sean Dow</name>
+    </author>
+    <author>
+      <name>Bijan Najafi</name>
+    </author>
+    <author>
+      <name>Salimeh Sekeh</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.00148v1</id>
+    <title>Mechanistically Guided LoRA Improves Paraphrase Consistency in Medical Vision-Language Models</title>
+    <updated>2026-02-24T23:30:50Z</updated>
+    <link href="https://arxiv.org/abs/2603.00148v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.00148v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical Vision-Language Models can give different yes or no answers to rephrasings of the same clinical question. We study this in MedGemma-4B using PSF-Med Sadanandan and Behzadan (2025), which provides paraphrase pairs for systematic consistency evaluation on medical VQA. On MIMIC-CXR binary questions (n = 158), the baseline flip rate is 14.6% and mean margin difference is 1.63 logits. We validate that Gemma Scope 2 Sparse Autoencoders (SAEs) transfer to MedGemma activations, achieving R2 ~= 0.997 on both medical and general text (n = 100 prompts each, p &lt; 0.001 for exceeding a 0.95 threshold). We then fine-tune Low-Rank Adaptation (LoRA) adapters with a combined loss that balances paraphrase consistency with answer accuracy. This combined approach prevents mode collapse that occurs with pure consistency training while reducing flip rate from 14.6% to 4.4% (p = 0.002, two-proportion z-test) and margin difference from 1.63 to 0.33 (79.5% reduction). Accuracy remains stable at 84.2% baseline versus 82.3% after training (-1.9pp, not significant). On PadChest Balanced (n = 250), flip rate drops from 13.6% to 7.8%, mean margin difference drops from 1.08 to 0.35 (67.9% reduction), and accuracy increases from 66.4% to 69.4%. A layer-range ablation shows that early layers reduce margin differences more than mechanistically selected middle layers.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-02-24T23:30:50Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Binesh Sadanandan</name>
+    </author>
+    <author>
+      <name>Vahid Behzadan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.10949v2</id>
+    <title>MMedExpert-R1: Strengthening Multimodal Medical Reasoning via Domain-Specific Adaptation and Clinical Guideline Reinforcement</title>
+    <updated>2026-01-19T02:44:41Z</updated>
+    <link href="https://arxiv.org/abs/2601.10949v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.10949v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical Vision-Language Models (MedVLMs) excel at perception tasks but struggle with complex clinical reasoning required in real-world scenarios. While reinforcement learning (RL) has been explored to enhance reasoning capabilities, existing approaches face critical mismatches: the scarcity of deep reasoning data, cold-start limits multi-specialty alignment, and standard RL algorithms fail to model clinical reasoning diversity. We propose MMedExpert-R1, a novel reasoning MedVLM that addresses these challenges through domain-specific adaptation and clinical guideline reinforcement. We construct MMedExpert, a high-quality dataset of 10K samples across four specialties with step-by-step reasoning traces. Our Domain-Specific Adaptation (DSA) creates specialty-specific LoRA modules to provide diverse initialization, while Guideline-Based Advantages (GBA) explicitly models different clinical reasoning perspectives to align with real-world diagnostic strategies. Conflict-Aware Capability Integration then merges these specialized experts into a unified agent, ensuring robust multi-specialty alignment. Comprehensive experiments demonstrate state-of-the-art performance, with our 7B model achieving 27.50 on MedXpert-MM and 83.03 on OmniMedVQA, establishing a robust foundation for reliable multimodal medical reasoning systems.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-16T02:32:07Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Meidan Ding</name>
+    </author>
+    <author>
+      <name>Jipeng Zhang</name>
+    </author>
+    <author>
+      <name>Wenxuan Wang</name>
+    </author>
+    <author>
+      <name>Haiqin Zhong</name>
+    </author>
+    <author>
+      <name>Xiaoling Luo</name>
+    </author>
+    <author>
+      <name>Wenting Chen</name>
+    </author>
+    <author>
+      <name>Linlin Shen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.01841v2</id>
+    <title>A GEN AI Framework for Medical Note Generation</title>
+    <updated>2025-09-24T17:00:37Z</updated>
+    <link href="https://arxiv.org/abs/2410.01841v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.01841v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The increasing administrative burden of medical documentation, particularly through Electronic Health Records (EHR), significantly reduces the time available for direct patient care and contributes to physician burnout. To address this issue, we propose MediNotes, an advanced generative AI framework designed to automate the creation of SOAP (Subjective, Objective, Assessment, Plan) notes from medical conversations. MediNotes integrates Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and Automatic Speech Recognition (ASR) to capture and process both text and voice inputs in real time or from recorded audio, generating structured and contextually accurate medical notes. The framework also incorporates advanced techniques like Quantized Low-Rank Adaptation (QLoRA) and Parameter-Efficient Fine-Tuning (PEFT) for efficient model fine-tuning in resource-constrained environments. Additionally, MediNotes offers a query-based retrieval system, allowing healthcare providers and patients to access relevant medical information quickly and accurately. Evaluations using the ACI-BENCH dataset demonstrate that MediNotes significantly improves the accuracy, efficiency, and usability of automated medical documentation, offering a robust solution to reduce the administrative burden on healthcare professionals while improving the quality of clinical workflows.</summary>
+    <category term="eess.AS" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SD" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-09-27T23:05:02Z</published>
+    <arxiv:comment>8 Figures, 7 page, IEEE standard research paper</arxiv:comment>
+    <arxiv:primary_category term="eess.AS"/>
+    <author>
+      <name>Hui Yi Leong</name>
+    </author>
+    <author>
+      <name>Yi Fan Gao</name>
+    </author>
+    <author>
+      <name>Shuai Ji</name>
+    </author>
+    <author>
+      <name>Bora Kalaycioglu</name>
+    </author>
+    <author>
+      <name>Uktu Pamuksuz</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.14100v1</id>
+    <title>Parameter-efficient Fine-tuning for improved Convolutional Baseline for Brain Tumor Segmentation in Sub-Saharan Africa Adult Glioma Dataset</title>
+    <updated>2024-12-18T17:48:32Z</updated>
+    <link href="https://arxiv.org/abs/2412.14100v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.14100v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Automating brain tumor segmentation using deep learning methods is an ongoing challenge in medical imaging. Multiple lingering issues exist including domain-shift and applications in low-resource settings which brings a unique set of challenges including scarcity of data. As a step towards solving these specific problems, we propose Convolutional adapter-inspired Parameter-efficient Fine-tuning (PEFT) of MedNeXt architecture. To validate our idea, we show our method performs comparable to full fine-tuning with the added benefit of reduced training compute using BraTS-2021 as pre-training dataset and BraTS-Africa as the fine-tuning dataset. BraTS-Africa consists of a small dataset (60 train / 35 validation) from the Sub-Saharan African population with marked shift in the MRI quality compared to BraTS-2021 (1251 train samples). We first show that models trained on BraTS-2021 dataset do not generalize well to BraTS-Africa as shown by 20% reduction in mean dice on BraTS-Africa validation samples. Then, we show that PEFT can leverage both the BraTS-2021 and BraTS-Africa dataset to obtain mean dice of 0.8 compared to 0.72 when trained only on BraTS-Africa. Finally, We show that PEFT (0.80 mean dice) results in comparable performance to full fine-tuning (0.77 mean dice) which may show PEFT to be better on average but the boxplots show that full finetuning results is much lesser variance in performance. Nevertheless, on disaggregation of the dice metrics, we find that the model has tendency to oversegment as shown by high specificity (0.99) compared to relatively low sensitivity(0.75). The source code is available at https://github.com/CAMERA-MRI/SPARK2024/tree/main/PEFT_MedNeXt</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-18T17:48:32Z</published>
+    <arxiv:comment>Accepted to "The International Brain Tumor Segmentation (BraTS) challenge organized at MICCAI 2024 conference"</arxiv:comment>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Bijay Adhikari</name>
+    </author>
+    <author>
+      <name>Pratibha Kulung</name>
+    </author>
+    <author>
+      <name>Jakesh Bohaju</name>
+    </author>
+    <author>
+      <name>Laxmi Kanta Poudel</name>
+    </author>
+    <author>
+      <name>Confidence Raymond</name>
+    </author>
+    <author>
+      <name>Dong Zhang</name>
+    </author>
+    <author>
+      <name>Udunna C Anazodo</name>
+    </author>
+    <author>
+      <name>Bishesh Khanal</name>
+    </author>
+    <author>
+      <name>Mahesh Shakya</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.20667v2</id>
+    <title>Advancing AI-Powered Medical Image Synthesis: Insights from MedVQA-GI Challenge Using CLIP, Fine-Tuned Stable Diffusion, and Dream-Booth + LoRA</title>
+    <updated>2025-08-10T09:07:55Z</updated>
+    <link href="https://arxiv.org/abs/2502.20667v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.20667v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The MEDVQA-GI challenge addresses the integration of AI-driven text-to-image generative models in medical diagnostics, aiming to enhance diagnostic capabilities through synthetic image generation. Existing methods primarily focus on static image analysis and lack the dynamic generation of medical imagery from textual descriptions. This study intends to partially close this gap by introducing a novel approach based on fine-tuned generative models to generate dynamic, scalable, and precise images from textual descriptions. Particularly, our system integrates fine-tuned Stable Diffusion and DreamBooth models, as well as Low-Rank Adaptation (LORA), to generate high-fidelity medical images. The problem is around two sub-tasks namely: image synthesis (IS) and optimal prompt production (OPG). The former creates medical images via verbal prompts, whereas the latter provides prompts that produce high-quality images in specified categories. The study emphasizes the limitations of traditional medical image generation methods, such as hand sketching, constrained datasets, static procedures, and generic models. Our evaluation measures showed that Stable Diffusion surpasses CLIP and DreamBooth + LORA in terms of producing high-quality, diversified images. Specifically, Stable Diffusion had the lowest Fréchet Inception Distance (FID) scores (0.099 for single center, 0.064 for multi-center, and 0.067 for combined), indicating higher image quality. Furthermore, it had the highest average Inception Score (2.327 across all datasets), indicating exceptional diversity and quality. This advances the field of AI-powered medical diagnosis. Future research will concentrate on model refining, dataset augmentation, and ethical considerations for efficiently implementing these advances into clinical practice</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-28T02:49:45Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <arxiv:journal_ref>Conference and Labs of the Evaluation Forum (CLEF) 2024</arxiv:journal_ref>
+    <author>
+      <name>Ojonugwa Oluwafemi Ejiga Peter</name>
+    </author>
+    <author>
+      <name>Md Mahmudur Rahman</name>
+    </author>
+    <author>
+      <name>Fahmi Khalifa</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.18873v3</id>
+    <title>Efficient Self-Supervised Adaptation for Medical Image Analysis</title>
+    <updated>2025-09-27T12:13:56Z</updated>
+    <link href="https://arxiv.org/abs/2503.18873v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.18873v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Self-supervised adaptation (SSA) improves foundation model transfer to medical domains but is computationally prohibitive. Although parameter efficient fine-tuning methods such as LoRA have been explored for supervised adaptation, their effectiveness for SSA remains unknown. In this work, we introduce efficient self-supervised adaptation (ESSA), a framework that applies parameter-efficient fine-tuning techniques to SSA with the aim of reducing computational cost and improving adaptation performance. Among the methods tested, Attention Projection Layer Adaptation (APLA) sets a new state-of-the-art, consistently surpassing full-parameter SSA and supervised fine-tuning across diverse medical tasks, while reducing GPU memory by up to 40.1% and increasing training throughput by 25.2%, all while maintaining inference efficiency.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-24T16:48:42Z</published>
+    <arxiv:comment>Accepted to ICCV CVAMD 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Moein Sorkhei</name>
+    </author>
+    <author>
+      <name>Emir Konuk</name>
+    </author>
+    <author>
+      <name>Jingyu Guo</name>
+    </author>
+    <author>
+      <name>Chanjuan Meng</name>
+    </author>
+    <author>
+      <name>Christos Matsoukas</name>
+    </author>
+    <author>
+      <name>Kevin Smith</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.14175v1</id>
+    <title>QU-NLP at ArchEHR-QA 2026: Two-Stage QLoRA Fine-Tuning of Qwen3-4B for Patient-Oriented Clinical Question Answering and Evidence Sentence Alignment</title>
+    <updated>2026-03-26T11:24:13Z</updated>
+    <link href="https://arxiv.org/abs/2604.14175v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.14175v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present a unified system addressing both Subtask 3 (answer generation) and Subtask 4 (evidence sentence alignment) of the ArchEHR-QA Shared Task. For Subtask 3, we apply two-stage Quantised Low-Rank Adaptation (QLoRA) to Qwen3-4B loaded in 4-bit NF4 quantisation: first on 30,000 samples from the emrQA-MedSQuAD corpus to establish clinical domain competence, then on the 20 annotated development cases to learn the task-specific output style. Our system achieves an overall score of 32.87 on the official test-2026 split (BLEU = 9.42, ROUGE-L = 27.04, SARI = 55.42, BERTScore = 43.00, AlignScore = 25.28, MEDCON = 37.04). For Subtask 4, we develop a weighted ensemble of three retrieval methods - BM25 with relative thresholding, TF-IDF cosine similarity, and a fine-tuned cross-encoder - to identify note sentences supporting a given gold answer, achieving a micro-F1 of 67.16 on the 100-case test set. Experiments reveal that both subtasks expose the same fundamental challenge: 20 annotated training cases are insufficient to distinguish relevant from irrelevant clinical sentences, pointing to data augmentation as the highest-leverage future direction.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-26T11:24:13Z</published>
+    <arxiv:comment>Accepted for publication at CL4Health 2026 workshop, LREC2026 conference</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mohammad AL-Smadi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.20792v1</id>
+    <title>DAC-LoRA: Dynamic Adversarial Curriculum for Efficient and Robust Few-Shot Adaptation</title>
+    <updated>2025-09-25T06:20:56Z</updated>
+    <link href="https://arxiv.org/abs/2509.20792v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.20792v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Vision-Language Models (VLMs) are foundational to critical applications like autonomous driving, medical diagnosis, and content moderation. While Parameter-Efficient Fine-Tuning (PEFT) methods like LoRA enable their efficient adaptation to specialized tasks, these models remain vulnerable to adversarial attacks that can compromise safety-critical decisions. CLIP, the backbone for numerous downstream VLMs, is a high-value target whose vulnerabilities can cascade across the multimodal AI ecosystem. We propose Dynamic Adversarial Curriculum DAC-LoRA, a novel framework that integrates adversarial training into PEFT. The core principle of our method i.e. an intelligent curriculum of progressively challenging attack, is general and can potentially be applied to any iterative attack method. Guided by the First-Order Stationary Condition (FOSC) and a TRADES-inspired loss, DAC-LoRA achieves substantial improvements in adversarial robustness without significantly compromising clean accuracy. Our work presents an effective, lightweight, and broadly applicable method to demonstrate that the DAC-LoRA framework can be easily integrated into a standard PEFT pipeline to significantly enhance robustness.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-25T06:20:56Z</published>
+    <arxiv:comment>Accepted at ICCV2025 Workshop on Safe and Trustworthy Multimodal AI Systems</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ved Umrajkar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.01612v3</id>
+    <title>RAG-BioQA: A Retrieval-Augmented Generation Framework for Long-Form Biomedical Question Answering</title>
+    <updated>2026-01-02T03:53:15Z</updated>
+    <link href="https://arxiv.org/abs/2510.01612v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.01612v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapidly growth of biomedical literature creates challenges acquiring specific medical information. Current biomedical question-answering systems primarily focus on short-form answers, failing to provide comprehensive explanations necessary for clinical decision-making. We present RAG-BioQA, a retrieval-augmented generation framework for long-form biomedical question answering. Our system integrates BioBERT embeddings with FAISS indexing for retrieval and a LoRA fine-tuned FLAN-T5 model for answer generation. We train on 181k QA pairs from PubMedQA, MedDialog, and MedQuAD, and evaluate on a held-out PubMedQA test set. We compare four retrieval strategies: dense retrieval (FAISS), BM25, ColBERT, and MonoT5. Our results show that domain-adapted dense retrieval outperforms zero-shot neural re-rankers, with the best configuration achieving 0.24 BLEU-1 and 0.29 ROUGE-1. Fine-tuning improves BERTScore by 81\% over the base model. We release our framework to support reproducible biomedical QA research.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-02T02:49:09Z</published>
+    <arxiv:comment>Submitted to ICAEI</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Lovely Yeswanth Panchumarthi</name>
+    </author>
+    <author>
+      <name>Sumalatha Saleti</name>
+    </author>
+    <author>
+      <name>Sai Prasad Gudari</name>
+    </author>
+    <author>
+      <name>Atharva Negi</name>
+    </author>
+    <author>
+      <name>Praveen Raj Budime</name>
+    </author>
+    <author>
+      <name>Harsit Upadhya</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.05505v1</id>
+    <title>Biomedical Literature Q&amp;A System Using Retrieval-Augmented Generation (RAG)</title>
+    <updated>2025-09-05T21:29:52Z</updated>
+    <link href="https://arxiv.org/abs/2509.05505v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.05505v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This work presents a Biomedical Literature Question Answering (Q&amp;A) system based on a Retrieval-Augmented Generation (RAG) architecture, designed to improve access to accurate, evidence-based medical information. Addressing the shortcomings of conventional health search engines and the lag in public access to biomedical research, the system integrates diverse sources, including PubMed articles, curated Q&amp;A datasets, and medical encyclopedias ,to retrieve relevant information and generate concise, context-aware responses. The retrieval pipeline uses MiniLM-based semantic embeddings and FAISS vector search, while answer generation is performed by a fine-tuned Mistral-7B-v0.3 language model optimized using QLoRA for efficient, low-resource training. The system supports both general medical queries and domain-specific tasks, with a focused evaluation on breast cancer literature demonstrating the value of domain-aligned retrieval. Empirical results, measured using BERTScore (F1), show substantial improvements in factual consistency and semantic relevance compared to baseline models. The findings underscore the potential of RAG-enhanced language models to bridge the gap between complex biomedical literature and accessible public health knowledge, paving the way for future work on multilingual adaptation, privacy-preserving inference, and personalized medical AI systems.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-05T21:29:52Z</published>
+    <arxiv:comment>10 pages, 6 figures, 3 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mansi Garg</name>
+    </author>
+    <author>
+      <name>Lee-Chi Wang</name>
+    </author>
+    <author>
+      <name>Bhavesh Ghanchi</name>
+    </author>
+    <author>
+      <name>Sanjana Dumpala</name>
+    </author>
+    <author>
+      <name>Shreyash Kakde</name>
+    </author>
+    <author>
+      <name>Yen Chih Chen</name>
+    </author>
+  </entry>
+</feed>

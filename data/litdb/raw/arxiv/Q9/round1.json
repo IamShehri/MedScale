@@ -1,0 +1,1422 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/gKh+swK44/6jGbJ4MgKE4D+vIS0</id>
+  <title>arXiv Query: search_query=(all:SNOMED OR all:LOINC OR all:RxNorm OR all:UMLS) AND (all:"language model" OR all:"value set" OR all:grounding)&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-07-10T19:49:46Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=(all:SNOMED+OR+(all:LOINC+OR+(all:RxNorm+OR+all:UMLS)))+AND+(all:%22language+model%22+OR+(all:%22value+set%22+OR+all:grounding))&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>135</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2311.15106v1</id>
+    <title>Solving the Right Problem is Key for Translational NLP: A Case Study in UMLS Vocabulary Insertion</title>
+    <updated>2023-11-25T19:35:53Z</updated>
+    <link href="https://arxiv.org/abs/2311.15106v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2311.15106v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As the immense opportunities enabled by large language models become more apparent, NLP systems will be increasingly expected to excel in real-world settings. However, in many instances, powerful models alone will not yield translational NLP solutions, especially if the formulated problem is not well aligned with the real-world task. In this work, we study the case of UMLS vocabulary insertion, an important real-world task in which hundreds of thousands of new terms, referred to as atoms, are added to the UMLS, one of the most comprehensive open-source biomedical knowledge bases. Previous work aimed to develop an automated NLP system to make this time-consuming, costly, and error-prone task more efficient. Nevertheless, practical progress in this direction has been difficult to achieve due to a problem formulation and evaluation gap between research output and the real-world task. In order to address this gap, we introduce a new formulation for UMLS vocabulary insertion which mirrors the real-world task, datasets which faithfully represent it and several strong baselines we developed through re-purposing existing solutions. Additionally, we propose an effective rule-enhanced biomedical language model which enables important new model behavior, outperforms all strong baselines and provides measurable qualitative improvements to editors who carry out the UVI task. We hope this case study provides insight into the considerable importance of problem formulation for the success of translational NLP solutions.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-11-25T19:35:53Z</published>
+    <arxiv:comment>EMNLP 2023 Findings; Code is available at https://github.com/OSU-NLP-Group/UMLS-Vocabulary-Insertion</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Bernal Jimenez Gutierrez</name>
+    </author>
+    <author>
+      <name>Yuqing Mao</name>
+    </author>
+    <author>
+      <name>Vinh Nguyen</name>
+    </author>
+    <author>
+      <name>Kin Wah Fung</name>
+    </author>
+    <author>
+      <name>Yu Su</name>
+    </author>
+    <author>
+      <name>Olivier Bodenreider</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2204.12716v1</id>
+    <title>UBERT: A Novel Language Model for Synonymy Prediction at Scale in the UMLS Metathesaurus</title>
+    <updated>2022-04-27T06:03:24Z</updated>
+    <link href="https://arxiv.org/abs/2204.12716v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2204.12716v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The UMLS Metathesaurus integrates more than 200 biomedical source vocabularies. During the Metathesaurus construction process, synonymous terms are clustered into concepts by human editors, assisted by lexical similarity algorithms. This process is error-prone and time-consuming. Recently, a deep learning model (LexLM) has been developed for the UMLS Vocabulary Alignment (UVA) task. This work introduces UBERT, a BERT-based language model, pretrained on UMLS terms via a supervised Synonymy Prediction (SP) task replacing the original Next Sentence Prediction (NSP) task. The effectiveness of UBERT for UMLS Metathesaurus construction process is evaluated using the UMLS Vocabulary Alignment (UVA) task. We show that UBERT outperforms the LexLM, as well as biomedical BERT-based models. Key to the performance of UBERT are the synonymy prediction task specifically developed for UBERT, the tight alignment of training data to the UVA task, and the similarity of the models used for pretrained UBERT.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-04-27T06:03:24Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Thilini Wijesiriwardene</name>
+    </author>
+    <author>
+      <name>Vinh Nguyen</name>
+    </author>
+    <author>
+      <name>Goonmeet Bajaj</name>
+    </author>
+    <author>
+      <name>Hong Yung Yip</name>
+    </author>
+    <author>
+      <name>Vishesh Javangula</name>
+    </author>
+    <author>
+      <name>Yuqing Mao</name>
+    </author>
+    <author>
+      <name>Kin Wah Fung</name>
+    </author>
+    <author>
+      <name>Srinivasan Parthasarathy</name>
+    </author>
+    <author>
+      <name>Amit P. Sheth</name>
+    </author>
+    <author>
+      <name>Olivier Bodenreider</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2407.05480v1</id>
+    <title>Biomedical Nested NER with Large Language Model and UMLS Heuristics</title>
+    <updated>2024-07-07T19:37:40Z</updated>
+    <link href="https://arxiv.org/abs/2407.05480v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2407.05480v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In this paper, we present our system for the BioNNE English track, which aims to extract 8 types of biomedical nested named entities from biomedical text. We use a large language model (Mixtral 8x7B instruct) and ScispaCy NER model to identify entities in an article and build custom heuristics based on unified medical language system (UMLS) semantic types to categorize the entities. We discuss the results and limitations of our system and propose future improvements. Our system achieved an F1 score of 0.39 on the BioNNE validation set and 0.348 on the test set.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-07-07T19:37:40Z</published>
+    <arxiv:comment>Submitted to CEUR-WS for the BioNNE task of BioASQ Lab in Conference and Labs of the Evaluation Forum (CLEF) 2024 as a working note</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Wenxin Zhou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.16698v2</id>
+    <title>Hierarchical Retrieval with Out-Of-Vocabulary Queries: A Case Study on SNOMED CT</title>
+    <updated>2026-04-20T05:50:32Z</updated>
+    <link href="https://arxiv.org/abs/2511.16698v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.16698v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>SNOMED CT is a biomedical ontology with a hierarchical representation, modelling terminological concepts at a large scale. Knowledge retrieval in SNOMED CT is critical for its application but often proves challenging due to linguistic ambiguity, synonymy, polysemy, and so on. This problem is exacerbated when the queries are out-of-vocabulary (OOV), i.e., lacking any equivalent matches in the ontology. In this work, we focus on the problem of hierarchical concept retrieval from SNOMED CT with OOV queries, and propose an approach driven by utilising language model-based ontology embeddings, which represent hierarchical concepts in a hyperbolic space for enabling efficient subsumption inference between a textual query and an arbitrary concept. For evaluation, we construct three datasets where OOV queries are annotated against SNOMED CT concepts, testing the retrieval of the most specific subsumers and their less relevant ancestors. We find that our method outperforms the baselines, including SBERT, SapBERT, and two lexical matching methods. While evaluated against SNOMED CT, the approach is generalisable and can be extended to other ontologies. We release all the experiment codes and datasets at https://github.com/jonathondilworth/HR-OOV-SNOMED-CT.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-17T19:18:10Z</published>
+    <arxiv:comment>21 pages, 5 figures, 8 tables, submission to the Transactions on Graph Data and Knowledge (TGDK) journal</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jonathon Dilworth</name>
+    </author>
+    <author>
+      <name>Hui Yang</name>
+    </author>
+    <author>
+      <name>Jiaoyan Chen</name>
+    </author>
+    <author>
+      <name>Yongsheng Gao</name>
+    </author>
+    <author>
+      <name>Ernesto Jimenez-Ruiz</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.02778v2</id>
+    <title>Integrating UMLS Knowledge into Large Language Models for Medical Question Answering</title>
+    <updated>2023-10-13T12:10:01Z</updated>
+    <link href="https://arxiv.org/abs/2310.02778v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.02778v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have demonstrated powerful text generation capabilities, bringing unprecedented innovation to the healthcare field. While LLMs hold immense promise for applications in healthcare, applying them to real clinical scenarios presents significant challenges, as these models may generate content that deviates from established medical facts and even exhibit potential biases. In our research, we develop an augmented LLM framework based on the Unified Medical Language System (UMLS), aiming to better serve the healthcare community. We employ LLaMa2-13b-chat and ChatGPT-3.5 as our benchmark models, and conduct automatic evaluations using the ROUGE Score and BERTScore on 104 questions from the LiveQA test set. Additionally, we establish criteria for physician-evaluation based on four dimensions: Factuality, Completeness, Readability and Relevancy. ChatGPT-3.5 is used for physician evaluation with 20 questions on the LiveQA test set. Multiple resident physicians conducted blind reviews to evaluate the generated content, and the results indicate that this framework effectively enhances the factuality, completeness, and relevance of generated content. Our research demonstrates the effectiveness of using UMLS-augmented LLMs and highlights the potential application value of LLMs in in medical question-answering.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-04T12:50:26Z</published>
+    <arxiv:comment>12 pages, 3 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Rui Yang</name>
+    </author>
+    <author>
+      <name>Edison Marrese-Taylor</name>
+    </author>
+    <author>
+      <name>Yuhe Ke</name>
+    </author>
+    <author>
+      <name>Lechao Cheng</name>
+    </author>
+    <author>
+      <name>Qingyu Chen</name>
+    </author>
+    <author>
+      <name>Irene Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2510.16899v1</id>
+    <title>SNOMED CT-powered Knowledge Graphs for Structured Clinical Data and Diagnostic Reasoning</title>
+    <updated>2025-10-19T15:50:33Z</updated>
+    <link href="https://arxiv.org/abs/2510.16899v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2510.16899v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The effectiveness of artificial intelligence (AI) in healthcare is significantly hindered by unstructured clinical documentation, which results in noisy, inconsistent, and logically fragmented training data. To address this challenge, we present a knowledge-driven framework that integrates the standardized clinical terminology SNOMED CT with the Neo4j graph database to construct a structured medical knowledge graph. In this graph, clinical entities such as diseases, symptoms, and medications are represented as nodes, and semantic relationships such as ``caused by,'' ``treats,'' and ``belongs to'' are modeled as edges in Neo4j, with types mapped from formal SNOMED CT relationship concepts (e.g., \texttt{Causative agent}, \texttt{Indicated for}). This design enables multi-hop reasoning and ensures terminological consistency. By extracting and standardizing entity-relationship pairs from clinical texts, we generate structured, JSON-formatted datasets that embed explicit diagnostic pathways. These datasets are used to fine-tune large language models (LLMs), significantly improving the clinical logic consistency of their outputs. Experimental results demonstrate that our knowledge-guided approach enhances the validity and interpretability of AI-generated diagnostic reasoning, providing a scalable solution for building reliable AI-assisted clinical systems.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-10-19T15:50:33Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Dun Liu</name>
+    </author>
+    <author>
+      <name>Qin Pang</name>
+    </author>
+    <author>
+      <name>Guangai Liu</name>
+    </author>
+    <author>
+      <name>Hongyu Mou</name>
+    </author>
+    <author>
+      <name>Jipeng Fan</name>
+    </author>
+    <author>
+      <name>Yiming Miao</name>
+    </author>
+    <author>
+      <name>Pin-Han Ho</name>
+    </author>
+    <author>
+      <name>Limei Peng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2301.03980v1</id>
+    <title>Language Models sounds the Death Knell of Knowledge Graphs</title>
+    <updated>2023-01-10T14:20:15Z</updated>
+    <link href="https://arxiv.org/abs/2301.03980v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2301.03980v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Healthcare domain generates a lot of unstructured and semi-structured text. Natural Language processing (NLP) has been used extensively to process this data. Deep Learning based NLP especially Large Language Models (LLMs) such as BERT have found broad acceptance and are used extensively for many applications. A Language Model is a probability distribution over a word sequence. Self-supervised Learning on a large corpus of data automatically generates deep learning-based language models. BioBERT and Med-BERT are language models pre-trained for the healthcare domain. Healthcare uses typical NLP tasks such as question answering, information extraction, named entity recognition, and search to simplify and improve processes. However, to ensure robust application of the results, NLP practitioners need to normalize and standardize them. One of the main ways of achieving normalization and standardization is the use of Knowledge Graphs. A Knowledge Graph captures concepts and their relationships for a specific domain, but their creation is time-consuming and requires manual intervention from domain experts, which can prove expensive. SNOMED CT (Systematized Nomenclature of Medicine -- Clinical Terms), Unified Medical Language System (UMLS), and Gene Ontology (GO) are popular ontologies from the healthcare domain. SNOMED CT and UMLS capture concepts such as disease, symptoms and diagnosis and GO is the world's largest source of information on the functions of genes. Healthcare has been dealing with an explosion in information about different types of drugs, diseases, and procedures. This paper argues that using Knowledge Graphs is not the best solution for solving problems in this domain. We present experiments using LLMs for the healthcare domain to demonstrate that language models provide the same functionality as knowledge graphs, thereby making knowledge graphs redundant.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-01-10T14:20:15Z</published>
+    <arxiv:comment>5 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kunal Suri</name>
+    </author>
+    <author>
+      <name>Atul Singh</name>
+    </author>
+    <author>
+      <name>Prakhar Mishra</name>
+    </author>
+    <author>
+      <name>Swapna Sourav Rout</name>
+    </author>
+    <author>
+      <name>Rajesh Sabapathy</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2607.02853v1</id>
+    <title>Prior Bias in Vision Language Models on UML Diagram Interpretation</title>
+    <updated>2026-07-03T01:29:30Z</updated>
+    <link href="https://arxiv.org/abs/2607.02853v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2607.02853v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Vision Language Models (VLMs) are increasingly applied to software engineering artifacts, especially UML class diagrams whose meaning depends on visual notation. Yet, it is unclear whether VLMs actually read such diagrams or instead answer from pretrained priors about how classes typically relate. We introduce a controlled UML benchmark in which each prior-conforming diagram is paired with its prior-conflicting counterpart that (1) preserves the same class names and layout while (2) reverses only the relation arrow. We evaluate eight open-source VLMs from two model families, InternVL3.5 and Qwen3, alongside two closed-source frontier models GPT-5.4 and GPT-5.4 Mini. Across the eight open-source models, reversing the arrow reduces relation-direction accuracy by 33.48% on average, while GPT-5.4 Mini retains a 10% gap. In the harder three-class condition, accuracy drops sharply by 45.28% for open-source models, and even 18.62% for the GPT-5.4 family on average. Scaling provides only limited improvements and is family-dependent. Our benchmark presents a diagnostic prior-driven failure in diagram-grounded software understanding. Our artifact is available at https://anonymous.4open.science/r/UMLKnowledgeConflict-8461.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-07-03T01:29:30Z</published>
+    <arxiv:comment>16 pages, 14 figures, 2 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Zaiyu Cheng</name>
+    </author>
+    <author>
+      <name>Khai-Nguyen Nguyen</name>
+    </author>
+    <author>
+      <name>Antonio Mastropaolo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2307.11170v2</id>
+    <title>UMLS-KGI-BERT: Data-Centric Knowledge Integration in Transformers for Biomedical Entity Recognition</title>
+    <updated>2025-04-11T11:58:33Z</updated>
+    <link href="https://arxiv.org/abs/2307.11170v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2307.11170v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Pre-trained transformer language models (LMs) have in recent years become the dominant paradigm in applied NLP. These models have achieved state-of-the-art performance on tasks such as information extraction, question answering, sentiment analysis, document classification and many others. In the biomedical domain, significant progress has been made in adapting this paradigm to NLP tasks that require the integration of domain-specific knowledge as well as statistical modelling of language. In particular, research in this area has focused on the question of how best to construct LMs that take into account not only the patterns of token distribution in medical text, but also the wealth of structured information contained in terminology resources such as the UMLS. This work contributes a data-centric paradigm for enriching the language representations of biomedical transformer-encoder LMs by extracting text sequences from the UMLS. This allows for graph-based learning objectives to be combined with masked-language pre-training. Preliminary results from experiments in the extension of pre-trained LMs as well as training from scratch show that this framework improves downstream performance on multiple biomedical and clinical Named Entity Recognition (NER) tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-07-20T18:08:34Z</published>
+    <arxiv:comment>Addition of v2 experiments</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Aidan Mannion</name>
+    </author>
+    <author>
+      <name>Thierry Chevalier</name>
+    </author>
+    <author>
+      <name>Didier Schwab</name>
+    </author>
+    <author>
+      <name>Lorraine Geouriot</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.11634v1</id>
+    <title>Unlocking UML Class Diagram Understanding in Vision Language Models</title>
+    <updated>2026-05-12T06:57:47Z</updated>
+    <link href="https://arxiv.org/abs/2605.11634v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.11634v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Although Vision Language Models (VLMs) have seen tremendous progress across all kinds of use cases, they still fall behind in answering questions regard-ing diagrams compared to photos. Although progress has been made in the area of bar charts, line charts and other diagrams like that there is still few research concerned with other types of diagrams, e.g. in the computer science domain. Our work presents a benchmark for visual question answering based on UML class diagrams which is both challenging and manageable. We further construct a large-scale training dataset with 16.000 image-question-answer triples and show that a LoRA-based finetune easily outperforms Qwen 3.5 27B, which is a recent and well-performing VLM in many other benchmarks.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-12T06:57:47Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Artem Naboichenko</name>
+    </author>
+    <author>
+      <name>René Peinl</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2506.00788v1</id>
+    <title>Behavioral Augmentation of UML Class Diagrams: An Empirical Study of Large Language Models for Method Generation</title>
+    <updated>2025-06-01T02:33:40Z</updated>
+    <link href="https://arxiv.org/abs/2506.00788v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2506.00788v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Automating the enrichment of UML class diagrams with behavioral methods from natural language use cases is a significant challenge. This study evaluates nine large language models (LLMs) in augmenting a methodless UML diagram (21 classes, 17 relationships) using 21 structured waste-management use cases. A total of 90 diagrams (3,373 methods) were assessed across six metrics: method quantity, signature richness (visibility, names, parameters, return types), annotation completeness (linking to use cases/actions), structural fidelity, syntactic correctness (PlantUML compilation), and naming convergence (across models). All LLMs produced valid PlantUML diagrams adhering to UML conventions. Some models excelled in method coverage and annotation accuracy, while others showed richer parameterization but weaker traceability. These results demonstrate that LLMs can generate well-structured methods with consistent naming, advancing automated behavioral modeling. However, inconsistencies in annotations and signatures highlight the need for improved prompt engineering and model selection. The rapid generation of these methods supports Agile practices by enabling faster design iterations. Despite their capabilities, human oversight is essential to ensure accuracy, appropriateness, and semantic alignment. This positions LLMs as collaborative partners in software design. All experimental artifacts (\texttt{.puml}, \texttt{.png}, \texttt{.csv}) are publicly available for reproducibility.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-06-01T02:33:40Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Djaber Rouabhia</name>
+    </author>
+    <author>
+      <name>Ismail Hadjadj</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.05847v2</id>
+    <title>Schema-Grounded LLM Extraction for FHIR Patient Digital Twins</title>
+    <updated>2026-05-22T20:05:45Z</updated>
+    <link href="https://arxiv.org/abs/2601.05847v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.05847v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We revisit the problem of constructing interoperable patient digital twins from unstructured electronic health records (EHRs) and argue that the task is better cast not as a cascade of extraction modules but as constrained generation of a valid FHIR bundle. We introduce SG-LLM, a schema-grounded LLM extractor that (i) augments the prompt with candidate SNOMED-CT, RxNorm, and LOINC codes retrieved through a SapBERT index, (ii) decodes under a JSON Schema derived directly from FHIR R4 StructureDefinitions, and (iii) closes a validator-in-the-loop repair stage whose diagnostics are fed back as structured error messages. We argue that the twin's usefulness, not only span-level F1, is the right object of evaluation, and operationalize this with a clinical-utility experiment that measures the gap in 30-day readmission AUROC between classifiers trained on SG-LLM-generated FHIR bundles versus expert-curated ones. On MIMIC-IV and n2c2 2018 Track 2 benchmarks, SG-LLM matches or exceeds strong joint-extraction and vanilla-LLM baselines while producing substantially more valid bundles. Ablations isolate the contributions of retrieval, schema constraint, and the repair loop. All code, prompts, and schemas are released.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-09T15:20:11Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Rafael Brens</name>
+    </author>
+    <author>
+      <name>Yuqiao Meng</name>
+    </author>
+    <author>
+      <name>Luoxi Tang</name>
+    </author>
+    <author>
+      <name>Zhaohan Xi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2104.10344v1</id>
+    <title>Improving Biomedical Pretrained Language Models with Knowledge</title>
+    <updated>2021-04-21T03:57:26Z</updated>
+    <link href="https://arxiv.org/abs/2104.10344v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2104.10344v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Pretrained language models have shown success in many natural language processing tasks. Many works explore incorporating knowledge into language models. In the biomedical domain, experts have taken decades of effort on building large-scale knowledge bases. For example, the Unified Medical Language System (UMLS) contains millions of entities with their synonyms and defines hundreds of relations among entities. Leveraging this knowledge can benefit a variety of downstream tasks such as named entity recognition and relation extraction. To this end, we propose KeBioLM, a biomedical pretrained language model that explicitly leverages knowledge from the UMLS knowledge bases. Specifically, we extract entities from PubMed abstracts and link them to UMLS. We then train a knowledge-aware language model that firstly applies a text-only encoding layer to learn entity representation and applies a text-entity fusion encoding to aggregate entity representation. Besides, we add two training objectives as entity detection and entity linking. Experiments on the named entity recognition and relation extraction from the BLURB benchmark demonstrate the effectiveness of our approach. Further analysis on a collected probing dataset shows that our model has better ability to model medical knowledge.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-04-21T03:57:26Z</published>
+    <arxiv:comment>Accepted at BioNLP 2021</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zheng Yuan</name>
+    </author>
+    <author>
+      <name>Yijia Liu</name>
+    </author>
+    <author>
+      <name>Chuanqi Tan</name>
+    </author>
+    <author>
+      <name>Songfang Huang</name>
+    </author>
+    <author>
+      <name>Fei Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2311.06858v1</id>
+    <title>Can Large Language Models Augment a Biomedical Ontology with missing Concepts and Relations?</title>
+    <updated>2023-11-12T14:20:55Z</updated>
+    <link href="https://arxiv.org/abs/2311.06858v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2311.06858v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Ontologies play a crucial role in organizing and representing knowledge. However, even current ontologies do not encompass all relevant concepts and relationships. Here, we explore the potential of large language models (LLM) to expand an existing ontology in a semi-automated fashion. We demonstrate our approach on the biomedical ontology SNOMED-CT utilizing semantic relation types from the widely used UMLS semantic network. We propose a method that uses conversational interactions with an LLM to analyze clinical practice guidelines (CPGs) and detect the relationships among the new medical concepts that are not present in SNOMED-CT. Our initial experimentation with the conversational prompts yielded promising preliminary results given a manually generated gold standard, directing our future potential improvements.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-11-12T14:20:55Z</published>
+    <arxiv:comment>Presented as a short paper at the Knowledge Representation for Healthcare 2023 workshop</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Antonio Zaitoun</name>
+    </author>
+    <author>
+      <name>Tomer Sagi</name>
+    </author>
+    <author>
+      <name>Szymon Wilk</name>
+    </author>
+    <author>
+      <name>Mor Peleg</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.11376v2</id>
+    <title>From Image to UML: First Results of Image Based UML Diagram Generation Using LLMs</title>
+    <updated>2024-06-18T08:34:43Z</updated>
+    <link href="https://arxiv.org/abs/2404.11376v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.11376v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In software engineering processes, systems are first specified using a modeling language such as UML. These initial designs are often collaboratively created, many times in meetings where different domain experts use whiteboards, paper or other types of quick supports to create drawings and blueprints that then will need to be formalized. These proper, machine-readable, models are key to ensure models can be part of automated processes (e.g. input of a low-code generation pipeline, a model-based testing system, ...). But going from hand-drawn diagrams to actual models is a time-consuming process that sometimes ends up with such drawings just added as informal images to the software documentation, reducing their value a lot. To avoid this tedious task, we explore the usage of Large Language Models (LLM) to generate the formal representation of (UML) models from a given drawing. More specifically, we have evaluated the capabilities of different LLMs to convert images of UML class diagrams into the actual models represented in the images. While the results are good enough to use such an approach as part of a model-driven engineering pipeline we also highlight some of their current limitations and the need to keep the human in the loop to overcome those limitations.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-17T13:33:11Z</published>
+    <arxiv:comment>Accepted in First Large Language Models for Model-Driven Engineering Workshop (LLM4MDE 2024)</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <arxiv:journal_ref>STAF Workshops 2024: 55-65</arxiv:journal_ref>
+    <author>
+      <name>Aaron Conrardy</name>
+    </author>
+    <author>
+      <name>Jordi Cabot</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1202.0414v1</id>
+    <title>Generating a Performance Stochastic Model from UML Specifications</title>
+    <updated>2012-02-02T11:42:16Z</updated>
+    <link href="https://arxiv.org/abs/1202.0414v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1202.0414v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Since its initiation by Connie Smith, the process of Software Performance Engineering (SPE) is becoming a growing concern. The idea is to bring performance evaluation into the software design process. This suitable methodology allows software designers to determine the performance of software during design. Several approaches have been proposed to provide such techniques. Some of them propose to derive from a UML (Unified Modeling Language) model a performance model such as Stochastic Petri Net (SPN) or Stochastic process Algebra (SPA) models. Our work belongs to the same category. We propose to derive from a UML model a Stochastic Automata Network (SAN) in order to obtain performance predictions. Our approach is more flexible due to the SAN modularity and its high resemblance to UML' state-chart diagram.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2012-02-02T11:42:16Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Ihab Sbeity</name>
+    </author>
+    <author>
+      <name>Leonardo Brenner</name>
+    </author>
+    <author>
+      <name>Mohamed Dbouk</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.17739v2</id>
+    <title>How LLMs Aid in UML Modeling: An Exploratory Study with Novice Analysts</title>
+    <updated>2024-06-10T17:29:16Z</updated>
+    <link href="https://arxiv.org/abs/2404.17739v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.17739v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Since the emergence of GPT-3, Large Language Models (LLMs) have caught the eyes of researchers, practitioners, and educators in the field of software engineering. However, there has been relatively little investigation regarding the performance of LLMs in assisting with requirements analysis and UML modeling. This paper explores how LLMs can assist novice analysts in creating three types of typical UML models: use case models, class diagrams, and sequence diagrams. For this purpose, we designed the modeling tasks of these three UML models for 45 undergraduate students who participated in a requirements modeling course, with the help of LLMs. By analyzing their project reports, we found that LLMs can assist undergraduate students as novice analysts in UML modeling tasks, but LLMs also have shortcomings and limitations that should be considered when using them.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-27T00:38:20Z</published>
+    <arxiv:comment>The 21st IEEE International Conference on Software Services Engineering (SSE)</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Beian Wang</name>
+    </author>
+    <author>
+      <name>Chong Wang</name>
+    </author>
+    <author>
+      <name>Peng Liang</name>
+    </author>
+    <author>
+      <name>Bing Li</name>
+    </author>
+    <author>
+      <name>Cheng Zeng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.22628v2</id>
+    <title>UML-CoT: Structured Reasoning and Planning with Unified Modeling Language for Robotic Room Cleaning</title>
+    <updated>2025-09-29T13:56:38Z</updated>
+    <link href="https://arxiv.org/abs/2509.22628v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.22628v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Chain-of-Thought (CoT) prompting improves reasoning in large language models (LLMs), but its reliance on unstructured text limits interpretability and executability in embodied tasks. Prior work has explored structured CoTs using scene or logic graphs, yet these remain fundamentally limited: they model only low-order relations, lack constructs like inheritance or behavioral abstraction, and provide no standardized semantics for sequential or conditional planning. We propose UML-CoT, a structured reasoning and planning framework that leverages Unified Modeling Language (UML) to generate symbolic CoTs and executable action plans. UML class diagrams capture compositional object semantics, while activity diagrams model procedural control flow. Our three-stage training pipeline combines supervised fine-tuning with Group Relative Policy Optimization (GRPO), including reward learning from answer-only data. We evaluate UML-CoT on MRoom-30k, a new benchmark of cluttered room-cleaning scenarios. UML-CoT outperforms unstructured CoTs in interpretability, planning coherence, and execution success, highlighting UML as a more expressive and actionable structured reasoning formalism.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-26T17:51:46Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Hongyu Chen</name>
+    </author>
+    <author>
+      <name>Guangrun Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.22409v2</id>
+    <title>NOMAD: A Multi-Agent LLM System for UML Class Diagram Generation from Natural Language Requirements</title>
+    <updated>2026-05-01T10:52:04Z</updated>
+    <link href="https://arxiv.org/abs/2511.22409v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.22409v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) are increasingly utilised in software engineering, yet their ability to generate structured artefacts such as UML diagrams remains underexplored. In this work we present NOMAD, a cognitively inspired, modular multi-agent framework that decomposes UML generation into a series of role-specialised subtasks. Each agent handles a distinct modelling activity, such as entity extraction, relationship classification, and diagram synthesis, mirroring the goal-directed reasoning processes of an engineer. This decomposition improves interpretability and allows for targeted verification strategies. We evaluate NOMAD through a mixed design: a large case study (Northwind) for in-depth probing and error analysis, and human-authored UML exercises for breadth and realism. NOMAD outperforms all selected baselines, while revealing persistent challenges in fine-grained attribute extraction. Building on these observations, we introduce the first systematic taxonomy of errors in LLM-generated UML diagrams, categorising structural, relationship, and semantic/logical. Finally, we examine verification as a design probe, showing its mixed effects and outlining adaptive strategies as promising directions. Together, these contributions position NOMAD as both an effective framework for UML class diagram generation and a lens onto the broader research challenges of reliable language-to-model workflows.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-27T12:36:25Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Polydoros Giannouris</name>
+    </author>
+    <author>
+      <name>Sophia Ananiadou</name>
+    </author>
+    <arxiv:doi>10.5220/0014301900004058</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.5220/0014301900004058" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2402.17897v2</id>
+    <title>A Language Model based Framework for New Concept Placement in Ontologies</title>
+    <updated>2024-03-04T14:06:42Z</updated>
+    <link href="https://arxiv.org/abs/2402.17897v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2402.17897v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We investigate the task of inserting new concepts extracted from texts into an ontology using language models. We explore an approach with three steps: edge search which is to find a set of candidate locations to insert (i.e., subsumptions between concepts), edge formation and enrichment which leverages the ontological structure to produce and enhance the edge candidates, and edge selection which eventually locates the edge to be placed into. In all steps, we propose to leverage neural methods, where we apply embedding-based methods and contrastive learning with Pre-trained Language Models (PLMs) such as BERT for edge search, and adapt a BERT fine-tuning-based multi-label Edge-Cross-encoder, and Large Language Models (LLMs) such as GPT series, FLAN-T5, and Llama 2, for edge selection. We evaluate the methods on recent datasets created using the SNOMED CT ontology and the MedMentions entity linking benchmark. The best settings in our framework use fine-tuned PLM for search and a multi-label Cross-encoder for selection. Zero-shot prompting of LLMs is still not adequate for the task, and we propose explainable instruction tuning of LLMs for improved performance. Our study shows the advantages of PLMs and highlights the encouraging performance of LLMs that motivates future studies.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-02-27T21:27:35Z</published>
+    <arxiv:comment>20 pages, 3 figures, accepted for ESWC 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hang Dong</name>
+    </author>
+    <author>
+      <name>Jiaoyan Chen</name>
+    </author>
+    <author>
+      <name>Yuan He</name>
+    </author>
+    <author>
+      <name>Yongsheng Gao</name>
+    </author>
+    <author>
+      <name>Ian Horrocks</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2201.04843v2</id>
+    <title>Multi-task Pre-training Language Model for Semantic Network Completion</title>
+    <updated>2022-04-28T03:02:07Z</updated>
+    <link href="https://arxiv.org/abs/2201.04843v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2201.04843v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Semantic networks, such as the knowledge graph, can represent the knowledge leveraging the graph structure. Although the knowledge graph shows promising values in natural language processing, it suffers from incompleteness. This paper focuses on knowledge graph completion by predicting linkage between entities, which is a fundamental yet critical task. Semantic matching is a potential solution as it can deal with unseen entities, which the translational distance based methods struggle with. However, to achieve competitive performance as translational distance based methods, semantic matching based methods require large-scale datasets for the training purpose, which are typically unavailable in practical settings. Therefore, we employ the language model and introduce a novel knowledge graph architecture named LP-BERT, which contains two main stages: multi-task pre-training and knowledge graph fine-tuning. In the pre-training phase, three tasks are taken to drive the model to learn the relationship from triples by predicting either entities or relations. While in the fine-tuning phase, inspired by contrastive learning, we design a triple-style negative sampling in a batch, which greatly increases the proportion of negative sampling while keeping the training time almost unchanged. Furthermore, we propose a new data augmentation method utilizing the inverse relationship of triples to improve the performance and robustness of the model. To demonstrate the effectiveness of our method, we conduct extensive experiments on three widely-used datasets, WN18RR, FB15k-237, and UMLS. The experimental results demonstrate the superiority of our methods, and our approach achieves state-of-the-art results on WN18RR and FB15k-237 datasets. Significantly, Hits@10 indicator is improved by 5% from previous state-of-the-art result on the WN18RR dataset while reaching 100% on the UMLS dataset.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-01-13T09:18:30Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Da Li</name>
+    </author>
+    <author>
+      <name>Sen Yang</name>
+    </author>
+    <author>
+      <name>Kele Xu</name>
+    </author>
+    <author>
+      <name>Ming Yi</name>
+    </author>
+    <author>
+      <name>Yukai He</name>
+    </author>
+    <author>
+      <name>Huaimin Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.22125v1</id>
+    <title>FoodSEM: Large Language Model Specialized in Food Named-Entity Linking</title>
+    <updated>2025-09-26T09:47:35Z</updated>
+    <link href="https://arxiv.org/abs/2509.22125v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.22125v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper introduces FoodSEM, a state-of-the-art fine-tuned open-source large language model (LLM) for named-entity linking (NEL) to food-related ontologies. To the best of our knowledge, food NEL is a task that cannot be accurately solved by state-of-the-art general-purpose (large) language models or custom domain-specific models/systems. Through an instruction-response (IR) scenario, FoodSEM links food-related entities mentioned in a text to several ontologies, including FoodOn, SNOMED-CT, and the Hansard taxonomy. The FoodSEM model achieves state-of-the-art performance compared to related models/systems, with F1 scores even reaching 98% on some ontologies and datasets. The presented comparative analyses against zero-shot, one-shot, and few-shot LLM prompting baselines further highlight FoodSEM's superior performance over its non-fine-tuned version. By making FoodSEM and its related resources publicly available, the main contributions of this article include (1) publishing a food-annotated corpora into an IR format suitable for LLM fine-tuning/evaluation, (2) publishing a robust model to advance the semantic understanding of text in the food domain, and (3) providing a strong baseline on food NEL for future benchmarking.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-26T09:47:35Z</published>
+    <arxiv:comment>To appear in the Proceedings of the 28th International Conference on Discovery Science (DS 2025)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ana Gjorgjevikj</name>
+    </author>
+    <author>
+      <name>Matej Martinc</name>
+    </author>
+    <author>
+      <name>Gjorgjina Cenikj</name>
+    </author>
+    <author>
+      <name>Sašo Džeroski</name>
+    </author>
+    <author>
+      <name>Barbara Koroušić Seljak</name>
+    </author>
+    <author>
+      <name>Tome Eftimov</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.23470v1</id>
+    <title>Automated Feedback on Student-Generated UML and ER Diagrams Using Large Language Models</title>
+    <updated>2025-07-31T11:49:01Z</updated>
+    <link href="https://arxiv.org/abs/2507.23470v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.23470v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>UML and ER diagrams are foundational in computer science education but come with challenges for learners due to the need for abstract thinking, contextual understanding, and mastery of both syntax and semantics. These complexities are difficult to address through traditional teaching methods, which often struggle to provide scalable, personalized feedback, especially in large classes. We introduce DUET (Diagrammatic UML &amp; ER Tutor), a prototype of an LLM-based tool, which converts a reference diagram and a student-submitted diagram into a textual representation and provides structured feedback based on the differences. It uses a multi-stage LLM pipeline to compare diagrams and generate reflective feedback. Furthermore, the tool enables analytical insights for educators, aiming to foster self-directed learning and inform instructional strategies. We evaluated DUET through semi-structured interviews with six participants, including two educators and four teaching assistants. They identified strengths such as accessibility, scalability, and learning support alongside limitations, including reliability and potential misuse. Participants also suggested potential improvements, such as bulk upload functionality and interactive clarification features. DUET presents a promising direction for integrating LLMs into modeling education and offers a foundation for future classroom integration and empirical evaluation.</summary>
+    <category term="cs.HC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-31T11:49:01Z</published>
+    <arxiv:comment>Learnersourcing: Student-generated Content @ Scale Workshop at L@S 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.HC"/>
+    <author>
+      <name>Sebastian Gürtl</name>
+    </author>
+    <author>
+      <name>Gloria Schimetta</name>
+    </author>
+    <author>
+      <name>David Kerschbaumer</name>
+    </author>
+    <author>
+      <name>Michael Liut</name>
+    </author>
+    <author>
+      <name>Alexander Steinmaurer</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.10848v1</id>
+    <title>Large Language Models for Medical Forecasting -- Foresight 2</title>
+    <updated>2024-12-14T14:45:28Z</updated>
+    <link href="https://arxiv.org/abs/2412.10848v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.10848v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Foresight 2 (FS2) is a large language model fine-tuned on hospital data for modelling patient timelines (GitHub 'removed for anon'). It can understand patients' clinical notes and predict SNOMED codes for a wide range of biomedical use cases, including diagnosis suggestions, risk forecasting, and procedure and medication recommendations. FS2 is trained on the free text portion of the MIMIC-III dataset, firstly through extracting biomedical concepts and then creating contextualised patient timelines, upon which the model is then fine-tuned. The results show significant improvement over the previous state-of-the-art for the next new biomedical concept prediction (P/R - 0.73/0.66 vs 0.52/0.32) and a similar improvement specifically for the next new disorder prediction (P/R - 0.69/0.62 vs 0.46/0.25). Finally, on the task of risk forecast, we compare our model to GPT-4-turbo (and a range of open-source biomedical LLMs) and show that FS2 performs significantly better on such tasks (P@5 - 0.90 vs 0.65). This highlights the need to incorporate hospital data into LLMs and shows that small models outperform much larger ones when fine-tuned on high-quality, specialised data.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-14T14:45:28Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zeljko Kraljevic</name>
+    </author>
+    <author>
+      <name>Joshua Au Yeung</name>
+    </author>
+    <author>
+      <name>Daniel Bean</name>
+    </author>
+    <author>
+      <name>James Teo</name>
+    </author>
+    <author>
+      <name>Richard J. Dobson</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.14334v1</id>
+    <title>Language Models as Ontology Encoders</title>
+    <updated>2025-07-18T19:26:16Z</updated>
+    <link href="https://arxiv.org/abs/2507.14334v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.14334v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>OWL (Web Ontology Language) ontologies which are able to formally represent complex knowledge and support semantic reasoning have been widely adopted across various domains such as healthcare and bioinformatics. Recently, ontology embeddings have gained wide attention due to its potential to infer plausible new knowledge and approximate complex reasoning. However, existing methods face notable limitations: geometric model-based embeddings typically overlook valuable textual information, resulting in suboptimal performance, while the approaches that incorporate text, which are often based on language models, fail to preserve the logical structure. In this work, we propose a new ontology embedding method OnT, which tunes a Pretrained Language Model (PLM) via geometric modeling in a hyperbolic space for effectively incorporating textual labels and simultaneously preserving class hierarchies and other logical relationships of Description Logic EL. Extensive experiments on four real-world ontologies show that OnT consistently outperforms the baselines including the state-of-the-art across both tasks of prediction and inference of axioms. OnT also demonstrates strong potential in real-world applications, indicated by its robust transfer learning abilities and effectiveness in real cases of constructing a new ontology from SNOMED CT. Data and code are available at https://github.com/HuiYang1997/OnT.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-18T19:26:16Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Hui Yang</name>
+    </author>
+    <author>
+      <name>Jiaoyan Chen</name>
+    </author>
+    <author>
+      <name>Yuan He</name>
+    </author>
+    <author>
+      <name>Yongsheng Gao</name>
+    </author>
+    <author>
+      <name>Ian Horrocks</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.04930v1</id>
+    <title>HILGEN: Hierarchically-Informed Data Generation for Biomedical NER Using Knowledgebases and Large Language Models</title>
+    <updated>2025-03-06T20:02:19Z</updated>
+    <link href="https://arxiv.org/abs/2503.04930v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.04930v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present HILGEN, a Hierarchically-Informed Data Generation approach that combines domain knowledge from the Unified Medical Language System (UMLS) with synthetic data generated by large language models (LLMs), specifically GPT-3.5. Our approach leverages UMLS's hierarchical structure to expand training data with related concepts, while incorporating contextual information from LLMs through targeted prompts aimed at automatically generating synthetic examples for sparsely occurring named entities. The performance of the HILGEN approach was evaluated across four biomedical NER datasets (MIMIC III, BC5CDR, NCBI-Disease, and Med-Mentions) using BERT-Large and DANN (Data Augmentation with Nearest Neighbor Classifier) models, applying various data generation strategies, including UMLS, GPT-3.5, and their best ensemble. For the BERT-Large model, incorporating UMLS led to an average F1 score improvement of 40.36%, while using GPT-3.5 resulted in a comparable average increase of 40.52%. The Best-Ensemble approach using BERT-Large achieved the highest improvement, with an average increase of 42.29%. DANN model's F1 score improved by 22.74% on average using the UMLS-only approach. The GPT-3.5-based method resulted in a 21.53% increase, and the Best-Ensemble DANN model showed a more notable improvement, with an average increase of 25.03%. Our proposed HILGEN approach improves NER performance in few-shot settings without requiring additional manually annotated data. Our experiments demonstrate that an effective strategy for optimizing biomedical NER is to combine biomedical knowledge curated in the past, such as the UMLS, and generative LLMs to create synthetic training instances. Our future research will focus on exploring additional innovative synthetic data generation strategies for further improving NER performance.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-06T20:02:19Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yao Ge</name>
+    </author>
+    <author>
+      <name>Yuting Guo</name>
+    </author>
+    <author>
+      <name>Sudeshna Das</name>
+    </author>
+    <author>
+      <name>Swati Rajwal</name>
+    </author>
+    <author>
+      <name>Selen Bozkurt</name>
+    </author>
+    <author>
+      <name>Abeed Sarker</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.07588v1</id>
+    <title>BALI: Enhancing Biomedical Language Representations through Knowledge Graph and Language Model Alignment</title>
+    <updated>2025-09-09T10:59:47Z</updated>
+    <link href="https://arxiv.org/abs/2509.07588v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.07588v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In recent years, there has been substantial progress in using pretrained Language Models (LMs) on a range of tasks aimed at improving the understanding of biomedical texts. Nonetheless, existing biomedical LLMs show limited comprehension of complex, domain-specific concept structures and the factual information encoded in biomedical Knowledge Graphs (KGs). In this work, we propose BALI (Biomedical Knowledge Graph and Language Model Alignment), a novel joint LM and KG pre-training method that augments an LM with external knowledge by the simultaneous learning of a dedicated KG encoder and aligning the representations of both the LM and the graph. For a given textual sequence, we link biomedical concept mentions to the Unified Medical Language System (UMLS) KG and utilize local KG subgraphs as cross-modal positive samples for these mentions. Our empirical findings indicate that implementing our method on several leading biomedical LMs, such as PubMedBERT and BioLinkBERT, improves their performance on a range of language understanding tasks and the quality of entity representations, even with minimal pre-training on a small alignment dataset sourced from PubMed scientific abstracts.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-09-09T10:59:47Z</published>
+    <arxiv:comment>9 pages, 1 figure, published in "The 48th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR 2025)"</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Proceedings of the 48th International ACM SIGIR Conference on Research and Development in Information Retrieval (2025). Association for Computing Machinery, 1152-1164</arxiv:journal_ref>
+    <author>
+      <name>Andrey Sakhovskiy</name>
+    </author>
+    <author>
+      <name>Elena Tutubalina</name>
+    </author>
+    <arxiv:doi>10.1145/3726302.3729901</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3726302.3729901" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.06371v2</id>
+    <title>Model Generation with LLMs: From Requirements to UML Sequence Diagrams</title>
+    <updated>2024-07-01T13:16:49Z</updated>
+    <link href="https://arxiv.org/abs/2404.06371v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.06371v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Complementing natural language (NL) requirements with graphical models can improve stakeholders' communication and provide directions for system design. However, creating models from requirements involves manual effort. The advent of generative large language models (LLMs), ChatGPT being a notable example, offers promising avenues for automated assistance in model generation. This paper investigates the capability of ChatGPT to generate a specific type of model, i.e., UML sequence diagrams, from NL requirements. We conduct a qualitative study in which we examine the sequence diagrams generated by ChatGPT for 28 requirements documents of various types and from different domains. Observations from the analysis of the generated diagrams have systematically been captured through evaluation logs, and categorized through thematic analysis. Our results indicate that, although the models generally conform to the standard and exhibit a reasonable level of understandability, their completeness and correctness with respect to the specified requirements often present challenges. This issue is particularly pronounced in the presence of requirements smells, such as ambiguity and inconsistency. The insights derived from this study can influence the practical utilization of LLMs in the RE process, and open the door to novel RE-specific prompting strategies targeting effective model generation.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-09T15:07:25Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Alessio Ferrari</name>
+    </author>
+    <author>
+      <name>Sallam Abualhaija</name>
+    </author>
+    <author>
+      <name>Chetan Arora</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2307.16648v2</id>
+    <title>LLMs4OL: Large Language Models for Ontology Learning</title>
+    <updated>2023-08-02T07:47:26Z</updated>
+    <link href="https://arxiv.org/abs/2307.16648v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2307.16648v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We propose the LLMs4OL approach, which utilizes Large Language Models (LLMs) for Ontology Learning (OL). LLMs have shown significant advancements in natural language processing, demonstrating their ability to capture complex language patterns in different knowledge domains. Our LLMs4OL paradigm investigates the following hypothesis: \textit{Can LLMs effectively apply their language pattern capturing capability to OL, which involves automatically extracting and structuring knowledge from natural language text?} To test this hypothesis, we conduct a comprehensive evaluation using the zero-shot prompting method. We evaluate nine different LLM model families for three main OL tasks: term typing, taxonomy discovery, and extraction of non-taxonomic relations. Additionally, the evaluations encompass diverse genres of ontological knowledge, including lexicosemantic knowledge in WordNet, geographical knowledge in GeoNames, and medical knowledge in UMLS.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IT" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-07-31T13:27:21Z</published>
+    <arxiv:comment>15 pages main content, 27 pages overall, 2 Figures, accepted for publication at ISWC 2023 research track</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Hamed Babaei Giglou</name>
+    </author>
+    <author>
+      <name>Jennifer D'Souza</name>
+    </author>
+    <author>
+      <name>Sören Auer</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.16422v1</id>
+    <title>Injecting Structured Biomedical Knowledge into Language Models: Continual Pretraining vs. GraphRAG</title>
+    <updated>2026-04-03T16:23:51Z</updated>
+    <link href="https://arxiv.org/abs/2604.16422v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.16422v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The injection of domain-specific knowledge is crucial for adapting language models (LMs) to specialized fields such as biomedicine. While most current approaches rely on unstructured text corpora, this study explores two complementary strategies for leveraging structured knowledge from the UMLS Metathesaurus: (i) Continual pretraining that embeds knowledge into model parameters, and (ii) Graph Retrieval-Augmented Generation (GraphRAG) that consults a knowledge graph at inference time. We first construct a large-scale biomedical knowledge graph from UMLS (3.4 million concepts and 34.2 million relations), stored in Neo4j for efficient querying. We then derive a ~100-million-token textual corpus from this graph to continually pretrain two models: BERTUMLS (from BERT) and BioBERTUMLS (from BioBERT). We evaluate these models on six BLURB (Biomedical Language Understanding and Reasoning Benchmark) datasets spanning five task types and evaluate GraphRAG on the two QA (Question Answering) datasets (PubMedQA, BioASQ). On BLURB tasks, BERTUMLS improves over BERT, with the largest gains on knowledge-intensive QA. Effects on BioBERT are more nuanced, suggesting diminishing returns when the base model already encodes substantial biomedical text knowledge. Finally, augmenting LLaMA 3-8B with our GraphRAG pipeline yields over than 3 points accuracy on PubMedQA and 5 points on BioASQ without any retraining, delivering transparent, multi-hop, and easily updated knowledge access. We release the processed UMLS Neo4j graph to support reproducibility.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-03T16:23:51Z</published>
+    <arxiv:comment>Accepted at LREC 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jaafer Klila</name>
+    </author>
+    <author>
+      <name>Sondes Bannour Souihi</name>
+    </author>
+    <author>
+      <name>Rahma Boujelben</name>
+    </author>
+    <author>
+      <name>Nasredine Semmar</name>
+    </author>
+    <author>
+      <name>Lamia Hadrich Belguith</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.15256v1</id>
+    <title>Structured Extraction of Real World Medical Knowledge using LLMs for Summarization and Search</title>
+    <updated>2024-12-16T02:57:00Z</updated>
+    <link href="https://arxiv.org/abs/2412.15256v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.15256v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Creation and curation of knowledge graphs can accelerate disease discovery and analysis in real-world data. While disease ontologies aid in biological data annotation, codified categories (SNOMED-CT, ICD10, CPT) may not capture patient condition nuances or rare diseases. Multiple disease definitions across data sources complicate ontology mapping and disease clustering. We propose creating patient knowledge graphs using large language model extraction techniques, allowing data extraction via natural language rather than rigid ontological hierarchies. Our method maps to existing ontologies (MeSH, SNOMED-CT, RxNORM, HPO) to ground extracted entities.
+  Using a large ambulatory care EHR database with 33.6M patients, we demonstrate our method through the patient search for Dravet syndrome, which received ICD10 recognition in October 2020. We describe our construction of patient-specific knowledge graphs and symptom-based patient searches. Using confirmed Dravet syndrome ICD10 codes as ground truth, we employ LLM-based entity extraction to characterize patients in grounded ontologies. We then apply this method to identify Beta-propeller protein-associated neurodegeneration (BPAN) patients, demonstrating real-world discovery where no ground truth exists.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-16T02:57:00Z</published>
+    <arxiv:comment>10 pages, 3 figures, Work published in 4th Workshop on Knowledge Graphs and Big Data (In Conjunction with IEEE Big Data 2024)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Edward Kim</name>
+    </author>
+    <author>
+      <name>Manil Shrestha</name>
+    </author>
+    <author>
+      <name>Richard Foty</name>
+    </author>
+    <author>
+      <name>Tom DeLay</name>
+    </author>
+    <author>
+      <name>Vicki Seyfert-Margolis</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2312.13881v1</id>
+    <title>Diversifying Knowledge Enhancement of Biomedical Language Models using Adapter Modules and Knowledge Graphs</title>
+    <updated>2023-12-21T14:26:57Z</updated>
+    <link href="https://arxiv.org/abs/2312.13881v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2312.13881v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recent advances in natural language processing (NLP) owe their success to pre-training language models on large amounts of unstructured data. Still, there is an increasing effort to combine the unstructured nature of LMs with structured knowledge and reasoning. Particularly in the rapidly evolving field of biomedical NLP, knowledge-enhanced language models (KELMs) have emerged as promising tools to bridge the gap between large language models and domain-specific knowledge, considering the available biomedical knowledge graphs (KGs) curated by experts over the decades. In this paper, we develop an approach that uses lightweight adapter modules to inject structured biomedical knowledge into pre-trained language models (PLMs). We use two large KGs, the biomedical knowledge system UMLS and the novel biochemical ontology OntoChem, with two prominent biomedical PLMs, PubMedBERT and BioLinkBERT. The approach includes partitioning knowledge graphs into smaller subgraphs, fine-tuning adapter modules for each subgraph, and combining the knowledge in a fusion layer. We test the performance on three downstream tasks: document classification,question answering, and natural language inference. We show that our methodology leads to performance improvements in several instances while keeping requirements in computing power low. Finally, we provide a detailed interpretation of the results and report valuable insights for future work.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-12-21T14:26:57Z</published>
+    <arxiv:comment>Accepted as Full Paper to ICAART 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Juraj Vladika</name>
+    </author>
+    <author>
+      <name>Alexander Fichtl</name>
+    </author>
+    <author>
+      <name>Florian Matthes</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.01189v2</id>
+    <title>NEURON: A Neuro-symbolic System for Grounded Clinical Explainability</title>
+    <updated>2026-06-29T13:20:41Z</updated>
+    <link href="https://arxiv.org/abs/2605.01189v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.01189v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Clinical AI adoption is hindered by the black-box/grey-box nature of high-performing models, which lack the ontological grounding and narrative transparency required for professional-level explainability. We present NEURON, a neuro-symbolic system designed to enhance both predictive reliability and clinical interpretability. NEURON integrates SNOMED CT ontology-informed structural representations with machine learning models to bridge the gap between raw data and medical nomenclature. To facilitate human-aligned interaction, the system utilizes a Retrieval-Augmented Generation (RAG) grounded LLM layer to synthesize SHAP feature attributions and patient-specific clinical notes into coherent, natural-language explanations. Validated on the MIMIC-IV dataset for Acute Heart Failure mortality prediction, NEURON improved the AUC from 0.74-0.77 to 0.84-0.88 and significantly outperformed raw SHAP visualizations in human-aligned metrics (0.85 vs. 0.50). Our results demonstrate that NEURON offers a robust, scalable engineering solution for deploying trustworthy, human-centered connected health applications.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-02T02:00:02Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Anuradha Chandrasekaran</name>
+    </author>
+    <author>
+      <name>Dimitrios Zikos</name>
+    </author>
+    <author>
+      <name>Mutlu Mete</name>
+    </author>
+    <author>
+      <name>Alan Pang</name>
+    </author>
+    <author>
+      <name>Brady D. Lund</name>
+    </author>
+    <author>
+      <name>Kewei Sha</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.20822v2</id>
+    <title>MediEval: A Unified Medical Benchmark for Patient-Contextual and Knowledge-Grounded Reasoning in LLMs</title>
+    <updated>2026-05-07T15:02:00Z</updated>
+    <link href="https://arxiv.org/abs/2512.20822v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.20822v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) are increasingly applied to medicine, yet their adoption is limited by concerns over reliability and safety. Existing evaluations either test factual medical knowledge in isolation or assess patient-level reasoning without verifying correctness, leaving a critical gap. We introduce MediEval, a benchmark that links MIMIC-IV electronic health records (EHRs) to a unified knowledge base built from UMLS and other biomedical vocabularies. MediEval generates diverse factual and counterfactual medical statements within real patient contexts, enabling systematic evaluation across a 4-quadrant framework that jointly considers knowledge grounding and contextual consistency. Using this framework, we identify critical failure modes, including hallucinated support and truth inversion, that current proprietary, open-source, and domain-specific LLMs frequently exhibit. To address these risks, we propose Counterfactual Risk-Aware Fine-tuning (CoRFu), a DPO-based method with an asymmetric penalty targeting unsafe confusions. CoRFu improves by +16.4 macro-F1 points over the base model and eliminates truth inversion errors, demonstrating both higher accuracy and substantially greater safety.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-23T22:52:24Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zhan Qu</name>
+    </author>
+    <author>
+      <name>Michael Färber</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2501.00031v1</id>
+    <title>Distilling Large Language Models for Efficient Clinical Information Extraction</title>
+    <updated>2024-12-21T02:15:29Z</updated>
+    <link href="https://arxiv.org/abs/2501.00031v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2501.00031v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) excel at clinical information extraction but their computational demands limit practical deployment. Knowledge distillation--the process of transferring knowledge from larger to smaller models--offers a potential solution. We evaluate the performance of distilled BERT models, which are approximately 1,000 times smaller than modern LLMs, for clinical named entity recognition (NER) tasks. We leveraged state-of-the-art LLMs (Gemini and OpenAI models) and medical ontologies (RxNorm and SNOMED) as teacher labelers for medication, disease, and symptom extraction. We applied our approach to over 3,300 clinical notes spanning five publicly available datasets, comparing distilled BERT models against both their teacher labelers and BERT models fine-tuned on human labels. External validation was conducted using clinical notes from the MedAlign dataset. For disease extraction, F1 scores were 0.82 (teacher model), 0.89 (BioBERT trained on human labels), and 0.84 (BioBERT-distilled). For medication, F1 scores were 0.84 (teacher model), 0.91 (BioBERT-human), and 0.87 (BioBERT-distilled). For symptoms: F1 score of 0.73 (teacher model) and 0.68 (BioBERT-distilled). Distilled BERT models had faster inference (12x, 4x, 8x faster than GPT-4o, o1-mini, and Gemini Flash respectively) and lower costs (85x, 101x, 2x cheaper than GPT-4o, o1-mini, and Gemini Flash respectively). On the external validation dataset, the distilled BERT model achieved F1 scores of 0.883 (medication), 0.726 (disease), and 0.699 (symptom). Distilled BERT models were up to 101x cheaper and 12x faster than state-of-the-art LLMs while achieving similar performance on NER tasks. Distillation offers a computationally efficient and scalable alternative to large LLMs for clinical information extraction.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-21T02:15:29Z</published>
+    <arxiv:comment>19 pages, 1 figure, 10 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Karthik S. Vedula</name>
+    </author>
+    <author>
+      <name>Annika Gupta</name>
+    </author>
+    <author>
+      <name>Akshay Swaminathan</name>
+    </author>
+    <author>
+      <name>Ivan Lopez</name>
+    </author>
+    <author>
+      <name>Suhana Bedi</name>
+    </author>
+    <author>
+      <name>Nigam H. Shah</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.06706v3</id>
+    <title>PFDial: A Structured Dialogue Instruction Fine-tuning Method Based on UML Flowcharts</title>
+    <updated>2025-06-13T07:21:17Z</updated>
+    <link href="https://arxiv.org/abs/2503.06706v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.06706v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Process-driven dialogue systems, which operate under strict predefined process constraints, are essential in customer service and equipment maintenance scenarios. Although Large Language Models (LLMs) have shown remarkable progress in dialogue and reasoning, they still struggle to solve these strictly constrained dialogue tasks. To address this challenge, we construct Process Flow Dialogue (PFDial) dataset, which contains 12,705 high-quality Chinese dialogue instructions derived from 440 flowcharts containing 5,055 process nodes. Based on PlantUML specification, each UML flowchart is converted into atomic dialogue units i.e., structured five-tuples. Experimental results demonstrate that a 7B model trained with merely 800 samples, and a 0.5B model trained on total data both can surpass 90% accuracy. Additionally, the 8B model can surpass GPT-4o up to 43.88% with an average of 11.00%. We further evaluate models' performance on challenging backward transitions in process flows and conduct an in-depth analysis of various dataset formats to reveal their impact on model performance in handling decision and sequential branches. The data is released in https://github.com/KongLongGeFDU/PFDial.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-09T17:43:30Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ming Zhang</name>
+    </author>
+    <author>
+      <name>Yuhui Wang</name>
+    </author>
+    <author>
+      <name>Yujiong Shen</name>
+    </author>
+    <author>
+      <name>Tingyi Yang</name>
+    </author>
+    <author>
+      <name>Changhao Jiang</name>
+    </author>
+    <author>
+      <name>Yilong Wu</name>
+    </author>
+    <author>
+      <name>Shihan Dou</name>
+    </author>
+    <author>
+      <name>Qinhao Chen</name>
+    </author>
+    <author>
+      <name>Zhiheng Xi</name>
+    </author>
+    <author>
+      <name>Zhihao Zhang</name>
+    </author>
+    <author>
+      <name>Yi Dong</name>
+    </author>
+    <author>
+      <name>Zhen Wang</name>
+    </author>
+    <author>
+      <name>Zhihui Fei</name>
+    </author>
+    <author>
+      <name>Mingyang Wan</name>
+    </author>
+    <author>
+      <name>Tao Liang</name>
+    </author>
+    <author>
+      <name>Guojun Ma</name>
+    </author>
+    <author>
+      <name>Qi Zhang</name>
+    </author>
+    <author>
+      <name>Tao Gui</name>
+    </author>
+    <author>
+      <name>Xuanjing Huang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.12293v2</id>
+    <title>Unified Modeling Language Code Generation from Diagram Images Using Multimodal Large Language Models</title>
+    <updated>2025-05-15T16:29:38Z</updated>
+    <link href="https://arxiv.org/abs/2503.12293v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.12293v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The Unified Modeling Language is a standardized visual language widely used for modeling and documenting the design of software systems. Although many tools generate UML diagrams from UML code, generating executable UML code from image-based UML diagrams remains challenging. This paper proposes a new approach to generate UML code using a large multimodal language model automatically. Synthetic UML activity and sequence diagram datasets were created to train and test the model. We compared standard fine-tuning with LoRA techniques to optimize base models. The experiments measured code generation accuracy across different model sizes and training strategies. These results demonstrated that domain-adapted MM-LLMs perform for UML code generation automation, whereby, at the best model, it achieved BLEU and SSIM scores of 0.779 and 0.942 on sequence diagrams. This will enable the modernization of legacy systems and decrease the manual effort in software development workflows.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-15T23:20:26Z</published>
+    <arxiv:comment>Published in the Journal of Machine Learning with Applications, Author Contributions: Averi Bates: Methodology, Development, Analysis, Data Curation, Drafting, Review. Ryan Vavricka: Data Curation, Development, Review. Shane Carleton: Supervision, Funding. Ruosi Shao: Review. Chongle Pan: Supervision, Review</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <arxiv:journal_ref>Mach. Learn. Appl. 20 (2025) 100660</arxiv:journal_ref>
+    <author>
+      <name>Averi Bates</name>
+    </author>
+    <author>
+      <name>Ryan Vavricka</name>
+    </author>
+    <author>
+      <name>Shane Carleton</name>
+    </author>
+    <author>
+      <name>Ruosi Shao</name>
+    </author>
+    <author>
+      <name>Chongle Pan</name>
+    </author>
+    <arxiv:doi>10.1016/j.mlwa.2025.100660</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1016/j.mlwa.2025.100660" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2110.08173v3</id>
+    <title>Rewire-then-Probe: A Contrastive Recipe for Probing Biomedical Knowledge of Pre-trained Language Models</title>
+    <updated>2022-05-22T15:23:19Z</updated>
+    <link href="https://arxiv.org/abs/2110.08173v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2110.08173v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Knowledge probing is crucial for understanding the knowledge transfer mechanism behind the pre-trained language models (PLMs). Despite the growing progress of probing knowledge for PLMs in the general domain, specialised areas such as biomedical domain are vastly under-explored. To catalyse the research in this direction, we release a well-curated biomedical knowledge probing benchmark, MedLAMA, which is constructed based on the Unified Medical Language System (UMLS) Metathesaurus. We test a wide spectrum of state-of-the-art PLMs and probing approaches on our benchmark, reaching at most 3% of acc@10. While highlighting various sources of domain-specific challenges that amount to this underwhelming performance, we illustrate that the underlying PLMs have a higher potential for probing tasks. To achieve this, we propose Contrastive-Probe, a novel self-supervised contrastive probing approach, that adjusts the underlying PLMs without using any probing data. While Contrastive-Probe pushes the acc@10 to 28%, the performance gap still remains notable. Our human expert evaluation suggests that the probing performance of our Contrastive-Probe is still under-estimated as UMLS still does not include the full spectrum of factual knowledge. We hope MedLAMA and Contrastive-Probe facilitate further developments of more suited probing techniques for this domain.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-10-15T16:00:11Z</published>
+    <arxiv:comment>ACL 2022; code and data are released at https://github.com/cambridgeltl/medlama</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zaiqiao Meng</name>
+    </author>
+    <author>
+      <name>Fangyu Liu</name>
+    </author>
+    <author>
+      <name>Ehsan Shareghi</name>
+    </author>
+    <author>
+      <name>Yixuan Su</name>
+    </author>
+    <author>
+      <name>Charlotte Collins</name>
+    </author>
+    <author>
+      <name>Nigel Collier</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2507.20643v2</id>
+    <title>Ontology-Enhanced Knowledge Graph Completion using Large Language Models</title>
+    <updated>2025-10-21T03:05:04Z</updated>
+    <link href="https://arxiv.org/abs/2507.20643v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2507.20643v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) have been extensively adopted in Knowledge Graph Completion (KGC), showcasing significant research advancements. However, as black-box models driven by deep neural architectures, current LLM-based KGC methods rely on implicit knowledge representation with parallel propagation of erroneous knowledge, thereby hindering their ability to produce conclusive and decisive reasoning outcomes. We aim to integrate neural-perceptual structural information with ontological knowledge, leveraging the powerful capabilities of LLMs to achieve a deeper understanding of the intrinsic logic of the knowledge. We propose an ontology enhanced KGC method using LLMs -- OL-KGC. It first leverages neural perceptual mechanisms to effectively embed structural information into the textual space, and then uses an automated extraction algorithm to retrieve ontological knowledge from the knowledge graphs (KGs) that needs to be completed, which is further transformed into a textual format comprehensible to LLMs for providing logic guidance. We conducted extensive experiments on three widely-used benchmarks -- FB15K-237, UMLS and WN18RR. The experimental results demonstrate that OL-KGC significantly outperforms existing mainstream KGC methods across multiple evaluation metrics, achieving state-of-the-art performance.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-07-28T09:00:48Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Wenbin Guo</name>
+    </author>
+    <author>
+      <name>Xin Wang</name>
+    </author>
+    <author>
+      <name>Jiaoyan Chen</name>
+    </author>
+    <author>
+      <name>Zhao Li</name>
+    </author>
+    <author>
+      <name>Zirui Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.03379v3</id>
+    <title>Data Dependency-Aware Code Generation from Enhanced UML Sequence Diagrams</title>
+    <updated>2025-11-05T03:19:25Z</updated>
+    <link href="https://arxiv.org/abs/2508.03379v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.03379v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) excel at generating code from natural language (NL) descriptions. However, the plain textual descriptions are inherently ambiguous and often fail to capture complex requirements like intricate system behaviors, conditional logic, and architectural constraints; implicit data dependencies in service-oriented architectures are difficult to infer and handle correctly. To bridge this gap, we propose a novel step-by-step code generation framework named UML2Dep by leveraging unambiguous formal specifications of complex requirements. First, we introduce an enhanced Unified Modeling Language (UML) sequence diagram tailored for service-oriented architectures. This diagram extends traditional visual syntax by integrating decision tables and API specifications, explicitly formalizing structural relationships and business logic flows in service interactions to rigorously eliminate linguistic ambiguity. Second, recognizing the critical role of data flow, we introduce a dedicated data dependency inference (DDI) task. DDI systematically constructs an explicit data dependency graph prior to actual code synthesis. To ensure reliability, we formalize DDI as a constrained mathematical reasoning task through novel prompting strategies, aligning with LLMs' excellent mathematical strengths. Additional static parsing and dependency pruning further reduce context complexity and cognitive load associated with intricate specifications, thereby enhancing reasoning accuracy and efficiency.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-05T12:28:23Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Wenxin Mao</name>
+    </author>
+    <author>
+      <name>Zhitao Wang</name>
+    </author>
+    <author>
+      <name>Long Wang</name>
+    </author>
+    <author>
+      <name>Sirong Chen</name>
+    </author>
+    <author>
+      <name>Cuiyun Gao</name>
+    </author>
+    <author>
+      <name>Luyang Cao</name>
+    </author>
+    <author>
+      <name>Ziming Liu</name>
+    </author>
+    <author>
+      <name>Qiming Zhang</name>
+    </author>
+    <author>
+      <name>Jun Zhou</name>
+    </author>
+    <author>
+      <name>Zhi Jin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.05478v1</id>
+    <title>OntoTune: Ontology-Driven Self-training for Aligning Large Language Models</title>
+    <updated>2025-02-08T07:38:45Z</updated>
+    <link href="https://arxiv.org/abs/2502.05478v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.05478v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Existing domain-specific Large Language Models (LLMs) are typically developed by fine-tuning general-purposed LLMs with large-scale domain-specific corpora. However, training on large-scale corpora often fails to effectively organize domain knowledge of LLMs, leading to fragmented understanding. Inspired by how humans connect concepts and organize knowledge through mind maps, we aim to emulate this approach by using ontology with hierarchical conceptual knowledge to reorganize LLM's domain knowledge. From this perspective, we propose an ontology-driven self-training framework called OntoTune, which aims to align LLMs with ontology through in-context learning, enabling the generation of responses guided by the ontology. We leverage in-context learning to identify whether the LLM has acquired the specific concept's ontology knowledge, and select the entries not yet mastered by LLM as the training set to further align the LLM with ontology. Compared to existing domain LLMs based on newly collected large-scale domain-specific corpora, our OntoTune, which relies on the existing, long-term developed ontology and LLM itself, significantly reduces data maintenance costs and offers improved generalization ability. We conduct our study in the medical domain to evaluate the effectiveness of OntoTune, utilizing a standardized medical ontology, SNOMED CT as our ontology source. Experimental results demonstrate that OntoTune achieves state-of-the-art performance in both in-ontology task hypernym discovery and out-of-ontology task medical domain QA. Moreover, compared to the latest direct ontology injection method TaxoLLaMA, our OntoTune better preserves original knowledge of LLM. The code and data are available at https://github.com/zjukg/OntoTune.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-08T07:38:45Z</published>
+    <arxiv:comment>Accepted by WWW25</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zhiqiang Liu</name>
+    </author>
+    <author>
+      <name>Chengtao Gan</name>
+    </author>
+    <author>
+      <name>Junjie Wang</name>
+    </author>
+    <author>
+      <name>Yichi Zhang</name>
+    </author>
+    <author>
+      <name>Zhongpu Bo</name>
+    </author>
+    <author>
+      <name>Mengshu Sun</name>
+    </author>
+    <author>
+      <name>Huajun Chen</name>
+    </author>
+    <author>
+      <name>Wen Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.10440v3</id>
+    <title>A Hybrid Framework with Large Language Models for Rare Disease Phenotyping</title>
+    <updated>2024-11-08T23:12:56Z</updated>
+    <link href="https://arxiv.org/abs/2405.10440v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.10440v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Rare diseases pose significant challenges in diagnosis and treatment due to their low prevalence and heterogeneous clinical presentations. Unstructured clinical notes contain valuable information for identifying rare diseases, but manual curation is time-consuming and prone to subjectivity. This study aims to develop a hybrid approach combining dictionary-based natural language processing (NLP) tools with large language models (LLMs) to improve rare disease identification from unstructured clinical reports. We propose a novel hybrid framework that integrates the Orphanet Rare Disease Ontology (ORDO) and the Unified Medical Language System (UMLS) to create a comprehensive rare disease vocabulary. The proposed hybrid approach demonstrates superior performance compared to traditional NLP systems and standalone LLMs. Notably, the approach uncovers a significant number of potential rare disease cases not documented in structured diagnostic records, highlighting its ability to identify previously unrecognized patients.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-16T20:59:28Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>BMC Med Inform Decis Mak 24, 289 (2024)</arxiv:journal_ref>
+    <author>
+      <name>Jinge Wu</name>
+    </author>
+    <author>
+      <name>Hang Dong</name>
+    </author>
+    <author>
+      <name>Zexi Li</name>
+    </author>
+    <author>
+      <name>Haowei Wang</name>
+    </author>
+    <author>
+      <name>Runci Li</name>
+    </author>
+    <author>
+      <name>Arijit Patra</name>
+    </author>
+    <author>
+      <name>Chengliang Dai</name>
+    </author>
+    <author>
+      <name>Waqar Ali</name>
+    </author>
+    <author>
+      <name>Phil Scordis</name>
+    </author>
+    <author>
+      <name>Honghan Wu</name>
+    </author>
+    <arxiv:doi>10.1186/s12911-024-02698-7</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1186/s12911-024-02698-7" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.07951v1</id>
+    <title>Disease Entity Recognition and Normalization is Improved with Large Language Model Derived Synthetic Normalized Mentions</title>
+    <updated>2024-10-10T14:18:34Z</updated>
+    <link href="https://arxiv.org/abs/2410.07951v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.07951v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Background: Machine learning methods for clinical named entity recognition and entity normalization systems can utilize both labeled corpora and Knowledge Graphs (KGs) for learning. However, infrequently occurring concepts may have few mentions in training corpora and lack detailed descriptions or synonyms, even in large KGs. For Disease Entity Recognition (DER) and Disease Entity Normalization (DEN), this can result in fewer high quality training examples relative to the number of known diseases. Large Language Model (LLM) generation of synthetic training examples could improve performance in these information extraction tasks.
+  Methods: We fine-tuned a LLaMa-2 13B Chat LLM to generate a synthetic corpus containing normalized mentions of concepts from the Unified Medical Language System (UMLS) Disease Semantic Group. We measured overall and Out of Distribution (OOD) performance for DER and DEN, with and without synthetic data augmentation. We evaluated performance on 3 different disease corpora using 4 different data augmentation strategies, assessed using BioBERT for DER and SapBERT and KrissBERT for DEN.
+  Results: Our synthetic data yielded a substantial improvement for DEN, in all 3 training corpora the top 1 accuracy of both SapBERT and KrissBERT improved by 3-9 points in overall performance and by 20-55 points in OOD data. A small improvement (1-2 points) was also seen for DER in overall performance, but only one dataset showed OOD improvement.
+  Conclusion: LLM generation of normalized disease mentions can improve DEN relative to normalization approaches that do not utilize LLMs to augment data with synthetic mentions. Ablation studies indicate that performance gains for DEN were only partially attributable to improvements in OOD performance. The same approach has only a limited ability to improve DER. We make our software and dataset publicly available.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-10-10T14:18:34Z</published>
+    <arxiv:comment>21 pages, 3 figures, 7 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Kuleen Sasse</name>
+    </author>
+    <author>
+      <name>Shinjitha Vadlakonda</name>
+    </author>
+    <author>
+      <name>Richard E. Kennedy</name>
+    </author>
+    <author>
+      <name>John D. Osborne</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.15122v1</id>
+    <title>Generalizable and Scalable Multistage Biomedical Concept Normalization Leveraging Large Language Models</title>
+    <updated>2024-05-24T00:31:04Z</updated>
+    <link href="https://arxiv.org/abs/2405.15122v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.15122v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Background: Biomedical entity normalization is critical to biomedical research because the richness of free-text clinical data, such as progress notes, can often be fully leveraged only after translating words and phrases into structured and coded representations suitable for analysis. Large Language Models (LLMs), in turn, have shown great potential and high performance in a variety of natural language processing (NLP) tasks, but their application for normalization remains understudied.
+  Methods: We applied both proprietary and open-source LLMs in combination with several rule-based normalization systems commonly used in biomedical research. We used a two-step LLM integration approach, (1) using an LLM to generate alternative phrasings of a source utterance, and (2) to prune candidate UMLS concepts, using a variety of prompting methods. We measure results by $F_β$, where we favor recall over precision, and F1.
+  Results: We evaluated a total of 5,523 concept terms and text contexts from a publicly available dataset of human-annotated biomedical abstracts. Incorporating GPT-3.5-turbo increased overall $F_β$ and F1 in normalization systems +9.5 and +7.3 (MetaMapLite), +13.9 and +10.9 (QuickUMLS), and +10.5 and +10.3 (BM25), while the open-source Vicuna model achieved +10.8 and +12.2 (MetaMapLite), +14.7 and +15 (QuickUMLS), and +15.6 and +18.7 (BM25).
+  Conclusions: Existing general-purpose LLMs, both propriety and open-source, can be leveraged at scale to greatly improve normalization performance using existing tools, with no fine-tuning.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-24T00:31:04Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Nicholas J Dobbins</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2408.07531v2</id>
+    <title>Development of a Large Language Model-based Multi-Agent Clinical Decision Support System for Korean Triage and Acuity Scale (KTAS)-Based Triage and Treatment Planning in Emergency Departments</title>
+    <updated>2024-08-27T15:16:06Z</updated>
+    <link href="https://arxiv.org/abs/2408.07531v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2408.07531v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Emergency department (ED) overcrowding and the complexity of rapid decision-making in critical care settings pose significant challenges to healthcare systems worldwide. While clinical decision support systems (CDSS) have shown promise, the integration of large language models (LLMs) offers new possibilities for enhancing triage accuracy and clinical decision-making. This study presents an LLM-driven CDSS designed to assist ED physicians and nurses in patient triage, treatment planning, and overall emergency care management.
+  We developed a multi-agent CDSS utilizing Llama-3-70b as the base LLM, orchestrated by CrewAI and Langchain. The system comprises four AI agents emulating key ED roles: Triage Nurse, Emergency Physician, Pharmacist, and ED Coordinator. It incorporates the Korean Triage and Acuity Scale (KTAS) for triage assessment and integrates with the RxNorm API for medication management.
+  The model was evaluated using the Asclepius dataset, with performance assessed by a clinical emergency medicine specialist. The CDSS demonstrated high accuracy in triage decision-making compared to the baseline of a single-agent system. Furthermore, the system exhibited strong performance in critical areas, including primary diagnosis, critical findings identification, disposition decision-making, treatment planning, and resource allocation.
+  Our multi-agent CDSS demonstrates significant potential for supporting comprehensive emergency care management. By leveraging state-of-the-art AI technologies, this system offers a scalable and adaptable tool that could enhance emergency medical care delivery, potentially alleviating ED overcrowding and improving patient outcomes. This work contributes to the growing field of AI applications in emergency medicine and offers a promising direction for future research and clinical implementation.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-08-14T13:03:41Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Seungjun Han</name>
+    </author>
+    <author>
+      <name>Wongyung Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.05738v2</id>
+    <title>MedLayBench-V: A Large-Scale Benchmark for Expert-Lay Semantic Alignment in Medical Vision Language Models</title>
+    <updated>2026-06-24T08:04:10Z</updated>
+    <link href="https://arxiv.org/abs/2604.05738v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.05738v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical Vision-Language Models (Med-VLMs) have achieved expert-level proficiency in interpreting diagnostic imaging. However, current models are predominantly trained on professional literature, limiting their ability to communicate findings in the lay register required for patient-centered care. While text-centric research has actively developed resources for simplifying medical jargon, there is a critical absence of large-scale multimodal benchmarks designed to facilitate lay-accessible medical image understanding. To bridge this resource gap, we introduce MedLayBench-V, the first large-scale multimodal benchmark dedicated to expert-lay semantic alignment. Unlike naive simplification approaches that risk hallucination, our dataset is constructed via a Structured Concept-Grounded Refinement (SCGR) pipeline. This method enforces strict semantic equivalence by integrating Unified Medical Language System (UMLS) Concept Unique Identifiers (CUIs) with micro-level entity constraints. MedLayBench-V provides a verified foundation for training and evaluating next-generation Med-VLMs capable of bridging the communication divide between clinical experts and patients.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-07T11:39:41Z</published>
+    <arxiv:comment>Findings of ACL 2026. 9 pages, 5 figures, 11 tables, plus appendix</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <arxiv:journal_ref>Findings of the Association for Computational Linguistics: ACL 2026, pages 18375-18394</arxiv:journal_ref>
+    <author>
+      <name>Han Jang</name>
+    </author>
+    <author>
+      <name>Junhyeok Lee</name>
+    </author>
+    <author>
+      <name>Heeseong Eum</name>
+    </author>
+    <author>
+      <name>Kyu Sung Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2006.05274v1</id>
+    <title>UMLS-ChestNet: A deep convolutional neural network for radiological findings, differential diagnoses and localizations of COVID-19 in chest x-rays</title>
+    <updated>2020-06-06T19:24:35Z</updated>
+    <link href="https://arxiv.org/abs/2006.05274v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2006.05274v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In this work we present a method for the detection of radiological findings, their location and differential diagnoses from chest x-rays. Unlike prior works that focus on the detection of few pathologies, we use a hierarchical taxonomy mapped to the Unified Medical Language System (UMLS) terminology to identify 189 radiological findings, 22 differential diagnosis and 122 anatomic locations, including ground glass opacities, infiltrates, consolidations and other radiological findings compatible with COVID-19. We train the system on one large database of 92,594 frontal chest x-rays (AP or PA, standing, supine or decubitus) and a second database of 2,065 frontal images of COVID-19 patients identified by at least one positive Polymerase Chain Reaction (PCR) test. The reference labels are obtained through natural language processing of the radiological reports. On 23,159 test images, the proposed neural network obtains an AUC of 0.94 for the diagnosis of COVID-19. To our knowledge, this work uses the largest chest x-ray dataset of COVID-19 positive cases to date and is the first one to use a hierarchical labeling schema and to provide interpretability of the results, not only by using network attention methods, but also by indicating the radiological findings that have led to the diagnosis.</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-06-06T19:24:35Z</published>
+    <arxiv:comment>17 pages, 3 figures, 3 tables</arxiv:comment>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Germán González</name>
+    </author>
+    <author>
+      <name>Aurelia Bustos</name>
+    </author>
+    <author>
+      <name>José María Salinas</name>
+    </author>
+    <author>
+      <name>María de la Iglesia-Vaya</name>
+    </author>
+    <author>
+      <name>Joaquín Galant</name>
+    </author>
+    <author>
+      <name>Carlos Cano-Espinosa</name>
+    </author>
+    <author>
+      <name>Xavier Barber</name>
+    </author>
+    <author>
+      <name>Domingo Orozco-Beltrán</name>
+    </author>
+    <author>
+      <name>Miguel Cazorla</name>
+    </author>
+    <author>
+      <name>Antonio Pertusa</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2509.00934v2</id>
+    <title>MedCOD: Enhancing English-to-Spanish Medical Translation of Large Language Models Using Enriched Chain-of-Dictionary Framework</title>
+    <updated>2025-09-19T02:16:48Z</updated>
+    <link href="https://arxiv.org/abs/2509.00934v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2509.00934v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present MedCOD (Medical Chain-of-Dictionary), a hybrid framework designed to improve English-to-Spanish medical translation by integrating domain-specific structured knowledge into large language models (LLMs). MedCOD integrates domain-specific knowledge from both the Unified Medical Language System (UMLS) and the LLM-as-Knowledge-Base (LLM-KB) paradigm to enhance structured prompting and fine-tuning. We constructed a parallel corpus of 2,999 English-Spanish MedlinePlus articles and a 100-sentence test set annotated with structured medical contexts. Four open-source LLMs (Phi-4, Qwen2.5-14B, Qwen2.5-7B, and LLaMA-3.1-8B) were evaluated using structured prompts that incorporated multilingual variants, medical synonyms, and UMLS-derived definitions, combined with LoRA-based fine-tuning. Experimental results demonstrate that MedCOD significantly improves translation quality across all models. For example, Phi-4 with MedCOD and fine-tuning achieved BLEU 44.23, chrF++ 28.91, and COMET 0.863, surpassing strong baseline models like GPT-4o and GPT-4o-mini. Ablation studies confirm that both MedCOD prompting and model adaptation independently contribute to performance gains, with their combination yielding the highest improvements. These findings highlight the potential of structured knowledge integration to enhance LLMs for medical translation tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-31T17:04:09Z</published>
+    <arxiv:comment>To appear in Findings of the Association for Computational Linguistics: EMNLP 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Md Shahidul Salim</name>
+    </author>
+    <author>
+      <name>Lian Fu</name>
+    </author>
+    <author>
+      <name>Arav Adikesh Ramakrishnan</name>
+    </author>
+    <author>
+      <name>Zonghai Yao</name>
+    </author>
+    <author>
+      <name>Hong Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.21194v1</id>
+    <title>MEDLAYXPLAIN: Benchmarking the Expert-Lay Gap in Medical Vision-Language Models</title>
+    <updated>2026-06-19T08:06:09Z</updated>
+    <link href="https://arxiv.org/abs/2606.21194v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.21194v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Medical Vision-Language Models (Med-VLMs) achieve strong expert-level performance, yet their ability to generate patient-accessible descriptions remains underexplored. With the 21st Century Cures Act now mandating immediate patient access to diagnostic imaging results, evaluating whether Med-VLMs can bridge this Expert-Lay Gap is both urgent and clinically consequential for patient education and shared decision-making. To this end, we introduce MedLayXPlain, the first large-scale multimodal benchmark and evaluation framework for Medical Lay Language Generation (MLLG). MedLayXPlain-122K provides 122,789 region-grounded samples across 8 imaging modalities from 12 publicly available source datasets, each comprising a medical image with paired expert and lay captions anchored in a three-level Unified Medical Language System (UMLS) ontology hierarchy spanning 7 semantic groups, 43 semantic types, and 2,411 medical concepts. Lay captions are constructed via Hierarchical Ontology-Verified Refinement (HOVER), a three-step pipeline combining patient-centric vocabulary mapping, LLM-based constrained rewriting, and cross-model visual verification to enforce semantic equivalence while preventing hallucination. We further introduce MedLayEval, a lightweight 3B evaluator distilled from a 27B verifier that scores expert-lay alignment across five clinically grounded attributes, addressing the poor correlation between standard NLG metrics and clinical judgment. Benchmarking 33 VLMs on MedLayXPlain-122K reveals a systematic Expert-Lay Gap: medical VLMs achieve strong expert captioning but suffer significant lay-register degradation, while general-purpose VLMs produce more accessible language yet lack clinical precision, confirming that neither current paradigm adequately serves patient-facing communication.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-19T08:06:09Z</published>
+    <arxiv:comment>40 pages (10 pages main text, 30 pages appendix), 4 main figures, 33 vision-language models benchmarked</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Han Jang</name>
+    </author>
+    <author>
+      <name>Junhyeok Lee</name>
+    </author>
+    <author>
+      <name>Songsoo Kim</name>
+    </author>
+    <author>
+      <name>Chae Young Lim</name>
+    </author>
+    <author>
+      <name>Hyeonjin Goh</name>
+    </author>
+    <author>
+      <name>Heeseong Eum</name>
+    </author>
+    <author>
+      <name>Kyu Sung Choi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2402.11441v2</id>
+    <title>InfuserKI: Enhancing Large Language Models with Knowledge Graphs via Infuser-Guided Knowledge Integration</title>
+    <updated>2024-12-16T07:18:06Z</updated>
+    <link href="https://arxiv.org/abs/2402.11441v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2402.11441v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) have achieved exceptional capabilities in open generation across various domains, yet they encounter difficulties with tasks that require intensive knowledge. To address these challenges, methods for integrating knowledge have been developed, which augment LLMs with domain-specific knowledge graphs through external modules. These approaches, however, face data inefficiency issues as they necessitate the processing of both known and unknown knowledge for fine-tuning. Thus, our research focuses on a novel problem: efficiently integrating unknown knowledge into LLMs without unnecessary overlap of known knowledge. A risk of introducing new knowledge is the potential forgetting of existing knowledge. To mitigate this risk, we propose the innovative {\method} framework. This framework employs transformer internal states to determine when to enrich LLM outputs with additional information, effectively preventing knowledge forgetting. Performance evaluations using the UMLS-2.5k and MetaQA domain knowledge graphs reveal that {\method} not only successfully integrates new knowledge but also outperforms state-of-the-art baselines, reducing knowledge forgetting by 9\% and 6\%, respectively.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-02-18T03:36:26Z</published>
+    <arxiv:comment>14 pages, 7 figures, EMNLP 2024 Findings</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Fali Wang</name>
+    </author>
+    <author>
+      <name>Runxue Bao</name>
+    </author>
+    <author>
+      <name>Suhang Wang</name>
+    </author>
+    <author>
+      <name>Wenchao Yu</name>
+    </author>
+    <author>
+      <name>Yanchi Liu</name>
+    </author>
+    <author>
+      <name>Wei Cheng</name>
+    </author>
+    <author>
+      <name>Haifeng Chen</name>
+    </author>
+  </entry>
+</feed>
