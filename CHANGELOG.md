@@ -45,6 +45,22 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (T1 parsers + ecosystem long view — 2026-07-10)
+
+- **`medscale.litdb.parsers`**: deterministic parsers for all four sources — OpenAlex
+  (incl. abstract reconstruction from inverted index, DOI/PMID URL normalization),
+  Semantic Scholar (externalIds, arXiv version collapsing for dedupe), PubMed
+  (esummary records + esearch id extraction), arXiv (Atom XML). Per-record provenance
+  anchors to the SHA-256 of the archived payload (R1); unparseable items are skipped
+  with recorded reasons, never silently. Evidence tiers are deterministic proposals;
+  screening remains the decision of record. Tests include end-to-end parses of the
+  real committed pilot archives. 10 new tests (120 total).
+- **`docs/architecture/ecosystem_evolution.md`**: the founder's Linux-style ecosystem
+  vision recorded with graduation gates (external consumers, stable API, real cadence
+  need, maintainer capacity, dedicated ADR) — one package now, extraction later;
+  interface roadmap (protocols added with first consumers, never ahead) and registry
+  schema evolution (measurement fields arrive when T3/T4 manifests can fill them).
+
 ### Added (model-agnostic AI platform — 2026-07-10)
 
 - **`medscale.modelkit`** (ADR-0015, operator-directed): the AI-Infrastructure layer's
