@@ -62,6 +62,11 @@ Reading rules: solid boxes are committed Horizon-1 work mapped to existing phase
 so it cannot masquerade as scope. Every layer's outputs are admissible only after
 passing the spine.
 
+> **Navigational taxonomy:** [ADR-0012](../adr/0012-layered-architecture-model.md) refines
+> this into a shared vocabulary (spine · two pillars · Developer/Applications edges) with a
+> horizon label per element, reconciling a proposed 8-layer model while keeping
+> verification cross-cutting rather than a peer layer.
+
 ## Layer-by-layer disposition
 
 | Layer | What it is | Status / gate |

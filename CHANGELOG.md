@@ -25,6 +25,24 @@ All notable changes to this project are documented here. The format is based on
 
 - ADR-0003 marked **Accepted** with a post-consolidation note.
 
+### Added (architecture — layering & OpenMed decomposition — 2026-07-10)
+
+- **`docs/architecture/openmed_capability_analysis.md`**: capability-by-capability
+  decomposition of OpenMed (NER, de-id, local inference, serving, registry) into
+  adopted/adapter/deferred/rejected, each with reasoning; extends accepted ADR-0007,
+  introduces no new decision.
+- **Proposed ADR-0012 (layered architecture model)**: reconciles a founder-proposed
+  8-layer model with the accepted reference architecture. Key architectural pushback —
+  the 8-layer model demotes verification to a peer layer; MedScale keeps it as the
+  cross-cutting spine. Adopts the useful additions (Developer Infrastructure and
+  Applications as first-class edges), resolves the Knowledge/Evidence/Research overlap
+  into pillar 2, and gives every element a horizon label. Not self-ratified.
+- **Model registry extended** (`ai_model_strategy.md`): added the *role* axis
+  (generative base vs encoder baseline — encoders cannot be MESC bases) and verified
+  entries (Bio_ClinicalBERT MIT, PubMedBERT/BiomedBERT MIT, OpenMed encoders Apache-2.0),
+  with MIMIC-III provenance transparency for Bio_ClinicalBERT. No `models/` package
+  created (ADR-0012).
+
 ### Added (release infrastructure design — 2026-07-10)
 
 - **`docs/releases/`** (12 documents): complete publication & artifact lifecycle —
