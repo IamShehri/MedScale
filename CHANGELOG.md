@@ -45,6 +45,23 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Changed (ADR-0016/0017 ratified — 2026-07-10)
+
+- **ADR-0016 Accepted (Option A)**: archives stay in-repo, field-trimmed, capped, with a
+  ~75 MB tripwire. Compliance implemented: OpenAlex requests now carry `select=` with
+  only parser-consumed fields (round-1 OpenAlex payloads dominated the 18 MB volume);
+  field list recorded in search-strategy §4; tripwire noted in data README. **Ingestion
+  is unblocked.**
+- **ADR-0017 Accepted**: identifier derivations are a frozen versioned contract;
+  dedupe-before-decision ordering is binding. Compliance implemented: `medscale check`
+  is now a dedicated CI gate step; ordering invariant recorded in search-strategy §3.
+- **`docs/research/novelty_candidates.md`** (Chief Scientist directive): living registry
+  of novelty hypotheses with the 10-step analysis protocol. First full entry: **N1
+  "PRISMA-as-code"** — reproducible-by-construction systematic review infrastructure
+  (byte-replayable PRISMA counts from append-only attributed logs with CI-enforced
+  referential integrity) — analyzed against Covidence/Rayyan/DistillerSR/ASReview;
+  validation experiments and venues (JAMIA/JMIR/AMIA) proposed; nothing implemented.
+
 ### Added (integrity guard — 2026-07-10)
 
 - **`medscale.litdb.integrity`** + **`medscale check`**: referential-integrity guard for
