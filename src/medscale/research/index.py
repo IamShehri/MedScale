@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Final
 
+import medscale._layout as _layout
 from medscale.evidence import EvidenceObject
 from medscale.evidence_store import load_evidence
 from medscale.litdb.records import LiteratureRecord
@@ -21,9 +22,9 @@ from medscale.litdb.store import load_corpus
 
 __all__ = ["ResearchIndex", "ReviewEventLite"]
 
-_CORPUS: Final = "corpus/records.jsonl"
-_REVIEW_LOG: Final = "screening/review_log.jsonl"
-_EVIDENCE: Final = "evidence/objects.jsonl"
+_CORPUS: Final = _layout.CORPUS
+_REVIEW_LOG: Final = _layout.REVIEW_LOG
+_EVIDENCE: Final = _layout.EVIDENCE
 
 
 @dataclass(frozen=True)

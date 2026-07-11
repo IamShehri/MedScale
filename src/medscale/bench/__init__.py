@@ -1,5 +1,9 @@
 """medscale.bench — the scientific benchmark foundation (contracts before models).
 
+Stability: **internal**, except the types the public ``Benchmark`` facade returns
+(``BenchmarkSpec``, ``TaskItem``, ``BenchmarkRunArtifact``, ``EvidenceSystem``) which
+are frozen with it.
+
 The benchmark answers one question: *can a system produce correct, reproducible,
 evidence-grounded outputs from the same scientific substrate?* Its invariants:
 

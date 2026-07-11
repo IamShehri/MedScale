@@ -1,5 +1,8 @@
 """medscale.modelkit — the model-agnostic AI-infrastructure layer (ADR-0015).
 
+Stability: **public-frozen protocols** (``TextGenerator``, ``SpanExtractor``,
+``ModelRef``) — backends must implement these to exist; everything else internal.
+
 MedScale is never optimized around a single LLM. This package defines the contracts
 every model must satisfy to participate — so models can be replaced without changing
 MedScale:

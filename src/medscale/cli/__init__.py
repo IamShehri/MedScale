@@ -11,14 +11,16 @@ import io
 import sys
 from collections.abc import Sequence
 
-from medscale.bench import bench_cli
-from medscale.litdb import extract_cli, integrity, screen_cli
-from medscale.research import research_cli
+from medscale.cli import bench as bench_cli
+from medscale.cli import check as check_cli
+from medscale.cli import extract as extract_cli
+from medscale.cli import research as research_cli
+from medscale.cli import screen as screen_cli
 
 _SUBCOMMANDS = {
     "screen": screen_cli.main,
     "extract": extract_cli.main,
-    "check": integrity.main,
+    "check": check_cli.main,
     "stats": research_cli.stats_main,
     "snapshot": research_cli.snapshot_main,
     "bench": bench_cli.main,

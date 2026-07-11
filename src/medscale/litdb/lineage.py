@@ -16,6 +16,7 @@ import json
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 
+import medscale._layout as _layout
 from medscale.litdb.integrity import Merge
 from medscale.litdb.parsers import parse_records
 from medscale.litdb.sources import RawRetrieval
@@ -55,9 +56,9 @@ def _load_merges(path: Path) -> tuple[Merge, ...]:
 
 def build_query_tags(root: Path) -> dict[str, set[str]]:
     """final record_id -> query ids, rebuilt from every committed round manifest."""
-    lineage = resolve_lineage(_load_merges(root / "screening" / "merge_log.jsonl"))
+    lineage = resolve_lineage(_load_merges(_layout.merge_log_path(root)))
     tags: dict[str, set[str]] = {}
-    for manifest_path in sorted((root / "manifests").glob("*.json")):
+    for manifest_path in sorted(_layout.manifests_dir(root).glob("*.json")):
         manifest: Mapping[str, object] = json.loads(manifest_path.read_text(encoding="utf-8"))
         entries = manifest["entries"]
         assert isinstance(entries, list)

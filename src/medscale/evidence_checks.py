@@ -21,6 +21,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+import medscale._layout as _layout
 from medscale.evidence import EvidenceObject, VerificationState
 
 __all__ = [
@@ -56,7 +57,7 @@ def source_reference_check(obj: EvidenceObject, corpus_ids: frozenset[str]) -> C
 def archived_payload_hashes(root: Path) -> frozenset[str]:
     """Every payload SHA-256 recorded by any committed round manifest under ``root``."""
     hashes: set[str] = set()
-    manifests_dir = root / "manifests"
+    manifests_dir = _layout.manifests_dir(root)
     if not manifests_dir.exists():
         return frozenset()
     for manifest_path in sorted(manifests_dir.glob("*.json")):

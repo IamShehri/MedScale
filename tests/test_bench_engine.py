@@ -28,8 +28,8 @@ from medscale.bench.scorers import set_precision, set_recall
 from medscale.evidence import StudyType, VerificationState
 from medscale.evidence_checks import rule_verify_source
 from medscale.evidence_store import write_evidence
+from medscale.extraction import assemble_evidence
 from medscale.litdb import EvidenceTier, Identifiers, LiteratureRecord
-from medscale.litdb.extract_cli import assemble_evidence
 from medscale.litdb.store import write_corpus
 from medscale.provenance import Provenance, SourceAPI
 from medscale.research.snapshot import capture_snapshot, write_snapshot

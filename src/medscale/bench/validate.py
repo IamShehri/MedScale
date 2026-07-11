@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import medscale._layout as _layout
 from medscale.bench.spec import IMPLEMENTED_TASK_TYPES, BenchmarkSpec
 from medscale.bench.tasks import TaskItem
 from medscale.evidence import VerificationState
@@ -34,7 +35,7 @@ _ORDER: dict[VerificationState, int] = {
 
 
 def find_snapshot(root: Path, snapshot_id: str) -> ResearchSnapshot | None:
-    snapshots_dir = root / "snapshots"
+    snapshots_dir = _layout.snapshots_dir(root)
     if not snapshots_dir.exists():
         return None
     for path in sorted(snapshots_dir.glob("*.json")):
@@ -57,7 +58,7 @@ def validate_benchmark(
         for mismatch in verify_snapshot(root, snapshot):
             issues.append(f"snapshot drift: {mismatch}")
 
-    evidence = {obj.evidence_id: obj for obj in load_evidence(root / "evidence" / "objects.jsonl")}
+    evidence = {obj.evidence_id: obj for obj in load_evidence(_layout.evidence_path(root))}
     minimum = _ORDER[spec.min_verification]
 
     task_ids: set[str] = set()

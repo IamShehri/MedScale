@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final, Protocol
 
+import medscale._layout as _layout
 from medscale.bench.scorers import SCORER_VERSION, score_item
 from medscale.bench.store import benchmark_dir, load_benchmark
 from medscale.bench.tasks import TaskItem, TaskOutput
@@ -130,9 +131,7 @@ def run_benchmark(
     if issues:
         raise ValueError("benchmark is not scientifically runnable:\n  " + "\n  ".join(issues))
     index = ResearchIndex.load(root)
-    known_ids = frozenset(
-        obj.evidence_id for obj in load_evidence(root / "evidence" / "objects.jsonl")
-    )
+    known_ids = frozenset(obj.evidence_id for obj in load_evidence(_layout.evidence_path(root)))
     per_item: dict[str, dict[str, float]] = {}
     for item in sorted(items, key=lambda i: i.task_id):
         output = system.solve(item, index)

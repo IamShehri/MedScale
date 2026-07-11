@@ -14,8 +14,8 @@ import pytest
 from medscale import cli
 from medscale.evidence import StudyType, VerificationState
 from medscale.evidence_store import write_evidence
+from medscale.extraction import assemble_evidence
 from medscale.litdb import EvidenceTier, Identifiers, LiteratureRecord
-from medscale.litdb.extract_cli import assemble_evidence
 from medscale.litdb.review import ReviewDecision, append_events, make_event
 from medscale.litdb.store import write_corpus
 from medscale.provenance import Provenance, SourceAPI

@@ -28,14 +28,13 @@ The researcher contract this module exists to keep::
 
 from __future__ import annotations
 
-import subprocess
 from collections.abc import Iterator
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from medscale.__about__ import __version__
+from medscale._runtime import git_sha, utc_now
 from medscale.bench.run import BenchmarkRunArtifact, EvidenceSystem, run_benchmark
 from medscale.bench.spec import BenchmarkSpec
 from medscale.bench.store import list_benchmarks, load_benchmark
@@ -64,16 +63,6 @@ __all__ = [
 
 #: The stable name of the snapshot type in the public contract.
 Snapshot = ResearchSnapshot
-
-
-def _default_git_sha() -> str:
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
-        )
-        return result.stdout.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return "0000000"
 
 
 @dataclass(frozen=True)
@@ -120,9 +109,9 @@ class Workspace:
         """Capture (and by default persist) the citable knowledge-state identity."""
         snapshot = capture_snapshot(
             self._root,
-            git_sha=_default_git_sha(),
+            git_sha=git_sha(),
             software_version=__version__,
-            created_at=datetime.now(UTC).isoformat(),
+            created_at=utc_now(),
         )
         if write:
             write_snapshot(self._root, snapshot)
@@ -282,8 +271,8 @@ class Benchmark:
             self.spec.benchmark_id,
             system,
             parameters=parameters,
-            started_at=datetime.now(UTC).isoformat(),
+            started_at=utc_now(),
             software_version=__version__,
-            git_sha=_default_git_sha(),
+            git_sha=git_sha(),
         )
         return artifact

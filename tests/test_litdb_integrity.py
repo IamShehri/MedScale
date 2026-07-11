@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from medscale.litdb.integrity import Merge, check_litdb, check_references, main
+from medscale.cli.check import main
+from medscale.litdb.integrity import Merge, check_litdb, check_references
 
 _ROOT = Path(__file__).resolve().parents[1] / "data" / "litdb"
 

@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
 
+import medscale._layout as _layout
 from medscale.litdb.queries import QUERY_SET
 from medscale.provenance import validate_timestamp
 from medscale.reproducibility import canonical_json, content_hash
@@ -32,12 +33,12 @@ _GIT_SHA: Final = re.compile(r"^[0-9a-f]{7,40}$")
 
 #: Every knowledge artifact a snapshot pins: (key, path relative to the litdb root).
 _ARTIFACTS: Final[tuple[tuple[str, str], ...]] = (
-    ("corpus", "corpus/records.jsonl"),
-    ("evidence", "evidence/objects.jsonl"),
-    ("screening_log", "screening/screening_log.jsonl"),
-    ("review_log", "screening/review_log.jsonl"),
-    ("merge_log", "screening/merge_log.jsonl"),
-    ("uncertain_resolutions", "screening/uncertain_resolutions.jsonl"),
+    ("corpus", _layout.CORPUS),
+    ("evidence", _layout.EVIDENCE),
+    ("screening_log", _layout.SCREENING_LOG),
+    ("review_log", _layout.REVIEW_LOG),
+    ("merge_log", _layout.MERGE_LOG),
+    ("uncertain_resolutions", _layout.UNCERTAIN_RESOLUTIONS),
 )
 
 
@@ -115,7 +116,7 @@ def capture_snapshot(
 
 
 def write_snapshot(root: Path, snapshot: ResearchSnapshot) -> Path:
-    target = root / "snapshots" / f"{snapshot.snapshot_id[:16]}.json"
+    target = _layout.snapshots_dir(root) / f"{snapshot.snapshot_id[:16]}.json"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(canonical_json(snapshot.to_dict()) + "\n", encoding="utf-8", newline="\n")
     return target

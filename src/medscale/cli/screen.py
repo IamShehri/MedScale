@@ -12,12 +12,13 @@ in this loop.
 from __future__ import annotations
 
 import argparse
-import subprocess
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final
 
-from medscale import __version__
+import medscale._layout as _layout
+from medscale.__about__ import __version__
+from medscale._runtime import git_sha as _runtime_git_sha
+from medscale._runtime import utc_now
 from medscale.litdb.dedupe import normalize_title
 from medscale.litdb.records import LiteratureRecord
 from medscale.litdb.review import (
@@ -41,11 +42,11 @@ from medscale.litdb.uncertain import (
     unresolved_groups,
 )
 
-_DEFAULT_ROOT: Final = Path("data/litdb")
-_REVIEW_LOG: Final = "screening/review_log.jsonl"
-_CORPUS: Final = "corpus/records.jsonl"
-_UNCERTAIN: Final = "screening/uncertain_duplicates.jsonl"
-_RESOLUTIONS: Final = "screening/uncertain_resolutions.jsonl"
+_DEFAULT_ROOT: Final = _layout.DEFAULT_ROOT
+_REVIEW_LOG: Final = _layout.REVIEW_LOG
+_CORPUS: Final = _layout.CORPUS
+_UNCERTAIN: Final = _layout.UNCERTAIN_DUPLICATES
+_RESOLUTIONS: Final = _layout.UNCERTAIN_RESOLUTIONS
 
 #: Keypress -> (decision, needs an exclusion reason?)
 _KEY_ACTIONS: Final[dict[str, tuple[ReviewDecision, bool]]] = {
@@ -106,13 +107,7 @@ def format_record(
 
 
 def _git_sha() -> str:
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
-        )
-        return result.stdout.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return "0000000"  # detached/no-git: still a valid 7-hex placeholder
+    return _runtime_git_sha()
 
 
 def build_event(
@@ -131,7 +126,7 @@ def build_event(
         record_id,
         decision,
         reviewer=reviewer,
-        decided_at=now or datetime.now(UTC).isoformat(),
+        decided_at=now or utc_now(),
         software_version=__version__,
         git_sha=git_sha or _git_sha(),
         current=current,
@@ -300,7 +295,7 @@ def _run_duplicates(root: Path, reviewer: str) -> int:
             break
         if choice == "s":
             continue
-        now = datetime.now(UTC).isoformat()
+        now = utc_now()
         if choice == "d":
             append_resolution(
                 root / _RESOLUTIONS,

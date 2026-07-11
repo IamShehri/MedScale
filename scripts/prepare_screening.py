@@ -18,6 +18,7 @@ import argparse
 from datetime import UTC, datetime
 from pathlib import Path
 
+import medscale._layout as _layout
 from medscale.litdb import ScreeningDecision, ScreeningStage, append_decisions
 from medscale.litdb.coverage import coverage_for_manifest
 from medscale.litdb.dedupe import dedupe_records
@@ -31,7 +32,7 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=Path("data/litdb"))
     args = parser.parse_args()
 
-    corpus_path = args.root / "corpus" / "records.jsonl"
+    corpus_path = _layout.corpus_path(args.root)
     records = load_corpus(corpus_path)
     print(f"loaded corpus: {len(records)} records")
 
@@ -77,9 +78,9 @@ def main() -> int:
         print(f"screening log: {len(result.records)} records advanced to DEDUPED")
 
     # 3 — coverage report
-    manifest_path = args.root / "manifests" / f"{args.run_id}.json"
+    manifest_path = _layout.manifests_dir(args.root) / f"{args.run_id}.json"
     coverage = coverage_for_manifest(args.root, manifest_path)
-    report_path = args.root / "reports" / f"{args.run_id}-coverage.json"
+    report_path = args.root / _layout.REPORTS_DIR / f"{args.run_id}-coverage.json"
     report_path.write_text(
         canonical_json(
             {

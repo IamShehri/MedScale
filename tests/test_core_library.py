@@ -10,6 +10,7 @@ from medscale.bench.spec import BenchmarkSpec
 from medscale.evidence import StudyType, VerificationState
 from medscale.evidence_checks import rule_verify_source
 from medscale.evidence_store import write_evidence
+from medscale.extraction import assemble_evidence
 from medscale.litdb import (
     EvidenceTier,
     Identifiers,
@@ -19,7 +20,6 @@ from medscale.litdb import (
     archive_retrieval,
     write_manifest,
 )
-from medscale.litdb.extract_cli import assemble_evidence
 from medscale.litdb.review import ReviewDecision, append_events, make_event
 from medscale.litdb.store import write_corpus
 from medscale.provenance import Provenance, SourceAPI

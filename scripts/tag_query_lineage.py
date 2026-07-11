@@ -14,6 +14,7 @@ import dataclasses
 from collections import Counter
 from pathlib import Path
 
+import medscale._layout as _layout
 from medscale.litdb.integrity import check_litdb, format_report
 from medscale.litdb.lineage import build_query_tags
 from medscale.litdb.store import load_corpus, write_corpus
@@ -24,7 +25,7 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=Path("data/litdb"))
     args = parser.parse_args()
 
-    corpus_path = args.root / "corpus" / "records.jsonl"
+    corpus_path = _layout.corpus_path(args.root)
     records = load_corpus(corpus_path)
     tags = build_query_tags(args.root)
 

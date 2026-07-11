@@ -12,11 +12,12 @@ Usage:  uv run --with truststore python scripts/ingest_round.py --run-id round1 
 from __future__ import annotations
 
 import argparse
-import subprocess
 import sys
 import time
 from pathlib import Path
 
+import medscale._layout as _layout
+from medscale._runtime import git_sha
 from medscale.litdb import (
     QUERY_SET,
     ArxivAdapter,
@@ -41,13 +42,6 @@ _S2_MAX_CONSECUTIVE_FAILURES = 2
 _S2_REQUEST_LIMIT = 100  # Semantic Scholar per-request maximum
 
 
-def _git_sha() -> str:
-    result = subprocess.run(
-        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
-    )
-    return result.stdout.strip()
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", default="round1")
@@ -55,7 +49,7 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=Path("data/litdb"))
     args = parser.parse_args()
 
-    sha = _git_sha()
+    sha = git_sha(strict=True)  # manifests must cite a real commit
     entries: list[ArchiveEntry] = []
     records: list[LiteratureRecord] = []
     skipped_items: list[str] = []
@@ -146,7 +140,7 @@ def main() -> int:
     # --- Manifest, corpus, report
     manifest = RunManifest(run_id=args.run_id, search_strategy_git_sha=sha, entries=tuple(entries))
     manifest_path = write_manifest(args.root, manifest)
-    corpus_path = args.root / "corpus" / "records.jsonl"
+    corpus_path = _layout.corpus_path(args.root)
     deduped = write_corpus(corpus_path, records)
 
     report = {
@@ -163,7 +157,7 @@ def main() -> int:
         "failures": failures,
         "skipped_item_reasons": skipped_items,
     }
-    report_path = args.root / "reports" / f"{args.run_id}.json"
+    report_path = args.root / _layout.REPORTS_DIR / f"{args.run_id}.json"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(canonical_json(report) + "\n", encoding="utf-8", newline="\n")
 

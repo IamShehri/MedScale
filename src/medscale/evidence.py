@@ -1,5 +1,9 @@
 """The MedScale evidence model (ADR-0009).
 
+Stability: **public-frozen data model** — ``EvidenceObject`` and its identity
+derivation are contract (ADR-0017); constructors and field semantics do not change
+without an ADR + migration.
+
 An :class:`EvidenceObject` is a validated unit of evidence: one atomic claim, bound to a
 source through R1-grade provenance, carrying an explicit verification state and a
 declared, mechanical evidence grading. A claim is not evidence; evidence is a claim plus

@@ -21,6 +21,7 @@ from medscale.evidence_store import (
     load_evidence,
     write_evidence,
 )
+from medscale.extraction import assemble_evidence, extraction_queue
 from medscale.litdb import (
     EvidenceTier,
     Identifiers,
@@ -30,7 +31,6 @@ from medscale.litdb import (
     archive_retrieval,
     write_manifest,
 )
-from medscale.litdb.extract_cli import assemble_evidence, extraction_queue
 from medscale.litdb.review import ReviewDecision, make_event
 from medscale.litdb.review import append_events as append_review_events
 from medscale.litdb.store import write_corpus

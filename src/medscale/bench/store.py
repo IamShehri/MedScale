@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import medscale._layout as _layout
 from medscale.bench.spec import BenchmarkSpec
 from medscale.bench.tasks import TaskItem
 from medscale.reproducibility import canonical_json
@@ -20,7 +21,7 @@ __all__ = ["benchmark_dir", "list_benchmarks", "load_benchmark", "write_benchmar
 
 
 def benchmark_dir(root: Path, benchmark_id: str) -> Path:
-    return root / "benchmarks" / benchmark_id
+    return _layout.benchmarks_dir(root) / benchmark_id
 
 
 def write_benchmark(root: Path, spec: BenchmarkSpec, items: tuple[TaskItem, ...]) -> Path:
@@ -53,7 +54,7 @@ def load_benchmark(root: Path, benchmark_id: str) -> tuple[BenchmarkSpec, tuple[
 
 
 def list_benchmarks(root: Path) -> tuple[str, ...]:
-    base = root / "benchmarks"
+    base = _layout.benchmarks_dir(root)
     if not base.exists():
         return ()
     return tuple(sorted(entry.name for entry in base.iterdir() if (entry / "spec.json").exists()))

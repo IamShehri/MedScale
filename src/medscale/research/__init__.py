@@ -1,5 +1,8 @@
 """medscale.research — the Research Intelligence read layer.
 
+Stability: **internal** (except ``ResearchIndex``, re-exposed via the root contract
+through ``Workspace.index()``).
+
 Turns stored artifacts into a queryable scientific evidence engine. Everything here is
 a *pure read*: no hidden state, no mutation, no caching, no ML, no probabilistic
 ranking — deterministic functions over an immutable :class:`ResearchIndex`, so a

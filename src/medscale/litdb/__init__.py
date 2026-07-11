@@ -1,5 +1,8 @@
 """medscale.litdb — the literature database (T1).
 
+Stability: **internal** — these names may change between minor versions; depend on
+the frozen root contract (``medscale.Workspace`` et al.) wherever possible.
+
 Schema and workflow machinery for a PRISMA-governed, citation-verified literature
 corpus: bibliographic records with R1 provenance, the screening state machine and its
 append-only decision log, the frozen query set, live-API adapters with an injectable

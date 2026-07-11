@@ -5,14 +5,14 @@ from __future__ import annotations
 from pathlib import Path
 
 from medscale import cli
-from medscale.litdb import EvidenceTier, Identifiers, LiteratureRecord
-from medscale.litdb.review import ExclusionReason, ReviewDecision, current_reviews
-from medscale.litdb.screen_cli import (
+from medscale.cli.screen import (
     build_event,
     decision_for_key,
     format_record,
 )
-from medscale.litdb.screen_cli import main as screen_main
+from medscale.cli.screen import main as screen_main
+from medscale.litdb import EvidenceTier, Identifiers, LiteratureRecord
+from medscale.litdb.review import ExclusionReason, ReviewDecision, current_reviews
 from medscale.litdb.store import write_corpus
 from medscale.provenance import Provenance, SourceAPI
 

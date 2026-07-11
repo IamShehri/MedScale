@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
 
+import medscale._layout as _layout
 from medscale.litdb.store import load_corpus
 
 __all__ = [
@@ -26,14 +27,13 @@ __all__ = [
     "Merge",
     "check_litdb",
     "check_references",
-    "main",
 ]
 
-_REVIEW_LOG: Final = "screening/review_log.jsonl"
-_SCREENING_LOG: Final = "screening/screening_log.jsonl"
-_MERGE_LOG: Final = "screening/merge_log.jsonl"
-_CORPUS: Final = "corpus/records.jsonl"
-_EVIDENCE: Final = "evidence/objects.jsonl"
+_REVIEW_LOG: Final = _layout.REVIEW_LOG
+_SCREENING_LOG: Final = _layout.SCREENING_LOG
+_MERGE_LOG: Final = _layout.MERGE_LOG
+_CORPUS: Final = _layout.CORPUS
+_EVIDENCE: Final = _layout.EVIDENCE
 
 
 @dataclass(frozen=True)
@@ -199,16 +199,5 @@ def format_report(report: IntegrityReport) -> str:
     return "\n".join(lines)
 
 
-def main(argv: list[str] | None = None) -> int:
-    import argparse
-
-    parser = argparse.ArgumentParser(prog="medscale check", description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path("data/litdb"))
-    args = parser.parse_args(argv)
-    report = check_litdb(args.root)
-    print(format_report(report))
-    return 0 if report.is_clean else 1  # non-zero exit => usable as a CI gate
-
-
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(0)
