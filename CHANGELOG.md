@@ -6,6 +6,33 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed (core stabilization sprint — 2026-07-10)
+
+- **Transport layer isolated:** all CLIs consolidated into the `medscale.cli` package
+  as thin adapters — `stats`/`snapshot`/`bench` rewritten onto the public `Workspace`
+  facade; `check` deliberately calls the integrity engine directly (a corruption
+  checker must run against trees too broken to index). CLI behavior, flags, output,
+  and exit codes unchanged.
+- **Layer inversions removed:** evidence assembly moved out of litdb into
+  `medscale.extraction` (Knowledge no longer imports Evidence); package-root
+  `__version__` imports replaced with `medscale.__about__`; no module imports the
+  package root.
+- **Storage layout sealed:** new internal `medscale._layout` module owns every
+  path/JSONL/manifest location; string values are byte-identical to before, so all
+  persisted artifacts, identifiers, and **snapshot ids are unchanged**.
+- **Runtime helpers consolidated:** new internal `medscale._runtime`
+  (`utc_now`, `git_sha`) replaces four `_git_sha` copies and six ad-hoc
+  `datetime.now` call sites.
+- **Dead code removed:** `medscale.litdb.workqueue` (+ its tests) — superseded by the
+  review layer.
+- **Architecture enforcement:** `tests/test_architecture.py` — six build-failing rules
+  (layer classification, no root imports, downward-only dependencies, transport
+  isolation, engine never imports the facade, layout literals confined to `_layout`).
+- **ADR-0020 Accepted** (founder-directed): Public API Stability Policy — stability
+  tiers, SemVer binding, deprecation policy, compatibility rules, public vs internal
+  namespaces. **ADR-0021 Proposed** (design only): extension/plugin architecture via
+  frozen protocols + entry-point discovery; explicitly not implemented.
+
 ### Added
 
 - **Python workspace (T0):** `medscale` package (src-layout), `pyproject.toml`
