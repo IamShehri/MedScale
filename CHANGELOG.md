@@ -45,6 +45,25 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (architectural stress test — 2026-07-10)
+
+- **Decade stress test** (`docs/architecture/reviews/2026-07-10-stress-test.md`): every
+  subsystem attacked at 1000× scale with evidence from the code. Verdict: contracts
+  survive (content-addressed identity, append-only logs, pure spine, protocols, zero
+  runtime deps); engines are v1 behind verified-clean seams. Engineering debt register
+  D1–D7 opened with explicit triggers (storage engine at the 75 MB tripwire;
+  multi-writer logs at the second reviewer; identity-hash caching on profile; action
+  SHA-pinning with the release workflow).
+- **F1 fixed — persisted-format versioning**: every serializer now emits `"format": 1`
+  (corpus lines, screening decisions, review events, run + experiment manifests, merge
+  entries, group resolutions); all readers tolerate absence (absence ≡ format 1);
+  committed logs never rewritten; the corpus snapshot rewritten once to be
+  self-describing (record_ids unchanged; `medscale check` CLEAN). 5 new tests
+  (188 total).
+- **Proposed ADR-0018** (amends ADR-0009): decouple `evidence_id` from
+  `schema_version` — the first schema bump would otherwise re-mint every evidence id
+  ecosystem-wide; window is open (zero evidence objects exist). Founder decision.
+
 ### Changed (ADR-0016/0017 ratified — 2026-07-10)
 
 - **ADR-0016 Accepted (Option A)**: archives stay in-repo, field-trimmed, capped, with a

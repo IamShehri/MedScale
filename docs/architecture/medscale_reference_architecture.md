@@ -1,6 +1,7 @@
 # MedScale Reference Architecture
 
-- **Status:** Proposed target architecture (conceptual; implementation gated phase by phase)
+- **Status:** Accepted target architecture (ADR-0012 hybrid: spine + seven capability
+  layers; implementation gated phase by phase)
 - **Date:** 2026-07-10
 - **Related:** [ecosystem analysis](ecosystem_analysis.md), ADRs
   [0005](../adr/0005-research-intelligence-scope.md)–[0008](../adr/0008-interoperability-fhir-canonical.md),

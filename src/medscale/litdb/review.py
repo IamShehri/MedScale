@@ -137,6 +137,7 @@ class ReviewEvent:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "format": 1,
             "record_id": self.record_id,
             "previous_decision": self.previous_decision.value,
             "new_decision": self.new_decision.value,

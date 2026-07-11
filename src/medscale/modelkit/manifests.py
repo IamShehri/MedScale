@@ -162,6 +162,7 @@ class ExperimentManifest:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "format": 1,
             "experiment_id": self.experiment_id,
             "rq_refs": list(self.rq_refs),
             "configuration": self.configuration,

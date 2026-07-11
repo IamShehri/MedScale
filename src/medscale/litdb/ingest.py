@@ -98,6 +98,7 @@ class RunManifest:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "format": 1,
             "run_id": self.run_id,
             "search_strategy_git_sha": self.search_strategy_git_sha,
             "entries": [entry.to_dict() for entry in self.entries],

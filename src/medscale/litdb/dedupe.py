@@ -50,6 +50,7 @@ class MergeEntry:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "format": 1,
             "merged_record_id": self.merged_record_id,
             "source_record_ids": list(self.source_record_ids),
             "source_records": list(self.source_records),

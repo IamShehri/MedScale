@@ -22,6 +22,7 @@ __all__ = ["load_corpus", "record_from_dict", "record_to_dict", "write_corpus"]
 
 def record_to_dict(record: LiteratureRecord) -> dict[str, Any]:
     return {
+        "format": 1,
         "record_id": record.record_id,
         "identifiers": {
             "doi": record.identifiers.doi,

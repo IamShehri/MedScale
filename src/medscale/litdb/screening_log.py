@@ -40,6 +40,7 @@ class ScreeningDecision:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "format": 1,
             "record_id": self.record_id,
             "to_stage": self.to_stage.value,
             "decided_at": self.decided_at,

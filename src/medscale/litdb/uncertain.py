@@ -71,6 +71,7 @@ class GroupResolution:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "format": 1,
             "key": self.key,
             "resolution": self.resolution,
             "reviewer": self.reviewer,
