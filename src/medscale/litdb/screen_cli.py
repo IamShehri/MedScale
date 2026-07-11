@@ -75,6 +75,7 @@ def format_record(record: LiteratureRecord, *, position: int, remaining: int) ->
         f"authors  : {authors or '(none listed)'}",
         f"year     : {record.year or '?'}    venue: {record.venue or '(none)'}",
         f"tier     : {record.evidence_tier.value}   source: {record.provenance.source_api.value}",
+        f"queries  : {', '.join(record.tags) or '(untagged)'}",
         f"ids      : {'  '.join(id_parts)}",
         f"record_id: {record.record_id}",
         "",
@@ -153,8 +154,13 @@ def _prompt_exclusion_reason() -> ExclusionReason | None:
     return _EXCLUSION_KEYS[int(raw) - 1]
 
 
-def _run_interactive(root: Path, reviewer: str, limit: int | None) -> int:
+def _run_interactive(root: Path, reviewer: str, limit: int | None, query: str | None) -> int:
     corpus = load_corpus(root / _CORPUS)
+    if query is not None:
+        corpus = tuple(record for record in corpus if query in record.tags)
+        if not corpus:
+            print(f"no records tagged {query!r} — run scripts/tag_query_lineage.py or check the id")
+            return 1
     ids_in_order = [
         record.record_id for record in sorted(corpus, key=lambda r: normalize_title(r.title))
     ]
@@ -220,13 +226,16 @@ def main(argv: list[str] | None = None) -> int:
         "--reviewer", default="operator", help="reviewer id recorded in the audit trail"
     )
     parser.add_argument("--limit", type=int, default=None, help="max records this session")
+    parser.add_argument(
+        "--query", default=None, help="only records retrieved by this query id (e.g. Q2)"
+    )
     args = parser.parse_args(argv)
 
     if args.command == "status":
         print(_status_text(args.root))
         return 0
     # 'next' and 'resume' are the same operation: pick up the pending queue.
-    return _run_interactive(args.root, args.reviewer, args.limit)
+    return _run_interactive(args.root, args.reviewer, args.limit, args.query)
 
 
 if __name__ == "__main__":
