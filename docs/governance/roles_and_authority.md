@@ -50,6 +50,39 @@ Architecture Impact · Research Impact · Technical Debt · Risks · Quality Gat
 ADR Changes · Recommended Options (A/B/C) · Architectural Recommendation · Awaiting
 Founder Approval.
 
+## Review cadence — tiered (**Proposed** amendment, 2026-07-10, awaiting approval)
+
+The Founder's Architect directive (2026-07-10) asks for ~20 review lenses (architecture,
+scientific, OSS, security, performance, technical debt, risks, opportunities, suggested
+ADRs/papers/benchmarks/datasets/integrations/refactoring/roadmap/research/publication/
+funding/community/documentation) "at the end of every completed task."
+
+**Architect's challenge (per Duty to Challenge).** Taken literally, this conflicts with
+the Execution Phase directive ("software first; do not create documentation by default;
+success = working infrastructure, not number of documents"). Emitting 20 review sections
+after a small task — e.g. suggested *funding* and *community-building* after a bugfix —
+is process noise that buries the code the Execution directive prioritizes, and would
+make MedScale look *less* like PyTorch/Arrow (lean, code-first) rather than more. The
+value of the deep lenses is real; the per-task cadence is the problem.
+
+**Proposed reconciliation — three tiers, same total rigor, right cadence:**
+
+| Tier | When | Lenses |
+|---|---|---|
+| **Per task** | every session (unchanged) | The 11-part session report above — already covers architecture, research, debt, risks, ADRs, options, and quality gate. |
+| **Per milestone** | after a significant milestone (already the cadence for the reviews below) | Full battery: Architecture · Scientific Integrity · CTO · **OSS** · **Security** · **Performance** reviews, each a short dated file under `docs/{architecture,research}/reviews/`. |
+| **Per horizon / strategic** | when a horizon closes or on request | Suggested **papers · benchmarks · datasets · ecosystem integrations · research directions · publication · funding · community** — these are strategic-cadence artifacts; producing them per-task is noise, per-horizon is signal. |
+
+This adds two standing milestone lenses not yet formalized (**OSS review**: packaging,
+API stability, contributor experience, docs, licensing, versioning vs PyTorch/Arrow
+bar; **Security review**: input trust boundaries, supply chain, secrets, dependency
+CVEs, data-handling) and one performance lens (**Performance review**: only where a
+measured bottleneck exists — never premature). Nothing is lost from the founder's list;
+each lens is assigned the cadence where it produces signal rather than overhead.
+
+If the founder prefers literal per-task 20-lens reports instead, that overrides this
+proposal — but the recommendation, with evidence, is the tiered model.
+
 ## Innovation rule
 
 Nothing is built because another project has it. A capability is built only if it
