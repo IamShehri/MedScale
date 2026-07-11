@@ -33,6 +33,7 @@ _REVIEW_LOG: Final = "screening/review_log.jsonl"
 _SCREENING_LOG: Final = "screening/screening_log.jsonl"
 _MERGE_LOG: Final = "screening/merge_log.jsonl"
 _CORPUS: Final = "corpus/records.jsonl"
+_EVIDENCE: Final = "evidence/objects.jsonl"
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,7 @@ class IntegrityReport:
     screening_refs: int
     merges: int
     issues: tuple[IntegrityIssue, ...]
+    evidence_refs: int = 0
 
     @property
     def is_clean(self) -> bool:
@@ -69,6 +71,7 @@ class IntegrityReport:
             "review_refs": self.review_refs,
             "screening_refs": self.screening_refs,
             "merges": self.merges,
+            "evidence_refs": self.evidence_refs,
             "clean": self.is_clean,
             "issues": [issue.to_dict() for issue in self.issues],
         }
@@ -80,10 +83,21 @@ def check_references(
     review_ref_ids: set[str],
     screening_ref_ids: set[str],
     merges: Iterable[Merge],
+    evidence_source_ids: set[str] | None = None,
 ) -> IntegrityReport:
     """Pure integrity check over id sets. Deterministic issue ordering."""
     issues: list[IntegrityIssue] = []
     merges = tuple(merges)
+    evidence_source_ids = evidence_source_ids or set()
+
+    for ref in sorted(evidence_source_ids - corpus_ids):
+        issues.append(
+            IntegrityIssue(
+                "orphaned_evidence_ref",
+                ref,
+                "evidence object references a source record not in the corpus",
+            )
+        )
 
     for ref in sorted(review_ref_ids - corpus_ids):
         issues.append(
@@ -124,6 +138,7 @@ def check_references(
         screening_refs=len(screening_ref_ids),
         merges=len(merges),
         issues=tuple(issues),
+        evidence_refs=len(evidence_source_ids),
     )
 
 
@@ -152,11 +167,20 @@ def _load_merges(path: Path) -> tuple[Merge, ...]:
 def check_litdb(root: Path) -> IntegrityReport:
     """Run the integrity check over a ``data/litdb`` directory."""
     corpus_ids = {record.record_id for record in load_corpus(root / _CORPUS)}
+    evidence_sources: set[str] = set()
+    evidence_path = root / _EVIDENCE
+    if evidence_path.exists():
+        for line in evidence_path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                source = json.loads(line).get("source_record_id")
+                if source:
+                    evidence_sources.add(str(source))
     return check_references(
         corpus_ids,
         review_ref_ids=_referenced_ids(root / _REVIEW_LOG, "record_id"),
         screening_ref_ids=_referenced_ids(root / _SCREENING_LOG, "record_id"),
         merges=_load_merges(root / _MERGE_LOG),
+        evidence_source_ids=evidence_sources,
     )
 
 
@@ -167,6 +191,7 @@ def format_report(report: IntegrityReport) -> str:
         f"  review refs     : {report.review_refs}",
         f"  screening refs  : {report.screening_refs}",
         f"  merges          : {report.merges}",
+        f"  evidence refs   : {report.evidence_refs}",
         f"  status          : {'CLEAN' if report.is_clean else 'ISSUES FOUND'}",
     ]
     for issue in report.issues:

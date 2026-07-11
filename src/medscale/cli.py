@@ -11,9 +11,13 @@ import io
 import sys
 from collections.abc import Sequence
 
-from medscale.litdb import integrity, screen_cli
+from medscale.litdb import extract_cli, integrity, screen_cli
 
-_SUBCOMMANDS = {"screen": screen_cli.main, "check": integrity.main}
+_SUBCOMMANDS = {
+    "screen": screen_cli.main,
+    "extract": extract_cli.main,
+    "check": integrity.main,
+}
 
 
 def _never_crash_on_console_encoding() -> None:
@@ -32,7 +36,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args or args[0] in ("-h", "--help"):
         print("usage: medscale <command> [options]")
         print("\ncommands:\n  screen   human literature screening")
-        print("  check    verify corpus/log referential integrity")
+        print("  extract  turn INCLUDED records into verified Evidence Objects")
+        print("  check    verify corpus/log/evidence referential integrity")
         return 0 if args else 1
     command, rest = args[0], args[1:]
     handler = _SUBCOMMANDS.get(command)
