@@ -45,6 +45,19 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (integrity guard — 2026-07-10)
+
+- **`medscale.litdb.integrity`** + **`medscale check`**: referential-integrity guard for
+  the corpus↔log coupling. Proactively surfaced a latent hazard — fuzzy dedupe mints new
+  `record_id`s and removes merged sources (40 merges removed 80 source ids in the current
+  corpus), so a decision keyed to a since-merged id would silently orphan. The check
+  verifies every log reference resolves to a live record, merged records are present, and
+  merged-away sources are absent; exits non-zero for CI gating. Verified CLEAN against the
+  real corpus (1,346 records, 40 merges, 0 issues). 9 new tests (171 total).
+- **Proposed ADR-0017** (identifier stability contract + pipeline ordering invariant):
+  content-addressed ids are a frozen versioned contract; dedupe must precede any decision;
+  `medscale check` is the mechanical enforcement. Surfaced by the architect, not requested.
+
 ### Added (human screening workflow — 2026-07-10)
 
 - **`medscale.litdb.review`**: the human decision layer — controlled `ReviewDecision`
