@@ -11,6 +11,7 @@ import io
 import sys
 from collections.abc import Sequence
 
+from medscale.bench import bench_cli
 from medscale.litdb import extract_cli, integrity, screen_cli
 from medscale.research import research_cli
 
@@ -20,6 +21,7 @@ _SUBCOMMANDS = {
     "check": integrity.main,
     "stats": research_cli.stats_main,
     "snapshot": research_cli.snapshot_main,
+    "bench": bench_cli.main,
 }
 
 
@@ -43,6 +45,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("  check    verify corpus/log/evidence referential integrity")
         print("  stats    machine-readable corpus/screening/evidence statistics")
         print("  snapshot capture or --verify a citable knowledge-state identity")
+        print("  bench    list/validate/run snapshot-bound evidence benchmarks")
         return 0 if args else 1
     command, rest = args[0], args[1:]
     handler = _SUBCOMMANDS.get(command)
