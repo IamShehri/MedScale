@@ -69,3 +69,33 @@ T3/T4 produce manifests to link. Planned v2 (at T4, append-only): `context_lengt
 `supported_features`, `benchmark_results: tuple[manifest ref, ...]`. **No field is added
 before real data can fill it** — a registry with empty capability columns is marketing,
 not measurement. Models are evaluated, never trusted.
+
+## The final picture (founder, 2026-07-10) — consumption-side view
+
+```
+Afia (one application among future many)
+│  UI · Workspace · Notes · Agents · Patient Apps · Research Apps
+└──► MedScale Engine
+     litdb · Evidence Objects · Benchmark · Verification ·
+     Model Evaluation · Clinical Knowledge · Research Intelligence · APIs
+```
+
+Checked against the accepted architecture: every engine component maps to an existing
+module or a gated phase (litdb ✅ · evidence ✅ · bench = T3 · verification = spine/T2 ·
+model evaluation = modelkit/T4 · clinical knowledge = H2 KG gate · APIs = the published
+package surface). The consumption edge is ADR-0003's outbound-only contract, unchanged.
+**No conflict; the picture is the architecture.** Public APIs are designed for
+thousands of downstream consumers, of which Afia is the first.
+
+## Beyond the repository (ten-year adoption surface — vision only, nothing built)
+
+| Dimension | Long-term targets | Where already governed |
+|---|---|---|
+| Distribution artifacts | PyPI · HF org · Docker/OCI images (bench runner, validator env) · docs site (MkDocs) · Zenodo DOIs | [releases/](../releases/README.md); images/docs-site land with their first consumer |
+| Community collaborations | HL7 FHIR community · OHDSI/OMOP (observational data standards) · OpenMed (adapter, ADR-0007) · OpenAlex/S2 (data partners) | ecosystem analysis; interop strategy |
+| Adoption targets | University informatics labs (litdb + bench as teaching/replication material) · health systems (validator + bench for AI procurement evaluation) · standards bodies (executable-conformance evidence to HL7) | Blueprint §13–14 |
+| Venues | JAMIA / npj Digital Medicine (litdb methodology, bench) · NeurIPS D&B (MedScale-Bench) · ACL BioNLP / EMNLP (extraction, RQ5) · AMIA/MLHC (applications) | papers.md roadmap |
+| Standards ambition | The release-manifest + evidence-provenance format itself — publishable as a lightweight reproducibility profile others adopt | releases/reproducibility.md |
+
+Rule unchanged: none of this pollutes today's architecture; each item enters the
+roadmap only through its phase gate or an ADR.
