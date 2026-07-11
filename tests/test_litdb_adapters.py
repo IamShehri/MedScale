@@ -44,12 +44,16 @@ def test_search_wraps_payload_with_request_url() -> None:
     assert "limit=5" in result.query
 
 
-def test_openalex_search_url_is_polite() -> None:
+def test_openalex_search_url_is_polite_and_field_trimmed() -> None:
     fetcher = FakeFetcher()
     (result,) = OpenAlexAdapter(fetcher=fetcher, now=_now).search("fhir", limit=3)
     assert "api.openalex.org/works" in result.query
     assert "per-page=3" in result.query
     assert "mailto=" in result.query
+    # ADR-0016: request only parser-consumed fields (archive-volume control)
+    assert "select=" in result.query
+    for field in ("doi", "display_name", "abstract_inverted_index", "authorships"):
+        assert field in result.query
 
 
 def test_pubmed_urls() -> None:

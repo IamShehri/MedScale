@@ -75,6 +75,10 @@ identified ──► deduped ──► screened ──► eligibility ──► 
 2. **deduped** — pass 1 by construction: identical resolvable identifiers ⇒ identical
    `record_id`. Pass 2 (documented, human-confirmed): fuzzy title+year for cross-id
    duplicates; the merge decision is logged with both provenances retained.
+   **Ordering invariant (ADR-0017, Accepted):** both dedupe passes complete *before*
+   any human decision references a `record_id` — merges mint new ids, so re-running
+   dedupe after decisions exist is prohibited without a lineage-based migration.
+   `medscale check` enforces referential integrity in CI.
 3. **screened** — title/abstract vs inclusion criteria (below).
 4. **eligibility** — full-text check; licence and reproducibility signals extracted.
 5. **included / excluded** — exclusion always carries a reason (enforced in code).
@@ -94,6 +98,12 @@ via resolvable identifier.
   (`data/litdb/raw/<source>/<query-id>/<timestamp>.json`) with SHA-256 recorded — the
   hash that `Provenance.raw_response_sha256` carries. A `LICENSE.md` accompanies the
   data directory (R3) before the first byte is committed.
+  **Field trimming (ADR-0016, Accepted Option A):** requests ask only for
+  parser-consumed fields (OpenAlex `select=id,doi,ids,display_name,title,`
+  `publication_year,primary_location,authorships,abstract_inverted_index`; S2 `fields=`
+  already minimal). The trimmed response *is* the verbatim response — trimming happens
+  at request time, so archived bytes still match their hash. Repo data budget:
+  ~75 MB tripwire before storage policy is revisited.
 - **Run manifest:** query id, source, timestamp (UTC, tz-aware), result count, cap
   hit (y/n), git SHA — committed with the run.
 - **Determinism boundary:** live APIs are inherently non-stationary; reproducibility is

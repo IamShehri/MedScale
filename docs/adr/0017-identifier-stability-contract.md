@@ -1,7 +1,8 @@
 # ADR-0017 — Identifier Stability Contract and litdb Pipeline Ordering Invariant
 
-- **Status:** Proposed (awaiting founder approval — surfaced proactively by the
-  architect; the enforcement mechanism is implemented, the *policy* awaits ratification)
+- **Status:** Accepted (2026-07-10, founder approval — the identifier derivations are a
+  frozen versioned contract; dedupe-before-decision ordering is binding; `medscale
+  check` is the mechanical enforcement, wired into CI)
 - **Date:** 2026-07-10
 - **Deciders:** Founder
 - **Related:** [ADR-0009](0009-evidence-model.md) (evidence_id),

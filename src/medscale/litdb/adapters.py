@@ -40,6 +40,14 @@ USER_AGENT: Final = f"MedScale-litdb/0.0 (research; mailto:{CONTACT_EMAIL})"
 
 _S2_FIELDS: Final = "title,year,venue,abstract,authors,externalIds"
 
+#: ADR-0016 (Accepted, Option A): request only the fields the parser reads. Round-1
+#: full objects made OpenAlex ~80% of the 18 MB archive volume; trimming at request
+#: time keeps archives verbatim-and-hashable while shrinking every future round.
+_OPENALEX_SELECT: Final = (
+    "id,doi,ids,display_name,title,publication_year,primary_location,"
+    "authorships,abstract_inverted_index"
+)
+
 
 class RetrievalError(RuntimeError):
     """A source API failed in a way that must abort the run (e.g. rate limit)."""
@@ -152,7 +160,12 @@ class OpenAlexAdapter(_BaseAdapter):
 
     def _search_url(self, query: str, limit: int) -> str:
         params = urllib.parse.urlencode(
-            {"search": query, "per-page": str(limit), "mailto": CONTACT_EMAIL}
+            {
+                "search": query,
+                "per-page": str(limit),
+                "select": _OPENALEX_SELECT,
+                "mailto": CONTACT_EMAIL,
+            }
         )
         return f"https://api.openalex.org/works?{params}"
 

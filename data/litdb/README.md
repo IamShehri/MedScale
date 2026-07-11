@@ -21,6 +21,10 @@ studies, which these queries deliberately do not retrieve. A separate
 ingested through the same machinery when its round is approved — two scientific
 objects, one infrastructure (scientific review S5).
 
+**Storage policy (ADR-0016, Accepted Option A):** archives live in-repo, field-trimmed
+at request time, capped per round. Tripwire: if `data/` exceeds **~75 MB**, storage
+policy is revisited via a superseding ADR before any further round runs.
+
 Rules of the directory:
 
 - Nothing lands in `raw/` except through `medscale.litdb.ingest.archive_retrieval`

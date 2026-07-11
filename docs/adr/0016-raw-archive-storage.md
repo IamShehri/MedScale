@@ -1,7 +1,7 @@
 # ADR-0016 — Raw-Archive Storage Policy (In-Repo, Trimmed, Capped)
 
-- **Status:** Proposed (awaiting founder approval — **blocks further ingestion rounds**;
-  git history is append-only, so this must be decided before more data lands)
+- **Status:** Accepted (2026-07-10, founder approval — **Option A**: in-repo,
+  field-trimmed, capped, ~75 MB tripwire. Ingestion unblocked.)
 - **Date:** 2026-07-10
 - **Deciders:** Founder
 - **Related:** [search strategy §4](../execution/search_strategy.md) (archival policy),

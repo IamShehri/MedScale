@@ -46,3 +46,7 @@ jobs:
 
       - name: Pytest
         run: uv run pytest --cov --cov-report=term-missing
+
+      # ADR-0017: corpus<->log referential integrity is a hard gate, not a convention.
+      - name: litdb integrity (medscale check)
+        run: uv run medscale check
