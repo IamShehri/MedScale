@@ -45,6 +45,23 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (survivability audit — 2026-07-10)
+
+- **Survivability audit** ("the founder vanished in 2028; it is 2038"): SPOF matrix
+  S1–S14 across founder/technical/scientific/governance/infrastructure/knowledge/
+  community/funding/security/release classes, each with probability, impact, and cost.
+  Verdict: knowledge SPOFs are already dead (repo verified self-contained — one gap
+  found and fixed: duplicates-first screening order was tool-only); the fatal residue
+  is *authority* (private repo on a personal account + founder-only ratification).
+  Foundation-readiness assessed (NumFOCUS-first path); Claude-dependency honestly
+  scored (velocity only — stack deliberately conventional); AI collaboration found
+  invisible in git history (zero trailers) — disclosure policy proposed.
+- **Proposed ADR-0019 (Continuity & Succession)**: publication as survivability
+  deadline; organization ownership; 6-month stewardship vacancy clause with
+  constitutional freeze; security succession; namespace custody; mirrors;
+  repository-is-the-only-memory rule; AI-collaboration disclosure + trailers going
+  forward (history never rewritten); NumFOCUS/Apache foundation path.
+
 ### Added (architectural stress test — 2026-07-10)
 
 - **Decade stress test** (`docs/architecture/reviews/2026-07-10-stress-test.md`): every

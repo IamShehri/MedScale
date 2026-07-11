@@ -29,10 +29,15 @@ append-only audit trail (`data/litdb/screening/review_log.jsonl`).
 
 ```
 uv run medscale screen status                    # PRISMA counts (reproducible from the log)
-uv run medscale screen next --reviewer <you>     # screen the pending queue; q to stop
+uv run medscale screen duplicates --reviewer <you>  # FIRST: resolve uncertain duplicate groups
+uv run medscale screen next --reviewer <you>     # then screen the pending queue; q to stop
 uv run medscale screen resume --reviewer <you>   # same as next; picks up where you left off
-uv run medscale screen next --limit 50           # cap a session
+uv run medscale screen next --query Q2 --limit 50   # topic-batched, capped session
 ```
+
+**Order matters:** resolve the uncertain-duplicate groups *before* title/abstract
+screening (ADR-0017 ordering discipline; `screen status` gates on this). Recommended
+topic order: Q2 → Q6 → Q4 (serves the novelty verdicts first).
 
 Per record: `[1] Include  [2] Exclude  [3] Maybe  [4] Duplicate  [5] Skip  [q] Quit`.
 Exclude prompts for a machine-readable reason. Decisions map to PRISMA stages
