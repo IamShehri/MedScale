@@ -7,6 +7,7 @@ minimal — no framework, just argv dispatch.
 
 from __future__ import annotations
 
+import io
 import sys
 from collections.abc import Sequence
 
@@ -15,7 +16,18 @@ from medscale.litdb import integrity, screen_cli
 _SUBCOMMANDS = {"screen": screen_cli.main, "check": integrity.main}
 
 
+def _never_crash_on_console_encoding() -> None:
+    """Record titles/abstracts are arbitrary Unicode; Windows consoles are often cp1252.
+
+    Unencodable characters degrade to ``?`` instead of killing a screening session.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        if isinstance(stream, io.TextIOWrapper):
+            stream.reconfigure(errors="replace")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
+    _never_crash_on_console_encoding()
     args = list(sys.argv[1:] if argv is None else argv)
     if not args or args[0] in ("-h", "--help"):
         print("usage: medscale <command> [options]")

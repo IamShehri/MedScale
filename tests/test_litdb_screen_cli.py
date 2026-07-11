@@ -41,6 +41,13 @@ def test_decision_for_key() -> None:
     assert decision_for_key("x") is None
 
 
+def test_format_record_chrome_is_ascii() -> None:
+    """Display chrome must survive cp1252 consoles (only record CONTENT may be Unicode)."""
+    record = _record("10.1/ascii", "Plain ascii title")
+    text = format_record(record, position=1, remaining=1)
+    text.encode("ascii")  # raises if any decorative character is non-ASCII
+
+
 def test_format_record_shows_key_fields() -> None:
     text = format_record(_record("10.1/x"), position=1, remaining=5)
     assert "grammar-constrained FHIR" in text

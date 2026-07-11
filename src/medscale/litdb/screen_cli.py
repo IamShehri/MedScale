@@ -68,9 +68,10 @@ def format_record(record: LiteratureRecord, *, position: int, remaining: int) ->
     authors = ", ".join(record.authors[:6]) + (" et al." if len(record.authors) > 6 else "")
     abstract = record.abstract or "(no abstract)"
     if len(abstract) > 1500:
-        abstract = abstract[:1500] + " […]"
+        abstract = abstract[:1500] + " ..."
+    # Chrome stays ASCII: Windows consoles default to cp1252 and must never crash here.
     lines = [
-        f"── record {position} · {remaining} remaining ────────────────────────────────",
+        f"--- record {position} | {remaining} remaining " + "-" * 40,
         f"title    : {record.title}",
         f"authors  : {authors or '(none listed)'}",
         f"year     : {record.year or '?'}    venue: {record.venue or '(none)'}",
@@ -159,7 +160,7 @@ def _run_interactive(root: Path, reviewer: str, limit: int | None, query: str | 
     if query is not None:
         corpus = tuple(record for record in corpus if query in record.tags)
         if not corpus:
-            print(f"no records tagged {query!r} — run scripts/tag_query_lineage.py or check the id")
+            print(f"no records tagged {query!r} - run scripts/tag_query_lineage.py or check the id")
             return 1
     ids_in_order = [
         record.record_id for record in sorted(corpus, key=lambda r: normalize_title(r.title))
@@ -168,7 +169,7 @@ def _run_interactive(root: Path, reviewer: str, limit: int | None, query: str | 
     reviews = current_reviews(root / _REVIEW_LOG)
     queue = pending_queue(ids_in_order, reviews)
     if not queue:
-        print("queue empty — every record has a decision. Nothing to screen.")
+        print("queue empty - every record has a decision. Nothing to screen.")
         return 0
     done = 0
     for position, record_id in enumerate(queue, start=1):
@@ -179,7 +180,7 @@ def _run_interactive(root: Path, reviewer: str, limit: int | None, query: str | 
         print("\n" + format_record(record, position=position, remaining=len(queue) - position + 1))
         choice = input("> ").strip().lower()
         if choice == "q":
-            print("quit — progress saved.")
+            print("quit - progress saved.")
             break
         if choice == "5":
             continue
