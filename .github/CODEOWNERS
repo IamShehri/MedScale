@@ -1,0 +1,27 @@
+# CODEOWNERS — review ownership for MedScale.
+#
+# Solo-maintained today. The path rules below are intentional, not decorative: they
+# encode which areas demand extra scrutiny (governance, decisions, scientific policy,
+# data licensing) and pre-wire GitHub review routing for when the project opens to
+# outside contributors — so review discipline is enforced from the first external PR,
+# not retrofitted later.
+
+# Default owner for everything.
+*                       @IamShehri
+
+# Governance, architecture decisions, and scientific policy.
+# Changes here alter how MedScale is run or what it claims — maintainer review always.
+/docs/governance/       @IamShehri
+/docs/adr/              @IamShehri
+/docs/research/         @IamShehri
+/docs/vision/           @IamShehri
+
+# Data provenance and licensing (Rule R3). Licence-sensitive; never rubber-stamped.
+/data/                  @IamShehri
+
+# Public API surface and reproducibility spine — stability-critical.
+/src/medscale/          @IamShehri
+
+# Packaging, release, and CI/CD surface.
+/pyproject.toml         @IamShehri
+/.github/               @IamShehri
