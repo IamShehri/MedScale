@@ -32,6 +32,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.scripts]
+medscale = "medscale.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/IamShehri/MedScale"
 Repository = "https://github.com/IamShehri/MedScale"

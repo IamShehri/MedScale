@@ -20,6 +20,24 @@ intentionally empty at freeze time: **no phase (T0 onward) has started.**
 
 - **T0** — Repository foundation *(✅ complete — ADR-0003/0004)*
 - **T1** — Literature database & evidence foundation *(🟡 in progress — `medscale.litdb`, ADR-0009)*
+
+### Screening the corpus (`medscale screen`)
+
+Human title/abstract screening turns the deduplicated corpus into a validated evidence
+foundation. No model is involved — decisions are the operator's, recorded in an
+append-only audit trail (`data/litdb/screening/review_log.jsonl`).
+
+```
+uv run medscale screen status                    # PRISMA counts (reproducible from the log)
+uv run medscale screen next --reviewer <you>     # screen the pending queue; q to stop
+uv run medscale screen resume --reviewer <you>   # same as next; picks up where you left off
+uv run medscale screen next --limit 50           # cap a session
+```
+
+Per record: `[1] Include  [2] Exclude  [3] Maybe  [4] Duplicate  [5] Skip  [q] Quit`.
+Exclude prompts for a machine-readable reason. Decisions map to PRISMA stages
+(include→screened, exclude/duplicate→excluded); corrections are new events (history is
+never edited). Interrupt any time — progress is saved after every decision.
 - **T2** — FHIR toolkit (`fhirkit`)
 - **T3** — MedScale-Bench
 - **T4–T7** — Model landscape, training pipeline, MESC-v0 adapter, evaluation

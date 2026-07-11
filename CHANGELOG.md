@@ -45,6 +45,23 @@ All notable changes to this project are documented here. The format is based on
   (local-first, no runtime phone-home, task-first discoverability, composition over
   pipelines); product not copied.
 
+### Added (human screening workflow — 2026-07-10)
+
+- **`medscale.litdb.review`**: the human decision layer — controlled `ReviewDecision`
+  states (PENDING/INCLUDE/EXCLUDE/UNCERTAIN/DUPLICATE_CONFIRMED, never free-form),
+  machine-readable `ExclusionReason` taxonomy, and `ReviewEvent` audit records carrying
+  record_id, previous/new decision, previous/new PRISMA stage, reviewer, timestamp,
+  reason, notes, software version, and git SHA. Append-only `review_log.jsonl`;
+  corrections are new events (history never edited); PRISMA counts and the resume queue
+  are replayed deterministically from the log. PRISMA stage is a pure function of the
+  decision — the accepted `ScreeningStage` machine is untouched.
+- **`medscale` CLI** (`[project.scripts]`): `medscale screen {status|next|resume}` —
+  operator-first, pure-function core (format/decide/build-event) with a thin
+  interactive shell; `--reviewer`, `--limit` for session control. Verified against the
+  real corpus (1,346 pending).
+- 22 new tests (162 total): state transitions, invalid decisions, append-only, exclusion
+  validation, resume, PRISMA calculations, CLI dispatch + interactive include path.
+
 ### Added (screening readiness — 2026-07-10)
 
 - **`litdb.dedupe`** (S2): conflict-safe fuzzy dedupe — applied to the real corpus:

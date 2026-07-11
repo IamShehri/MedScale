@@ -23,6 +23,14 @@ from medscale.litdb.ingest import ArchiveEntry, RunManifest, archive_retrieval, 
 from medscale.litdb.parsers import ParseOutcome, parse_pubmed_esearch_ids, parse_records
 from medscale.litdb.queries import QUERY_SET, RESULT_CAP, YEAR_FROM, QuerySpec, get_query
 from medscale.litdb.records import EvidenceTier, Identifiers, LiteratureRecord
+from medscale.litdb.review import (
+    ExclusionReason,
+    PrismaSummary,
+    RecordReview,
+    ReviewDecision,
+    ReviewEvent,
+    prisma_summary,
+)
 from medscale.litdb.screening import ScreeningStage, ScreeningState, advance_stage
 from medscale.litdb.screening_log import (
     ScreeningDecision,
@@ -40,16 +48,21 @@ __all__ = [
     "ArchiveEntry",
     "ArxivAdapter",
     "EvidenceTier",
+    "ExclusionReason",
     "FetchResult",
     "Fetcher",
     "Identifiers",
     "LiteratureRecord",
     "OpenAlexAdapter",
     "ParseOutcome",
+    "PrismaSummary",
     "PubMedAdapter",
     "QuerySpec",
     "RawRetrieval",
+    "RecordReview",
     "RetrievalError",
+    "ReviewDecision",
+    "ReviewEvent",
     "RunManifest",
     "ScreeningDecision",
     "ScreeningStage",
@@ -65,6 +78,7 @@ __all__ = [
     "load_corpus",
     "parse_pubmed_esearch_ids",
     "parse_records",
+    "prisma_summary",
     "replay_decisions",
     "write_corpus",
     "write_manifest",
