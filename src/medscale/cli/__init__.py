@@ -11,6 +11,7 @@ import io
 import sys
 from collections.abc import Sequence
 
+from medscale.__about__ import __version__
 from medscale.cli import bench as bench_cli
 from medscale.cli import check as check_cli
 from medscale.cli import extract as extract_cli
@@ -40,14 +41,19 @@ def _never_crash_on_console_encoding() -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     _never_crash_on_console_encoding()
     args = list(sys.argv[1:] if argv is None else argv)
+    if args and args[0] in ("--version", "-V"):
+        print(f"medscale {__version__}")
+        return 0
     if not args or args[0] in ("-h", "--help"):
         print("usage: medscale <command> [options]")
-        print("\ncommands:\n  screen   human literature screening")
+        print("\ncommands:\n  screen   human literature screening (status/duplicates/next/amend)")
         print("  extract  turn INCLUDED records into verified Evidence Objects")
         print("  check    verify corpus/log/evidence referential integrity")
         print("  stats    machine-readable corpus/screening/evidence statistics")
         print("  snapshot capture or --verify a citable knowledge-state identity")
         print("  bench    list/validate/run snapshot-bound evidence benchmarks")
+        print("\nrun `medscale <command> --help` for options and examples;")
+        print("new here? start with docs/guides/research_quickstart.md")
         return 0 if args else 1
     command, rest = args[0], args[1:]
     handler = _SUBCOMMANDS.get(command)

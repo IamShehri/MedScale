@@ -14,6 +14,7 @@ from typing import Final
 import medscale._layout as _layout
 from medscale.bench.baselines import EmptySystem, GoldOracle
 from medscale.bench.run import EvidenceSystem
+from medscale.cli import _common
 from medscale.workspace import Workspace
 
 _DEFAULT_ROOT: Final = _layout.DEFAULT_ROOT
@@ -24,10 +25,20 @@ _REFERENCE_SYSTEMS: Final[dict[str, type]] = {
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="medscale bench", description=__doc__)
+    parser = argparse.ArgumentParser(
+        prog="medscale bench",
+        description="List, validate, and run snapshot-bound evidence benchmarks. "
+        "`validate` proves the benchmark's knowledge state still matches the tree "
+        "(exit 1 if not); `run` executes a reference system and writes a "
+        "reproducible run artifact.",
+        epilog="example:\n  medscale bench run my-benchmark --system gold-oracle",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("command", choices=["list", "validate", "run"])
     parser.add_argument("benchmark_id", nargs="?", default=None)
-    parser.add_argument("--root", type=Path, default=_DEFAULT_ROOT)
+    parser.add_argument(
+        "--root", type=Path, default=_DEFAULT_ROOT, help="workspace root (default: data/litdb)"
+    )
     parser.add_argument(
         "--system",
         choices=sorted(_REFERENCE_SYSTEMS),
@@ -35,6 +46,9 @@ def main(argv: list[str] | None = None) -> int:
         help="reference system to run (models plug in via the EvidenceSystem API later)",
     )
     args = parser.parse_args(argv)
+    guard = _common.require_root(args.root)
+    if guard is not None:
+        return guard
     workspace = Workspace.open(args.root)
 
     if args.command == "list":
@@ -51,8 +65,17 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.benchmark_id is None:
-        print("benchmark_id required for this command")
-        return 2
+        return _common.fail(
+            "benchmark_id required for this command",
+            hint="see `medscale bench list` for what exists",
+        )
+
+    available = workspace.benchmarks()
+    if args.benchmark_id not in available:
+        return _common.fail(
+            f"unknown benchmark {args.benchmark_id!r}",
+            hint=f"available: {', '.join(available) or '(none defined yet)'}",
+        )
 
     benchmark = workspace.benchmark(args.benchmark_id)
 

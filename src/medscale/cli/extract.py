@@ -17,6 +17,7 @@ from typing import Final
 
 import medscale._layout as _layout
 from medscale._runtime import utc_now
+from medscale.cli import _common
 from medscale.evidence import EvidenceObject, StudyType
 from medscale.evidence_checks import archived_payload_hashes, rule_verify_source
 from medscale.evidence_store import load_evidence, write_evidence
@@ -58,10 +59,24 @@ def _show_record(record: LiteratureRecord, position: int, total: int) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="medscale extract", description=__doc__)
-    parser.add_argument("--root", type=Path, default=_DEFAULT_ROOT)
+    parser = argparse.ArgumentParser(
+        prog="medscale extract",
+        description="Turn INCLUDED records into verified Evidence Objects: one atomic "
+        "claim at a time, with optional PICO structure. Every object is rule-verified "
+        "against the corpus and its archived source payload, then saved immediately - "
+        "an interrupted session loses nothing.",
+        epilog="example:\n  medscale extract --limit 5",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--root", type=Path, default=_DEFAULT_ROOT, help="workspace root (default: data/litdb)"
+    )
     parser.add_argument("--limit", type=int, default=None, help="max records this session")
     args = parser.parse_args(argv)
+
+    guard = _common.require_corpus(args.root)
+    if guard is not None:
+        return guard
 
     corpus = load_corpus(args.root / _CORPUS)
     reviews = current_reviews(args.root / _REVIEW_LOG)
@@ -85,41 +100,49 @@ def main(argv: list[str] | None = None) -> int:
     known_hashes = archived_payload_hashes(args.root)
     collected: list[EvidenceObject] = list(existing)
     done = 0
-    for position, record in enumerate(queue, start=1):
-        if args.limit is not None and done >= args.limit:
-            print(f"\nreached --limit {args.limit}; resume with `medscale extract`.")
-            break
-        _show_record(record, position, len(queue))
-        while True:
-            claim = input("  claim ([enter]=next record, q=quit) > ").strip()
-            if claim.lower() == "q":
-                write_evidence(evidence_path, collected)
-                print(f"quit - {done} extraction(s) saved to {evidence_path}")
-                return 0
-            if not claim:
+    try:
+        for position, record in enumerate(queue, start=1):
+            if args.limit is not None and done >= args.limit:
+                print(f"\nreached --limit {args.limit}; resume with `medscale extract`.")
                 break
-            study_type = _prompt_study_type()
-            if study_type is None:
-                continue
-            obj = assemble_evidence(
-                record,
-                claim=claim,
-                study_type=study_type,
-                created_at=utc_now(),
-                population=_optional("population"),
-                intervention=_optional("intervention"),
-                comparator=_optional("comparator"),
-                outcome=_optional("outcome"),
-                effect_measure=_optional("effect measure"),
-                effect_value=_optional("effect value"),
-            )
-            verified, results = rule_verify_source(obj, corpus_ids, known_hashes)
-            for result in results:
-                marker = "ok" if result.passed else "FAIL"
-                print(f"    [{marker}] {result.check}: {result.reason}")
-            collected.append(verified)
-            done += 1
-            print(f"    recorded: {verified.verification.value}  ({verified.evidence_id[:12]}...)")
+            _show_record(record, position, len(queue))
+            while True:
+                claim = input("  claim ([enter]=next record, q=quit) > ").strip()
+                if claim.lower() == "q":
+                    print(f"quit - {done} extraction(s) saved to {evidence_path}")
+                    return 0
+                if not claim:
+                    break
+                study_type = _prompt_study_type()
+                if study_type is None:
+                    continue
+                obj = assemble_evidence(
+                    record,
+                    claim=claim,
+                    study_type=study_type,
+                    created_at=utc_now(),
+                    population=_optional("population"),
+                    intervention=_optional("intervention"),
+                    comparator=_optional("comparator"),
+                    outcome=_optional("outcome"),
+                    effect_measure=_optional("effect measure"),
+                    effect_value=_optional("effect value"),
+                )
+                verified, results = rule_verify_source(obj, corpus_ids, known_hashes)
+                for result in results:
+                    marker = "ok" if result.passed else "FAIL"
+                    print(f"    [{marker}] {result.check}: {result.reason}")
+                collected.append(verified)
+                done += 1
+                # Persist immediately: a crash or interrupt must never lose an
+                # extraction the operator was told was recorded.
+                write_evidence(evidence_path, collected)
+                print(
+                    f"    recorded: {verified.verification.value}  ({verified.evidence_id[:12]}...)"
+                )
+    except (KeyboardInterrupt, EOFError):
+        print(f"\nsession interrupted - {done} extraction(s) already saved.")
+        return 0
     count = write_evidence(evidence_path, collected)
     print(f"\n{done} extraction(s) this session; evidence store now {count} objects.")
     return 0

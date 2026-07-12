@@ -94,7 +94,10 @@ def write_evidence(path: Path, objects: Iterable[EvidenceObject]) -> int:
         unique.setdefault(obj.evidence_id, obj)
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [canonical_json(evidence_to_dict(unique[eid])) for eid in sorted(unique)]
-    path.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8", newline="\n")
+    # Atomic replace: a crash mid-write must never leave a truncated evidence store.
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8", newline="\n")
+    tmp.replace(path)
     return len(unique)
 
 
