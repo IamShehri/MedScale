@@ -3,7 +3,9 @@
 **Mission:** MedScale's first real systematic review, conducted by the Founder as a
 working researcher. Software is frozen except for bugs and operational issues
 discovered during actual use. Observe, measure, record; implement only after.
+The governing rules live in the [Operations Manual](README.md).
 
+- **Status: GO** — mission approved 2026-07-12; ADR-0022 Accepted
 - **Started:** pre-flight passed 2026-07-12 at `9a04aa0`
 - **Reviewer id:** *(founder: record the id you screen under here)*
 - **Scope:** uncertain-duplicate resolution (16 groups), then title/abstract
@@ -20,7 +22,7 @@ discovered during actual use. Observe, measure, record; implement only after.
 | Baseline snapshot verify | PASS — `cfdfcce5e2830391` VERIFIED |
 | Screening state | 16 uncertain groups unresolved; 1,346 pending |
 | Documentation current | PASS — guides shipped at `9a04aa0` |
-| ADRs required for the study | **ADR-0022 Proposed — ratification is the GO gate** |
+| ADRs required for the study | PASS — **ADR-0022 Accepted** (GO gate cleared 2026-07-12) |
 | ADR-0018 (evidence identity) | Not needed for screening; **gates the extraction stage** |
 
 ## Rules of engagement (support side)
@@ -43,7 +45,7 @@ Everything else is recorded below and the study continues.
 
 | # | Date | Reviewer | Scope | Decisions | Notes |
 |---|---|---|---|---|---|
-| — | — | — | — | — | *(first session pending ADR-0022 ratification)* |
+| — | — | — | — | — | *(GO — first session: `screen duplicates`)* |
 
 ## Issue register
 
@@ -66,7 +68,7 @@ Template:
 
 ## Milestones
 
-- [ ] ADR-0022 ratified (GO)
+- [x] ADR-0022 ratified (GO — 2026-07-12, mission approval)
 - [ ] 16 uncertain-duplicate groups resolved
 - [ ] Q2 title/abstract screening complete (148 records)
 - [ ] Post-Q2 snapshot captured and committed

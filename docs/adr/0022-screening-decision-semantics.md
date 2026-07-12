@@ -1,8 +1,9 @@
 # ADR-0022 — Screening Decision Semantics (Two-Stage Review)
 
-- **Status:** Proposed — **ratification is the Mission Zero GO gate**: these semantics
-  must be accepted (or amended) *before* the first real screening decision is logged,
-  because every event written afterwards is permanent and must mean something exact.
+- **Status:** Accepted (2026-07-12 — ratified by the founder's Mission Zero approval;
+  this ADR was the mission's GO gate: semantics fixed *before* the first real
+  screening decision is logged, because every event written afterwards is permanent
+  and must mean something exact).
 - **Date:** 2026-07-12
 - **Deciders:** Founder
 - **Related:** [ADR-0017](0017-identifier-stability-contract.md) (the precedent:

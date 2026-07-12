@@ -8,11 +8,15 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added (Mission Zero — 2026-07-12)
 
-- **ADR-0022 Proposed (screening decision semantics):** INCLUDE = passes
-  title/abstract; eligibility is a distinct future stage; ratification is the
-  Mission Zero GO gate — semantics fixed before the first permanent decision.
-- **Mission Zero operational journal** (`docs/execution/mission_zero.md`):
-  pre-flight record, session protocol, issue register, milestones.
+- **ADR-0022 Accepted (screening decision semantics):** INCLUDE = passes
+  title/abstract; eligibility is a distinct future stage. Proposed as the Mission
+  Zero GO gate; ratified by the founder's mission approval — semantics fixed
+  before the first permanent decision.
+- **Mission Zero Operations Manual** (`docs/execution/mission_zero/`): protocol,
+  one-page daily checklist, incident response guide (9 scenarios), journal +
+  per-session template, objective completion criteria, hard/baseline success
+  metrics, evidence-only lessons-learned framework. The journal moved into the
+  manual directory.
 
 ### Added (research readiness sprint — 2026-07-12)
 
