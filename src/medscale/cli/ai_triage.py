@@ -6,15 +6,14 @@ Advisory prioritization layer only. Does not modify human review logs.
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
-from typing import Final
+from typing import Any, Final
 
 import medscale._layout as _layout
 from medscale.cli import _common
 from medscale.litdb.ai_triage import (
-    AI_TRIAGE_SIGNALS,
     AIRecommendation,
+    TriageRecord,
     append_recommendations,
     build_recommendation,
     detect_deterministic_flags,
@@ -23,8 +22,8 @@ from medscale.litdb.ai_triage import (
     pending_for_triage,
     score_triage,
 )
-from medscale.litdb.store import load_corpus
 from medscale.litdb.review import current_reviews
+from medscale.litdb.store import load_corpus
 
 _DEFAULT_ROOT: Final = _layout.DEFAULT_ROOT
 
@@ -63,13 +62,33 @@ def _print_recommendation(recommendation: AIRecommendation, record_title: str) -
     print("--------------------------------")
 
 
+def _is_high(recommendation: object) -> bool:
+    rec = recommendation if hasattr(recommendation, "priority_score") else None
+    if rec is None:
+        return False
+    rec_any: Any = rec
+    return bool(
+        rec_any.priority_score >= 0.7 and rec_any.relevance_score >= 0.55
+    )
+
+
+def _is_medium(recommendation: object) -> bool:
+    rec = recommendation if hasattr(recommendation, "priority_score") else None
+    if rec is None:
+        return False
+    rec_any: Any = rec
+    priority = float(rec_any.priority_score)
+    relevance = float(rec_any.relevance_score)
+    return 0.45 <= priority < 0.7 and 0.35 <= relevance < 0.55
+
+
 def _run_status(root: Path) -> int:
     corpus = load_corpus(_layout.corpus_path(root))
     reviews = current_reviews(_layout.review_log_path(root))
     pending = pending_for_triage(corpus, reviews, query=None, limit=None)
     triage_recommendations = load_triage_log(_layout.triage_log_path(root))
-    high = sum(1 for r in triage_recommendations.values() if r.priority_score >= 0.7 and r.relevance_score >= 0.55)
-    medium = sum(1 for r in triage_recommendations.values() if 0.45 <= r.priority_score < 0.7 and 0.35 <= r.relevance_score < 0.55)
+    high = sum(1 for r in triage_recommendations.values() if _is_high(r))
+    medium = sum(1 for r in triage_recommendations.values() if _is_medium(r))
     total_triaged = len(triage_recommendations)
     print("MedScale AI Triage status")
     print(f"  corpus        : {len(corpus)} records")
@@ -88,7 +107,7 @@ def _run_recommend(root: Path, query: str | None, limit: int | None) -> int:
         print("no pending records for triage.")
         return 0
     triage_log_path = _layout.triage_log_path(root)
-    existing = load_triage_log(triage_log_path)
+    load_triage_log(triage_log_path)
     recommendations: list[AIRecommendation] = []
     by_id = {record.record.record_id: record for record in pending}
     for triage_record in pending:

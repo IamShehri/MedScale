@@ -10,9 +10,10 @@ Metrics:
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Any
 
 from medscale.litdb.ai_triage import load_triage_log
 from medscale.litdb.review import ReviewDecision, current_reviews
@@ -21,9 +22,9 @@ from medscale.reproducibility import canonical_json
 __all__ = [
     "EvaluationRun",
     "compute_metrics",
-    "write_goldset",
-    "load_goldset",
     "evaluate",
+    "load_goldset",
+    "write_goldset",
 ]
 
 
@@ -68,19 +69,22 @@ def _decision_bucket(recommendation: str) -> str:
 
 
 def compute_metrics(
-    recommendations: dict[str, object],
-    reviews: dict[str, object],
+    recommendations: Mapping[str, Any],
+    reviews: Mapping[str, Any],
 ) -> EvaluationRun:
-    total = len(recommendations)
+    recs: dict[str, Any] = dict(recommendations)
+    revs: dict[str, Any] = dict(reviews)
+    total = len(recs)
     included_total = 0
     included_flagged = 0
     recommended_medium_plus = 0
     bucket_counts = {"high": 0, "medium": 0, "low": 0, "uncertain": 0}
-    for record_id, recommendation in recommendations.items():
+    for record_id, recommendation in recs.items():
         bucket = _decision_bucket(str(getattr(recommendation, "recommendation", "")))
         bucket_counts[bucket] += 1
-        review = reviews.get(record_id)
-        if review is not None and getattr(review, "decision", None) is ReviewDecision.INCLUDE:
+        review = revs.get(record_id)
+        decision = getattr(review, "decision", None) if review is not None else None
+        if decision is ReviewDecision.INCLUDE:
             included_total += 1
             if bucket in {"high", "medium"}:
                 included_flagged += 1
@@ -110,8 +114,8 @@ def compute_metrics(
 
 def write_goldset(
     path: Path,
-    recommendations: dict[str, object],
-    reviews: dict[str, object],
+    recommendations: Mapping[str, Any],
+    reviews: Mapping[str, Any],
 ) -> None:
     """Write evaluated goldset entries including human decision alignment."""
 
@@ -119,13 +123,16 @@ def write_goldset(
     lines: list[str] = []
     for record_id, recommendation in recommendations.items():
         review = reviews.get(record_id)
+        decision_value = None
+        if review is not None:
+            decision = getattr(review, "decision", None)
+            if decision is not None:
+                decision_value = decision.value
         entry = {
             "record_id": record_id,
             "recommendation": str(getattr(recommendation, "recommendation", "")),
             "confidence": getattr(recommendation, "confidence", 0.0),
-            "human_decision": getattr(review, "decision", None).value
-            if review and getattr(review, "decision", None) is not None
-            else None,
+            "human_decision": decision_value,
         }
         lines.append(canonical_json(entry))
     if lines:

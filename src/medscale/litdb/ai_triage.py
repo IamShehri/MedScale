@@ -17,29 +17,30 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, field
+from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Literal
+from typing import Any, Final, Literal, cast
 
 from medscale._runtime import git_sha, utc_now
 from medscale.litdb.records import LiteratureRecord
-from medscale.litdb.store import load_corpus
-from medscale.litdb.review import current_reviews
 from medscale.reproducibility import canonical_json
 
 __all__ = [
     "AI_TRIAGE_SIGNALS",
+    "AIRecommendation",
     "DeterministicFlag",
     "OntologySignal",
     "TriageRecord",
-    "AIRecommendation",
-    "load_triage_log",
-    "append_recommendations",
-    "score_triage",
-    "build_recommendation",
-    "pending_for_triage",
     "_priority_label",
     "_recommendation_from_scores",
+    "append_recommendations",
+    "build_recommendation",
+    "detect_deterministic_flags",
+    "detect_ontology_signals",
+    "load_triage_log",
+    "pending_for_triage",
+    "score_triage",
 ]
 
 
@@ -83,10 +84,7 @@ _DEFAULT_ONTOLOGY_RE: Final[re.Pattern[str]] = re.compile(
 
 @dataclass(frozen=True)
 class DeterministicFlag:
-    """Deterministic pre-screening annotation.
-
-    These are informational only. They never directly cause exclusion.
-    """
+    """Informational pre-screen flag; never produces automatic exclusion."""
 
     rule: str
     severity: Literal["review_required", "monitor"]
@@ -94,16 +92,14 @@ class DeterministicFlag:
 
 @dataclass(frozen=True)
 class OntologySignal:
-    """Detected healthcare domain ontology signal."""
+    """Matched healthcare domain concept."""
 
-    signal: str
-    severity: Literal["monitor"] = "monitor"
+    name: str
+    matched_text: str
 
 
 @dataclass(frozen=True)
 class TriageRecord:
-    """A LiteratureRecord augmented with triage metadata."""
-
     record: LiteratureRecord
     deterministic_flags: tuple[DeterministicFlag, ...] = ()
     ontology_signals: tuple[str, ...] = ()
@@ -113,25 +109,23 @@ class TriageRecord:
 
 @dataclass(frozen=True)
 class AIRecommendation:
-    """One AI triage recommendation written to the audit log."""
-
     record_id: str
     recommendation: Literal["review first", "review later", "low priority", "uncertain"]
     confidence: float
     reasoning: str
-    reason_codes: tuple[str, ...]
-    matched_rules: tuple[str, ...]
-    model: str | None = None
-    provider: str | None = None
-    timestamp: str | None = None
-    agent_version: str = "medscale-ai-triage-v0.1"
-    git_sha: str | None = None
-    deterministic_flags: tuple[dict[str, Any], ...] = ()
+    reason_codes: tuple[str, ...] = ()
+    matched_rules: tuple[str, ...] = ()
+    timestamp: str = ""
+    agent_version: str = ""
+    git_sha: str = ""
+    deterministic_flags: tuple[dict[str, str], ...] = ()
     ontology_signals: tuple[str, ...] = ()
     priority_score: float = 0.0
     relevance_score: float = 0.0
+    model: str | None = None
+    provider: str | None = None
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         return {
             "format": 1,
             "record_id": self.record_id,
@@ -140,78 +134,129 @@ class AIRecommendation:
             "reasoning": self.reasoning,
             "reason_codes": list(self.reason_codes),
             "matched_rules": list(self.matched_rules),
-            "model": self.model,
-            "provider": self.provider,
             "timestamp": self.timestamp,
             "agent_version": self.agent_version,
             "git_sha": self.git_sha,
-            "deterministic_flags": [
-                {"rule": flag["rule"], "severity": flag["severity"]}
-                for flag in self.deterministic_flags
-            ],
+            "deterministic_flags": [dict(item) for item in self.deterministic_flags],
             "ontology_signals": list(self.ontology_signals),
             "priority_score": self.priority_score,
             "relevance_score": self.relevance_score,
+            "model": self.model,
+            "provider": self.provider,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict[str, object]) -> AIRecommendation:
+        required = ("record_id", "recommendation", "confidence")
+        missing = [key for key in required if key not in data]
+        if missing:
+            raise ValueError(f"AIRecommendation missing required fields: {missing}")
 
-def _dict_to_recommendation(payload: dict[str, Any]) -> AIRecommendation:
-    return AIRecommendation(
-        record_id=str(payload["record_id"]),
-        recommendation=str(payload["recommendation"]),
-        confidence=float(payload["confidence"]),
-        reasoning=str(payload.get("reasoning", "")),
-        reason_codes=tuple(payload.get("reason_codes", [])),
-        matched_rules=tuple(payload.get("matched_rules", [])),
-        model=payload.get("model"),
-        provider=payload.get("provider"),
-        timestamp=payload.get("timestamp"),
-        agent_version=str(payload.get("agent_version", "medscale-ai-triage-v0.1")),
-        git_sha=payload.get("git_sha"),
-        deterministic_flags=tuple(payload.get("deterministic_flags", [])),
-        ontology_signals=tuple(payload.get("ontology_signals", [])),
-        priority_score=float(payload.get("priority_score", 0.0)),
-        relevance_score=float(payload.get("relevance_score", 0.0)),
-    )
+        record_id_raw = data["record_id"]
+        if not isinstance(record_id_raw, str):
+            raise TypeError("record_id must be a string")
+        record_id = record_id_raw
+
+        recommendation_raw = data["recommendation"]
+        if not isinstance(recommendation_raw, str):
+            raise TypeError("recommendation must be a string")
+        allowed = {"review first", "review later", "low priority", "uncertain"}
+        if recommendation_raw not in allowed:
+            raise ValueError(f"Invalid recommendation: {recommendation_raw}")
+        recommendation = cast(
+            Literal["review first", "review later", "low priority", "uncertain"],
+            recommendation_raw,
+        )
+
+        confidence_raw = data["confidence"]
+        if not isinstance(confidence_raw, int | float):
+            raise TypeError("confidence must be a number")
+        confidence = float(confidence_raw)
+
+        reasoning = str(data.get("reasoning", ""))
+
+        raw_reason_codes = data.get("reason_codes", [])
+        if not isinstance(raw_reason_codes, list):
+            raise TypeError("reason_codes must be a list")
+        reason_codes = tuple(str(code) for code in raw_reason_codes)
+
+        raw_matched_rules = data.get("matched_rules", [])
+        if not isinstance(raw_matched_rules, list):
+            raise TypeError("matched_rules must be a list")
+        matched_rules = tuple(str(rule) for rule in raw_matched_rules)
+
+        timestamp = str(data.get("timestamp", ""))
+        agent_version = str(data.get("agent_version", ""))
+        git_sha = str(data.get("git_sha", ""))
+
+        raw_deterministic_flags = data.get("deterministic_flags", [])
+        if not isinstance(raw_deterministic_flags, list):
+            raise TypeError("deterministic_flags must be a list")
+        deterministic_flags = tuple(dict(item) for item in raw_deterministic_flags)
+
+        raw_ontology_signals = data.get("ontology_signals", [])
+        if not isinstance(raw_ontology_signals, list):
+            raise TypeError("ontology_signals must be a list")
+        ontology_signals = tuple(str(signal) for signal in raw_ontology_signals)
+
+        priority_raw = data.get("priority_score", 0.0)
+        if not isinstance(priority_raw, int | float):
+            raise TypeError("priority_score must be a number")
+        priority_score = float(priority_raw)
+
+        relevance_raw = data.get("relevance_score", 0.0)
+        if not isinstance(relevance_raw, int | float):
+            raise TypeError("relevance_score must be a number")
+        relevance_score = float(relevance_raw)
+
+        model = str(data["model"]) if "model" in data else None
+        provider = str(data["provider"]) if "provider" in data else None
+
+        return cls(
+            record_id=record_id,
+            recommendation=recommendation,
+            confidence=confidence,
+            reasoning=reasoning,
+            reason_codes=reason_codes,
+            matched_rules=matched_rules,
+            timestamp=timestamp,
+            agent_version=agent_version,
+            git_sha=git_sha,
+            deterministic_flags=deterministic_flags,
+            ontology_signals=ontology_signals,
+            priority_score=priority_score,
+            relevance_score=relevance_score,
+            model=model,
+            provider=provider,
+        )
 
 
-def pending_for_triage(
-    corpus: tuple[LiteratureRecord, ...],
-    reviews: dict[str, Any],
-    *,
-    query: str | None = None,
-    limit: int | None = None,
-) -> list[TriageRecord]:
-    """Return records still pending human review, preserving corpus order.
-
-    Deterministic: same inputs -> same output.
-    """
-
-    queue: list[TriageRecord] = []
-    for record in corpus:
-        if query is not None and query not in record.tags:
-            continue
-        review = reviews.get(record.record_id)
-        if review is not None and review.decision.value != "pending":
-            continue
-        queue.append(TriageRecord(record=record))
-        if limit is not None and len(queue) >= limit:
-            break
-    return queue
+def _triaged_path(
+    recommendations: dict[str, AIRecommendation],
+    record_id: str,
+) -> AIRecommendation | None:
+    return recommendations.get(record_id)
 
 
-def load_triage_log(path: Path) -> dict[str, AIRecommendation]:
-    """Replay the triage log, latest entry per record wins."""
+def _insert_if_higher_confidence(
+    recommendations: dict[str, AIRecommendation], candidate: AIRecommendation
+) -> None:
+    existing = _triaged_path(recommendations, candidate.record_id)
+    if existing is None or candidate.confidence >= existing.confidence:
+        recommendations[candidate.record_id] = candidate
 
-    if not path.exists():
+
+def load_triage_log(log_path: Path) -> dict[str, AIRecommendation]:
+    if not log_path.exists():
         return {}
     recommendations: dict[str, AIRecommendation] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
+    for line in log_path.read_text(encoding="utf-8").splitlines():
         stripped = line.strip()
         if not stripped:
             continue
-        payload = json.loads(stripped)
-        recommendations[payload["record_id"]] = _dict_to_recommendation(payload)
+        data = json.loads(stripped)
+        recommendation = AIRecommendation.from_dict(data)
+        _insert_if_higher_confidence(recommendations, recommendation)
     return recommendations
 
 
@@ -249,7 +294,6 @@ def detect_deterministic_flags(record: LiteratureRecord) -> list[DeterministicFl
     """
 
     flags: list[DeterministicFlag] = []
-    text = _text(record)
 
     if not record.abstract or not record.abstract.strip():
         _append_flag(flags, RULE_HAS_ABSTRACT, "review_required")
@@ -297,8 +341,6 @@ def score_triage(record: TriageRecord) -> tuple[float, float]:
     Stability: deterministic given the same record and deterministic pre-screen.
     """
 
-    text = _text(record.record)
-    lower_text = text.lower()
     tier = (record.record.evidence_tier.value or "").lower()
 
     # Base scores
@@ -352,8 +394,6 @@ def _priority_label(priority_score: float) -> str:
         return "HIGH"
     if priority_score >= 0.45:
         return "MEDIUM"
-    if priority_score >= 0.25:
-        return "LOW"
     return "LOW"
 
 
@@ -413,7 +453,9 @@ def _recommendation_reasoning(
 
 
 def _derive_reason_codes(
-    signals: list[str], flags: list[DeterministicFlag], record: LiteratureRecord
+    signals: list[str],
+    flags: tuple[DeterministicFlag, ...],
+    record: LiteratureRecord,
 ) -> list[str]:
     codes = list(signals)
     for flag in flags:
@@ -487,3 +529,22 @@ def build_recommendation(
         relevance_score=round(relevance_score, 4),
     )
 
+
+def pending_for_triage(
+    corpus: Iterable[LiteratureRecord],
+    reviews: dict[str, Any],
+    query: str | None = None,
+    limit: int | None = None,
+) -> list[TriageRecord]:
+    pending: list[TriageRecord] = []
+    seen = 0
+    for record in corpus:
+        if limit is not None and seen >= limit:
+            break
+        if query is not None and query not in (record.tags or ()):
+            continue
+        if record.record_id in reviews:
+            continue
+        pending.append(TriageRecord(record=record))
+        seen += 1
+    return pending

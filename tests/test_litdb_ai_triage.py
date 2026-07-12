@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 from medscale._runtime import utc_now
@@ -10,7 +9,6 @@ from medscale.litdb.ai_triage import (
     AI_TRIAGE_SIGNALS,
     AIRecommendation,
     DeterministicFlag,
-    OntologySignal,
     TriageRecord,
     _priority_label,
     _recommendation_from_scores,
@@ -21,11 +19,9 @@ from medscale.litdb.ai_triage import (
     load_triage_log,
     pending_for_triage,
     score_triage,
-    _priority_label,
 )
 from medscale.litdb.records import EvidenceTier, Identifiers, LiteratureRecord
 from medscale.provenance import Provenance, RetrievalStatus, SourceAPI
-from medscale.reproducibility import content_hash
 
 
 def _make_record(
@@ -35,7 +31,7 @@ def _make_record(
     evidence_tier: str = "peer-reviewed",
     source_api: str = "openalex",
     *,
-    tags=("Q1",),
+    tags: tuple[str, ...] = ("Q1",),
     doi: str | None = "10.1234/test",
 ) -> LiteratureRecord:
     return LiteratureRecord(
@@ -136,7 +132,7 @@ def test_score_triage_low() -> None:
     record = _make_record(abstract=None, year=2009)
     flags = detect_deterministic_flags(record)
     triage = TriageRecord(record=record, deterministic_flags=tuple(flags))
-    priority, relevance = score_triage(triage)
+    priority, _relevance = score_triage(triage)
     assert priority < 0.45
 
 
@@ -278,8 +274,7 @@ def test_pending_filters_query() -> None:
 
 def test_no_human_log_mutation(tmp_path: Path) -> None:
     """AI triage log path must not collide with human review log."""
-    from medscale._layout import review_log_path, triage_log_path
-    from medscale._layout import DEFAULT_ROOT
+    from medscale._layout import DEFAULT_ROOT, review_log_path, triage_log_path
     assert review_log_path(DEFAULT_ROOT) != triage_log_path(DEFAULT_ROOT)
 
 
