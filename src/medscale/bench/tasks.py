@@ -16,9 +16,25 @@ from typing import Any, Final
 from medscale.bench.spec import IMPLEMENTED_TASK_TYPES, TaskType
 from medscale.provenance import validate_timestamp
 
-__all__ = ["GoldConfidence", "GoldEvidenceSet", "Statement", "TaskItem", "TaskOutput"]
+__all__ = [
+    "BaseBenchmarkTask",
+    "GoldConfidence",
+    "GoldEvidenceSet",
+    "Statement",
+    "TaskItem",
+    "TaskOutput",
+]
 
 _TASK_ID: Final = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
+
+class BaseBenchmarkTask:
+    seed: int
+    version: str
+    metadata: dict[str, str]
+
+    def build(self, *, seed: int, context: dict[str, Any]) -> TaskItem:
+        raise NotImplementedError
 
 
 class GoldConfidence(enum.Enum):
