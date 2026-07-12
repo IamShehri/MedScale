@@ -121,6 +121,20 @@ def test_core_library_is_not_imported_by_the_engine() -> None:
     assert not offenders, f"engine modules importing the facade: {offenders}"
 
 
+def test_evidence_layer_does_not_import_application_modules() -> None:
+    """Evidence owns the claim model. It must not depend on downstream layers."""
+    forbidden = {"litdb", "modelkit", "bench"}
+    offenders = [
+        str(p.relative_to(_SRC))
+        for p in _all_modules()
+        if _unit_of(p) == "evidence" and bool(forbidden & _imports_of(p))
+    ]
+    assert not offenders, (
+        "evidence imports cross forbidden boundaries:\n  "
+        + "\n  ".join(offenders)
+    )
+
+
 def test_storage_layout_lives_in_exactly_one_module() -> None:
     """Path literals for knowledge artifacts may exist only in _layout."""
     layout_literals = (
