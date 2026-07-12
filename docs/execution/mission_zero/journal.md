@@ -129,3 +129,31 @@ Observations:
 
 Next goal:
 Begin duplicate screening workflow
+
+## Session 002 — Duplicate Resolution
+
+Date: 2026-07-12
+
+Reviewer: abdulaziz
+
+Commands:
+- uv run medscale screen duplicates --reviewer abdulaziz
+- uv run medscale screen status
+- uv run medscale check
+
+Result:
+PASS
+
+Observations:
+- All uncertain duplicate groups resolved
+- 16 duplicate groups reviewed
+- 23 duplicate records excluded
+- Review audit trail created
+- Merge decisions preserved
+- MedScale litdb integrity CLEAN
+
+Commit:
+6c678b4
+
+Next goal:
+Begin title/abstract screening with Q2 and Q6 priority
