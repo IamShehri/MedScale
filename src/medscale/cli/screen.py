@@ -20,6 +20,7 @@ from medscale.__about__ import __version__
 from medscale._runtime import git_sha as _runtime_git_sha
 from medscale._runtime import utc_now
 from medscale.cli import _common
+from medscale.cli import ai_triage as ai_triage_cli
 from medscale.evidence_store import load_evidence
 from medscale.litdb.dedupe import normalize_title
 from medscale.litdb.records import LiteratureRecord
@@ -429,9 +430,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "command",
-        choices=["next", "status", "resume", "duplicates", "amend"],
+        choices=["next", "status", "resume", "duplicates", "amend", "triage"],
         help="next/resume: screen pending records; status: counts; "
-        "duplicates: resolve uncertain groups; amend: correct one earlier decision",
+        "duplicates: resolve uncertain groups; amend: correct one earlier decision; "
+        "triage: AI-assisted prioritization (advisory only)",
     )
     parser.add_argument(
         "--root", type=Path, default=_DEFAULT_ROOT, help="workspace root (default: data/litdb)"
@@ -463,6 +465,8 @@ def main(argv: list[str] | None = None) -> int:
                     hint="example: medscale screen amend --record 3e7155a2",
                 )
             return _run_amend(args.root, args.reviewer, args.record)
+        if args.command == "triage":
+            return ai_triage_cli.main(argv[1:] if argv else None)
         # 'next' and 'resume' are the same operation: pick up the pending queue.
         return _run_interactive(args.root, args.reviewer, args.limit, args.query)
     except (KeyboardInterrupt, EOFError):

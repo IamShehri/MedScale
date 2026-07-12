@@ -27,6 +27,11 @@ MERGE_LOG: Final = "screening/merge_log.jsonl"
 UNCERTAIN_DUPLICATES: Final = "screening/uncertain_duplicates.jsonl"
 UNCERTAIN_RESOLUTIONS: Final = "screening/uncertain_resolutions.jsonl"
 
+# --- AI triage artifacts (advisory layer, never touches human logs) -----------------
+TRIAGE_LOG: Final = "screening/ai_triage_log.jsonl"
+TRIAGE_GOLDSET: Final = "evaluation/triage_goldset.jsonl"
+EVALUATION_DIR: Final = "evaluation"
+
 # --- derived / operational locations -------------------------------------------------
 RAW_DIR: Final = "raw"
 MANIFESTS_DIR: Final = "manifests"
@@ -61,6 +66,18 @@ def uncertain_duplicates_path(root: Path) -> Path:
 
 def uncertain_resolutions_path(root: Path) -> Path:
     return root / UNCERTAIN_RESOLUTIONS
+
+
+def triage_log_path(root: Path) -> Path:
+    return root / TRIAGE_LOG
+
+
+def triage_goldset_path(root: Path) -> Path:
+    return root / TRIAGE_GOLDSET
+
+
+def evaluation_dir(root: Path) -> Path:
+    return root / EVALUATION_DIR
 
 
 def manifests_dir(root: Path) -> Path:
