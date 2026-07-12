@@ -1,11 +1,11 @@
 # Execution
 
-- **Status:** Placeholder (directory established during Foundation Consolidation)
-- **Date:** 2026-07-09
+- **Status:** Active (v0.1.0 release; T0 complete, T1 in progress)
 
-This directory will hold MedScale's execution and phase-planning documents — the concrete
-tickets and specifications that translate the strategic foundation into work. It is
-intentionally empty at freeze time: **no phase (T0 onward) has started.**
+This directory holds MedScale's execution and phase-planning documents — the concrete
+tickets and specifications that translate the strategic foundation into work. T0 is
+complete; T1 has produced the literature database, screening workflow, and AI triage
+module, and new execution artifacts are authored as phases proceed.
 
 ## Intended contents (to be authored when each phase begins; not yet present)
 

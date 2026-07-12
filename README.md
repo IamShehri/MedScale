@@ -64,12 +64,9 @@ flowchart LR
 
 ## Status
 
-**Pre-research foundation (T0).** The scientific strategy is frozen; the engineering
-foundation is being established. No model training, benchmark, or FHIR toolkit is
-implemented yet — by design. See the [Roadmap](ROADMAP.md).
+**Pre-research foundation (T0) · Literature database & AI triage foundation (T1).** The scientific strategy is frozen; the engineering foundation is established. Deterministic screening, reproducibility primitives, content-addressed corpus storage, and advisory AI triage are implemented. Model training, full FHIR validation toolkit, and benchmark execution are not implemented yet — by design. See the [Roadmap](ROADMAP.md).
 
-The public API currently exposes only reproducibility primitives; domain APIs (FHIR,
-grammar, validation, benchmark, model) arrive in their own phases.
+The public API exposes reproducibility primitives, literature database storage, review/screening workflows, deterministic AI triage recommendations, and configuration constants. Domain APIs in full FHIR validation, grammar-constrained generation, and model training arrive in their own phases.
 
 ## Repository map
 
