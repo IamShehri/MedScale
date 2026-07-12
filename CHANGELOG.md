@@ -6,6 +6,35 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added (research readiness sprint — 2026-07-12)
+
+- **Researcher documentation:** `docs/guides/research_quickstart.md` (fifteen-minute
+  path to first decisions), `docs/guides/first_systematic_review.md` (the complete
+  workflow stage-by-stage with PRISMA mapping), `docs/guides/troubleshooting.md`
+  (symptom-first).
+- **`medscale screen amend`:** correct an earlier screening decision through an
+  append-only audit event (old and new decision both recorded); warns when the
+  record already has extracted evidence.
+- **`medscale --version`.**
+- **Operator-safety tests** (`tests/test_cli_ux.py`): friendly failures, no data
+  loss on interrupt, append-only corrections.
+
+### Fixed (research readiness sprint — 2026-07-12)
+
+- **Extraction data loss:** `medscale extract` now persists every Evidence Object
+  the moment it is recorded; previously a crash or Ctrl+C lost the whole session
+  *after* telling the operator each object was recorded.
+- **Atomic evidence writes:** the evidence store is written via temp-file +
+  atomic replace; a crash mid-write can no longer truncate it.
+- **Friendly CLI failures:** a mistyped `--root` now exits 2 with advice on every
+  command instead of a traceback — and `medscale stats` no longer fabricates a
+  plausible all-zero document for a nonexistent root. Unknown benchmark ids list
+  what exists; `snapshot --verify` reports a missing file plainly.
+- **Interrupt safety:** Ctrl+C/EOF in `screen` and `extract` exits cleanly with a
+  saved-state message instead of a traceback.
+- **Help text:** every subcommand now has researcher-facing descriptions and
+  examples; `screen` documents `duplicates` and `amend`.
+
 ### Changed (core stabilization sprint — 2026-07-10)
 
 - **Transport layer isolated:** all CLIs consolidated into the `medscale.cli` package
