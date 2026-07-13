@@ -27,8 +27,7 @@ def _write_dataset_dir(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
     (dataset_dir / "schema.json").write_text(
-        json.dumps({"version": "1"}),
-        encoding="utf-8",
+        json.dumps({"version": "1"}), encoding="utf-8"
     )
     splits = dataset_dir / "splits"
     splits.mkdir()
@@ -37,7 +36,7 @@ def _write_dataset_dir(tmp_path: Path) -> Path:
     (splits / "test.json").write_text("[]", encoding="utf-8")
     checksums = dataset_dir / "checksums"
     checksums.mkdir()
-    checksums.joinpath("manifest.sha256").write_text(
+    checksums.joinpath("manifest.json.sha256").write_text(
         hashlib.sha256((dataset_dir / "manifest.json").read_bytes()).hexdigest() + "\n",
         encoding="utf-8",
     )
