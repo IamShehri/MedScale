@@ -1,0 +1,43 @@
+name: Optional Extras / Backends
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'src/medscale/backends/**'
+      - 'pyproject.toml'
+      - 'tests/test_modelkit_backends.py'
+
+jobs:
+  backends-transformers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install transformer extra
+        run: uv sync --extra backends-transformers --frozen
+      - name: Run backend tests with transformers
+        run: uv run pytest tests/test_modelkit_backends.py -q --no-header
+
+  backends-llamacpp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install llama.cpp extra
+        run: uv sync --extra backends-llamacpp --frozen
+      - name: Run backend tests with llama.cpp available
+        run: uv run pytest tests/test_modelkit_backends.py -k 'llamacpp or llamacpp_skip' -q --no-header
+
+  core-without-backends:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install core only
+        run: uv sync --frozen
+      - name: Ensure backend package import is safe on core
+        run: uv run python -c 'import medscale.backends'
+      - name: Run core verification
+        run: uv run ruff check . && uv run mypy src tests

@@ -32,6 +32,7 @@ _LAYER: dict[str, int] = {
     "extraction": 2,
     # parallel capability layer (AI infrastructure)
     "modelkit": 2,
+    "backends": 2,
     # research intelligence
     "research": 3,
     # dataset artifacts
@@ -157,3 +158,42 @@ def test_storage_layout_lives_in_exactly_one_module() -> None:
             if f'"{literal}"' in text or f"'{literal}'" in text:
                 offenders.append(f"{module.relative_to(_SRC)}: {literal}")
     assert not offenders, "layout literals outside _layout:\n  " + "\n  ".join(offenders)
+
+
+def test_dataset_does_not_import_research() -> None:
+    """The dataset artifact boundary must not depend on research intelligence."""
+    offenders = [
+        str(p.relative_to(_SRC))
+        for p in _all_modules()
+        if _unit_of(p) == "dataset" and "research" in _imports_of(p)
+    ]
+    assert not offenders, (
+        "dataset imports research:\n  " + "\n  ".join(offenders)
+    )
+
+
+def test_cli_imports_are_not_imported_by_engine_modules() -> None:
+    """CLI is a transport boundary; engine modules must not import it accidentally."""
+    forbidden_engine_units = {
+        "__about__",
+        "_layout",
+        "_runtime",
+        "reproducibility",
+        "provenance",
+        "litdb",
+        "evidence",
+        "evidence_store",
+        "evidence_checks",
+        "extraction",
+        "modelkit",
+        "research",
+        "dataset",
+        "bench",
+        "workspace",
+    }
+    offenders = [
+        str(p.relative_to(_SRC))
+        for p in _all_modules()
+        if _unit_of(p) in forbidden_engine_units and "cli" in _imports_of(p)
+    ]
+    assert not offenders, "engine modules importing cli:\n  " + "\n  ".join(offenders)
