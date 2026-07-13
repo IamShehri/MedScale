@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from medscale.bench.spec import TaskType
-from medscale.bench.tasks import BaseBenchmarkTask, GoldEvidenceSet, Statement, TaskItem
+from medscale.bench.tasks import BaseBenchmarkTask, GoldEvidenceSet, TaskItem
 
 
 @dataclass(frozen=True)
@@ -21,17 +21,16 @@ class Task003ScreeningPrioritization(BaseBenchmarkTask):
     metadata: dict[str, str] = field(
         default_factory=lambda: {
             "category": "summarization",
-            "description": "Prioritize screening queue with required citations from a synthetic evidence set.",
+            "description": (
+                "Prioritize screening queue with required citations from a"
+                " synthetic evidence set."
+            ),
         }
     )
 
     def build(self, *, seed: int, context: dict[str, Any]) -> TaskItem:
         prefix = f"syn-eo-{seed:06d}"
         ids = (f"{prefix}-1", f"{prefix}-2")
-        statements = tuple(
-            Statement(text=f"Priority finding {idx}", cited_evidence_ids=(evidence_id,))
-            for idx, evidence_id in enumerate(ids, start=1)
-        )
         return TaskItem(
             task_id=self.task_id,
             task_type=self.task_type,
@@ -42,5 +41,4 @@ class Task003ScreeningPrioritization(BaseBenchmarkTask):
                 annotator="synthetic",
                 decided_at="2026-07-13T00:00:00+00:00",
             ),
-            statements=statements,
         )

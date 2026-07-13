@@ -22,7 +22,10 @@ class Task001LiteratureClassification(BaseBenchmarkTask):
     metadata: dict[str, str] = field(
         default_factory=lambda: {
             "category": "retrieval",
-            "description": "Evidence-grounded retrieval for constrained decoding validity literature classification.",
+            "description": (
+                "Evidence-grounded retrieval for constrained decoding validity"
+                " literature classification."
+            ),
         }
     )
 
@@ -31,7 +34,10 @@ class Task001LiteratureClassification(BaseBenchmarkTask):
         return TaskItem(
             task_id=self.task_id,
             task_type=self.task_type,
-            input_text="Does constrained decoding improve classifier validity under distribution shift?",
+            input_text=(
+                "Does constrained decoding improve classifier validity"
+                " under distribution shift?"
+            ),
             gold=GoldEvidenceSet(
                 relevant_evidence_ids=(evidence_id,),
                 annotator="synthetic",

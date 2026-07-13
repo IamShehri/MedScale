@@ -21,7 +21,10 @@ class Task002EvidenceExtraction(BaseBenchmarkTask):
     metadata: dict[str, str] = field(
         default_factory=lambda: {
             "category": "grounding",
-            "description": "Extract supporting and contradicting evidence for a constrained decoding claim.",
+            "description": (
+                "Extract supporting and contradicting evidence for a constrained"
+                " decoding claim."
+            ),
         }
     )
 
@@ -31,7 +34,10 @@ class Task002EvidenceExtraction(BaseBenchmarkTask):
         return TaskItem(
             task_id=self.task_id,
             task_type=self.task_type,
-            input_text="Constrained decoding improves validity; identify supporting and contradicting evidence.",
+            input_text=(
+                "Constrained decoding improves validity; identify supporting"
+                " and contradicting evidence."
+            ),
             gold=GoldEvidenceSet(
                 supporting_evidence_ids=(support_id,),
                 contradicting_evidence_ids=(contra_id,),

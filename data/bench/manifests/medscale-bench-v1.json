@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "manifest_id": "medscale-bench-v1-20260101-000000",
+  "benchmark_id": "medscale-bench",
+  "version": "1.0.0",
+  "dataset_id": "synthetic-pilot",
+  "git_sha": "abcdef1",
+  "software_version": "0.0.0",
+  "seed": 101,
+  "tasks": {
+    "task-001-literature-classification": "1.0.0",
+    "task-002-evidence-extraction": "1.0.0",
+    "task-003-screening-prioritization": "1.0.0"
+  },
+  "scorers": {
+    "evidence-retrieval-scorer": "1.0.0",
+    "evidence-grounding-scorer": "1.0.0",
+    "evidence-summarization-scorer": "1.0.0"
+  },
+  "created_at": "2026-07-13T00:00:00+00:00",
+  "notes": "M3 pilot synthetic benchmark manifest — no live datasets required."
+}
