@@ -5,6 +5,7 @@ Stability: **public**. Validation is read-only and fails loudly on any mismatch.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 from dataclasses import dataclass, field
@@ -55,6 +56,11 @@ class DatasetValidationReport:
         return "\n".join(lines)
 
 
+def _sha256_of(value: object) -> str:
+    serialized = json.dumps(value, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
 def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -73,7 +79,7 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
     - manifest.json exists and is valid JSON
     - schema.json exists and is valid JSON
     - splits/train.json, splits/validation.json, splits/test.json exist
-    - checksums/*.sha256 match sibling artifact hashes
+    - checksums/manifest.json maps artifact paths to sha256 values and matches
 
     Returns a report; does not raise on validation failure.
     """
@@ -88,6 +94,7 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
     train_path = dataset_dir / "splits" / "train.json"
     validation_path = dataset_dir / "splits" / "validation.json"
     test_path = dataset_dir / "splits" / "test.json"
+    checksums_path = dataset_dir / "checksums" / "manifest.json"
 
     if not manifest_path.exists():
         issues.append(ValidationIssue("manifest.json", "missing manifest"))
@@ -125,37 +132,37 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
         except ValueError as exc:
             issues.append(ValidationIssue(name, str(exc)))
 
-    checksums_dir = dataset_dir / "checksums"
-    if checksums_dir.exists():
-        for checksum_file in sorted(checksums_dir.glob("*.sha256")):
-            artifact_name = checksum_file.name[: -len(".sha256")]
-            artifact_path = checksum_file.parent.parent / checksum_file.name.replace(
-                ".sha256", ""
-            )
-            if not artifact_path.exists():
-                issues.append(ValidationIssue(str(artifact_path), "missing artifact for checksum"))
-                continue
-            expected = checksum_file.read_text(encoding="utf-8").strip()
-            actual = _sha256_file(artifact_path)
-            if expected == actual:
-                checksum_checks.append(f"{artifact_name}: match")
-            else:
-                issues.append(
-                    ValidationIssue(
-                        str(artifact_path),
-                        "sha256 mismatch",
-                    )
-                )
-                checksum_checks.append(f"{artifact_name}: mismatch")
+    if not checksums_path.exists():
+        issues.append(ValidationIssue("checksums/manifest.json", "missing checksum manifest"))
     else:
-        issues.append(ValidationIssue("checksums/", "missing checksums directory"))
+        try:
+            expected_checksums = _load_json(checksums_path)
+            if not isinstance(expected_checksums, dict):
+                issues.append(ValidationIssue("checksums/manifest.json", "must be a JSON object"))
+            else:
+                for relative_path, expected_digest in expected_checksums.items():
+                    artifact_path = (dataset_dir / relative_path).resolve()
+                    if not artifact_path.exists():
+                        issues.append(ValidationIssue(str(artifact_path), "missing checksum artifact"))
+                        continue
+                    actual_digest = _sha256_file(artifact_path)
+                    if actual_digest == expected_digest:
+                        checksum_checks.append(f"{relative_path}: match")
+                    else:
+                        issues.append(
+                            ValidationIssue(
+                                str(artifact_path),
+                                "sha256 mismatch",
+                            )
+                        )
+                        checksum_checks.append(f"{relative_path}: mismatch")
+        except ValueError as exc:
+            issues.append(ValidationIssue("checksums/manifest.json", str(exc)))
 
     dataset_id = None
     if manifest_path.exists():
-        try:
+        with contextlib.suppress(ValueError):
             dataset_id = _load_json(manifest_path).get("dataset_id")
-        except ValueError:
-            pass
 
     return DatasetValidationReport(
         dataset_id=dataset_id,

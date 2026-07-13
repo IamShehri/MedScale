@@ -34,6 +34,8 @@ _LAYER: dict[str, int] = {
     "modelkit": 2,
     # research intelligence
     "research": 3,
+    # dataset artifacts
+    "dataset": 3,
     # benchmarks
     "bench": 4,
     # public facade

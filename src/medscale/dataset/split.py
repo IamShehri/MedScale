@@ -7,15 +7,15 @@ sorted record-id order. No global random state is used.
 from __future__ import annotations
 
 import enum
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 from medscale.reproducibility import content_hash
 
-__all__ = ["SplitStrategy", "SplitResult", "DeterministicSplitter", "split_literature_records"]
+__all__ = ["DeterministicSplitter", "SplitResult", "SplitStrategy", "split_literature_records"]
 
 
-class SplitStrategy(str, enum.Enum):
+class SplitStrategy(enum.StrEnum):
     DETERMINISTIC_HASH_SPLIT = "deterministic_hash_split"
 
 
@@ -77,7 +77,15 @@ class DeterministicSplitter:
         )
 
 
-def split_literature_records(records: Sequence[object], *, seed: int = 42) -> SplitResult:
+from typing import Protocol, Sequence, runtime_checkable
+
+
+@runtime_checkable
+class _HasRecordId(Protocol):
+    record_id: str
+
+
+def split_literature_records(records: Sequence[_HasRecordId], *, seed: int = 42) -> SplitResult:
     """Split literature records by stable ``record_id``."""
-    record_ids = [getattr(record, "record_id") for record in records]
+    record_ids = [record.record_id for record in records]
     return DeterministicSplitter(seed=seed).split(record_ids)

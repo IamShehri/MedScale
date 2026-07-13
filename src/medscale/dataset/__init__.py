@@ -11,6 +11,12 @@ from medscale.dataset.manifest import (
     compute_dataset_manifest,
     write_manifest,
 )
+from medscale.dataset.schema import (
+    BENCHMARK_ITEM_SCHEMA,
+    EVIDENCE_OBJECT_SCHEMA,
+    LITERATURE_RECORD_SCHEMA,
+    DatasetSchema,
+)
 from medscale.dataset.split import (
     DeterministicSplitter,
     SplitStrategy,
@@ -20,20 +26,15 @@ from medscale.dataset.validate import (
     DatasetValidationReport,
     validate_dataset,
 )
-from medscale.dataset.schema import (
-    BENCHMARK_ITEM_SCHEMA,
-    EVIDENCE_OBJECT_SCHEMA,
-    LITERATURE_RECORD_SCHEMA,
-    DatasetSchema,
-)
 
 __all__ = [
     "BENCHMARK_ITEM_SCHEMA",
+    "EVIDENCE_OBJECT_SCHEMA",
+    "LITERATURE_RECORD_SCHEMA",
     "DatasetManifest",
     "DatasetSchema",
     "DatasetValidationReport",
-    "EVIDENCE_OBJECT_SCHEMA",
-    "LITERATURE_RECORD_SCHEMA",
+    "DeterministicSplitter",
     "SplitStrategy",
     "compute_dataset_manifest",
     "deterministic_hash_split",
