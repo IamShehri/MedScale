@@ -15,6 +15,8 @@ import medscale._layout as _layout
 from medscale.bench.baselines import EmptySystem, GoldOracle
 from medscale.bench.run import EvidenceSystem
 from medscale.cli import _common
+from medscale.cli.bench_init import main as bench_init_main
+from medscale.cli.bench_replay import main as bench_replay_main
 from medscale.workspace import Workspace
 
 _DEFAULT_ROOT: Final = _layout.DEFAULT_ROOT
@@ -34,8 +36,11 @@ def main(argv: list[str] | None = None) -> int:
         epilog="example:\n  medscale bench run my-benchmark --system gold-oracle",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("command", choices=["list", "validate", "run"])
+    parser.add_argument("command", choices=["list", "validate", "run", "init", "replay"])
     parser.add_argument("benchmark_id", nargs="?", default=None)
+    parser.add_argument(
+        "artifact_path", nargs="?", default=None, help="path to a run artifact for replay"
+    )
     parser.add_argument(
         "--root", type=Path, default=_DEFAULT_ROOT, help="workspace root (default: data/litdb)"
     )
@@ -50,6 +55,25 @@ def main(argv: list[str] | None = None) -> int:
     if guard is not None:
         return guard
     workspace = Workspace.open(args.root)
+
+    if args.command == "init":
+        return bench_init_main(
+            [
+                args.benchmark_id,
+                args.description or "",
+                "--root",
+                str(args.root),
+                "--version",
+                args.version,
+                "--snapshot-id",
+                "0" * 64,
+            ]
+        )
+
+    if args.command == "replay":
+        if args.artifact_path is None:
+            return _common.fail("artifact_path required for replay")
+        return bench_replay_main([str(args.artifact_path)])
 
     if args.command == "list":
         names = workspace.benchmarks()
