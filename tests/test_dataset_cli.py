@@ -58,12 +58,32 @@ def test_dataset_validate_exits_zero_for_valid_dataset(tmp_path: Path) -> None:
     dataset_dir = tmp_path / "medscale-dataset-v1"
     dataset_dir.mkdir(parents=True)
     (dataset_dir / "manifest.json").write_text(
-        json.dumps({"dataset_id": "medscale-dataset-v1"}), encoding="utf-8"
+        json.dumps(
+            {
+                "dataset_id": "medscale-dataset-v1",
+                "created_at": "2026-07-13T00:00:00+00:00",
+            }
+        ),
+        encoding="utf-8",
     )
     (dataset_dir / "schema.json").write_text("{}", encoding="utf-8")
     (dataset_dir / "splits").mkdir()
     for name in ["train", "validation", "test"]:
         (dataset_dir / "splits" / f"{name}.json").write_text("[]", encoding="utf-8")
+    metadata = dataset_dir / "metadata"
+    metadata.mkdir(parents=True, exist_ok=True)
+    (metadata / "license.json").write_text(
+        json.dumps(
+            {
+                "spdx_id": "MIT",
+                "source_scope": ["synthetic"],
+                "redistribution_allowed": True,
+                "attribution_required": False,
+                "commercial_allowed": True,
+            }
+        ),
+        encoding="utf-8",
+    )
     checksums = dataset_dir / "checksums"
     checksums.mkdir()
     for path in [

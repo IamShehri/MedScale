@@ -33,6 +33,9 @@ _LAYER: dict[str, int] = {
     # parallel capability layer (AI infrastructure)
     "modelkit": 2,
     "backends": 2,
+    "fhirkit": 2,
+    # collaboration
+    "collaboration": 2,
     # research intelligence
     "research": 3,
     # dataset artifacts
@@ -197,3 +200,13 @@ def test_cli_imports_are_not_imported_by_engine_modules() -> None:
         if _unit_of(p) in forbidden_engine_units and "cli" in _imports_of(p)
     ]
     assert not offenders, "engine modules importing cli:\n  " + "\n  ".join(offenders)
+
+
+def test_collaboration_does_not_import_forbidden_modules() -> None:
+    forbidden = {"dataset", "research", "backends", "fhirkit"}
+    offenders = [
+        str(p.relative_to(_SRC))
+        for p in _all_modules()
+        if _unit_of(p) == "collaboration" and bool(forbidden & _imports_of(p))
+    ]
+    assert not offenders, "collaboration imports forbidden modules:\n  " + "\n  ".join(offenders)

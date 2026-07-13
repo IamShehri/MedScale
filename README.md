@@ -64,7 +64,8 @@ flowchart LR
 
 ## Status
 
-**Pre-research foundation (T0) · Literature database & AI triage foundation (T1).** The scientific strategy is frozen; the engineering foundation is established. Deterministic screening, reproducibility primitives, content-addressed corpus storage, and advisory AI triage are implemented. Model training, full FHIR validation toolkit, and benchmark execution are not implemented yet — by design. See the [Roadmap](ROADMAP.md).
+**v0.2.0 — Reproducible research intelligence platform.** Deterministic literature database, evidence infrastructure, benchmark replay contracts, Dataset v1, FHIR boundary, optional backends, and reviewer collaboration workflow are implemented. Model training, external healthcare data ingestion, and production deployment remain out of scope. See the [Roadmap](ROADMAP.md).
+
 
 The public API exposes reproducibility primitives, literature database storage, review/screening workflows, deterministic AI triage recommendations, and configuration constants. Domain APIs in full FHIR validation, grammar-constrained generation, and model training arrive in their own phases.
 

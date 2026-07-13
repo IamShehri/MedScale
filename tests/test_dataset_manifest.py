@@ -1,7 +1,7 @@
 """Deterministic dataset manifest reproduction.
 
 The same client-supplied inputs must produce the same manifest bytes for the
-same created_at, source_snapshot, git_sha, seed, and record set.
+same created_at, git_sha, software_version, seed, and record set.
 """
 
 from __future__ import annotations
@@ -17,11 +17,11 @@ def test_same_inputs_produce_identical_manifest_bytes() -> None:
     manifest = compute_dataset_manifest(
         dataset_id="medscale-dataset-v1",
         version="1.0",
-        source_snapshot="snapshot-a",
+        created_at="2026-07-13T00:00:00+00:00",
         git_sha="abc123",
         records=records,
         license_summary=[{"spdx": "MIT", "count": 2}],
-        created_at="2026-07-13T00:00:00+00:00",
+        software_version="0.1.0",
     )
     expected = json.dumps(manifest.to_dict(), sort_keys=True, separators=(",", ":"))
     assert hashlib.sha256(expected.encode("utf-8")).hexdigest() == manifest_sha(manifest)
@@ -32,20 +32,20 @@ def test_recomputed_manifest_is_stable() -> None:
     first = compute_dataset_manifest(
         dataset_id="medscale-dataset-v1",
         version="1.0",
-        source_snapshot="snapshot-b",
+        created_at="2026-07-13T00:00:00+00:00",
         git_sha="def456",
         records=records,
         license_summary=[],
-        created_at="2026-07-13T00:00:00+00:00",
+        software_version="0.1.0",
     )
     second = compute_dataset_manifest(
         dataset_id="medscale-dataset-v1",
         version="1.0",
-        source_snapshot="snapshot-b",
+        created_at="2026-07-13T00:00:00+00:00",
         git_sha="def456",
         records=records,
         license_summary=[],
-        created_at="2026-07-13T00:00:00+00:00",
+        software_version="0.1.0",
     )
     assert first.to_dict() == second.to_dict()
     assert manifest_sha(first) == manifest_sha(second)

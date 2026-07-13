@@ -4,11 +4,11 @@
 - Status: complete
 - Verification: ruff/mypy/pytest PASS
 
-## M1 Patient Domain
+## M1 Release Engineering
 - Status: complete
 - Verification: ruff/mypy/pytest PASS
 
-## M2 Evidence/Extractor
+## M2 Evidence Infrastructure
 - Status: complete
 - Verification: ruff/mypy/pytest PASS
 
@@ -16,21 +16,39 @@
 - Status: complete
 - Verification: ruff/mypy/pytest PASS
 
-## M4 ModelKit Backends
+## Dataset v1 + ADR-0030
 - Status: complete
-- Deliverables:
-  - `src/medscale/backends/common.py`
-  - `src/medscale/backends/__init__.py`
-  - `src/medscale/backends/transformers/`
-  - `src/medscale/backends/llamacpp/`
-  - `pyproject.toml` optional extras:
-    - `backends-transformers`
-    - `backends-llamacpp`
-- Verification: ruff/mypy/pytest GREEN
-- Known limitations: optional ML deps are not installed in core; full remote-model runs are out of scope.
+- Verification: ruff/mypy/pytest PASS
+
+## S0 Stabilization
+- Status: complete
+- Verification: ruff/mypy/pytest PASS
+
+## M4 Modelkit Backends
+- Status: complete
+- Verification: ruff/mypy/pytest PASS
 
 ## M5 FHIR Boundary
-- Status: pending
+- Status: complete
+- Deliverables:
+  - `src/medscale/fhirkit/`
+  - `src/medscale/cli/fhir.py`
+  - `tests/test_fhirkit.py`
+  - `docs/execution/v0.2/M5-README.md`
+- Verification: ruff/mypy/pytest GREEN
 
 ## M6 Collaboration Workflow
-- Status: pending
+- Status: complete
+- Deliverables:
+  - `src/medscale/litdb/collaboration.py`
+  - `tests/test_collaboration.py`
+  - `src/medscale/cli/screen.py` merge command
+  - `docs/execution/v0.2/M6-README.md`
+- Verification: ruff/mypy/pytest GREEN
+
+## v0.2 Final Audit
+- Status: in progress
+- Deliverables:
+  - `docs/execution/v0.2/final_release_audit.md`
+  - `docs/execution/v0.2/RELEASE_CHECKLIST.md`
+- Verification: pending

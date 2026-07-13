@@ -18,10 +18,15 @@ def _write_dataset_dir(tmp_path: Path) -> Path:
                 "dataset_id": "medscale-dataset-v1",
                 "version": "1.0",
                 "created_at": "2026-07-13T00:00:00+00:00",
-                "source_snapshot": "snapshot-1",
+                "dataset_snapshot": {
+                    "git_sha": "abc123",
+                    "software_version": "0.1.0",
+                    "created_at": "2026-07-13T00:00:00+00:00",
+                    "fingerprint": "",
+                },
                 "git_sha": "abc123",
                 "record_count": 2,
-                "metadata": {},
+                "license_summary": [{"spdx": "MIT", "count": 2}],
             }
         ),
         encoding="utf-8",
@@ -34,8 +39,22 @@ def _write_dataset_dir(tmp_path: Path) -> Path:
     (splits / "train.json").write_text("[]", encoding="utf-8")
     (splits / "validation.json").write_text("[]", encoding="utf-8")
     (splits / "test.json").write_text("[]", encoding="utf-8")
+    metadata = dataset_dir / "metadata"
+    metadata.mkdir(parents=True, exist_ok=True)
+    (metadata / "license.json").write_text(
+        json.dumps(
+            {
+                "spdx_id": "MIT",
+                "source_scope": ["synthetic"],
+                "redistribution_allowed": True,
+                "attribution_required": False,
+                "commercial_allowed": True,
+            }
+        ),
+        encoding="utf-8",
+    )
     checksums = dataset_dir / "checksums"
-    checksums.mkdir()
+    checksums.mkdir(parents=True, exist_ok=True)
     checksums.joinpath("manifest.json.sha256").write_text(
         hashlib.sha256((dataset_dir / "manifest.json").read_bytes()).hexdigest() + "\n",
         encoding="utf-8",
@@ -72,8 +91,7 @@ def test_valid_dataset_passes(tmp_path: Path) -> None:
         else:
             path = dataset_dir / "splits" / f"{name}.json"
         checksums.joinpath(f"{name}.sha256").write_text(
-            hashlib.sha256(path.read_bytes()).hexdigest() + "\n",
-            encoding="utf-8",
+            hashlib.sha256(path.read_bytes()).hexdigest() + "\n", encoding="utf-8"
         )
     report = validate_dataset(dataset_dir)
     assert report.passed is True

@@ -38,6 +38,8 @@ MANIFESTS_DIR: Final = "manifests"
 REPORTS_DIR: Final = "reports"
 SNAPSHOTS_DIR: Final = "snapshots"
 BENCHMARKS_DIR: Final = "benchmarks"
+FHIR_REPORTS_DIR: Final = "fhirkit/reports"
+REVIEWERS_DIR: Final = "collaboration/reviewers"
 
 
 def corpus_path(root: Path) -> Path:
@@ -90,3 +92,15 @@ def snapshots_dir(root: Path) -> Path:
 
 def benchmarks_dir(root: Path) -> Path:
     return root / BENCHMARKS_DIR
+
+
+def fhirkit_reports_dir(root: Path) -> Path:
+    return root / FHIR_REPORTS_DIR
+
+
+def reviewers_dir(root: Path) -> Path:
+    return root / REVIEWERS_DIR
+
+
+def collaboration_merges_dir(root: Path) -> Path:
+    return root / "collaboration" / "merges"

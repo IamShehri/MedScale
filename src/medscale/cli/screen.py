@@ -12,6 +12,7 @@ in this loop.
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Final
 
@@ -22,6 +23,7 @@ from medscale._runtime import utc_now
 from medscale.cli import _common
 from medscale.cli import ai_triage as ai_triage_cli
 from medscale.evidence_store import load_evidence
+from medscale.litdb.collaboration import merge_reviewer_logs
 from medscale.litdb.dedupe import normalize_title
 from medscale.litdb.records import LiteratureRecord
 from medscale.litdb.review import (
@@ -414,8 +416,7 @@ _EXAMPLES: Final = """\
 examples:
   medscale screen status                         where the review stands
   medscale screen duplicates --reviewer alice    resolve uncertain duplicates (do this first)
-  medscale screen next --reviewer alice --query Q2 --limit 25
-  medscale screen amend --record 3e7155a2 --reviewer alice   correct an earlier decision
+  medscale screen merge --reviewer-a alice --reviewer-b bob --root data/litdb
 """
 
 
@@ -430,10 +431,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "command",
-        choices=["next", "status", "resume", "duplicates", "amend", "triage"],
+        choices=["next", "status", "resume", "duplicates", "amend", "triage", "merge"],
         help="next/resume: screen pending records; status: counts; "
         "duplicates: resolve uncertain groups; amend: correct one earlier decision; "
-        "triage: AI-assisted prioritization (advisory only)",
+        "triage: AI-assisted prioritization (advisory only); "
+        "merge: merge two reviewer logs into a deterministic audit artifact",
     )
     parser.add_argument(
         "--root", type=Path, default=_DEFAULT_ROOT, help="workspace root (default: data/litdb)"
@@ -446,6 +448,12 @@ def main(argv: list[str] | None = None) -> int:
         "--query", default=None, help="only records retrieved by this query id (e.g. Q2)"
     )
     parser.add_argument("--record", default=None, help="record id (or unique prefix) for `amend`")
+    parser.add_argument(
+        "--reviewer-a", required=False, help="first reviewer id for `merge` (required for merge)"
+    )
+    parser.add_argument(
+        "--reviewer-b", required=False, help="second reviewer id for `merge` (required for merge)"
+    )
     args = parser.parse_args(argv)
 
     guard = _common.require_corpus(args.root)
@@ -467,6 +475,21 @@ def main(argv: list[str] | None = None) -> int:
             return _run_amend(args.root, args.reviewer, args.record)
         if args.command == "triage":
             return ai_triage_cli.main(argv[1:] if argv else None)
+        if args.command == "merge":
+            if not args.reviewer_a or not args.reviewer_b:
+                return _common.fail(
+                    "merge needs --reviewer-a and --reviewer-b",
+                    hint="example: medscale screen merge --reviewer-a alice --reviewer-b bob",
+                )
+            merged = merge_reviewer_logs(args.root, args.reviewer_a, args.reviewer_b)
+            manifest = merged.manifest.to_dict()
+            print(json.dumps(manifest, indent=2, sort_keys=True))
+            if manifest["conflict_count"]:
+                print(
+                    f"!! {manifest['conflict_count']} conflict(s) detected - "
+                    "do not auto-resolve; review and record a resolution in the opposite-side log."
+                )
+            return 1 if manifest["conflict_count"] else 0
         # 'next' and 'resume' are the same operation: pick up the pending queue.
         return _run_interactive(args.root, args.reviewer, args.limit, args.query)
     except (KeyboardInterrupt, EOFError):

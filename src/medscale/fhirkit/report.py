@@ -1,0 +1,103 @@
+"""ValidationReport contract and deterministic helpers."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import asdict, dataclass, field
+from typing import Any
+
+from medscale.fhirkit.errors import InvalidReportError
+from medscale.reproducibility import canonical_json
+
+FORMAT_VERSION = "fhirkit-validation-report/v1"
+_NULLABLE_STRINGS = (
+    "report_id",
+    "input_hash",
+    "validator_name",
+    "validator_version",
+    "status",
+    "created_at",
+    "format_version",
+)
+_LIST_FIELDS = ("errors", "warnings")
+
+
+@dataclass(frozen=True)
+class ValidationReport:
+    """Deterministic validation report for FHIR boundary outputs."""
+
+    report_id: str | None = None
+    input_hash: str | None = None
+    validator_name: str | None = None
+    validator_version: str | None = None
+    status: str | None = None
+    errors: tuple[str, ...] = field(default_factory=tuple)
+    warnings: tuple[str, ...] = field(default_factory=tuple)
+    created_at: str | None = None
+    format_version: str = FORMAT_VERSION
+
+    def __post_init__(self) -> None:
+        if self.format_version != FORMAT_VERSION:
+            raise InvalidReportError(
+                f"format_version must be {FORMAT_VERSION!r}, got {self.format_version!r}"
+            )
+
+
+def validate_report_schema(report: ValidationReport) -> None:
+    """Fail fast on incompatible report shapes."""
+    if not isinstance(report, ValidationReport):
+        raise InvalidReportError("report must be a ValidationReport instance")
+    if report.format_version != FORMAT_VERSION:
+        raise InvalidReportError(
+            f"format_version must be {FORMAT_VERSION!r}, got {report.format_version!r}"
+        )
+
+
+def _sorted_report_payload(report: ValidationReport) -> dict[str, Any]:
+    payload = asdict(report)
+    for key in _NULLABLE_STRINGS:
+        if payload.get(key) is None:
+            payload[key] = ""
+    payload["errors"] = sorted(payload.get("errors", []) or [])
+    payload["warnings"] = sorted(payload.get("warnings", []) or [])
+    return payload
+
+
+def report_hash(report: ValidationReport) -> str:
+    """Return a stable SHA-256 for the report payload."""
+    payload = _sorted_report_payload(report)
+    serialized = canonical_json(payload)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def report_to_json(report: ValidationReport) -> str:
+    """Serialize a report to stable JSON with deterministic field ordering."""
+    payload = _sorted_report_payload(report)
+    return canonical_json(payload) + "\n"
+
+
+def load_report_from_json(raw: str) -> ValidationReport:
+    data = json.loads(raw)
+    if not isinstance(data, dict):
+        raise InvalidReportError("report JSON must decode to an object")
+    data.setdefault("format_version", FORMAT_VERSION)
+    for key in _LIST_FIELDS:
+        value = data.get(key)
+        if value is None:
+            data[key] = []
+    for key in _NULLABLE_STRINGS:
+        data.setdefault(key, None)
+    report = ValidationReport(
+        report_id=data["report_id"],
+        input_hash=data["input_hash"],
+        validator_name=data["validator_name"],
+        validator_version=data["validator_version"],
+        status=data["status"],
+        errors=tuple(data.get("errors", []) or []),
+        warnings=tuple(data.get("warnings", []) or []),
+        created_at=data["created_at"],
+        format_version=data["format_version"],
+    )
+    validate_report_schema(report)
+    return report

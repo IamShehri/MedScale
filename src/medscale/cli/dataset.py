@@ -1,16 +1,22 @@
-"""Dataset CLI: `medscale dataset {init|validate|manifest}`."""
+"""Dataset CLI: `medscale dataset {init|validate|manifest|freeze}`."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 from typing import Any
 
 import medscale._layout as _layout
+from medscale.__about__ import __version__ as _software_version
 from medscale.cli import _common
-from medscale.dataset.manifest import compute_dataset_manifest, write_manifest
+from medscale.dataset.manifest import (
+    compute_dataset_checksums,
+    compute_dataset_fingerprint,
+    compute_dataset_manifest,
+    write_checksums,
+    write_manifest,
+)
 from medscale.dataset.validate import validate_dataset
 
 _DEFAULT_ROOT: Path = _layout.DEFAULT_ROOT.parent / "datasets"
@@ -48,10 +54,10 @@ def _preview_manifest(dataset_dir: Path) -> dict[str, object]:
         dataset_id=dataset_id,
         version="1.0",
         created_at="2026-07-13T00:00:00+00:00",
-        source_snapshot=dataset_id,
         git_sha="abc123",
         records=records,
         license_summary=_build_license_summary(records),
+        software_version=_software_version,
     )
     return manifest.to_dict()
 
@@ -64,25 +70,44 @@ def _write_manifests(dataset_dir: Path) -> Path:
         dataset_id=dataset_id,
         version="1.0",
         created_at="2026-07-13T00:00:00+00:00",
-        source_snapshot=dataset_id,
         git_sha="abc123",
         records=records,
         license_summary=_build_license_summary(records),
+        software_version=_software_version,
     )
     write_manifest(manifest, dataset_dir / "manifest.json")
     return dataset_dir / "manifest.json"
 
 
-def _checksum_manifest(dataset_dir: Path) -> dict[str, str]:
-    manifest_path = dataset_dir / "manifest.json"
-    if not manifest_path.exists():
-        raise FileNotFoundError("missing manifest.json; generate it first")
-    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
-    return {
-        "manifest.json": hashlib.sha256(
-            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
-        ).hexdigest(),
-    }
+def _freeze_command(dataset_dir: Path, created_at: str) -> int:
+    dataset_dir = dataset_dir.resolve()
+    if not dataset_dir.exists():
+        return _common.fail(f"dataset directory not found: {dataset_dir}")
+    records_path = _layout.corpus_path(dataset_dir.parent).resolve()
+    records = _load_records(records_path)
+    dataset_id = dataset_dir.name
+    manifest = compute_dataset_manifest(
+        dataset_id=dataset_id,
+        version="1.0",
+        created_at=created_at,
+        git_sha="abc123",
+        records=records,
+        license_summary=_build_license_summary(records),
+        software_version=_software_version,
+    )
+    write_manifest(manifest, dataset_dir / "manifest.json")
+    write_checksums(compute_dataset_checksums(dataset_dir), dataset_dir / "checksums")
+    dataset_dir_resolved = dataset_dir.resolve()
+    fingerprint = compute_dataset_fingerprint(dataset_dir_resolved)
+    payload = manifest.to_dict()
+    payload["dataset_fingerprint"] = fingerprint
+    dataset_dir.joinpath("manifest.json").write_text(
+        json.dumps(payload, sort_keys=True, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    report = validate_dataset(dataset_dir_resolved)
+    print(report.to_summary())
+    return 0 if report.passed else 1
 
 
 def _init_command(dataset_id: str, root: Path, write: bool) -> int:
@@ -95,10 +120,20 @@ def _init_command(dataset_id: str, root: Path, write: bool) -> int:
         dataset_dir.mkdir(parents=True, exist_ok=True)
         (dataset_dir / "schema.json").write_text("{}", encoding="utf-8")
         (dataset_dir / "splits").mkdir(exist_ok=True)
+        (dataset_dir / "metadata").mkdir(exist_ok=True)
+        (dataset_dir / "checksums").mkdir(exist_ok=True)
         print(f"initialized dataset at {dataset_dir}")
         return 0
     print(f"would initialize dataset at {dataset_dir}")
     return 0
+
+
+def _validate_command(dataset_dir: Path) -> int:
+    if not dataset_dir.exists():
+        return _common.fail(f"dataset directory not found: {dataset_dir}")
+    report = validate_dataset(dataset_dir)
+    print(report.to_summary())
+    return 0 if report.passed else 1
 
 
 def _manifest_command(dataset_dir: Path, write: bool) -> int:
@@ -114,29 +149,29 @@ def _manifest_command(dataset_dir: Path, write: bool) -> int:
     return 0
 
 
-def _validate_command(dataset_dir: Path) -> int:
-    if not dataset_dir.exists():
-        return _common.fail(f"dataset directory not found: {dataset_dir}")
-    report = validate_dataset(dataset_dir)
-    print(report.to_summary())
-    return 0 if report.passed else 1
-
-
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="medscale dataset",
-        description="Dataset operations: init, preview, validation.",
+        description="Dataset operations: init, preview, validation, freeze.",
     )
-    parser.add_argument("command", choices=["init", "manifest", "validate"])
+    parser.add_argument("command", choices=["init", "manifest", "validate", "freeze"])
     parser.add_argument("dataset_id", nargs="?", default=None)
     parser.add_argument("path", nargs="?", default=None)
     parser.add_argument(
-        "--root", type=Path, default=_DEFAULT_ROOT, help="dataset root (default: data/datasets)"
+        "--root",
+        type=Path,
+        default=_DEFAULT_ROOT,
+        help="dataset root (default: data/datasets)",
     )
     parser.add_argument(
         "--write",
         action="store_true",
         help="persist mutations instead of previewing",
+    )
+    parser.add_argument(
+        "--created-at",
+        default=None,
+        help="explicit UTC ISO-8601 timestamp for freeze/manifest",
     )
     args = parser.parse_args(argv)
 
@@ -146,7 +181,8 @@ def main(argv: list[str] | None = None) -> int:
             return guard
         if args.dataset_id is None:
             return _common.fail(
-                "dataset_id required", hint="use `medscale dataset init <dataset_id>`"
+                "dataset_id required",
+                hint="use `medscale dataset init <dataset_id>`",
             )
         return _init_command(args.dataset_id, args.root, args.write)
 
@@ -161,7 +197,12 @@ def main(argv: list[str] | None = None) -> int:
         if guard is not None:
             return guard
         return _manifest_command(dataset_dir, args.write)
-    return _validate_command(dataset_dir)
+
+    if args.command == "validate":
+        return _validate_command(dataset_dir)
+
+    created_at = args.created_at or "2026-07-13T00:00:00+00:00"
+    return _freeze_command(dataset_dir, created_at)
 
 
 if __name__ == "__main__":

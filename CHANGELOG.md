@@ -6,6 +6,36 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-07-13
+
+### Added
+
+- **M1 release engineering**: structured logging, release workflow, coverage enforcement,
+  storage hygiene checks, and architecture-enforcement tests.
+- **M2 evidence infrastructure**: `medscale.evidence` subpackage with frozen models,
+  deterministic grading, protocol surface, backward-compatible shim, and evidence store.
+- **M3 benchmark framework**: deterministic task/spec contract, frozen scorer versions,
+  artifact-first replay CLI, and run-artifact identity validation.
+- **Dataset v1**: deterministic manifest/schema/split/validate pipeline, sibling `.sha256`
+  checksums, content-hash splitting with fixed seed, and metadata/license enforcement.
+- **M4 optional model backends**: `transformers` and `llama.cpp` backend boundaries behind
+  optional extras with isolated CI jobs.
+- **M5 FHIR boundary**: `medscale.fhirkit` package with deterministic `ValidationReport`,
+  content-addressed storage, and optional local validator integration.
+- **M6 collaboration workflow**: reviewer-scoped append-only JSONL logs, deterministic
+  merge with conflict visibility, and PRISMA reproducibility from merged logs.
+- **Release workflow**: `.github/workflows/release.yml` for tag-only quality-gated
+  GitHub Release creation.
+
+### Changed
+
+- Version metadata bumped to `0.2.0` across `src/medscale/__about__.py`, `CITATION.cff`,
+  `CHANGELOG.md`, and `RELEASES.md`.
+- Architecture enforcement expanded to cover collaboration isolation and transport
+  boundaries.
+- Documentation updated: README status, milestone tracker, ADR tracker, release notes,
+  and release checklist.
+
 ## [0.1.0] — 2026-07-12
 
 ### Added (Mission Zero — research readiness sprint)
