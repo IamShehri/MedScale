@@ -139,19 +139,27 @@ def main(argv: list[str] | None = None) -> int:
         help="persist mutations instead of previewing",
     )
     args = parser.parse_args(argv)
-    guard = _common.require_root(args.root)
-    if guard is not None:
-        return guard
 
     if args.command == "init":
+        guard = _common.require_root(args.root)
+        if guard is not None:
+            return guard
         if args.dataset_id is None:
             return _common.fail(
                 "dataset_id required", hint="use `medscale dataset init <dataset_id>`"
             )
         return _init_command(args.dataset_id, args.root, args.write)
 
-    dataset_dir = args.root / (args.path or args.dataset_id or "")
+    dataset_dir = (
+        Path(args.path)
+        if args.path is not None
+        else args.root / (args.dataset_id or "")
+    )
+
     if args.command == "manifest":
+        guard = _common.require_root(args.root)
+        if guard is not None:
+            return guard
         return _manifest_command(dataset_dir, args.write)
     return _validate_command(dataset_dir)
 

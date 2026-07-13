@@ -140,10 +140,7 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
 
     expected_checksums: dict[str, str] = {}
     if checksums_manifest is not None:
-        if not isinstance(checksums_manifest, dict):
-            issues.append(ValidationIssue("checksums/manifest.json", "must be a JSON object"))
-        else:
-            expected_checksums.update(checksums_manifest)
+        expected_checksums.update(checksums_manifest)
     elif checksums_dir.exists():
         for checksum_file in sorted(checksums_dir.glob("*.sha256")):
             try:
@@ -162,12 +159,16 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
                 if relative_path.endswith(".sha256")
                 else relative_path
             )
-            if artifact_name == "manifest":
+            if artifact_name.endswith(".json"):
+                candidate = artifact_name[: -len(".json")]
+            else:
+                candidate = artifact_name
+            if candidate == "manifest":
                 artifact_path = dataset_dir / "manifest.json"
-            elif artifact_name == "schema":
+            elif candidate == "schema":
                 artifact_path = dataset_dir / "schema.json"
-            elif artifact_name in {"train", "validation", "test"}:
-                artifact_path = dataset_dir / "splits" / f"{artifact_name}.json"
+            elif candidate in {"train", "validation", "test"}:
+                artifact_path = dataset_dir / "splits" / f"{candidate}.json"
             else:
                 artifact_path = (dataset_dir / artifact_name).resolve()
             if not artifact_path.exists():

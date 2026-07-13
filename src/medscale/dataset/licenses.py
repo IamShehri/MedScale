@@ -9,20 +9,20 @@ from __future__ import annotations
 
 import json
 from collections import Counter
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
 
 __all__ = ["write_licenses_metadata"]
 
 
-def _coalesce_license(record: dict[str, Any]) -> str | None:
+def _coalesce_license(record: dict[str, object]) -> str | None:
     license_spdx = record.get("license_spdx")
     if isinstance(license_spdx, str) and license_spdx.strip():
         return license_spdx.strip()
     return None
 
 
-def build_license_summary(records: Sequence[dict[str, Any]]) -> dict[str, int]:
+def build_license_summary(records: Sequence[dict[str, object]]) -> dict[str, int]:
     counts: Counter[str | None] = Counter()
     for record in records:
         counts[_coalesce_license(record)] += 1
@@ -37,7 +37,7 @@ def build_license_summary(records: Sequence[dict[str, Any]]) -> dict[str, int]:
 
 def write_licenses_metadata(
     dataset_dir: Path,
-    records: Sequence[dict[str, Any]],
+    records: Sequence[dict[str, object]],
 ) -> Path:
     license_dir = dataset_dir / "metadata"
     license_dir.mkdir(parents=True, exist_ok=True)

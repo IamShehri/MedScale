@@ -8,11 +8,9 @@ and a new ADR.
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Sequence
-
-from medscale.reproducibility import content_hash
 
 __all__ = ["DatasetManifest", "compute_dataset_manifest", "write_manifest"]
 
