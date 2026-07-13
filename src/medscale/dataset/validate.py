@@ -12,8 +12,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from medscale.dataset.schema import DatasetSchema
-
 __all__ = ["DatasetValidationReport", "ValidationIssue", "validate_dataset"]
 
 
@@ -95,6 +93,7 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
     validation_path = dataset_dir / "splits" / "validation.json"
     test_path = dataset_dir / "splits" / "test.json"
     checksums_path = dataset_dir / "checksums" / "manifest.json"
+    checksums_dir = dataset_dir / "checksums"
 
     if not manifest_path.exists():
         issues.append(ValidationIssue("manifest.json", "missing manifest"))
@@ -132,32 +131,61 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
         except ValueError as exc:
             issues.append(ValidationIssue(name, str(exc)))
 
-    if not checksums_path.exists():
-        issues.append(ValidationIssue("checksums/manifest.json", "missing checksum manifest"))
-    else:
+    checksums_manifest: dict[str, str] | None = None
+    if checksums_path.exists():
         try:
-            expected_checksums = _load_json(checksums_path)
-            if not isinstance(expected_checksums, dict):
-                issues.append(ValidationIssue("checksums/manifest.json", "must be a JSON object"))
-            else:
-                for relative_path, expected_digest in expected_checksums.items():
-                    artifact_path = (dataset_dir / relative_path).resolve()
-                    if not artifact_path.exists():
-                        issues.append(ValidationIssue(str(artifact_path), "missing checksum artifact"))
-                        continue
-                    actual_digest = _sha256_file(artifact_path)
-                    if actual_digest == expected_digest:
-                        checksum_checks.append(f"{relative_path}: match")
-                    else:
-                        issues.append(
-                            ValidationIssue(
-                                str(artifact_path),
-                                "sha256 mismatch",
-                            )
-                        )
-                        checksum_checks.append(f"{relative_path}: mismatch")
+            checksums_manifest = _load_json(checksums_path)
         except ValueError as exc:
             issues.append(ValidationIssue("checksums/manifest.json", str(exc)))
+
+    expected_checksums: dict[str, str] = {}
+    if checksums_manifest is not None:
+        if not isinstance(checksums_manifest, dict):
+            issues.append(ValidationIssue("checksums/manifest.json", "must be a JSON object"))
+        else:
+            expected_checksums.update(checksums_manifest)
+    elif checksums_dir.exists():
+        for checksum_file in sorted(checksums_dir.glob("*.sha256")):
+            try:
+                expected_checksums[checksum_file.name] = (
+                    checksum_file.read_text(encoding="utf-8").strip()
+                )
+            except OSError:
+                continue
+
+    if not expected_checksums:
+        issues.append(ValidationIssue("checksums/", "missing checksums manifest"))
+    else:
+        for relative_path, expected_digest in expected_checksums.items():
+            artifact_name = (
+                relative_path[: -len(".sha256")]
+                if relative_path.endswith(".sha256")
+                else relative_path
+            )
+            if artifact_name == "manifest":
+                artifact_path = dataset_dir / "manifest.json"
+            elif artifact_name == "schema":
+                artifact_path = dataset_dir / "schema.json"
+            elif artifact_name in {"train", "validation", "test"}:
+                artifact_path = dataset_dir / "splits" / f"{artifact_name}.json"
+            else:
+                artifact_path = (dataset_dir / artifact_name).resolve()
+            if not artifact_path.exists():
+                issues.append(
+                    ValidationIssue(str(artifact_path), "missing artifact for checksum")
+                )
+                continue
+            actual_digest = _sha256_file(artifact_path)
+            if actual_digest == expected_digest:
+                checksum_checks.append(f"{artifact_name}: match")
+            else:
+                issues.append(
+                    ValidationIssue(
+                        str(artifact_path),
+                        "sha256 mismatch",
+                    )
+                )
+                checksum_checks.append(f"{artifact_name}: mismatch")
 
     dataset_id = None
     if manifest_path.exists():

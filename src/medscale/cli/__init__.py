@@ -14,6 +14,7 @@ from collections.abc import Sequence
 from medscale.__about__ import __version__
 from medscale.cli import bench as bench_cli
 from medscale.cli import check as check_cli
+from medscale.cli import dataset as dataset_cli
 from medscale.cli import extract as extract_cli
 from medscale.cli import research as research_cli
 from medscale.cli import screen as screen_cli
@@ -25,6 +26,7 @@ _SUBCOMMANDS = {
     "stats": research_cli.stats_main,
     "snapshot": research_cli.snapshot_main,
     "bench": bench_cli.main,
+    "dataset": dataset_cli.main,
 }
 
 

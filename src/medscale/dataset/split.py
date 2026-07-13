@@ -9,6 +9,7 @@ from __future__ import annotations
 import enum
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import Protocol, runtime_checkable
 
 from medscale.reproducibility import content_hash
 
@@ -75,9 +76,6 @@ class DeterministicSplitter:
             validation=validation,
             test=test,
         )
-
-
-from typing import Protocol, Sequence, runtime_checkable
 
 
 @runtime_checkable
