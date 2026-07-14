@@ -33,6 +33,12 @@ datasets, or training execution.
 - No breaking changes to existing v0.2.0 public surface.
 - No hidden compute assumptions, no scheduler, no cloud integration, no execution layer beyond validation and contracts.
 
+## Phase skip rules
+- A planned hygiene or formatting phase may be recorded `Not Applicable` when a verified audit finds zero tracked behavior-preserving candidates.
+- A no-op empty PR must not be created merely to satisfy sequence numbering.
+- Functional, contract, API, schema, CLI, or architectural changes must move into separately scoped capability PRs.
+- Skipping a non-applicable phase requires recorded evidence and an explicit sequencing amendment before the next governed capability PR is opened.
+
 ## Assumptions
 - Public origin is `https://github.com/IamShehri/MedScale` on `main`.
 - Local working tree contains uncommitted M17/M18/MESC/HuggingFace work relative to `origin/main`.
