@@ -1,36 +1,33 @@
 # Public Repository Alignment — Plan
 
 ## Verified baseline
-- Current `origin/main` is `13629fabb9d18645eac1c68bd9e529cb6ff4bbd0`, which includes the merged PR #5 quality-gate repair.
-- Commits ahead of current `origin/main` after rebase: 1 specification commit.
-- Verification from current canonical baseline:
-  - `uv run ruff check .`: PASS
-  - `uv run ruff format --check .`: PASS
-  - `uv run mypy`: PASS — 136 source files
-  - `uv run pytest -q --no-header --tb=short`: 349 passed, 2 skipped
-  - `uv run pytest --cov --cov-report=term-missing`: 349 passed, 2 skipped, coverage 78.11%, required threshold 77.0%
-  - `uv run medscale check`: CLEAN
-  - `uv build`: PASS — `medscale-0.2.0.tar.gz`, `medscale-0.2.0-py3-none-any.whl`
-  - clean-wheel smoke test: imported package resolves from temporary `site-packages`, `medscale.cli.fhir` imports successfully, `medscale --help` and `medscale check` both pass
-- PR #5 remains the source of that baseline; this PR is specification-only on top of it.
+- Current `origin/main` is `00b45141666f85cb402a760cef6564ebfc25064b`, which includes the merged PR #4 and PR #5 governance and quality-gate repairs.
+- This amendment is documented from a clean worktree based on current canonical `origin/main`.
 
 ## Phase 0 — Truth capture
 1. Complete divergence audit.
 2. Capture README/ROADMAP/CHANGELOG/RELEASES/CITATION drift against current code/tests.
 3. Classify uncommitted work by capability group and review risk.
 4. Capture public API surface and classify stability.
-5. Document mypy/ruff-format drift as separate hygiene PRs.
+5. Record PR2 hygiene audit outcome as `Not Applicable` when no tracked behavior-preserving candidates exist.
 
 ## Phase 1 — Repository formatting and typing hygiene
-6. Run `ruff format` across tests and source where needed.
-7. Add explicit type annotations for untyped helpers/fixtures/paths in tests and evaluation modules.
-8. Fix remaining `attr-defined`, `arg-type`, `union-attr`, `index`, and `name-defined` mypy errors in M17/M18 modules.
-9. Gate format/type repairs on pytest remaining green.
+- Status: Not Applicable / NO-GO
+- Verified Group A eligible tracked files: 0
+- Modified tracked files audited: 6
+- Untracked files audited: 228
+- Reason: every tracked candidate is a functional, contract, CLI, export, or architecture-test change; every untracked candidate is new implementation or governance material
+- Result: no PR2 hygiene branch should be created
+- Governance rule: empty or mislabeled implementation PRs are prohibited
+- Next authorized action: Phase 2 dependency and boundary audit only
 
 ## Phase 2 — Evidence/dataset foundations
-10. Consolidate dataset/governance/validation contracts if duplicate `DatasetBinding`/contract roots remain.
-11. Freeze `dataset.builder` and `dataset.governance` public symbols and add tests proving imports.
-12. Bind dataset fingerprint/manifest/release_packager to CLI surface without execution logic.
+6. Audit the minimum dependency-complete evidence/dataset foundation slice.
+7. Determine which files are new versus already public.
+8. Classify public / experimental / internal surface.
+9. Identify required tests, dependency graph, serialization and schema compatibility, facade impact, and ADR need.
+10. Confirm the slice can be imported without model execution, cloud, scheduler, or external API assumptions.
+11. Capability implementation remains blocked until this audit is reviewed and explicitly approved.
 
 ## Phase 3 — Evaluation engine
 13. Audit `evaluation.pipeline.execution` naming vs `EvaluationReport`/`EvaluationResult` mismatch.
