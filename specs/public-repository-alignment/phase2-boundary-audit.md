@@ -123,9 +123,15 @@ Exact exclusions:
 - evaluation, model, training, orchestration, MESC, strategy, and execution files
 
 ## 10. Public / experimental / internal matrix
-- Public: `DatasetBinding`, `ManifestRecord`, `FingerprintInput`, schema version constant, stable factory helpers in `dataset.builder`
+- Public in `medscale.dataset.builder.contracts`: `StageResult`, `StageDefinition`, `PipelineContext`
+- Public in `medscale.dataset.builder.manifest`: `DatasetReleaseManifest`, `AuditReport`, `QualityReport`
+- Public in `medscale.dataset.builder.fingerprint`: `pipeline_fingerprint`, `context_fingerprint`
+- Public in `medscale.dataset.schema`: `DatasetSchema`, `LITERATURE_RECORD_SCHEMA`, `EVIDENCE_OBJECT_SCHEMA`, `BENCHMARK_ITEM_SCHEMA`
 - Experimental: none in the minimum slice
-- Internal: schema helpers, normalization helpers, internal hashing details not re-exported at top-level facade
+- Internal: normalization helpers, internal hashing details not re-exported at top-level facade
+- Notes:
+  - `FingerprintInput`, `ManifestRecord`, `DatasetBinding`, and `DatasetSchema.version` do not exist in the inspected candidate set; those placeholder labels are removed.
+  - The exact stable fingerprint helpers are `pipeline_fingerprint` and `context_fingerprint` only.
 
 ## 11. Schema and serialization analysis
 - Schema uses deterministic field order and JSON-compatible structures
@@ -143,20 +149,36 @@ Exact exclusions:
 
 ## 13. Required tests
 Exact proposed tests:
-- `tests/test_dataset_builder.py::test_manifest_round_trip_is_deterministic`
-- `tests/test_dataset_builder.py::test_fingerprint_stability`
-- `tests/test_evidence_contract.py::test_dataset_binding_schema_version`
-- `tests/test_evidence_contract.py::test_public_imports_only_allowlist`
+- `tests/test_dataset_builder.py`
+- Exact proposed dataset-only coverage: contract freeze, manifest determinism, fingerprint stability, public-import allowlist for `medscale.dataset`, clean-wheel import for dataset surface, malformed-input rejection, and schema compatibility boundaries.
+
+Do not include `tests/test_evidence_contract.py` in the dataset capability PR allowlist unless a later dataset slice explicitly depends on an already-public evidence contract boundary and that dependency is documented in an accepted ADR.
 
 Clean-wheel smoke and schema freeze tests remain required.
 
 ## 14. ADR decision
-Result: ADR REQUIRED BEFORE IMPLEMENTATION
-Rationale:
-- The slice creates a new public dataset-contract surface within an existing package
-- It establishes fingerprint/manifest ownership and compatibility policy
-- It affects how later dataset/governance PRs may expand exports
-- This aligns with existing ADR governance in canonical `main`
+Gate: ADR REQUIRED BEFORE IMPLEMENTATION.
+
+The future ADR must decide:
+- the canonical owner of `DatasetBinding` and competing `StageResult`/`StageDefinition`/`PipelineContext` roots
+- the canonical owner of manifest contracts
+- the canonical owner of fingerprint contracts
+- the relationship to `dataset.governance.contracts`
+- the relationship to `evidence.contract`
+- the exact public symbols
+- the exact experimental/internal symbols
+- digest and canonical JSON policy
+- schema version ownership
+- compatibility commitment
+- top-level and subpackage export policy
+- migration policy for duplicate roots
+- explicit exclusions from the first capability PR
+
+State clearly:
+- the audit identifies a viable provisional slice
+- the implementation allowlist is not authorized until the ADR is accepted
+- no public API commitment exists merely because the audit recommends a symbol
+- the provisional title and branch name are planning placeholders, not approvals
 
 ## 15. Risk register
 | Risk | Severity | Evidence | Mitigation | Blocks capability PR |
@@ -177,8 +199,11 @@ Result: GO conditionally
   - ALIGN-12 audit is reviewed
   - exact file/test allowlist above is confirmed
 
+Provisional future capability title: `feat(dataset): add deterministic dataset contract foundation`
+- This title remains provisional until the ADR is accepted and founder approves the exact scope.
+- The implementation allowlist above is not an authorization; it is a provisional planning artifact only.
+
 Proposed branch name: `chore/phase2-dataset-contract-foundation`
-Proposed PR title: `feat(dataset): add evidence/dataset foundation contracts`
 Proposed commit structure: one commit if inseparable; two commits if formatting and contract freeze are separable
 
 ## 17. Proposed implementation sequence
