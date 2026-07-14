@@ -2,7 +2,7 @@
 
 ## 1. Executive decision
 - Status: GO conditionally
-- Decision: The minimum dependency-complete slice is a small contract-and-fingerprint-only subset under `src/medscale/dataset/builder` and `src/medscale/dataset/schema`.
+- Decision: The minimum dependency-complete slice is a contract, manifest, schema, and fingerprint foundation subset under `src/medscale/dataset/builder` and `src/medscale/dataset/schema`.
 - Boundary: No implementation, imports, tests, or capability PR is authorized by this audit. ALIGN-13 remains pending explicit founder approval.
 
 ## 2. Canonical baseline
@@ -91,7 +91,7 @@ Duplicate or competing contract surfaces:
 - `src/medscale/evidence/contract.py`
 - tracked local export expansion in `src/medscale/evidence/__init__.py`
 
-Recommendation: one public contract root for the first PR at `dataset.builder.contracts`. Do not expose `dataset.governance` or `evidence/contract.py` publicly in the initial capability-import PR.
+Provisional candidate public contract root: `dataset.builder.contracts`, pending the required ADR. This audit does not establish canonical ownership. Do not expose `dataset.governance` or `evidence/contract.py` publicly in the initial capability-import PR.
 
 ## 9. Recommended minimum slice
 Implementation allowlist:
@@ -104,7 +104,6 @@ Implementation allowlist:
 
 Test allowlist:
 - `tests/test_dataset_builder.py`
-- `tests/test_evidence_contract.py`
 
 Exact exclusions:
 - `src/medscale/dataset/builder/pipeline.py`
@@ -211,7 +210,7 @@ Proposed commit structure: one commit if inseparable; two commits if formatting 
 2. Create and approve the required ADR.
 3. Obtain explicit founder approval for the exact allowlist above.
 4. Implement only `dataset.__init__`, `schema.py`, `builder` contract/manifest/fingerprint files.
-5. Implement the four exact proposed tests.
+5. Implement the exact dataset contract, manifest determinism, fingerprint stability, import-boundary, malformed-input, schema-compatibility, and clean-wheel tests in `tests/test_dataset_builder.py`.
 6. Run full canonical verification.
 7. Stop; do not proceed to connectors, governance, validation, evaluation, models, or execution in the same PR.
 
