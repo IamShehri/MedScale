@@ -77,14 +77,28 @@ def test_packaging_click_is_not_a_required_runtime_dependency() -> None:
     assert "click" not in pyproject.split("[project.optional-dependencies]")[0]
 
 
-def test_wheel_contains_fhir_module_without_click_dependency() -> None:
-    wheel = next(Path("dist").glob("*.whl"))
+@pytest.fixture(scope="session")
+def pr0_wheel(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    # Build the package wheel once per test session into a temporary directory
+    # so the packaging tests remain hermetic in clean CI environments.
+    wheel_dir = tmp_path_factory.mktemp("pr0-wheel")
+    subprocess.check_call(
+        ["uv", "build", "--wheel", "--out-dir", str(wheel_dir)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
+    )
+    wheels = sorted(wheel_dir.glob("*.whl"))
+    assert len(wheels) == 1, f"expected exactly one wheel, found {len(wheels)}"
+    return wheels[0].resolve()
+
+
+def test_wheel_contains_fhir_module_without_click_dependency(pr0_wheel: Path) -> None:
     names = []
     metadata_text = ""
     try:
         import zipfile
 
-        with zipfile.ZipFile(wheel) as z:
+        with zipfile.ZipFile(pr0_wheel) as z:
             names = z.namelist()
             metadata_path = next(n for n in names if n.endswith(".dist-info/METADATA"))
             metadata_text = z.read(metadata_path).decode("utf-8", errors="ignore")
@@ -96,8 +110,9 @@ def test_wheel_contains_fhir_module_without_click_dependency() -> None:
     assert "Requires-Dist: click\n" not in metadata_text
 
 
-def test_clean_wheel_can_import_intentionally_shipped_modules(tmp_path: Path) -> None:
-    wheel = next(Path("dist").glob("*.whl"))
+def test_clean_wheel_can_import_intentionally_shipped_modules(
+    tmp_path: Path, pr0_wheel: Path
+) -> None:
     venv = tmp_path / ".venv"
     subprocess.check_call(
         [sys.executable, "-m", "venv", str(venv)],
@@ -107,7 +122,7 @@ def test_clean_wheel_can_import_intentionally_shipped_modules(tmp_path: Path) ->
     python_exe = "Scripts/python.exe" if sys.platform == "win32" else "bin/python"
     python = venv / python_exe
     subprocess.check_call(
-        [str(python), "-m", "pip", "install", "--quiet", "--no-deps", str(wheel)],
+        [str(python), "-m", "pip", "install", "--quiet", "--no-deps", str(pr0_wheel)],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.STDOUT,
     )
