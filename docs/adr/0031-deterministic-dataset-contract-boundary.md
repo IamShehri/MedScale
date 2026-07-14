@@ -1,11 +1,24 @@
 # ADR-0031 — Deterministic Dataset Contract Ownership and Boundary
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-07-14
 - **Deciders:** Founder
 - **Supersedes:** None
 - **Superseded by:** None
 - **Related:** ADR-0020, ADR-0030, `specs/public-repository-alignment/phase2-boundary-audit.md`
+
+## Approval record
+
+ADR-0031 was explicitly approved by the Founder on 2026-07-14.
+
+This approval applies only to the architecture decision recorded by this ADR. It does not:
+
+- approve ALIGN-13;
+- authorize capability implementation;
+- authorize creation of a dataset-builder capability branch;
+- authorize source, test, dependency, packaging, CLI, release, model, MESC, or Hugging Face changes.
+
+ALIGN-13 remains a separate founder gate. The exact capability implementation allowlist still requires separate explicit founder approval.
 
 ## Context
 
