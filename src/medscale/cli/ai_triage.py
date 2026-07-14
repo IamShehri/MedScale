@@ -67,9 +67,7 @@ def _is_high(recommendation: object) -> bool:
     if rec is None:
         return False
     rec_any: Any = rec
-    return bool(
-        rec_any.priority_score >= 0.7 and rec_any.relevance_score >= 0.55
-    )
+    return bool(rec_any.priority_score >= 0.7 and rec_any.relevance_score >= 0.55)
 
 
 def _is_medium(recommendation: object) -> bool:
@@ -127,9 +125,7 @@ def _run_recommend(root: Path, query: str | None, limit: int | None) -> int:
             priority_score=priority_score,
             relevance_score=relevance_score,
         )
-        recommendation = build_recommendation(
-            updated, model=None, provider=None
-        )
+        recommendation = build_recommendation(updated, model=None, provider=None)
         recommendations.append(recommendation)
     if recommendations:
         append_recommendations(triage_log_path, recommendations)

@@ -22,8 +22,7 @@ class Task002EvidenceExtraction(BaseBenchmarkTask):
         default_factory=lambda: {
             "category": "grounding",
             "description": (
-                "Extract supporting and contradicting evidence for a constrained"
-                " decoding claim."
+                "Extract supporting and contradicting evidence for a constrained decoding claim."
             ),
         }
     )

@@ -138,34 +138,22 @@ def test_score_triage_low() -> None:
 
 def test_recommendation_first() -> None:
     """Review first for strong priority/relevance."""
-    assert (
-        _recommendation_from_scores(priority_score=0.8, relevance_score=0.75)
-        == "review first"
-    )
+    assert _recommendation_from_scores(priority_score=0.8, relevance_score=0.75) == "review first"
 
 
 def test_recommendation_later() -> None:
     """Review later for moderate priority/relevance."""
-    assert (
-        _recommendation_from_scores(priority_score=0.5, relevance_score=0.45)
-        == "review later"
-    )
+    assert _recommendation_from_scores(priority_score=0.5, relevance_score=0.45) == "review later"
 
 
 def test_recommendation_low() -> None:
     """Low priority only."""
-    assert (
-        _recommendation_from_scores(priority_score=0.3, relevance_score=0.3)
-        == "low priority"
-    )
+    assert _recommendation_from_scores(priority_score=0.3, relevance_score=0.3) == "low priority"
 
 
 def test_recommendation_uncertain() -> None:
     """Uncertain below threshold."""
-    assert (
-        _recommendation_from_scores(priority_score=0.2, relevance_score=0.2)
-        == "uncertain"
-    )
+    assert _recommendation_from_scores(priority_score=0.2, relevance_score=0.2) == "uncertain"
 
 
 def test_priority_label() -> None:
@@ -256,6 +244,7 @@ def test_pending_excludes_already_decided(tmp_path: Path) -> None:
     corpus = (_make_record(), _make_record(title="Second"))
     reviews = {}
     from medscale.litdb.review import RecordReview, ReviewDecision
+
     reviews[corpus[0].record_id] = RecordReview(ReviewDecision.INCLUDE, None)
     pending = pending_for_triage(corpus, reviews, query=None, limit=None)
     assert all(p.record.record_id == corpus[1].record_id for p in pending)
@@ -275,6 +264,7 @@ def test_pending_filters_query() -> None:
 def test_no_human_log_mutation(tmp_path: Path) -> None:
     """AI triage log path must not collide with human review log."""
     from medscale._layout import DEFAULT_ROOT, review_log_path, triage_log_path
+
     assert review_log_path(DEFAULT_ROOT) != triage_log_path(DEFAULT_ROOT)
 
 

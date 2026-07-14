@@ -260,9 +260,7 @@ def load_triage_log(log_path: Path) -> dict[str, AIRecommendation]:
     return recommendations
 
 
-def append_recommendations(
-    log_path: Path, recommendations: Iterable[AIRecommendation]
-) -> None:
+def append_recommendations(log_path: Path, recommendations: Iterable[AIRecommendation]) -> None:
     """Append recommendations to the triage log in canonical JSONL form."""
 
     items = list(recommendations)
@@ -426,29 +424,17 @@ def _recommendation_reasoning(
 ) -> str:
     parts: list[str] = []
     if signals:
-        parts.append(
-            f"Strong alignment with MedScale research themes: {', '.join(signals)}."
-        )
+        parts.append(f"Strong alignment with MedScale research themes: {', '.join(signals)}.")
     if flags:
-        parts.append(
-            f"Review attention needed for: {', '.join(flag.rule for flag in flags)}."
-        )
+        parts.append(f"Review attention needed for: {', '.join(flag.rule for flag in flags)}.")
     if recommendation == "review first":
-        parts.append(
-            "High priority: early human review is recommended."
-        )
+        parts.append("High priority: early human review is recommended.")
     elif recommendation == "review later":
-        parts.append(
-            "Suggested for standard queue review after higher-priority items."
-        )
+        parts.append("Suggested for standard queue review after higher-priority items.")
     elif recommendation == "low priority":
-        parts.append(
-            "Lower clinical/interoperability alignment; review after prioritized items."
-        )
+        parts.append("Lower clinical/interoperability alignment; review after prioritized items.")
     else:
-        parts.append(
-            "Insufficient deterministic signal for confident prioritization."
-        )
+        parts.append("Insufficient deterministic signal for confident prioritization.")
     return " ".join(parts)
 
 

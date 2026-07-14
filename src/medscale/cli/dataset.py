@@ -113,9 +113,7 @@ def _freeze_command(dataset_dir: Path, created_at: str) -> int:
 def _init_command(dataset_id: str, root: Path, write: bool) -> int:
     dataset_dir = root / dataset_id
     if dataset_dir.exists() and not write:
-        return _common.fail(
-            f"{dataset_dir} already exists; use --write to mutate explicitly"
-        )
+        return _common.fail(f"{dataset_dir} already exists; use --write to mutate explicitly")
     if write:
         dataset_dir.mkdir(parents=True, exist_ok=True)
         (dataset_dir / "schema.json").write_text("{}", encoding="utf-8")
@@ -186,11 +184,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         return _init_command(args.dataset_id, args.root, args.write)
 
-    dataset_dir = (
-        Path(args.path)
-        if args.path is not None
-        else args.root / (args.dataset_id or "")
-    )
+    dataset_dir = Path(args.path) if args.path is not None else args.root / (args.dataset_id or "")
 
     if args.command == "manifest":
         guard = _common.require_root(args.root)

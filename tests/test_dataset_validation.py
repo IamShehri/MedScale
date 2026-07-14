@@ -31,9 +31,7 @@ def _write_dataset_dir(tmp_path: Path) -> Path:
         ),
         encoding="utf-8",
     )
-    (dataset_dir / "schema.json").write_text(
-        json.dumps({"version": "1"}), encoding="utf-8"
-    )
+    (dataset_dir / "schema.json").write_text(json.dumps({"version": "1"}), encoding="utf-8")
     splits = dataset_dir / "splits"
     splits.mkdir()
     (splits / "train.json").write_text("[]", encoding="utf-8")

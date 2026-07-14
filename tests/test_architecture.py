@@ -135,9 +135,8 @@ def test_evidence_layer_does_not_import_application_modules() -> None:
         for p in _all_modules()
         if _unit_of(p) == "evidence" and bool(forbidden & _imports_of(p))
     ]
-    assert not offenders, (
-        "evidence imports cross forbidden boundaries:\n  "
-        + "\n  ".join(offenders)
+    assert not offenders, "evidence imports cross forbidden boundaries:\n  " + "\n  ".join(
+        offenders
     )
 
 
@@ -170,9 +169,7 @@ def test_dataset_does_not_import_research() -> None:
         for p in _all_modules()
         if _unit_of(p) == "dataset" and "research" in _imports_of(p)
     ]
-    assert not offenders, (
-        "dataset imports research:\n  " + "\n  ".join(offenders)
-    )
+    assert not offenders, "dataset imports research:\n  " + "\n  ".join(offenders)
 
 
 def test_cli_imports_are_not_imported_by_engine_modules() -> None:

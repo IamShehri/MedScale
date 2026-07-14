@@ -22,8 +22,7 @@ class Task003ScreeningPrioritization(BaseBenchmarkTask):
         default_factory=lambda: {
             "category": "summarization",
             "description": (
-                "Prioritize screening queue with required citations from a"
-                " synthetic evidence set."
+                "Prioritize screening queue with required citations from a synthetic evidence set."
             ),
         }
     )

@@ -22,9 +22,7 @@ def test_dataset_init_preview_does_not_write(
     assert not target.exists(), "init without --write must not create a dataset directory"
 
 
-def test_dataset_init_writes_artifacts(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_dataset_init_writes_artifacts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)
     root = tmp_path / "data" / "datasets"
     root.mkdir(parents=True)

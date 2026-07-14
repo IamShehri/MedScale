@@ -46,8 +46,7 @@ def validate_fhir_command(
 
     command = (
         validator_command.split()
-        if isinstance(validator_command, str)
-        and validator_command.strip()
+        if isinstance(validator_command, str) and validator_command.strip()
         else None
     )
     report = validate_fhir(payload, created_at=created_at)
@@ -55,9 +54,7 @@ def validate_fhir_command(
         try:
             from medscale.fhirkit.validate import validate_fhir_with_validator
 
-            report = validate_fhir_with_validator(
-                payload, command=command, created_at=created_at
-            )
+            report = validate_fhir_with_validator(payload, command=command, created_at=created_at)
         except Exception as exc:
             click.echo(f"validator error: {exc}", err=True)
             context.exit(1)
