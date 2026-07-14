@@ -1,4 +1,5 @@
 """llama.cpp backend validation."""
+
 from __future__ import annotations
 
 from medscale.backends.common import BackendMissingDependencyError

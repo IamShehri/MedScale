@@ -91,12 +91,8 @@ def compute_metrics(
         if bucket in {"high", "medium"}:
             recommended_medium_plus += 1
     false_negative_count = max(included_total - included_flagged, 0)
-    false_negative_rate = (
-        false_negative_count / included_total if included_total else None
-    )
-    included_hit_rate = (
-        included_flagged / included_total if included_total else None
-    )
+    false_negative_rate = false_negative_count / included_total if included_total else None
+    included_hit_rate = included_flagged / included_total if included_total else None
     return EvaluationRun(
         recommended_medium_plus=recommended_medium_plus,
         human_included_total=included_total,

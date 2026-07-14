@@ -83,33 +83,22 @@ def _timestamp_value(manifest: dict[str, Any], field_name: str) -> str | None:
     value = manifest.get(field_name)
     dataset_snapshot = manifest.get("dataset_snapshot") or {}
     dataset_snapshot_value = (
-        dataset_snapshot.get(field_name)
-        if isinstance(dataset_snapshot, dict)
-        else None
+        dataset_snapshot.get(field_name) if isinstance(dataset_snapshot, dict) else None
     )
     selected = dataset_snapshot_value or (value if isinstance(value, str) else None)
     return selected if isinstance(selected, str) else None
 
 
-def _validate_timestamps(
-    manifest: dict[str, Any], issues: list[ValidationIssue]
-) -> None:
+def _validate_timestamps(manifest: dict[str, Any], issues: list[ValidationIssue]) -> None:
     created_at = _timestamp_value(manifest, "created_at")
     if not created_at or not _TIMESTAMP_RE.match(created_at):
         issues.append(ValidationIssue("created_at", "missing or invalid ISO-8601 timestamp"))
 
 
-def _validate_dataset_id(
-    manifest: dict[str, Any], issues: list[ValidationIssue]
-) -> None:
+def _validate_dataset_id(manifest: dict[str, Any], issues: list[ValidationIssue]) -> None:
     dataset_id = manifest.get("dataset_id")
-    if (
-        not isinstance(dataset_id, str)
-        or not _DATASET_ID_RE.match(dataset_id)
-    ):
-        issues.append(
-            ValidationIssue("dataset_id", "must match ^[a-z][a-z0-9-]{3,63}$")
-        )
+    if not isinstance(dataset_id, str) or not _DATASET_ID_RE.match(dataset_id):
+        issues.append(ValidationIssue("dataset_id", "must match ^[a-z][a-z0-9-]{3,63}$"))
 
 
 def _validate_synthetic_first(
@@ -119,9 +108,7 @@ def _validate_synthetic_first(
 ) -> None:
     license_path = dataset_dir / "metadata" / "license.json"
     if not license_path.exists():
-        issues.append(
-            ValidationIssue("metadata/license.json", "missing license metadata")
-        )
+        issues.append(ValidationIssue("metadata/license.json", "missing license metadata"))
         return
     try:
         license_data = _load_json(license_path)
@@ -129,15 +116,10 @@ def _validate_synthetic_first(
         issues.append(ValidationIssue("metadata/license.json", str(exc)))
         return
     if not isinstance(license_data, dict):
-        issues.append(
-            ValidationIssue("metadata/license.json", "must be a JSON object")
-        )
+        issues.append(ValidationIssue("metadata/license.json", "must be a JSON object"))
         return
     source_scope = license_data.get("source_scope")
-    if (
-        not isinstance(source_scope, list)
-        or "synthetic" not in source_scope
-    ):
+    if not isinstance(source_scope, list) or "synthetic" not in source_scope:
         issues.append(
             ValidationIssue(
                 "metadata/license.json",
@@ -168,9 +150,7 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
             manifest = _load_json(manifest_path)
             schema_checks.append("manifest.json: present")
             if not isinstance(manifest, dict):
-                issues.append(
-                    ValidationIssue("manifest.json", "must be a JSON object")
-                )
+                issues.append(ValidationIssue("manifest.json", "must be a JSON object"))
                 manifest = None
         except ValueError as exc:
             issues.append(ValidationIssue("manifest.json", str(exc)))
@@ -202,14 +182,10 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
     if checksums_dir.exists():
         for checksum_file in sorted(checksums_dir.glob("*.sha256")):
             relative_name = checksum_file.name[: -len(".sha256")]
-            expected_checksums[relative_name] = checksum_file.read_text(
-                encoding="utf-8"
-            ).strip()
+            expected_checksums[relative_name] = checksum_file.read_text(encoding="utf-8").strip()
 
     if not expected_checksums:
-        issues.append(
-            ValidationIssue("checksums/", "missing sibling .sha256 files")
-        )
+        issues.append(ValidationIssue("checksums/", "missing sibling .sha256 files"))
     else:
         for relative_name, expected_digest in expected_checksums.items():
             if relative_name.endswith(".json"):
@@ -229,16 +205,10 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
             else:
                 artifact_path = (dataset_dir / artifact_name).resolve()
             if not _inside_dataset_root(artifact_path, dataset_dir):
-                issues.append(
-                    ValidationIssue(artifact_name, "path escaped dataset root")
-                )
+                issues.append(ValidationIssue(artifact_name, "path escaped dataset root"))
                 continue
             if not artifact_path.exists():
-                issues.append(
-                    ValidationIssue(
-                        artifact_name, "missing artifact for checksum"
-                    )
-                )
+                issues.append(ValidationIssue(artifact_name, "missing artifact for checksum"))
                 continue
             actual_digest = _sha256_file(artifact_path)
             if actual_digest == expected_digest:
@@ -260,9 +230,7 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
         _validate_synthetic_first(manifest, dataset_dir, issues)
 
     return DatasetValidationReport(
-        dataset_id=manifest.get("dataset_id")
-        if isinstance(manifest, dict)
-        else None,
+        dataset_id=manifest.get("dataset_id") if isinstance(manifest, dict) else None,
         passed=not issues,
         issues=issues,
         schema_checks=schema_checks,

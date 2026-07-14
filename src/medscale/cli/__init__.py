@@ -16,6 +16,7 @@ from medscale.cli import bench as bench_cli
 from medscale.cli import check as check_cli
 from medscale.cli import dataset as dataset_cli
 from medscale.cli import extract as extract_cli
+from medscale.cli import fhir as fhir_cli
 from medscale.cli import research as research_cli
 from medscale.cli import screen as screen_cli
 
@@ -27,6 +28,7 @@ _SUBCOMMANDS = {
     "snapshot": research_cli.snapshot_main,
     "bench": bench_cli.main,
     "dataset": dataset_cli.main,
+    "fhir": fhir_cli.main,
 }
 
 

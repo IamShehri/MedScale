@@ -4,6 +4,7 @@ This package is import-safe without ``llama_cpp`` installed. When installed,
 it provides optional CPU-friendly generation and span extraction with explicit
 missing-dependency failures when unavailable.
 """
+
 from __future__ import annotations
 
 from medscale.backends.llamacpp.backend import (

@@ -35,8 +35,7 @@ class Task001LiteratureClassification(BaseBenchmarkTask):
             task_id=self.task_id,
             task_type=self.task_type,
             input_text=(
-                "Does constrained decoding improve classifier validity"
-                " under distribution shift?"
+                "Does constrained decoding improve classifier validity under distribution shift?"
             ),
             gold=GoldEvidenceSet(
                 relevant_evidence_ids=(evidence_id,),

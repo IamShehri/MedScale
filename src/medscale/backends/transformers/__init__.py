@@ -4,6 +4,7 @@ This package is import-safe without ``transformers`` installed. When installed,
 it provides optional deterministic generation and span extraction with explicit
 missing-dependency failures when unavailable.
 """
+
 from __future__ import annotations
 
 from medscale.backends.transformers.backend import (

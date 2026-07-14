@@ -35,12 +35,15 @@ LITERATURE_RECORD_SCHEMA: dict[str, object] = {
                 "status",
             ],
             "properties": {
-                "source_api": {"type": "string", "enum": [
-                    "semantic_scholar",
-                    "openalex",
-                    "pubmed",
-                    "arxiv",
-                ]},
+                "source_api": {
+                    "type": "string",
+                    "enum": [
+                        "semantic_scholar",
+                        "openalex",
+                        "pubmed",
+                        "arxiv",
+                    ],
+                },
                 "identifier": {"type": "string", "minLength": 1},
                 "verified_at": {"type": "string", "format": "date-time"},
                 "raw_response_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -88,12 +91,15 @@ EVIDENCE_OBJECT_SCHEMA: dict[str, object] = {
                 "raw_response_sha256",
             ],
             "properties": {
-                "source_api": {"type": "string", "enum": [
-                    "semantic_scholar",
-                    "openalex",
-                    "pubmed",
-                    "arxiv",
-                ]},
+                "source_api": {
+                    "type": "string",
+                    "enum": [
+                        "semantic_scholar",
+                        "openalex",
+                        "pubmed",
+                        "arxiv",
+                    ],
+                },
                 "identifier": {"type": "string", "minLength": 1},
                 "verified_at": {"type": "string", "format": "date-time"},
                 "raw_response_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
