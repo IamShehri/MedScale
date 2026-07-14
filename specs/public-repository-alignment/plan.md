@@ -1,7 +1,7 @@
 # Public Repository Alignment — Plan
 
 ## Verified baseline
-- Current `origin/main` is `00b45141666f85cb402a760cef6564ebfc25064b`, which includes the merged PR #4 and PR #5 governance and quality-gate repairs.
+- Current `origin/main` is `0f9a2d3b68546e5475946a582be1496d8ac40ad3`, which includes merged PR #4, PR #5, and PR #6 governance and quality-gate repairs.
 - This amendment is documented from a clean worktree based on current canonical `origin/main`.
 
 ## Phase 0 — Truth capture
@@ -22,6 +22,11 @@
 - Next authorized action: Phase 2 dependency and boundary audit only
 
 ## Phase 2 — Evidence/dataset foundations
+- Status: Conditional GO / documentation complete
+- Audit recommendation: conditional GO; ADR required before capability implementation
+- Next governed action: ADR-only PR; capability implementation remains blocked
+- ALIGN-12: done
+- ALIGN-13: pending
 6. Audit the minimum dependency-complete evidence/dataset foundation slice.
 7. Determine which files are new versus already public.
 8. Classify public / experimental / internal surface.

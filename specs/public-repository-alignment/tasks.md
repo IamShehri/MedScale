@@ -13,5 +13,5 @@
 | ALIGN-09 | Install built wheel in clean env and run core smoke commands | owner | ALIGN-08 | done | clean-wheel smoke: temporary site-packages, `medscale --help`, `medscale check`, `medscale.cli.fhir` import |
 | ALIGN-10 | Prepare final GO/NO-GO recommendation for publishing | owner | ALIGN-09 | pending | final report |
 | ALIGN-11 | Record PR2 hygiene NO-GO disposition and zero eligible Group A files | owner | ALIGN-08 | done | PR2 disposition amendment |
-| ALIGN-12 | Audit the minimum dependency-complete Phase 2 evidence/dataset foundation slice | owner | ALIGN-11 | pending | Phase 2 boundary audit |
+| ALIGN-12 | Audit the minimum dependency-complete Phase 2 evidence/dataset foundation slice | owner | ALIGN-11 | done | `phase2-boundary-audit.md` — conditional GO; ADR required |
 | ALIGN-13 | Obtain explicit approval for the first capability-import PR scope | owner | ALIGN-12 | pending | approval gate |

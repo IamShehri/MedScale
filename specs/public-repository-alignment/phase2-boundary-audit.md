@@ -1,0 +1,218 @@
+# Public Repository Alignment — Phase 2 Evidence/Dataset Boundary Audit
+
+## 1. Executive decision
+- Status: GO conditionally
+- Decision: The minimum dependency-complete slice is a contract, manifest, schema, and fingerprint foundation subset under `src/medscale/dataset/builder` and `src/medscale/dataset/schema`.
+- Boundary: No implementation, imports, tests, or capability PR is authorized by this audit. ALIGN-13 remains pending explicit founder approval.
+
+## 2. Canonical baseline
+- Current `origin/main`: `0f9a2d3`
+- History includes merged PRs: `#4`, `#5`, `#6`
+- Governance documents read from current `origin/main`:
+  - `specs/public-repository-alignment/spec.md`
+  - `specs/public-repository-alignment/plan.md`
+  - `specs/public-repository-alignment/tasks.md`
+- Stale baseline note: merged governance docs still reference older baseline SHAs; this audit uses the canonical `0f9a2d3` only.
+
+## 3. Original workspace preservation evidence
+- Path: `C:\Users\Shehr\OneDrive\Desktop\MedScale`
+- Branch: `main`
+- Local HEAD: `d2e651a55c92f2218aca49acaa5b7bd18a75f096`
+- Modified tracked files: 6
+- Untracked files: 228
+- Deleted tracked files: 0
+- Renamed tracked files: 0
+- Mutating commands used: none
+- Status: preserved as read-only evidence only.
+
+## 4. Audit method
+- Read-only Git and filesystem evidence from original workspace and canonical `origin/main`
+- Static path and text inspection of candidate files; no module execution
+- No candidate imports
+- No file copies into a capability branch
+
+## 5. Canonical public inventory
+Canonical `main` already contains the foundation layer needed for the recommended slice:
+- `src/medscale/reproducibility.py`: `canonical_json`, `content_hash`, `set_global_seed`
+- canonical `dataset` surface: `__init__.py`, `compat.py`, `generate.py`, `licenses.py`, `manifest.py`, `schema.py`, `snapshot.py`, `split.py`, `validate.py`
+- canonical `evidence` surface: `__init__.py`, `grading.py`, `models.py`, `protocol.py`
+
+The proposed minimum slice can import only canonical deterministic primitives and remain additive.
+
+## 6. Local candidate inventory
+Candidate directories/files from the original workspace:
+- `src/medscale/evidence/contract.py`
+- `src/medscale/dataset/builder/*`
+- `src/medscale/dataset/connectors/*`
+- `src/medscale/dataset/governance/*`
+- `src/medscale/validation/*`
+- related tests: `tests/test_evidence_*.py`, `tests/test_dataset_*.py`, `tests/test_validation_*.py`
+
+Tracked-only delta relevant as evidence:
+- `src/medscale/evidence/__init__.py` public-export expansion from untracked `evidence/contract.py`
+
+Canonical status check confirms:
+- `src/medscale/dataset/schema.py`: exists on canonical `main`
+- `src/medscale/dataset/manifest.py`: exists on canonical `main`
+- `src/medscale/reproducibility.py`: exists on canonical `main`
+- `src/medscale/dataset/builder/*`: not on canonical `main`
+- `src/medscale/evidence/contract.py`: not on canonical `main`
+- `src/medscale/validation/*`: not on canonical `main`
+
+## 7. Dependency graph findings
+Minimum dependency-complete component:
+- `src/medscale/dataset/builder/contracts.py`
+- `src/medscale/dataset/builder/manifest.py`
+- `src/medscale/dataset/builder/fingerprint.py`
+- supported by canonical `src/medscale/dataset/schema.py`
+- supported by canonical `src/medscale/reproducibility.py`
+
+Key constraints found from static inspection:
+- `dataset/builder/*` may depend on canonical reproducibility utilities; those are already public and stable
+- `dataset/builder/pipeline.py`, `release_packager.py`, and `export_artifacts.py` introduce ordering, packaging/runtime concerns and are excluded from the minimum slice
+- `dataset/connectors/*` introduces external-source dependencies and is excluded
+- `validation/*`, `evidence/contract.py`, and `dataset/governance/*` expand the governance surface and are excluded from the initial PR
+
+No confirmed dependency on:
+- `medscale.evaluation`
+- `medscale.models`
+- model execution
+- evaluation execution
+- training
+- cloud SDKs
+- schedulers
+- HTTP/network clients
+- external APIs
+
+## 8. Duplicate-contract analysis
+Duplicate or competing contract surfaces:
+- `src/medscale/dataset/builder/contracts.py`
+- `src/medscale/dataset/governance/contracts.py`
+- `src/medscale/evidence/contract.py`
+- tracked local export expansion in `src/medscale/evidence/__init__.py`
+
+Provisional candidate public contract root: `dataset.builder.contracts`, pending the required ADR. This audit does not establish canonical ownership. Do not expose `dataset.governance` or `evidence/contract.py` publicly in the initial capability-import PR.
+
+## 9. Recommended minimum slice
+Implementation allowlist:
+- `src/medscale/dataset/__init__.py`
+- `src/medscale/dataset/schema.py`
+- `src/medscale/dataset/builder/__init__.py`
+- `src/medscale/dataset/builder/contracts.py`
+- `src/medscale/dataset/builder/manifest.py`
+- `src/medscale/dataset/builder/fingerprint.py`
+
+Test allowlist:
+- `tests/test_dataset_builder.py`
+
+Exact exclusions:
+- `src/medscale/dataset/builder/pipeline.py`
+- `src/medscale/dataset/builder/release_packager.py`
+- `src/medscale/dataset/builder/export_artifacts.py`
+- `src/medscale/dataset/builder/audit.py`
+- `src/medscale/dataset/builder/layout.py`
+- `src/medscale/dataset/builder/errors.py`
+- `src/medscale/dataset/connectors/**`
+- `src/medscale/dataset/governance/**`
+- `src/medscale/validation/**`
+- `src/medscale/evidence/contract.py`
+- `src/medscale/evidence/grading.py`
+- `src/medscale/evidence/models.py`
+- `src/medscale/evidence/protocol.py`
+- evaluation, model, training, orchestration, MESC, strategy, and execution files
+
+## 10. Public / experimental / internal matrix
+- Public in `medscale.dataset.builder.contracts`: `StageResult`, `StageDefinition`, `PipelineContext`
+- Public in `medscale.dataset.builder.manifest`: `DatasetReleaseManifest`, `AuditReport`, `QualityReport`
+- Public in `medscale.dataset.builder.fingerprint`: `pipeline_fingerprint`, `context_fingerprint`
+- Public in `medscale.dataset.schema`: `DatasetSchema`, `LITERATURE_RECORD_SCHEMA`, `EVIDENCE_OBJECT_SCHEMA`, `BENCHMARK_ITEM_SCHEMA`
+- Experimental: none in the minimum slice
+- Internal: normalization helpers, internal hashing details not re-exported at top-level facade
+- Notes:
+  - `FingerprintInput`, `ManifestRecord`, `DatasetBinding`, and `DatasetSchema.version` do not exist in the inspected candidate set; those placeholder labels are removed.
+  - The exact stable fingerprint helpers are `pipeline_fingerprint` and `context_fingerprint` only.
+
+## 11. Schema and serialization analysis
+- Schema uses deterministic field order and JSON-compatible structures
+- Serialization targets canonical JSON stable output
+- No timestamps, environment paths, or runtime metadata are embedded in the minimum slice implementation scope
+- Deterministic outputs are expected when implementations rely on canonical reproducibility utilities and sorted artifacts
+- Validation before PR is required to confirm identical inputs yield identical outputs
+
+## 12. Facade and packaging impact
+- No top-level `medscale.__all__` expansion required
+- No new runtime dependencies declared
+- No new console scripts
+- Wheel impact: new package files only
+- Clean-wheel import verification required after implementation
+
+## 13. Required tests
+Exact proposed tests:
+- `tests/test_dataset_builder.py`
+- Exact proposed dataset-only coverage: contract freeze, manifest determinism, fingerprint stability, public-import allowlist for `medscale.dataset`, clean-wheel import for dataset surface, malformed-input rejection, and schema compatibility boundaries.
+
+Do not include `tests/test_evidence_contract.py` in the dataset capability PR allowlist unless a later dataset slice explicitly depends on an already-public evidence contract boundary and that dependency is documented in an accepted ADR.
+
+Clean-wheel smoke and schema freeze tests remain required.
+
+## 14. ADR decision
+Gate: ADR REQUIRED BEFORE IMPLEMENTATION.
+
+The future ADR must decide:
+- the canonical owner of `DatasetBinding` and competing `StageResult`/`StageDefinition`/`PipelineContext` roots
+- the canonical owner of manifest contracts
+- the canonical owner of fingerprint contracts
+- the relationship to `dataset.governance.contracts`
+- the relationship to `evidence.contract`
+- the exact public symbols
+- the exact experimental/internal symbols
+- digest and canonical JSON policy
+- schema version ownership
+- compatibility commitment
+- top-level and subpackage export policy
+- migration policy for duplicate roots
+- explicit exclusions from the first capability PR
+
+State clearly:
+- the audit identifies a viable provisional slice
+- the implementation allowlist is not authorized until the ADR is accepted
+- no public API commitment exists merely because the audit recommends a symbol
+- the provisional title and branch name are planning placeholders, not approvals
+
+## 15. Risk register
+| Risk | Severity | Evidence | Mitigation | Blocks capability PR |
+|:---|:---|:---|:---|:---|
+| Duplicate contract roots | High | multiple `contracts.py` files | freeze one public root only | Yes |
+| Hidden execution assumptions | High | large execution layer nearby | exclude connectors and pipeline | Yes |
+| Schema churn later | Medium | neighboring uncleared development files | ADR + schema freeze audit | No |
+| Packaging expansion | Medium | new files only | no dependency/version changes | No |
+| Public export drift | Medium | tracked `evidence/__init__.py` adds new exports | explicit allowlist tests | No |
+| Provenance risk | Medium | dirty workspace is evidence only | static audit, no imports | No |
+
+## 16. Capability PR GO/NO-GO
+Result: GO conditionally
+- The minimum slice is finite, dependency-complete, deterministic, offline, and separable from execution
+- It remains blocked until:
+  - an approved ADR is merged
+  - explicit founder approval is recorded
+  - ALIGN-12 audit is reviewed
+  - exact file/test allowlist above is confirmed
+
+Provisional future capability title: `feat(dataset): add deterministic dataset contract foundation`
+- This title remains provisional until the ADR is accepted and founder approves the exact scope.
+- The implementation allowlist above is not an authorization; it is a provisional planning artifact only.
+
+Proposed branch name: `chore/phase2-dataset-contract-foundation`
+Proposed commit structure: one commit if inseparable; two commits if formatting and contract freeze are separable
+
+## 17. Proposed implementation sequence
+1. Merge this audit PR.
+2. Create and approve the required ADR.
+3. Obtain explicit founder approval for the exact allowlist above.
+4. Implement only `dataset.__init__`, `schema.py`, `builder` contract/manifest/fingerprint files.
+5. Implement the exact dataset contract, manifest determinism, fingerprint stability, import-boundary, malformed-input, schema-compatibility, and clean-wheel tests in `tests/test_dataset_builder.py`.
+6. Run full canonical verification.
+7. Stop; do not proceed to connectors, governance, validation, evaluation, models, or execution in the same PR.
+
+## 18. Explicit non-authorization statement
+This audit does not authorize capability implementation. ALIGN-13 remains pending. No capability-import branch may be created until this audit PR is reviewed, CI-green, merged, ADR approved, and founder approval is recorded.
