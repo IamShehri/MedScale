@@ -41,5 +41,4 @@ datasets, or training execution.
 
 ## Assumptions
 - Public origin is `https://github.com/IamShehri/MedScale` on `main`.
-- Local working tree contains uncommitted M17/M18/MESC/HuggingFace work relative to `origin/main`.
-- Current `origin/main` is `0f9a2d3b68546e5475946a582be1496d8ac40ad3`, and includes merged PRs #5, #4, and #6.
+- No uncommitted implementation or governance material will be silently incorporated; every capability PR is reviewed against the canonical acceptance criteria before merge.
