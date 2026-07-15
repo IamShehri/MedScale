@@ -22,6 +22,29 @@ datasets, or training execution.
 8. CI and supply-chain hardening — reproducible CI, action pinning, coverage enforcement, provenance attestation.
 9. Contributor readiness — templates, onboarding, succession risk, good-first-issue candidates.
 
+## Current governed state
+
+- Canonical `main` is `3132de8789badead5a6f554a71dbaea559fe2233`, the merge commit for PR #14.
+- ALIGN-13 capability foundation is complete.
+- ALIGN-14 deterministic split-assignment freeze and governance closeout are complete.
+- ALIGN-15 evaluation-engine boundary audit is complete.
+- The canonical current evaluation boundary remains `medscale.bench`, the `Benchmark` facade, and `BenchmarkRunArtifact`.
+- ALIGN-16 model-runtime and governance audit reached:
+
+  ```text
+  ALIGN-16 AUDIT DECISION: CONDITIONAL GO
+  ADR REQUIRED BEFORE IMPLEMENTATION
+  ```
+
+- Current optional Transformers and llama.cpp adapters provide deterministic synthetic protocol-contract behavior only; they do not load model weights or perform real inference.
+- `_runtime.py` and workspace orchestration remain internal.
+- `REGISTRY` is an immutable governed model fact registry, not a mutable runtime or deployment registry.
+- Training recipes and experiment manifests are schemas, not training or inference execution systems.
+- Model promotion, model lineage, training-run, checkpoint, adapter-artifact, deployment, and infrastructure contracts do not exist on canonical `main`.
+- No public export change, model runtime implementation, training execution, promotion, lineage, routing, deployment, or infrastructure work is authorized by ALIGN-16.
+- ALIGN-10 remains pending as the final publication recommendation.
+- Public documentation synchronization, golden-path work, and CI/distribution hardening remain future governed phases.
+
 ## Success criteria
 - The public repository gains a truthful internal alignment plan without changing public capability claims or release metadata.
 - Spec Kit artifacts explicitly record verified local versus `origin/main` state, quality baseline, and civic release boundaries.

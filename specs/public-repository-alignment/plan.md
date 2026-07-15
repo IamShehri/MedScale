@@ -1,8 +1,13 @@
 # Public Repository Alignment — Plan
 
 ## Verified baseline
-- Current `origin/main` is `99b024aaf6831ad15296cb85210b8ae7f8df6998`, which includes merged PR #10 (ALIGN-13 capability foundation), PR #12 (ALIGN-14 implementation), and PR #13 (ALIGN-14 governance closeout).
-- This amendment is documented from a clean worktree based on current canonical `origin/main`.
+- Current `origin/main` is `3132de8789badead5a6f554a71dbaea559fe2233`.
+- This baseline includes:
+  - PR #10 — ALIGN-13 capability foundation;
+  - PR #12 — ALIGN-14 deterministic split assignment freeze;
+  - PR #13 — ALIGN-14 governance closeout;
+  - PR #14 — ALIGN-15 evaluation engine boundary audit.
+- ALIGN-16 is being documented from a separate clean worktree created directly from this canonical baseline.
 
 ## Phase 0 — Truth capture
 1. Complete divergence audit.
@@ -38,22 +43,43 @@
 - Governance closeout documents updated and merged via PR #13.
 - Branch cleanup and selection of the next ALIGN task remain separately gated.
 
-## Phase 3 — Evaluation engine boundary audit (current governed phase)
-- Status: Complete / ADR NOT REQUIRED
-- ALIGN-15: done (documentation-only audit)
-12. Audit the evaluation surface on current `main`.
-13. Discover actual modules, symbols, tests, exports, CLI commands, and dependencies.
-14. Classify every evaluation-adjacent symbol as public / experimental / internal.
-15. Determine the minimum dependency-complete future slice with production/test allowlists.
-16. Resolve the `evaluation.pipeline.execution` vs `BenchmarkRunArtifact` naming question.
-17. Determine ADR requirement (ADR NOT REQUIRED for current boundary).
-18. Preserve implementation blocking until any future ADR is separately approved.
+## Phase 3 — Evaluation engine boundary audit
 
-## Phase 4 — Model runtime and governance
-- Status: Not started
-19. Freeze M18 contracts: promotion, lineage, training artifacts, infrastructure.
-20. Keep `models.execution`, `models.routing`, `models.registry` internal; do not export them publicly.
-21. Document evaluation vs execution boundary in README/docs.
+- Status: Complete / ADR NOT REQUIRED
+- ALIGN-15: done via PR #14
+- Canonical evaluation boundary:
+  - `medscale.bench`;
+  - `Benchmark`;
+  - `BenchmarkRunArtifact`.
+- No separate `EvaluationResult`, `EvaluationReport`, or `EvaluationEngine` was authorized.
+- Evaluation implementation remains separately gated.
+
+## Phase 4 — Model runtime and governance boundary audit
+
+- Status: Audit complete / Conditional GO / ADR required
+- ALIGN-16: documentation audit complete locally; publication not yet authorized
+- Audit findings:
+  - provider-neutral protocol contracts exist;
+  - optional backend adapters remain dependency-isolated;
+  - current Transformers and llama.cpp adapters provide deterministic synthetic contract behavior, not real inference;
+  - `_runtime.py` and workspace orchestration remain internal;
+  - `REGISTRY` is an immutable governed model fact registry, not a mutable runtime registry;
+  - recipes and experiment manifests are schemas, not execution systems;
+  - the wider `modelkit.__all__` compatibility status is unresolved;
+  - model promotion, model lineage, training-run, checkpoint, adapter-artifact, deployment, and infrastructure contracts do not exist.
+- Decision: `ALIGN-16 AUDIT DECISION: CONDITIONAL GO`
+- ADR decision: `ADR REQUIRED BEFORE IMPLEMENTATION`
+- Model runtime, routing, training, promotion, lineage, export changes, and real inference remain blocked.
+
+Future governed sequence:
+
+1. Merge the documentation-only ALIGN-16 audit.
+2. Authorize a separate ADR-only task.
+3. Review and accept or reject the ADR.
+4. Authorize a separate exact implementation allowlist.
+5. Implement only the approved slice in a later PR.
+
+ADR acceptance does not automatically authorize implementation.
 
 ## Phase 5 — Public documentation truth sync
 - Status: Not started
