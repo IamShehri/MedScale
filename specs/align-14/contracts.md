@@ -1,7 +1,7 @@
 # ALIGN-14 — Deterministic Dataset Split-Assignment Freeze Contract
 
 - **Planning status:** Complete
-- **Implementation status:** NOT AUTHORIZED
+- **Implementation status:** Implemented / Merged / Closed
 
 ## Proposed public symbols
 
