@@ -162,15 +162,5 @@ pytest: NOT APPLICABLE
 ## Next founder gate
 
 ```text
-After CI and CodeQL complete successfully on the corrected head, founder authorization is required for the guarded merge of PR #13.
-```
-
-Wait — correction. This is ALIGN-15. The correct next gate is:
-
-```text
-After the ALIGN-15 documentation PR is reviewed, merged, and CI/CodeQL complete, any future evaluation implementation remains separately gated by a new founder authorization and, if required by a subsequent audit, a separately approved ADR.
-```
-
-```text
 After the ALIGN-15 documentation PR is reviewed, merged, and CI/CodeQL complete, any future evaluation implementation remains separately gated by a new founder authorization and, if required by a subsequent audit, a separately approved ADR.
 ```

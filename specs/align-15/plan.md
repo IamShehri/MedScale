@@ -96,9 +96,9 @@ Create the following documentation files under `specs/align-15/`:
 | Surface discovery complete | auditor | Yes |
 | Symbol classification complete | auditor | Yes |
 | Minimum slice defined | auditor | Yes |
-- ADR requirement decided | auditor | Yes |
+| ADR requirement decided | auditor | Yes |
 | Registry reconciled | auditor | Yes |
-- Spec Kit package complete | auditor | Yes |
-- Documentation-only scope verified | auditor | Yes |
-- Local atomic commit created | auditor | Yes |
-- Publication authorization | founder | Yes |
+| Spec Kit package complete | auditor | Yes |
+| Documentation-only scope verified | auditor | Yes |
+| Local atomic commit created | auditor | Yes |
+| Publication authorization | founder | Yes |
