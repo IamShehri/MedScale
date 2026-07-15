@@ -17,9 +17,7 @@ _SUPPORTED_VERSION = "split-freeze/v1"
 
 def _require_sequence(value: object, label: str) -> tuple[str, ...]:
     if not isinstance(value, Sequence):
-        raise TypeError(
-            f"{label} must be a sequence of strings, got {type(value).__name__}"
-        )
+        raise TypeError(f"{label} must be a sequence of strings, got {type(value).__name__}")
     identifiers: list[str] = []
     for index, item in enumerate(value):
         _validate_identifier(item, f"{label}[{index}]")
@@ -39,8 +37,7 @@ def _identity_payload(
 ) -> dict[str, object]:
     if contract_version != _SUPPORTED_VERSION:
         raise ValueError(
-            f"unsupported contract_version {contract_version!r}; "
-            f"expected {_SUPPORTED_VERSION!r}"
+            f"unsupported contract_version {contract_version!r}; expected {_SUPPORTED_VERSION!r}"
         )
     return {
         "contract_version": contract_version,
@@ -73,17 +70,13 @@ class SplitAssignmentFreeze:
                 f"expected {_SUPPORTED_VERSION!r}"
             )
         if isinstance(self.seed, bool) or not isinstance(self.seed, int):
-            raise TypeError(
-                f"seed must be an int, got {type(self.seed).__name__}: {self.seed!r}"
-            )
+            raise TypeError(f"seed must be an int, got {type(self.seed).__name__}: {self.seed!r}")
         if not isinstance(self.strategy, SplitStrategy):
             raise TypeError(
                 "strategy must be a SplitStrategy, got "
                 f"{type(self.strategy).__name__}: {self.strategy!r}"
             )
-        _validate_identifier(
-            self.source_dataset_fingerprint, "source_dataset_fingerprint"
-        )
+        _validate_identifier(self.source_dataset_fingerprint, "source_dataset_fingerprint")
         train = _require_sequence(self.train, "train")
         validation = _require_sequence(self.validation, "validation")
         test = _require_sequence(self.test, "test")
