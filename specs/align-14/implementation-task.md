@@ -1,11 +1,11 @@
 # ALIGN-14 Implementation Task
 
-- **Task status:** Ready for Implementation Authorization
+- **Task status:** Implemented / Merged / Closed
 
 ```yaml
 task_id: ALIGN-14-IMPLEMENTATION
 title: Implement SplitAssignmentFreeze
-status: Ready for Implementation Authorization
+status: Implemented / Merged / Closed
 adr: ADR-0032
 scope: Minimum standalone Option A contract
 ```

@@ -1,7 +1,7 @@
 # ALIGN-14 Planning — Decision Record
 
 - **Planning status:** Complete
-- **Implementation status:** NOT AUTHORIZED
+- **Implementation status:** Implemented / Merged / Closed
 
 ## Selected capability
 
