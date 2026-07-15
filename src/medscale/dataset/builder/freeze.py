@@ -58,9 +58,9 @@ class SplitAssignmentFreeze:
     source_dataset_fingerprint: str
     strategy: SplitStrategy
     seed: int
-    train: tuple[str, ...] = field(default_factory=tuple)
-    validation: tuple[str, ...] = field(default_factory=tuple)
-    test: tuple[str, ...] = field(default_factory=tuple)
+    train: Sequence[str] = field(default_factory=tuple)
+    validation: Sequence[str] = field(default_factory=tuple)
+    test: Sequence[str] = field(default_factory=tuple)
     contract_version: str = _SUPPORTED_VERSION
 
     def __post_init__(self) -> None:

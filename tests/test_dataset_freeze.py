@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import dataclasses
+from collections.abc import Sequence
+from typing import cast
 
 import pytest
 
@@ -145,7 +147,7 @@ def test_non_integer_seed_rejected() -> None:
         SplitAssignmentFreeze(
             source_dataset_fingerprint="dataset-fingerprint",
             strategy=SplitStrategy.DETERMINISTIC_HASH_SPLIT,
-            seed="1",
+            seed=cast(int, "1"),
             train=["id"],
             validation=[],
             test=[],
@@ -205,7 +207,7 @@ def test_invalid_strategy_is_rejected() -> None:
         with pytest.raises(TypeError):
             SplitAssignmentFreeze(
                 source_dataset_fingerprint="dataset-fingerprint",
-                strategy=invalid,
+                strategy=cast(SplitStrategy, invalid),
                 seed=0,
                 train=["id"],
                 validation=[],
@@ -233,7 +235,7 @@ def test_non_string_identifier_rejected() -> None:
             source_dataset_fingerprint="dataset-fingerprint",
             strategy=SplitStrategy.DETERMINISTIC_HASH_SPLIT,
             seed=0,
-            train=[1],
+            train=cast(Sequence[str], [1]),
             validation=[],
             test=[],
             contract_version=_SUPPORTED_VERSION,
@@ -334,8 +336,8 @@ def test_leading_and_trailing_whitespace_preserved() -> None:
 
 def test_mutating_caller_input_does_not_mutate_object() -> None:
     train = ["id"]
-    validation = []
-    test = []
+    validation: list[str] = []
+    test: list[str] = []
     freeze = SplitAssignmentFreeze(
         source_dataset_fingerprint="dataset-fingerprint",
         strategy=SplitStrategy.DETERMINISTIC_HASH_SPLIT,
