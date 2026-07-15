@@ -19,7 +19,7 @@ Final canonical contract:
 - Builder facade: 9 symbols
 - Contract version: `split-freeze/v1`
 
-Post-merge validation:
+Final implementation validation evidence:
 
 - `uv run ruff format --check .` PASS
 - `uv run ruff check .` PASS
