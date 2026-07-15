@@ -50,6 +50,7 @@ def test_builder_module_exports_are_exact() -> None:
         "DatasetReleaseManifest",
         "PipelineContext",
         "QualityReport",
+        "SplitAssignmentFreeze",
         "StageDefinition",
         "StageResult",
         "context_fingerprint",
