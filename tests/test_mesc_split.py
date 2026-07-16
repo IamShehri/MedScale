@@ -154,4 +154,7 @@ def test_leakage_audit_report_count_matches_findings() -> None:
     assert report.finding_count == 2
     payload = report.to_dict()
     assert payload["finding_count"] == 2
-    assert len(payload["findings"]) == 2
+
+    serialized_findings = payload["findings"]
+    assert isinstance(serialized_findings, list)
+    assert len(serialized_findings) == 2
