@@ -17,4 +17,5 @@
 | ALIGN-13 | Capability foundation: public exports, benchmark run artifact, CLI entry, smoke tests | owner | ALIGN-12 | done | PR #10, merge commit `6c47a910fb6cc9ce41e309d891e58e0b3750f21d` |
 | ALIGN-14 | Implementation: deterministic split assignment freeze contract + governance closeout | owner | ALIGN-13 | done | PR #12 (`65f3685`), PR #13 (`99b024aa`) |
 | ALIGN-15 | Evaluation engine boundary audit and alignment registry reconciliation | owner | ALIGN-14 | done | `specs/align-15/`; ADR not required; no implementation authorized |
-| ALIGN-16 | Model runtime and governance boundary audit | owner | ALIGN-15 | done / conditional GO | `specs/align-16/`; ADR required before implementation |
+| ALIGN-16 | Model runtime and governance boundary audit | owner | ALIGN-15 | done / conditional GO / ADR accepted | PR #15; merge commit `1d60f00826f7029c83706b7f97e2409b40f57d57`; post-merge CI green; ADR-0033 accepted |
+| ALIGN-17 | Record the ModelKit public surface and runtime governance decision in ADR-0033 | owner | ALIGN-16 | done / ADR accepted | ADR-0033; `specs/align-17/`; implementation separately gated |
