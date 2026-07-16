@@ -42,6 +42,8 @@ _LAYER: dict[str, int] = {
     "dataset": 3,
     # benchmarks
     "bench": 4,
+    # MESC experiment and evaluation orchestration
+    "mesc": 4,
     # public facade
     "workspace": 5,
     # transports
@@ -189,6 +191,7 @@ def test_cli_imports_are_not_imported_by_engine_modules() -> None:
         "research",
         "dataset",
         "bench",
+        "mesc",
         "workspace",
     }
     offenders = [
