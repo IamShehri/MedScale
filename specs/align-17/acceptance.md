@@ -125,7 +125,7 @@ Satisfied:
 
 This record does not authorize code, exports, tests, runtime work, migration execution, release, or publication.
 
-IMPLEMENTATION AUTHORIZATION: NOT ***
+No implementation authorization was granted.
 
 ## ADR reference
 
