@@ -4,7 +4,7 @@
 
 ```text
 ALIGN-17 ADR DECISION: ACCEPTED
-IMPLEMENTATION REQUIRES SEPARATE FOUNDER AUTHORIZATION
+IMPLEMENTATION AUTHORIZATION: NOT GRANTED
 ```
 
 ## Purpose
@@ -28,17 +28,25 @@ ALIGN-17 converts the conditional ALIGN-16 audit outcome into an accepted archit
 - `docs/adr/0033-modelkit-public-surface-and-runtime-governance.md`
 - `specs/align-15/`
 
-Verified baseline:
+## Canonical main
 
 ```text
-1d60f00826f7029c83706b7f97e2409b40f57d57
+ce7db4342f01bdcbc15240f1dcf8384ea22ff308
 ```
 
-ALIGN-16 merge evidence:
+## Merge evidence
 
 ```text
-PR #15
-Merge commit: 1d60f00826f7029c83706b7f97e2409b40f57d57
+PR #16
+Merge commit: ce7db4342f01bdcbc15240f1dcf8384ea22ff308
+```
+
+## Post-merge verification
+
+```text
+CI: PASS
+CodeQL: PASS
+Optional Extras / Backends: PASS
 ```
 
 ## File map
@@ -77,11 +85,19 @@ No infrastructure
 No release
 ```
 
+## Closeout draft status
+
+```text
+ALIGN-17 CLOSEOUT DRAFT: VALIDATED WORKING DRAFT
+This record documents post-merge truth only.
+It does not authorize implementation, release, publication, ALIGN-10 closure, Phase 5–7 execution, branch deletion, or worktree cleanup.
+Commit, push, and PR creation for this closeout branch remain separately gated.
+```
+
 ## Next governed gate
 
 This package requires:
 
-- documentation review;
 - commit authorization;
 - publication through normal governance;
 - PR review and merge.
