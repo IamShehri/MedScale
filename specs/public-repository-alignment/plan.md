@@ -1,13 +1,14 @@
 # Public Repository Alignment — Plan
 
 ## Verified baseline
-- Current `origin/main` is `1d60f00826f7029c83706b7f97e2409b40f57d57`.
+- Current `origin/main` is `ce7db4342f01bdcbc15240f1dcf8384ea22ff308` (PR #16 merge).
 - This baseline includes:
   - PR #10 — ALIGN-13 capability foundation;
   - PR #12 — ALIGN-14 deterministic split assignment freeze;
   - PR #13 — ALIGN-14 governance closeout;
   - PR #14 — ALIGN-15 evaluation engine boundary audit;
-  - PR #15 — ALIGN-16 model runtime and governance boundary audit.
+  - PR #15 — ALIGN-16 model runtime and governance boundary audit;
+  - PR #16 — ALIGN-17 ModelKit public surface and runtime governance ADR.
 
 ## Phase 0 — Truth capture
 1. Complete divergence audit.
@@ -86,26 +87,22 @@ ADR acceptance does not automatically authorize implementation.
 
 ## Phase 4.5 — ModelKit public surface and runtime governance ADR
 
-- Status: ADR accepted / implementation blocked
-- ALIGN-17: ADR-0033 accepted
-- Stable facade: `FinishReason`, `GenerationRequest`, `GenerationResult`, `ModelRef`, `Span`, `SpanExtractor`, `TextGenerator`
-- Provisional/governance-public surface: `REGISTRY`, `AdapterMethod`, `DatasetSnapshot`, `ExperimentManifest`, `MetricSummary`, `ModelEntry`, `ModelKind`, `Role`, `RunnerClass`, `RunnerEnv`, `TrainingRecipe`
-- Compatibility-carried internal helpers: `detect_runner`, `eligible_bases`, `extraction_baselines`, `get_entry`, `read_manifest`, `summarize_metric`, `validate_registry`, `write_manifest`
-- `DatasetRef`: provisional submodule-public through `medscale.modelkit.recipes`; not re-exported by `medscale.modelkit`
-- Reporting ownership: `modelkit.reporting` = provisional general cross-seed statistical arithmetic; `bench.scorers` = canonical benchmark scoring definitions and scorer-version semantics; `BenchmarkRunArtifact` = canonical benchmark-result representation
-- `ModelRef` identity: `model_id` = governed model/catalog entry; `revision` remains `str | None`; `quantization` = scientific identity; `backend` = execution provenance; no mandatory model-weight digest
-- No current export changes; no runtime implementation authorization
+- ADR WORK: COMPLETE
+- MERGE STATUS: COMPLETE — PR #16 merged via `ce7db4342f01bdcbc15240f1dcf8384ea22ff308`
+- POST-MERGE WORKFLOWS: CI PASS / CodeQL PASS / Optional Extras / Backends PASS
+- TRUTH-CLOSEOUT DOCUMENTATION: VALIDATED WORKING DRAFT
+- IMPLEMENTATION AUTHORIZATION: NOT GRANTED
 
-Future sequence:
+`specs/align-17/README.md` and `specs/align-17/acceptance.md` record this post-merge truth package.
 
-1. Review and publish the ALIGN-17 documentation package.
-2. Merge through normal PR governance.
-3. Separately select one future implementation or migration slice.
-4. Produce an exact allowlist.
-5. Obtain founder authorization.
-6. Implement only that approved slice.
+This closeout branch is not yet committed, pushed, merged, or cleaned up.
+
+No implementation authorization was granted, and no source, test, or runtime change occurred as part of ALIGN-17.
+
+ALIGN-10 remains pending. Phases 5–7 remain not started. The release gate remains unchanged. Feature-branch and worktree cleanup remain separately gated.
 
 ADR acceptance does not automatically authorize implementation.
+
 
 ## Phase 5 — Public documentation truth sync
 - Status: Not started

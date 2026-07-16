@@ -8,6 +8,22 @@ FOUNDER DECISION DATE: 2026-07-15
 IMPLEMENTATION AUTHORIZATION: NOT GRANTED
 ```
 
+## Merge and ADR acceptance
+
+Satisfied:
+
+- PR #16 merged;
+- merge commit equals canonical main: PASS;
+- ADR-0033 accepted: PASS.
+
+## Post-merge workflows
+
+Satisfied:
+
+- CI: PASS;
+- CodeQL: PASS;
+- Optional Extras / Backends: PASS.
+
 ## Acceptance criteria
 
 Satisfied:
@@ -93,8 +109,35 @@ Release gate: unchanged
 Model runtime implementation: blocked
 ```
 
+## Scope and governance preservation
+
+Satisfied:
+
+- No implementation performed;
+- No source files changed;
+- No test files changed;
+- ALIGN-10 remains pending;
+- Phases 5–7 remain not started;
+- Release gate unchanged;
+- Cleanup separately gated.
+
 ## Non-authorization statement
 
 This record does not authorize code, exports, tests, runtime work, migration execution, release, or publication.
 
-No ALIGN-17 merge commit or PR number exists yet.
+No implementation authorization was granted.
+
+## ADR reference
+
+```text
+docs/adr/0033-modelkit-public-surface-and-runtime-governance.md
+MD5: b13565a3a2559ff6cd298eb3e375d139
+```
+
+## Outcome
+
+```text
+ALIGN-17 ADR AND MERGE ACCEPTANCE: PASS
+ALIGN-17 CLOSEOUT DRAFT STATUS: VALIDATED WORKING DRAFT
+COMMIT AUTHORIZATION: NOT GRANTED
+```
