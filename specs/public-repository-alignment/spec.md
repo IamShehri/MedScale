@@ -24,24 +24,20 @@ datasets, or training execution.
 
 ## Current governed state
 
-- Canonical `main` is `3132de8789badead5a6f554a71dbaea559fe2233`, the merge commit for PR #14.
+- Canonical `main` is `1d60f00826f7029c83706b7f97e2409b40f57d57`, the merge commit for PR #15.
 - ALIGN-13 capability foundation is complete.
 - ALIGN-14 deterministic split-assignment freeze and governance closeout are complete.
 - ALIGN-15 evaluation-engine boundary audit is complete.
+- ALIGN-16 model-runtime and governance audit merged via PR #15; its three post-merge workflows completed successfully; CodeQL and Optional Extras / Backends also green on the merge SHA.
+- ADR-0033 was accepted by the founder on 2026-07-15 after full semantic content review; ALIGN-17 governs ModelKit public surface and runtime exclusions.
 - The canonical current evaluation boundary remains `medscale.bench`, the `Benchmark` facade, and `BenchmarkRunArtifact`.
-- ALIGN-16 model-runtime and governance audit reached:
-
-  ```text
-  ALIGN-16 AUDIT DECISION: CONDITIONAL GO
-  ADR REQUIRED BEFORE IMPLEMENTATION
-  ```
-
+- ALIGN-15 evaluation/runtime separation remains authoritative: evaluation consumes stable model identity and outputs; it does not own provider execution, routing, credentials, or deployment state.
 - Current optional Transformers and llama.cpp adapters provide deterministic synthetic protocol-contract behavior only; they do not load model weights or perform real inference.
 - `_runtime.py` and workspace orchestration remain internal.
 - `REGISTRY` is an immutable governed model fact registry, not a mutable runtime or deployment registry.
 - Training recipes and experiment manifests are schemas, not training or inference execution systems.
 - Model promotion, model lineage, training-run, checkpoint, adapter-artifact, deployment, and infrastructure contracts do not exist on canonical `main`.
-- No public export change, model runtime implementation, training execution, promotion, lineage, routing, deployment, or infrastructure work is authorized by ALIGN-16.
+- No public export change, model runtime implementation, training execution, promotion, lineage, routing, deployment, or infrastructure work is authorized by ALIGN-16 or ALIGN-17.
 - ALIGN-10 remains pending as the final publication recommendation.
 - Public documentation synchronization, golden-path work, and CI/distribution hardening remain future governed phases.
 

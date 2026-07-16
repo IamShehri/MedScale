@@ -1,13 +1,13 @@
 # Public Repository Alignment — Plan
 
 ## Verified baseline
-- Current `origin/main` is `3132de8789badead5a6f554a71dbaea559fe2233`.
+- Current `origin/main` is `1d60f00826f7029c83706b7f97e2409b40f57d57`.
 - This baseline includes:
   - PR #10 — ALIGN-13 capability foundation;
   - PR #12 — ALIGN-14 deterministic split assignment freeze;
   - PR #13 — ALIGN-14 governance closeout;
-  - PR #14 — ALIGN-15 evaluation engine boundary audit.
-- ALIGN-16 is being documented from a separate clean worktree created directly from this canonical baseline.
+  - PR #14 — ALIGN-15 evaluation engine boundary audit;
+  - PR #15 — ALIGN-16 model runtime and governance boundary audit.
 
 ## Phase 0 — Truth capture
 1. Complete divergence audit.
@@ -56,8 +56,10 @@
 
 ## Phase 4 — Model runtime and governance boundary audit
 
-- Status: Audit complete / Conditional GO / ADR required
-- ALIGN-16: documentation audit complete locally; publication not yet authorized
+- Status: Complete / Conditional GO / ADR required
+- ALIGN-16: merged via PR #15
+- Merge commit: `1d60f00826f7029c83706b7f97e2409b40f57d57`
+- Post-merge CI, CodeQL, and Optional Extras / Backends: green
 - Audit findings:
   - provider-neutral protocol contracts exist;
   - optional backend adapters remain dependency-isolated;
@@ -66,9 +68,10 @@
   - `REGISTRY` is an immutable governed model fact registry, not a mutable runtime registry;
   - recipes and experiment manifests are schemas, not execution systems;
   - the wider `modelkit.__all__` compatibility status is unresolved;
-  - model promotion, model lineage, training-run, checkpoint, adapter-artifact, deployment, and infrastructure contracts do not exist.
+  - model promotion, model lineage, training-run, checkpoint, adapter-artifact, deployment, and infrastructure contracts do not exist;
+  - ADR-0033 accepted by founder on 2026-07-15 after full semantic review.
 - Decision: `ALIGN-16 AUDIT DECISION: CONDITIONAL GO`
-- ADR decision: `ADR REQUIRED BEFORE IMPLEMENTATION`
+- ADR decision: `ADR REQUIRED BEFORE IMPLEMENTATION` → `ADR-0033 ACCEPTED`
 - Model runtime, routing, training, promotion, lineage, export changes, and real inference remain blocked.
 
 Future governed sequence:
@@ -78,6 +81,29 @@ Future governed sequence:
 3. Review and accept or reject the ADR.
 4. Authorize a separate exact implementation allowlist.
 5. Implement only the approved slice in a later PR.
+
+ADR acceptance does not automatically authorize implementation.
+
+## Phase 4.5 — ModelKit public surface and runtime governance ADR
+
+- Status: ADR accepted / implementation blocked
+- ALIGN-17: ADR-0033 accepted
+- Stable facade: `FinishReason`, `GenerationRequest`, `GenerationResult`, `ModelRef`, `Span`, `SpanExtractor`, `TextGenerator`
+- Provisional/governance-public surface: `REGISTRY`, `AdapterMethod`, `DatasetSnapshot`, `ExperimentManifest`, `MetricSummary`, `ModelEntry`, `ModelKind`, `Role`, `RunnerClass`, `RunnerEnv`, `TrainingRecipe`
+- Compatibility-carried internal helpers: `detect_runner`, `eligible_bases`, `extraction_baselines`, `get_entry`, `read_manifest`, `summarize_metric`, `validate_registry`, `write_manifest`
+- `DatasetRef`: provisional submodule-public through `medscale.modelkit.recipes`; not re-exported by `medscale.modelkit`
+- Reporting ownership: `modelkit.reporting` = provisional general cross-seed statistical arithmetic; `bench.scorers` = canonical benchmark scoring definitions and scorer-version semantics; `BenchmarkRunArtifact` = canonical benchmark-result representation
+- `ModelRef` identity: `model_id` = governed model/catalog entry; `revision` remains `str | None`; `quantization` = scientific identity; `backend` = execution provenance; no mandatory model-weight digest
+- No current export changes; no runtime implementation authorization
+
+Future sequence:
+
+1. Review and publish the ALIGN-17 documentation package.
+2. Merge through normal PR governance.
+3. Separately select one future implementation or migration slice.
+4. Produce an exact allowlist.
+5. Obtain founder authorization.
+6. Implement only that approved slice.
 
 ADR acceptance does not automatically authorize implementation.
 
