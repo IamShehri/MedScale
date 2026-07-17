@@ -6,11 +6,11 @@ Freeze date: 2026-07-17
 
 Raw-data root:
 
-`C:\Users\Shehr\MedScaleData\mesc-pilot-01\raw\pubmedqa\`
+`C:\Users\Shehr\MedScaleData\mesc-pilot-01\raw\pubmedqa`
 
 Revision-specific directory:
 
-`C:\Users\Shehr\MedScaleData\mesc-pilot-01\raw\pubmedqa\9001f2853fb87cab8d220904e0de81ac6973b318\pqa_labeled\`
+`C:\Users\Shehr\MedScaleData\mesc-pilot-01\raw\pubmedqa\9001f2853fb87cab8d220904e0de81ac6973b318\pqa_labeled`
 
 ## Path-resolution evidence
 
@@ -24,6 +24,95 @@ Read-only inspection from canonical main worktree provided the following evidenc
 * no junction, symlink, or reparse point can redirect the non-existent path into a tracked or synchronized location
 * Windows path resolution appears normal with no unexpected redirection detected
 * filesystem permissions for later local-only research access cannot be verified without creating the directory; current evidence does not block the proposed boundary
+
+## Creation evidence
+
+Directory chain created in a separate authorized founder turn.
+
+Creation timestamp:
+
+```text
+CREATION_TIMESTAMP: 2026-07-17T23:50:00Z
+```
+
+Resolved absolute path:
+
+```text
+RESOLVED_PATH: C:\Users\Shehr\MedScaleData\mesc-pilot-01\raw\pubmedqa\9001f2853fb87cab8d220904e0de81ac6973b318\pqa_labeled
+```
+
+Directory existence:
+
+```text
+DIRECTORY_EXISTS: True
+```
+
+Reparse-point status:
+
+```text
+REPARSE_POINT: False
+```
+
+Owner:
+
+```text
+OWNER: ABDULAZIZ\Shehr
+```
+
+ACL summary:
+
+```text
+NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)
+BUILTIN\Administrators:(I)(OI)(CI)(F)
+ABDULAZIZ\Shehr:(I)(OI)(CI)(F)
+```
+
+Inherited ACL state:
+
+```text
+INHERITED_ACL: True
+```
+
+Explicit ACL entries:
+
+```text
+EXPLICIT_ENTRIES: SYSTEM, Administrators, Shehr full control with object-inheritance and container-inheritance
+```
+
+Git/worktree exclusion:
+
+```text
+GIT_WORKTREE_EXCLUDED: True
+```
+
+OneDrive exclusion:
+
+```text
+ONEDRIVE_EXCLUDED: True
+```
+
+Temporary probe lifecycle:
+
+```text
+PROBE_FILE: .medscale-storage-probe.tmp
+PROBE_CREATE: Success
+PROBE_READ_METADATA: Success
+PROBE_RENAME: Success
+PROBE_DELETE: Success
+PROBE_LEFT_BEHIND: False
+```
+
+Empty-directory confirmation:
+
+```text
+DIRECTORY_EMPTY_AFTER_PROBE: True
+```
+
+No dataset acquisition occurred:
+
+```text
+DATASET_ACQUIRED: False
+```
 
 ## External-storage requirements
 
@@ -45,6 +134,8 @@ C:/Users/Shehr/OneDrive/Desktop/MedScaleFiles/MedScale-mesc-p01-02-revision-lock
 C:/Users/Shehr/OneDrive/Desktop/MedScaleFiles/MedScale-mesc-p01-03-closeout
 C:/Users/Shehr/OneDrive/Desktop/MedScaleFiles/MedScale-mesc-p01-03-planning
 C:/Users/Shehr/OneDrive/Desktop/MedScaleFiles/MedScale-pilot-01-foundation
+C:/Users/Shehr/OneDrive/Desktop/MedScaleFiles/MedScale-mesc-pubmedqa-metadata-allowlist
+C:/Users/Shehr/OneDrive/Desktop/MedScaleFiles/MedScale-mesc-pubmedqa-storage-boundary
 ```
 
 Proposed path `C:\Users\Shehr\MedScaleData\...` is outside every listed worktree and repository root.
@@ -53,18 +144,32 @@ Proposed path `C:\Users\Shehr\MedScaleData\...` is outside every listed worktree
 
 Proposed path is outside `C:\Users\Shehr\OneDrive` and any other explicitly identified synchronized tree. Cloud-sync coverage cannot be guaranteed for all possible Windows configurations without explicit system policy review, but current path evidence does not indicate OneDrive coverage.
 
-## Permissions expectations
+## Permissions verification
 
-Directory creation was not performed. Windows filesystem permissions for `C:\Users\Shehr\MedScaleData` are unverified. Later authorization should confirm that the owner-only access boundary can be maintained.
+Windows filesystem permissions for `C:\Users\Shehr\MedScaleData` were verified after directory creation.
+
+Permission probe passed:
+
+* temporary probe file created successfully
+* temporary probe file metadata readable
+* temporary probe file renamed successfully
+* temporary probe file deleted successfully
+* directory empty after probe deletion
+
+ACL fail-closed properties:
+
+* ordinary inherited user/group access removed
+* current user full control granted
+* SYSTEM full control retained
+* Administrators full control retained
+* permissions inherit to child files and directories
 
 ## Retention and cleanup
 
-Retention and cleanup policy is not yet determined. Future governance should answer:
-
-* whether acquired artifacts are retained indefinitely or for a bounded research period
-* whether deletion must produce secure erasure
-* who owns cleanup after project archiving
+Retention policy adopted in this turn. See `decision-record.md` and the committed storage-boundary documentation for the full policy.
 
 ## Directory-created confirmation
 
-No directory was created during this readiness turn.
+Directory chain was created during this authorized turn.
+
+No dataset file was created.

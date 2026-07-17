@@ -27,21 +27,26 @@ The readiness package may pass documentation acceptance while actual acquisition
 Readiness conclusion:
 
 ```text
-NOT READY FOR ACQUISITION AUTHORIZATION -- BLOCKERS RECORDED
+READY FOR FOUNDER P01-03B ACQUISITION DECISION -- ACQUISITION NOT AUTHORIZED
 ```
 
-The package is ready for founder review of the recorded blockers and proposed remediation sequence. It is not ready for authorization of P01-03B acquisition.
+All P01-03B readiness blockers are resolved.
+Merging this documentation PR does not authorize acquisition.
 
 Acquisition-authorization readiness is blocked by:
 
-* `pending storage-boundary permission verification`
-* `retention and cleanup policy unresolved`
+* none
+
+All P01-03B readiness blockers are resolved.
+Merging this documentation PR does not authorize acquisition.
 
 Resolved blockers:
 
 * `exact remote filename allowlist` -- verified via metadata API in separate authorized turn
 * `metadata-only remote verification authorization` -- authorized and completed
 * `.gitignore` guardrail implementation -- merged as PR #26
+* `storage-boundary permission verification` -- verified in this turn
+* `retention and cleanup policy` -- adopted in this turn
 
 ## Planning checklist
 
