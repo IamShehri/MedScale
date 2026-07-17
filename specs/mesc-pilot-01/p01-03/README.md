@@ -41,7 +41,11 @@ TRANSFORMATION: NOT AUTHORIZED
 P01-T04 ACQUISITION: NOT AUTHORIZED
 P01-T05 TRANSFORMATION: NOT AUTHORIZED
 P01-04: NOT AUTHORIZED
-COMMIT/PUSH/PR: NOT AUTHORIZED
+DOCUMENTATION COMMIT/PUSH/PR: AUTHORIZED AND COMPLETED
+DOCUMENTATION PR #23: OPEN — NOT MERGED
+AUTO-MERGE: DISABLED
 ```
+
+Authorization for the documentation commit, push, and pull request grants no dataset or execution authority. Merging PR #23 requires a separate governance decision and does not itself authorize execution.
 
 This package defines future execution boundaries only. No execution occurs in this turn.

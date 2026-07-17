@@ -65,7 +65,7 @@ Passing this acceptance review, opening the documentation pull request, or mergi
 - [ ] Evidence mapping preserves original text and does not fabricate gold rationales.
 - [ ] Validation protocol reports unavailable fields as `not_applicable`.
 - [ ] No dataset download, transformation, inference, retrieval, baseline, or training occurred.
-- [ ] No commit, push, PR, merge, tag, or release performed.
+- [ ] Documentation commit, push, and PR creation are separately authorized and recorded; PR #23 remains open and unmerged, auto-merge remains disabled, and no tag, release, or execution activity occurred.
 - [ ] Top-level registry documents reconciled.
 - [ ] Repository quality gates pass.
 
