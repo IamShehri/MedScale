@@ -1,9 +1,12 @@
-# MESC Pilot-01 — P01-03 Dataset Execution Protocol
+# MESC Pilot-01 -- P01-03 Dataset Execution Protocol
 
-Status: **planning authorized — execution not authorized**
-Authorization: P01-03 planning authorized; execution not authorized
+Status: **documentation planning closed -- execution not authorized**
+Authorization: P01-03 documentation package merged; execution not authorized
 Freeze date: 2026-07-17
 P01-02 closeout: `ea4c0b1798d92b2560184f35a3a7a4d2b27db15e`
+Documentation PR: `#23` -- merged
+Merge commit: `7d6409c155f563eb9df177b8753f7a279cf24512`
+Merged at: `2026-07-17T22:30:50Z`
 
 ---
 
@@ -34,18 +37,20 @@ No lower-level authorization overrides a missing higher-level authorization.
 ## Governance summary
 
 ```text
-P01-03 PLANNING: AUTHORIZED
+P01-03 DOCUMENTATION PACKAGE: MERGED
+P01-03 DOCUMENTATION PLANNING: CLOSED
 P01-03 EXECUTION: NOT AUTHORIZED
 DATASET ACQUISITION: NOT AUTHORIZED
 TRANSFORMATION: NOT AUTHORIZED
 P01-T04 ACQUISITION: NOT AUTHORIZED
 P01-T05 TRANSFORMATION: NOT AUTHORIZED
 P01-04: NOT AUTHORIZED
-DOCUMENTATION COMMIT/PUSH/PR: AUTHORIZED AND COMPLETED
-DOCUMENTATION PR #23: OPEN — NOT MERGED
-AUTO-MERGE: DISABLED
+DOCUMENTATION COMMIT/PUSH/PR: COMPLETED
+DOCUMENTATION PR #23: MERGED
+MERGE COMMIT: 7d6409c155f563eb9df177b8753f7a279cf24512
+AUTO-MERGE: NOT USED
 ```
 
-Authorization for the documentation commit, push, and pull request grants no dataset or execution authority. Merging PR #23 requires a separate governance decision and does not itself authorize execution.
+Merge of PR #23 closed the P01-03 documentation-planning package only. It granted no dataset or execution authority. Every execution stage remains subject to a separate explicit governance decision.
 
-This package defines future execution boundaries only. No execution occurs in this turn.
+This package defines future execution boundaries only. No dataset acquisition or execution activity occurred during planning, review, or merge.
