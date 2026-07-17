@@ -1,7 +1,7 @@
 # MESC Pilot-01 — Tasks
 
 Status: **foundation task registry**
-Authorization: Foundation *** only
+Authorization: Foundation authorized; execution not authorized
 Freeze date: 2026-07-17
 
 ---
@@ -19,7 +19,7 @@ Stop conditions: prohibited imports, weakened enforcement, changed semantics, st
 
 ```text
 P01-T02 — Verify model metadata and revisions
-Status: AUTHORIZED
+Status: COMPLETED
 Prerequisites: P01-01 complete
 Outputs: model metadata record; revision pin list; license matrix
 Acceptance: all metadata recorded; no weights downloaded
@@ -28,7 +28,7 @@ Stop conditions: gated-access requirements ignored; model identity unresolved
 
 ```text
 P01-T03 — Verify dataset license and source rights
-Status: AUTHORIZED
+Status: COMPLETED
 Prerequisites: P01-01 complete
 Outputs: license review record; rights summary; immutable revision assignment
 Acceptance: license and rights documented; revision strategy defined
@@ -37,20 +37,20 @@ Stop conditions: license unresolved; full-text rights asserted without evidence
 
 ```text
 P01-T04 — Acquire PQA-L
-Status: NOT AUTHORIZED
-Prerequisites: P01-03 complete
-Outputs: pinned dataset artifact; provenance metadata
-Acceptance: immutable revision; reproducible content hash
-Stop conditions: revision drift; acquisition outside authorized environment
+Status: PLANNING AUTHORIZED / EXECUTION NOT AUTHORIZED
+Prerequisites: P01-03 planning complete; separate acquisition authorization
+Outputs: acquisition authorization record; artifact allowlist; storage boundary confirmation; acquisition manifest; downloaded Parquet artifacts
+Acceptance: immutable revision; reproducible content hash; fail-closed checks pass
+Stop conditions: revision drift; acquisition outside authorized environment; raw content inside Git tracking
 ```
 
 ```text
 P01-T05 — Transform records
-Status: NOT AUTHORIZED
-Prerequisites: P01-04 complete
-Outputs: transformed PilotRecord set; validation report
-Acceptance: deterministic transformation; unique IDs; reproducible hashes
-Stop conditions: schema revision uncontrolled; full-text contamination
+Status: PLANNING AUTHORIZED / EXECUTION NOT AUTHORIZED
+Prerequisites: P01-04 complete; separate transformation authorization
+Outputs: transformed PilotPubMedQASourceRecord set; validation report; schema versioning record
+Acceptance: deterministic transformation; unique IDs; reproducible hashes; unavailable fields marked not_annotated
+Stop conditions: schema revision uncontrolled; full-text contamination; annotation fields fabricated without authorization
 ```
 
 ```text
