@@ -36,3 +36,11 @@ Desktop.ini
 *~
 .idea/
 .vscode/
+
+# Research raw data and acquisition artifacts
+# Raw external datasets must remain outside the repository. These rules are
+# defense-in-depth against accidental repository-local acquisition.
+.medscale-data/
+data/raw/
+artifacts/raw/
+research-data/raw/
