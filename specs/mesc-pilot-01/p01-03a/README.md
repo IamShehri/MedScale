@@ -51,8 +51,8 @@ RELEASE OR PUBLICATION: NOT AUTHORIZED
 PRODUCTION OR CLINICAL USE: NOT AUTHORIZED
 AFIA INTEGRATION: NOT AUTHORIZED
 DOCUMENTATION COMMIT/PUSH/PR: COMPLETED
-DOCUMENTATION PR #24: OPEN
-AUTO-MERGE: NOT USED
+DOCUMENTATION PR #25: OPEN — NOT MERGED
+AUTO-MERGE: DISABLED
 ```
 
 Opening or merging this pull request records documentation readiness only. It grants no acquisition, execution, dataset, model, publication, clinical-use, or Afia-integration authority. A separate explicit governance decision is required before any future acquisition or execution stage.

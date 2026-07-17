@@ -12,7 +12,7 @@ All of the following must be true for the P01-03A readiness package to pass:
 - [x] `.gitignore` gap is recorded as a readiness issue without being masked as acceptable.
 - [x] Task-registry finding is recorded without altering the registry.
 - [x] Proposed storage boundary is documented with read-only evidence only.
-- [ ] Directory creation was not performed during readiness turn.
+- [x] Directory creation was not performed during readiness turn.
 - [x] No remote dataset access, remote metadata query, hugging face API call, or dataset file enumeration occurred.
 - [x] Artifact allowlist distinguishes frozen identity from unverified remote filenames.
 - [x] Acquisition protocol is non-executable and separated from later stages.
@@ -27,8 +27,10 @@ The readiness package may pass documentation acceptance while actual acquisition
 Readiness conclusion:
 
 ```text
-READY FOR FOUNDER ACQUISITION-AUTHORIZATION DECISION -- ACQUISITION NOT AUTHORIZED
+NOT READY FOR ACQUISITION AUTHORIZATION -- BLOCKERS RECORDED
 ```
+
+The package is ready for founder review of the recorded blockers and proposed remediation sequence. It is not ready for authorization of P01-03B acquisition.
 
 Acquisition-authorization readiness is blocked by:
 
@@ -53,8 +55,8 @@ Acquisition-authorization readiness is blocked by:
 - [x] Acquisition protocol fail-closed at every boundary.
 - [x] No execution activity authorized or performed.
 - [x] No dataset download, transformation, inference, retrieval, baseline, or training occurred.
-- [ ] No directory creation under proposed raw-data root.
-- [ ] No Parquet file opened or schema inspected.
+- [x] No directory creation under proposed raw-data root.
+- [x] No Parquet file opened or schema inspected.
 - [x] Repository quality gates pass.
 
 ## Governance record
