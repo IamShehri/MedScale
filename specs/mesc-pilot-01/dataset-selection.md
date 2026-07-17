@@ -18,9 +18,13 @@ PubMedQA PQA-L
 - Dataset: `qiaojin/PubMedQA`
 - Configuration: `pqa_labeled`
 - Primary split/task subset: PQA-L expert-labeled records
+- Repository format: Parquet
+- Immutable revision: `9001f2853fb87cab8d220904e0de81ac6973b318`
 - Homepage: pubmedqa.github.io
 - Paper: PubMedQA: A Dataset for Biomedical Research Question Answering, arXiv:1909.06146
 - Official source for Hugging Face metadata: https://huggingface.co/datasets/qiaojin/PubMedQA
+
+The pinned repository commit pins the complete Hugging Face repository snapshot, not only README.md. The pinned snapshot contains the `pqa_labeled` configuration. No arbitrary Python dataset loading script is required by the current Parquet repository representation. The dataset remains undownloaded in this turn. Raw abstracts must not be committed to MedScale. Raw abstracts must not be republished or redistributed by MedScale. The MIT repository/package metadata does not transfer publisher copyright in underlying abstracts. Local research acquisition requires a later explicit authorization.
 
 ### Expert-labeled record count
 
@@ -37,7 +41,7 @@ The dataset is constructed from PubMed abstracts.
 PubMed abstracts are bibliographic metadata, not full article text.
 Article-level PDF or full-text rights are not transferred by this dataset package.
 Redistribution or use of extracted abstracts remains subject to the underlying PubMed/NIH data-access policies and any publisher-specific restrictions for the cited article body; this record does not assert full-text rights.
-An immutable revision strategy must be adopted before execution to freeze the dataset revision as `pqa-labeled-immutable` or another exact pinned revision and to re-derive all `example_id` values when the pinned revision changes.
+An immutable revision strategy must be adopted before execution to freeze the dataset revision and to re-derive all `example_id` values when the pinned revision changes.
 
 ### Source identifiers
 
@@ -73,17 +77,21 @@ No gold annotations were created in this turn.
 ## SciFact auxiliary validation dataset
 
 Exact dataset: `allenai/scifact`
+Immutable revision: `1fe54665deee011033b2dd98db5752e0d586fdfb`
 Exact official page: https://huggingface.co/datasets/allenai/scifact
 Role: optional auxiliary Evidence Judge validation dataset; not the primary dataset.
 License: CC BY-NC 2.0
 Restrictions: non-commercial use only; attribution required.
+Loading boundary: repository requires arbitrary Python loading-script execution.
 Size: 1.4k expert-written scientific claims paired with evidence-containing abstracts.
 Splits: Claims 1261/450/300; Corpus 5183 train.
 This turn status: not downloaded; used only for documentation and future validation planning.
 Do not execute retrieval, baseline, evaluation, or training on SciFact in this turn without explicit authorization.
 
 ```text
-SCIFACT AUXILIARY DATASET: NOT AUTHORIZED FOR EXECUTION IN THIS TURN
+SCIFACT REMOTE CODE EXECUTION: NOT AUTHORIZED
+SCIFACT DATASET ACQUISITION: NOT AUTHORIZED
+SCIFACT COMMERCIAL USE: NOT PERMITTED BY DATASET LICENSE
 ```
 
 ---
