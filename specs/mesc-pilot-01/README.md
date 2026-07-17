@@ -33,3 +33,11 @@ Related Documents
 - `src/medscale/mesc/split.py`
 - `src/medscale/mesc/manifests.py`
 - `src/medscale/mesc/evaluation.py`
+- `specs/mesc-pilot-01/p01-03/README.md`
+- `specs/mesc-pilot-01/p01-03/research.md`
+- `specs/mesc-pilot-01/p01-03/spec.md`
+- `specs/mesc-pilot-01/p01-03/plan.md`
+- `specs/mesc-pilot-01/p01-03/data-model.md`
+- `specs/mesc-pilot-01/p01-03/execution-protocol.md`
+- `specs/mesc-pilot-01/p01-03/decision-record.md`
+- `specs/mesc-pilot-01/p01-03/acceptance.md`

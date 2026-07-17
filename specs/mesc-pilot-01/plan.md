@@ -1,7 +1,7 @@
 # MESC Pilot-01 — Plan
 
 Status: **foundation plan**
-Authorization: Foundation *** only
+Authorization: Foundation authorized; execution not authorized
 Freeze date: 2026-07-17
 
 ---
@@ -33,21 +33,23 @@ P01-12 — Paper evidence package
 - Stop conditions: prohibited imports detected; architecture enforcement weakened; contract semantics changed; stale test counts accepted without evidence.
 - Authorization status: COMPLETED.
 
-## P01-02 — Dataset acquisition and immutable revision
+## P01-02 — Dataset identity, rights, and immutable revision lock
 
 - Prerequisites: dataset license review finalized; dataset rights documented.
 - Outputs: pinned dataset revision identity; immutable acquisition record; provenance metadata.
 - Acceptance criteria: dataset ID, revision, configuration, and license recorded; content-hash inputs stable; no downloaded artifacts in unauthorized scope.
 - Stop conditions: license or rights review incomplete; revision strategy absent.
-- Authorization status: AUTHORIZED.
+- Authorization status: COMPLETED.
+
+Note: P01-02 completed dataset identity, rights documentation, and immutable revision locking. Dataset acquisition, content retrieval, and transformation were not performed in P01-02.
 
 ## P01-03 — Dataset transformation and validation
 
-- Prerequisites: dataset acquisition and immutable revision complete; schema finalized.
+- Prerequisites: dataset identity and immutable revision complete; schema finalized; acquisition authorization recorded.
 - Outputs: transformed PilotRecord set; validation report; schema versioning record.
 - Acceptance criteria: deterministic transformation from source IDs; example IDs unique; content hashes reproducible; abstract-only data boundary preserved; no full-text claims outside rights.
-- Stop conditions: schema revision uncontrolled; full copyrighted content introduced.
-- Authorization status: NOT AUTHORIZED.
+- Stop conditions: schema revision uncontrolled; full copyrighted content introduced; annotation fields fabricated without authorization.
+- Authorization status: PLANNING AUTHORIZED / EXECUTION NOT AUTHORIZED.
 
 ## P01-04 — Frozen split and leakage audit
 
