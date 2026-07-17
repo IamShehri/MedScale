@@ -34,7 +34,7 @@ Their presence in this file does not authorize download or execution.
 | Primary dataset / configuration | `qiaojin/PubMedQA` / `pqa_labeled` | `9001f2853fb87cab8d220904e0de81ac6973b318` | MIT (repository/package metadata) | No (dataset repository) | NOT AUTHORIZED |
 
 Boundaries for execution-path locks:
-- The GitHub repository commit pins the complete Hugging Face repository
+- The pinned Hugging Face repository commit pins the complete repository
   snapshot, not only `README.md`.
 - The pinned snapshot contains the `pqa_labeled` configuration.
 - No arbitrary Python dataset loading script is required by the current
