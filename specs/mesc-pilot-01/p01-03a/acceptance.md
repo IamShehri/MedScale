@@ -34,10 +34,14 @@ The package is ready for founder review of the recorded blockers and proposed re
 
 Acquisition-authorization readiness is blocked by:
 
-* incomplete exact remote filename allowlist
-* pending `.gitignore` guardrail implementation
-* pending storage-boundary permission verification
-* pending metadata-only remote verification authorization
+* `pending storage-boundary permission verification`
+* `retention and cleanup policy unresolved`
+
+Resolved blockers:
+
+* `exact remote filename allowlist` -- verified via metadata API in separate authorized turn
+* `metadata-only remote verification authorization` -- authorized and completed
+* `.gitignore` guardrail implementation -- merged as PR #26
 
 ## Planning checklist
 
