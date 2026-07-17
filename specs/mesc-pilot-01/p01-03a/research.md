@@ -92,10 +92,30 @@ This is evidence for a later decision only. It is not acquisition authorization.
 
 ## Unresolved questions
 
-* exact remote artifact filenames for `pqa_labeled` are not yet verified
-* metadata-only remote inspection is not authorized in this turn
+* metadata-only remote inspection authorization was not in scope for this package
 * `.gitignore` guardrail implementation is pending a separate PR
 * external storage permissions and cleanup policy are not yet confirmed
-* Windows filesystem permissions for `C:\Users\Shehr\MedScaleData` are unverified
+* Windows filesystem permissions for `C:\\Users\\Shehr\\MedScaleData` are unverified
 
 No remote dataset access was performed. No dataset content was inspected. No row counts, schemas, or hashes were claimed for unacquired files.
+
+## Metadata inspection evidence
+
+Freeze date: 2026-07-17
+
+This section records metadata-only inspection evidence from a separate authorized founder turn.
+
+* API method: `huggingface_hub.HfApi.repo_info` with `files_metadata=True`, `token=False`
+* Anonymous access: `token=False`, no stored credentials transmitted
+* Exact revision requested: `9001f2853fb87cab8d220904e0de81ac6973b318`
+* Exact revision returned: `9001f2853fb87cab8d220904e0de81ac6973b318`
+* Repository public: `True`
+* Repository configuration names: `pqa_artificial`, `pqa_labeled`, `pqa_unlabeled`
+* Tree count: `8`
+* `pqa_labeled` paths found: `1` data artifact
+* License metadata: `mit`
+* File content downloaded: `None`
+* Parquet file opened: `None`
+* Dataset cache or raw-data directory created: `None`
+
+Remote call was performed only after separate founder authorization in a subsequent turn. This documentation records the resulting contractual metadata only and does not authorize acquisition, transformation, or execution.
