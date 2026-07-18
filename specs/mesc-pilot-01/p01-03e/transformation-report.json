@@ -1,0 +1,100 @@
+{
+  "status": "complete",
+  "p01_03e_authorized": true,
+  "p01_03e_complete": true,
+  "p01_03f_required": true,
+  "p01_03f_authorized": false,
+  "formal_validation_authorized": false,
+  "p01_04_authorized": false,
+  "record_count": 1000,
+  "yes": 552,
+  "no": 338,
+  "maybe": 110,
+  "unexpected": 0,
+  "unique_pubid_count": 1000,
+  "duplicate_pubid_count": 0,
+  "unique_source_document_count": 1000,
+  "unique_source_record_hash_count": 1000,
+  "source_record_hash_collision_count": 0,
+  "total_context_segments": 3358,
+  "min_context_segments": 1,
+  "max_context_segments": 9,
+  "labels_context_cardinality_validation": "pass",
+  "byte_equivalence_result": "exact_match",
+  "raw_artifact_unchanged": true,
+  "pilot_record_public_status": "deferred",
+  "example_id_public_status": "deferred",
+  "p01_03f_status": "not_authorized",
+  "schema_version": "mesc-pubmedqa-source/1",
+  "dataset_id": "qiaojin/PubMedQA",
+  "configuration": "pqa_labeled",
+  "revision": "9001f2853fb87cab8d220904e0de81ac6973b318",
+  "source_artifact": {
+    "repository_path": "train-00000-of-00001.parquet",
+    "size": 1075513,
+    "sha256": "3d56bd1abc11884579ecc3aab9dd3cdfce8b7cf54715daeca93b8022b7be231c"
+  },
+  "runs": {
+    "run_0": {
+      "records": {
+        "filename": "source-records.jsonl",
+        "size": 2770193,
+        "sha256": "22495853cf8a395f962f9d2a2f9023ecb277f2b10cd875f69aa4b592d5b00dce"
+      },
+      "registry": {
+        "filename": "source-record-registry.jsonl",
+        "size": 272664,
+        "sha256": "26f8fec3881b77092f26690a30e8a01a7863cd9d4eddb5a8169b1e4cdd3a51af"
+      },
+      "manifest": {
+        "filename": "transformation-manifest.json",
+        "size": 1380,
+        "sha256": "6d9fbf1022f077d7e23ff9f8d48244996d45a15dbe705a40437c201baa41fe68"
+      }
+    },
+    "run_1": {
+      "records": {
+        "filename": "source-records.jsonl",
+        "size": 2770193,
+        "sha256": "22495853cf8a395f962f9d2a2f9023ecb277f2b10cd875f69aa4b592d5b00dce"
+      },
+      "registry": {
+        "filename": "source-record-registry.jsonl",
+        "size": 272664,
+        "sha256": "26f8fec3881b77092f26690a30e8a01a7863cd9d4eddb5a8169b1e4cdd3a51af"
+      },
+      "manifest": {
+        "filename": "transformation-manifest.json",
+        "size": 1380,
+        "sha256": "6d9fbf1022f077d7e23ff9f8d48244996d45a15dbe705a40437c201baa41fe68"
+      }
+    }
+  },
+  "final_output": {
+    "records": {
+      "filename": "source-records.jsonl",
+      "size": 2770193,
+      "sha256": "22495853cf8a395f962f9d2a2f9023ecb277f2b10cd875f69aa4b592d5b00dce"
+    },
+    "registry": {
+      "filename": "source-record-registry.jsonl",
+      "size": 272664,
+      "sha256": "26f8fec3881b77092f26690a30e8a01a7863cd9d4eddb5a8169b1e4cdd3a51af"
+    },
+    "manifest": {
+      "filename": "transformation-manifest.json",
+      "size": 1380,
+      "sha256": "6d9fbf1022f077d7e23ff9f8d48244996d45a15dbe705a40437c201baa41fe68"
+    },
+    "local": {
+      "filename": "transformation-run.local.json",
+      "size": 63,
+      "sha256": "0ed2b3e149ab5439ae874b5e52fad43d768e75bef526631c8a44ff188c676312"
+    }
+  },
+  "quarantine": {
+    "inventory_name": "mesc-pubmedqa-source-1.preexisting-20260718T113620Z-02d68231",
+    "inventory_equivalent_source_records": false,
+    "inventory_equivalent_registry": false
+  }
+}

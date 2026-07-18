@@ -55,6 +55,7 @@ dev = [
   "mypy>=1.11",
   "pytest>=8.0",
   "pytest-cov>=5.0",
+  "pyarrow==25.0.0",
 ]
 
 [tool.hatch.version]
@@ -89,6 +90,9 @@ select = [
 [tool.ruff.lint.isort]
 known-first-party = ["medscale"]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/test_pubmedqa_source_transform.py" = ["E501"]
+
 # ---------------------------------------------------------------------------
 # Mypy — strict typing
 # ---------------------------------------------------------------------------
@@ -99,8 +103,8 @@ files = ["src", "tests", "scripts"]
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unreachable = true
+disable_error_code = ["import-untyped"]
 
-# ---------------------------------------------------------------------------
 # Pytest + coverage
 # ---------------------------------------------------------------------------
 [tool.pytest.ini_options]
