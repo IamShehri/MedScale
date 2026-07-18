@@ -23,6 +23,7 @@
     "num_rows": 1000,
     "num_row_groups": 1,
     "num_columns": 9,
+    "column_count_semantics": "physical leaf columns",
     "row_group_rows": [1000]
   },
   "native_top_level_schema": [
@@ -68,7 +69,8 @@
     "row_count": 1000,
     "row_group_count": 1,
     "rows_per_row_group": [1000],
-    "top_level_column_count": 9,
+    "top_level_field_count": 5,
+    "physical_leaf_column_count": 9,
     "artifact_count": 1,
     "native_split": "train"
   },
