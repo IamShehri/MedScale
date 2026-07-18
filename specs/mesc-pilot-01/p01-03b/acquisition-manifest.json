@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "status": "verified",
+  "dataset": {
+    "repository": "qiaojin/PubMedQA",
+    "configuration": "pqa_labeled",
+    "revision": "9001f2853fb87cab8d220904e0de81ac6973b318"
+  },
+  "artifact": {
+    "repository_path": "pqa_labeled/train-00000-of-00001.parquet",
+    "size_bytes": 1075513,
+    "sha256": "3d56bd1abc11884579ecc3aab9dd3cdfce8b7cf54715daeca93b8022b7be231c"
+  },
+  "acquisition": {
+    "method": "anonymous immutable-revision direct stream",
+    "content_opened": false,
+    "parquet_inspected": false,
+    "transformation_performed": false
+  },
+  "authorization": {
+    "scope": "P01-03B immutable artifact acquisition only",
+    "p01_03c_authorized": false
+  }
+}
