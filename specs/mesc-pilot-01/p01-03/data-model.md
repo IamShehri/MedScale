@@ -1,7 +1,7 @@
 # MESC Pilot-01 — P01-03 Data Model
 
 Status: **planning data model**
-Authorization: P01-03 planning authorized; execution not authorized
+Authorization: P01-03D schema-gap resolution authorized and complete; P01-03E transformation not authorized
 Freeze date: 2026-07-17
 
 ---
@@ -35,7 +35,7 @@ Any downstream field that depends on these missing annotations must be marked un
 This internal representation is not a public contract root. It exists to keep native labels separate from derived or manual annotations.
 
 ```text
-schema_version: "mesc-pilot-01/1"
+schema_version: "mesc-pubmedqa-source/1"
 dataset_id: str
 dataset_revision: str
 configuration: str
@@ -43,13 +43,60 @@ original_example_id: str
 source_document_id: str
 pubid: str
 question: str
-context: tuple[str, ...]
+context_segments: tuple[NativeContextSegment, ...]
+mesh_terms: tuple[str, ...]
 long_answer: str
 final_decision: str
+native_annotation_trace: NativeAnnotationTrace
 license_id: str
 ```
 
-Fields `dataset_id`, `dataset_revision`, `configuration`, `original_example_id`, `source_document_id`, `pubid`, `question`, `context`, `long_answer`, `final_decision`, and `license_id` are populated from native data or revision metadata only. No annotation fields are present.
+`NativeContextSegment`:
+
+```text
+ordinal: int
+text: str
+section_label: str
+```
+
+`NativeAnnotationTrace`:
+
+```text
+reasoning_required_pred: tuple[str, ...]
+reasoning_free_pred: tuple[str, ...]
+```
+
+Fields `dataset_id`, `dataset_revision`, `configuration`, `original_example_id`, `source_document_id`, `pubid`, `question`, `context_segments`, `mesh_terms`, `long_answer`, `final_decision`, `native_annotation_trace`, and `license_id` are populated from native data or revision metadata only.
+
+`source_record_hash` deterministic payload includes:
+- internal schema version
+- dataset identity and revision
+- configuration
+- original example identity
+- source document identity
+- pubid
+- question
+- every context segment ordinal
+- every context segment text
+- every context segment section label
+- MeSH terms in source order
+- long_answer
+- final_decision
+- reasoning-required annotation trace in source order
+- reasoning-free annotation trace in source order
+- license identity
+
+Excluded from `source_record_hash`:
+- timestamps
+- local paths
+- usernames
+- hostnames
+- hardware
+- runtime durations
+- split assignments
+- annotation UI state
+
+This internal hash does not change or replace the public `PilotRecord` content-hash contract.
 
 ---
 
@@ -68,7 +115,7 @@ Full `PilotRecord` construction requires manual annotation for unavailable field
 | `source.source_document_id` | normalized `pubid` | derived |
 | `source.license_id` | `PubMedQA-PQA-L` | derived |
 | `question` | native `question` | native |
-| `evidence[].text` | native `context` entries | native but normalized |
+| `evidence[].text` | native `context.contexts` entries | native source segments |
 | `evidence[].evidence_id` | deterministic derivation | derived |
 | `evidence[].sentence_index` | ordinal in normalized context list | derived |
 | `evidence[].source_document_id` | same as `source.source_document_id` | derived |
@@ -83,6 +130,15 @@ Full `PilotRecord` construction requires manual annotation for unavailable field
 | `provenance.annotation_method` | `native`, `derived`, or `manual` | mixed |
 | `provenance.annotation_revision` | annotation protocol version or empty | derived |
 | `provenance.synthetic` | false for real data | derived |
+
+NativeContextSegment.ordinal and NativeContextSegment.section_label remain
+internal Layer-1 source-record fields. P01-03D does not extend the public
+PilotEvidence schema.
+
+If P01-03E is separately authorized, NativeContextSegment.ordinal maps to
+the existing evidence[].sentence_index field. Section labels remain internal
+source metadata unless a separate public-contract decision explicitly
+authorizes a PilotEvidence field for them.
 
 ---
 
@@ -116,6 +172,8 @@ provenance.annotation_method
 provenance.annotation_revision
 provenance.synthetic
 ```
+
+---
 
 ## Operational provenance fields
 

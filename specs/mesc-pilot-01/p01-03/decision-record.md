@@ -85,19 +85,30 @@ Shortened digests are not permitted without an explicit collision analysis docum
 
 ---
 
-## Selected evidence mapping
+## Selected native-context mapping decision
 
-**Selected:** direct deterministic mapping of PubMedQA `context` list entries into `PilotEvidence` objects with original text preserved exactly in raw local artifacts.
+**Selected:** positional ordered segment mapping for `context.contexts`, `context.labels`, `context.meshes`, `context.reasoning_required_pred`, and `context.reasoning_free_pred`.
+
+Rationale:
+- All five members are present in all `1000` rows in the merged P01-03C verified report.
+- `context.contexts` contains the structured abstract excluding its conclusion.
+- `long_answer` contains the abstract conclusion.
+- `final_decision` is the only native consensus target decision.
+- `meshes` are document-topic metadata derived from Medical Subject Headings.
+- `reasoning_required_pred` preserves the annotation made using question and context.
+- `reasoning_free_pred` preserves the annotation made using question, context, and long_answer.
+- No field may be silently discarded or semantically reinterpreted.
 
 Rules:
-- No LLM rewriting.
-- No summarization.
-- No semantic sentence splitter requiring external models.
-- Deterministic ordering by row ordinal.
-- Deterministic `evidence_id` derivation.
-- Explicit handling of empty and duplicate context elements.
-- Source-document linkage preserved.
-- Context entries recorded as source-provided context segments, not gold rationales.
+- `contexts` entries map to ordered `NativeContextSegment` objects with `ordinal`, `text`, and `section_label`.
+- Preserve every entry, preserve source order, preserve exact text, do not summarize, rewrite, split, merge, or deduplicate.
+- Duplicate text entries remain separate segments with distinct ordinals.
+- `labels[i]` maps to `context_segments[i].section_label`.
+- Require `len(labels) == len(contexts)` during P01-03E; any cardinality mismatch must fail closed.
+- `meshes` map to `mesh_terms: tuple[str, ...]` and are excluded from default model input.
+- `reasoning_required_pred` and `reasoning_free_pred` map to `native_annotation_trace` and are not used as model inputs, targets, or scoring signals.
+- `final_decision` remains the only native consensus target; `maybe` is not converted to abstain.
+- This decision supersedes the prior generic deduplication assumption for PubMedQA context entries.
 
 ---
 

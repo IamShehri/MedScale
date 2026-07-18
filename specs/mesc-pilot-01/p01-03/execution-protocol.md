@@ -64,10 +64,16 @@ Fail-closed behavior:
 Verify, do not assume, the following:
 
 - Required columns `pubid`, `question`, `context`, `long_answer`, `final_decision` are present.
-- Column types match expectations: `pubid` is string-like; `context` is list-like or string-encoded JSON; `final_decision` is string-like.
+- `context` is a struct with members `contexts`, `labels`, `meshes`, `reasoning_required_pred`, and `reasoning_free_pred`.
+- `context.contexts` is a list of strings.
+- `context.labels` is a list of strings.
+- `context.meshes` is a list of strings.
+- `context.reasoning_required_pred` is a list of strings.
+- `context.reasoning_free_pred` is a list of strings.
+- Column types match expectations: `pubid` is string-like or integer; `final_decision` is string-like.
 - `final_decision` values are only `yes`, `no`, or `maybe`.
 - `pubid` is present and non-empty for every row.
-- `context` shape is list-like; empty lists are permitted only if later handled explicitly.
+- `context.contexts` list lengths are between 1 and 9.
 - No unexpected nulls in required fields.
 - No empty `question` values in records treated as answerable.
 - Row count matches expected PQA-L count from approved metadata.
@@ -76,9 +82,11 @@ Verify, do not assume, the following:
 
 Fail-closed behavior:
 - Missing required column stops execution.
+- Missing `context` struct member stops execution.
 - Unexpected `final_decision` value stops execution.
 - `pubid` missing or malformed at scale stops execution.
 - Row count deviation without documented explanation stops execution.
+- `labels` / `contexts` cardinality mismatch stops execution.
 
 ---
 
@@ -112,7 +120,10 @@ Normalization rules:
 - `question`: strip surrounding whitespace only; preserve all other characters.
 - `long_answer`: strip surrounding whitespace only; preserve all other characters.
 - `final_decision`: map `yes` -> `yes`, `no` -> `no`, `maybe` -> `maybe`; no other mappings.
-- `context`: preserve exact text in raw local artifacts; normalize only for deterministic ordering and duplicate handling in derived evidence objects.
+- `context.contexts`: preserve exact text, source order, and every entry in `NativeContextSegment` records; do not deduplicate or rewrite.
+- `context.labels`: preserve exact source values and positional alignment with `context.contexts`; enforce `len(labels) == len(contexts)` in P01-03E.
+- `context.meshes`: preserve exact values and source order in `mesh_terms`.
+- `context.reasoning_required_pred` and `context.reasoning_free_pred`: preserve exact source values and multiplicity in `native_annotation_trace`.
 
 Prohibited normalizations:
 - Lowercasing.
@@ -122,23 +133,33 @@ Prohibited normalizations:
 - Reordering context.
 - Removing citations.
 - Paraphrasing abstracts.
+- Summarizing context segments.
+- Collapsing reasoning_* lists to a scalar without a verified cardinality rule.
 
 ---
 
-## A5 — Construct evidence objects
+## A5 — Populate internal source-record structures
 
-Map PubMedQA `context` elements into `PilotEvidence` deterministically.
+Populate the internal `context_segments`, `mesh_terms`, and
+`native_annotation_trace` structures deterministically. Only
+`context.contexts` entries are candidates for later `PilotEvidence` mapping.
+MeSH terms and reasoning annotation traces remain internal source metadata.
+
+Map `context.contexts`, `context.labels`, `context.meshes`, `context.reasoning_required_pred`, and `context.reasoning_free_pred` records deterministically.
 
 Rules:
-- Preserve original context text exactly in raw local artifacts.
+- Preserve original context text, labels, MeSH terms, reasoning annotations exactly in raw local artifacts.
 - No LLM rewriting.
 - No summarization.
 - No semantic sentence splitter requiring external models.
 - Deterministic ordering: use row ordinal as stable index.
 - Deterministic `evidence_id` payload excludes timestamps, paths, hostnames, runtime metadata, and split assignments.
-- Explicit handling of empty context lists: produce zero evidence objects and mark `evidence_sufficiency` as unavailable in Layer 1.
-- Explicit handling of duplicate context entries: deduplicate deterministically before evidence-id assignment.
-- Source-document linkage: every evidence object carries the same `source_document_id` as the parent record.
+- Explicit handling of empty context lists: produce zero context segments and mark unavailable in Layer 1.
+- Duplicate text entries remain separate segments with distinct ordinals.
+- `len(labels) == len(contexts)` is enforced in P01-03E; fail closed on mismatch.
+- `meshes` are retained as document metadata, not evidence objects.
+- `reasoning_required_pred` and `reasoning_free_pred` are retained as annotation traces, not model inputs.
+- Source-document linkage is owned by the parent `PilotPubMedQASourceRecord`. `NativeContextSegment` and `NativeAnnotationTrace` do not duplicate `source_document_id`.
 
 Do not assert that context elements are gold rationales. Record them as source-provided context segments.
 
@@ -212,6 +233,8 @@ Digest policy:
 
 For native unannotated rows:
 - Construct `PilotPubMedQASourceRecord` Layer-1 representation.
+- Populate `context_segments`, `mesh_terms`, and `native_annotation_trace` from the resolved P01-03D mapping.
+- Compute `source_record_hash` from scientific identity fields only; exclude operational provenance, timestamps, local paths, hostnames, hardware, runtime durations, split assignments, and annotation UI state.
 - Defer full `PilotRecord` construction until annotation authorization is granted.
 
 For manually annotated rows:
