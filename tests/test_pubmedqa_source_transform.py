@@ -92,7 +92,7 @@ def _write_synthetic_parquet(path: Path) -> Path:
 
 
 class TestP0103DContract:
-    def test_pilot_record_fields(self):
+    def test_pilot_record_fields(self) -> None:
         expected = {
             "schema_version",
             "dataset_id",
@@ -111,7 +111,7 @@ class TestP0103DContract:
         }
         assert expected == set(PilotPubMedQASourceRecord.__dataclass_fields__.keys())
 
-    def test_pilot_record_absent_fields_removed(self):
+    def test_pilot_record_absent_fields_removed(self) -> None:
         removed = {
             "transformation_version",
             "source_record_hash",
@@ -120,10 +120,10 @@ class TestP0103DContract:
         }
         assert removed.isdisjoint(PilotPubMedQASourceRecord.__dataclass_fields__.keys())
 
-    def test_pilot_record_pubid_type(self):
+    def test_pilot_record_pubid_type(self) -> None:
         assert PilotPubMedQASourceRecord.__dataclass_fields__["pubid"].type == "str"
 
-    def test_pilot_record_question_type(self):
+    def test_pilot_record_question_type(self) -> None:
         assert PilotPubMedQASourceRecord.__dataclass_fields__["question"].type == "str"
 
 
@@ -133,13 +133,13 @@ class TestP0103DContract:
 
 
 class TestFrozenSlotted:
-    def test_native_frozen_slots(self):
+    def test_native_frozen_slots(self) -> None:
         segment = NativeContextSegment(ordinal=0, text="t", section_label="s")
         with pytest.raises(AttributeError):
             segment.ordinal = 1  # type: ignore[misc]
         assert set(NativeContextSegment.__slots__) == {"ordinal", "text", "section_label"}
 
-    def test_native_annotation_trace_slots(self):
+    def test_native_annotation_trace_slots(self) -> None:
         trace = NativeAnnotationTrace(reasoning_required_pred=("r",), reasoning_free_pred=("f",))
         with pytest.raises(AttributeError):
             trace.reasoning_required_pred = ("x",)  # type: ignore[misc]
@@ -148,7 +148,7 @@ class TestFrozenSlotted:
             "reasoning_free_pred",
         }
 
-    def test_pilot_record_slots(self):
+    def test_pilot_record_slots(self) -> None:
         anchors = {
             "schema_version",
             "dataset_id",
@@ -174,7 +174,7 @@ class TestFrozenSlotted:
 
 
 class TestPyArrowIsolation:
-    def test_private_module_import_does_not_require_pyarrow(self):
+    def test_private_module_import_does_not_require_pyarrow(self) -> None:
         module_name = "medscale.dataset._pubmedqa_source"
         if module_name in sys.modules:
             del sys.modules[module_name]
@@ -189,7 +189,7 @@ class TestPyArrowIsolation:
 
 
 class TestNativeMapping:
-    def test_zero_based_ordinals(self):
+    def test_zero_based_ordinals(self) -> None:
         context = {
             "contexts": ["a", "b", "c"],
             "labels": ["x", "y", "z"],
@@ -200,7 +200,7 @@ class TestNativeMapping:
         row = _row_to_source_record(1, "q", context, "a", "yes", 0)
         assert [segment.ordinal for segment in row.context_segments] == [0, 1, 2]
 
-    def test_exact_duplicate_context_preserved(self):
+    def test_exact_duplicate_context_preserved(self) -> None:
         context = {
             "contexts": ["dup", "dup", "unique"],
             "labels": ["same", "same", "diff"],
@@ -217,7 +217,7 @@ class TestNativeMapping:
             ordinal=1, text="dup", section_label="same"
         )
 
-    def test_pubid_canonical_string(self):
+    def test_pubid_canonical_string(self) -> None:
         context = {
             "contexts": ["a"],
             "labels": ["x"],
@@ -229,7 +229,7 @@ class TestNativeMapping:
         assert row.pubid == "12345"
         assert row.source_document_id == "pmid:12345"
 
-    def test_mesh_terms_preserved(self):
+    def test_mesh_terms_preserved(self) -> None:
         context = {
             "contexts": ["a"],
             "labels": ["x"],
@@ -240,7 +240,7 @@ class TestNativeMapping:
         row = _row_to_source_record(1, "q", context, "a", "yes", 0)
         assert row.mesh_terms == ("mesh1", "mesh2", "mesh1")
 
-    def test_single_annotation_trace(self):
+    def test_single_annotation_trace(self) -> None:
         context = {
             "contexts": ["a"],
             "labels": ["x"],
@@ -253,7 +253,7 @@ class TestNativeMapping:
         assert row.native_annotation_trace.reasoning_required_pred == ("r1",)
         assert row.native_annotation_trace.reasoning_free_pred == ("f1",)
 
-    def test_text_stripped(self):
+    def test_text_is_not_stripped(self) -> None:
         context = {
             "contexts": ["  segmented text  "],
             "labels": ["BACKGROUND"],
@@ -262,11 +262,11 @@ class TestNativeMapping:
             "reasoning_free_pred": [],
         }
         row = _row_to_source_record(1, "  question  ", context, "  answer  ", "yes", 0)
-        assert row.question == "question"
-        assert row.long_answer == "answer"
-        assert row.context_segments[0].text == "segmented text"
+        assert row.question == "  question  "
+        assert row.long_answer == "  answer  "
+        assert row.context_segments[0].text == "  segmented text  "
 
-    def test_empty_after_strip_raises(self):
+    def test_empty_after_strip_raises(self) -> None:
         context = {
             "contexts": ["a"],
             "labels": ["x"],
@@ -284,7 +284,7 @@ class TestNativeMapping:
 
 
 class TestHashBehavior:
-    def test_hash_outside_record(self):
+    def test_hash_outside_record(self) -> None:
         context = {
             "contexts": ["a"],
             "labels": ["x"],
@@ -298,7 +298,7 @@ class TestHashBehavior:
         assert "source_record_hash" in envelope
         assert "source_record_hash" not in envelope["record"]
 
-    def test_hash_covers_all_scientific_fields(self):
+    def test_hash_covers_all_scientific_fields(self) -> None:
         scientific_fields = {
             "schema_version",
             "dataset_id",
@@ -327,7 +327,7 @@ class TestHashBehavior:
         envelope = _record_to_envelope(row)
         assert set(envelope["record"].keys()) == scientific_fields
 
-    def test_hash_deterministic(self):
+    def test_hash_deterministic(self) -> None:
         context = {
             "contexts": ["a"],
             "labels": ["x"],
@@ -342,7 +342,7 @@ class TestHashBehavior:
             == _record_to_envelope(second)["source_record_hash"]
         )
 
-    def test_hash_changes_with_scientific_field(self):
+    def test_hash_changes_with_scientific_field(self) -> None:
         context_a = {
             "contexts": ["a"],
             "labels": ["x"],
@@ -371,16 +371,16 @@ class TestHashBehavior:
 
 
 class TestPublicNamespace:
-    def test_internal_not_in_public_all(self):
+    def test_internal_not_in_public_all(self) -> None:
         public_all = getattr(__import__("medscale.dataset", fromlist=[""]), "__all__", [])
         assert "_pubmedqa_source" not in public_all
 
-    def test_no_pilot_record_in_public(self):
+    def test_no_pilot_record_in_public(self) -> None:
         assert "PilotPubMedQASourceRecord" not in dir(
             __import__("medscale.dataset", fromlist=["PilotPubMedQASourceRecord"])
         )
 
-    def test_no_public_example_id_function(self):
+    def test_no_public_example_id_function(self) -> None:
         mod = __import__("medscale.dataset", fromlist=["pubmedqa_example_id"])
         assert not hasattr(mod, "pubmedqa_example_id")
 
@@ -398,7 +398,7 @@ EXPECTED_OUTPUT_FILES = {
 }
 
 
-def _run_operator(args: list[str]) -> tuple[int, dict | None]:
+def _run_operator(args: list[str]) -> tuple[int, dict[str, Any] | None]:
     script = Path(__file__).resolve().parents[1] / "scripts" / "mesc_pilot_01_transform_pubmedqa.py"
     completed = subprocess.run(
         [sys.executable, str(script), *args],
@@ -427,7 +427,7 @@ def _fresh_output_path(base: Path, name: str) -> Path:
 
 
 class TestDeterministicContract:
-    def test_exact_four_final_files(self, tmp_path):
+    def test_exact_four_final_files(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -450,7 +450,7 @@ class TestDeterministicContract:
         assert EXPECTED_OUTPUT_FILES.issubset(files)
         assert all((actual_dir / name).exists() for name in EXPECTED_OUTPUT_FILES)
 
-    def test_manifest_filename(self, tmp_path):
+    def test_manifest_filename(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -471,7 +471,7 @@ class TestDeterministicContract:
         assert (final / "transformation-manifest.json").exists()
         assert not (final / "source-record-manifest.json").exists()
 
-    def test_no_repository_report_in_external_output(self, tmp_path):
+    def test_no_repository_report_in_external_output(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -498,7 +498,7 @@ class TestDeterministicContract:
 
 
 class TestPromotionSafety:
-    def test_existing_destination_fails(self, tmp_path):
+    def test_existing_destination_fails(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -519,7 +519,7 @@ class TestPromotionSafety:
         assert rc == 1
         assert not (pre_existing / "source-records.jsonl").exists()
 
-    def test_temporary_directories_do_not_overwrite_each_other(self, tmp_path):
+    def test_temporary_directories_do_not_overwrite_each_other(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -557,7 +557,7 @@ class TestPromotionSafety:
 
 
 class TestDeterministicManifestMetadata:
-    def test_manifest_no_run_identities(self, tmp_path):
+    def test_manifest_no_run_identities(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -588,7 +588,9 @@ class TestDeterministicManifestMetadata:
 
 
 class TestOperatorContract:
-    def test_stdout_only_concise_json(self, tmp_path, capsys):
+    def test_stdout_only_concise_json(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -619,7 +621,7 @@ class TestOperatorContract:
 
 
 class TestCrossRunEquality:
-    def test_independent_runs_produce_equal_three_file_bundle(self, tmp_path):
+    def test_independent_runs_produce_equal_three_file_bundle(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -659,7 +661,7 @@ class TestCrossRunEquality:
         }
         assert first_files == second_files
 
-    def test_three_file_byte_sizes_match_across_runs(self, tmp_path):
+    def test_three_file_byte_sizes_match_across_runs(self, tmp_path: Path) -> None:
         parquet = tmp_path / "source.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -701,7 +703,7 @@ class TestCrossRunEquality:
 
 
 class TestSyntheticParquetIntegration:
-    def test_exact_nested_struct_shape(self, tmp_path):
+    def test_exact_nested_struct_shape(self, tmp_path: Path) -> None:
         parquet = tmp_path / "fake.parquet"
         _write_synthetic_parquet(parquet)
         sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
@@ -733,7 +735,7 @@ class TestSyntheticParquetIntegration:
 
 
 class TestComparisonHelper:
-    def test_compare_fails_on_mismatch(self):
+    def test_compare_fails_on_mismatch(self) -> None:
         from medscale.dataset._pubmedqa_source import _record_to_envelope
 
         context = {

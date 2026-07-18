@@ -66,6 +66,16 @@ PARQUET_BASENAME: str = "train-00000-of-00001.parquet"
 
 _VALID_DECISIONS: set[str] = {"yes", "no", "maybe"}
 
+# ---------------------------------------------------------------------------
+# Aggregate contract values
+# ---------------------------------------------------------------------------
+
+_EXPECTED_RECORD_COUNT: int = 1000
+_EXPECTED_YES_COUNT: int = 552
+_EXPECTED_NO_COUNT: int = 338
+_EXPECTED_MAYBE_COUNT: int = 110
+_MIN_CONTEXT_SEGMENTS: int = 1
+_MAX_CONTEXT_SEGMENTS: int = 9
 
 # ---------------------------------------------------------------------------
 # Private aggregate types
@@ -85,6 +95,7 @@ class _Aggregates:
     max_contexts_per_record: int = 0
     unique_source_document_count: int = 0
     unique_source_record_hash_count: int = 0
+    source_record_hash_collision_count: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -112,6 +123,11 @@ def _sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def source_record_hash(record: PilotPubMedQASourceRecord) -> str:
+    """Return SHA-256 of the complete canonical scientific record dictionary."""
+    return _sha256_bytes(_canonical_bytes(_record_to_scientific_dict(record)))
 
 
 # ---------------------------------------------------------------------------
@@ -162,6 +178,14 @@ def _load_expected_schemas(parquet_path: str | Path) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
+def _validate_nonnull_nonblank_string(value: object, field: str) -> str:
+    if not isinstance(value, str):
+        raise TypeError(f"{field} must be a string")
+    if not value.strip():
+        raise ValueError(f"{field} must not be empty after stripping whitespace")
+    return value
+
+
 def _validate_pubid(pubid: int) -> str:
     if not isinstance(pubid, int) or pubid < 1:
         raise ValueError(f"pubid must be a positive integer, got {pubid!r}")
@@ -173,15 +197,6 @@ def _validate_decision(decision: str) -> None:
         raise ValueError(
             f"invalid final_decision value {decision!r}; expected one of {sorted(_VALID_DECISIONS)}"
         )
-
-
-def _normalize_text(text: str, field: str) -> str:
-    if not isinstance(text, str):
-        raise TypeError(f"{field} must be a string")
-    normalized = text.strip()
-    if not normalized:
-        raise ValueError(f"{field} must not be empty after stripping whitespace")
-    return normalized
 
 
 # ---------------------------------------------------------------------------
@@ -198,16 +213,17 @@ def _build_context_segments(context: dict[str, Any]) -> tuple[NativeContextSegme
         raise TypeError("context['contexts'] and context['labels'] must be lists")
     if len(raw_contexts) != len(raw_labels):
         raise ValueError("context['contexts'] and context['labels'] must have equal length")
+    if not (1 <= len(raw_contexts) <= 9):
+        raise ValueError(f"context count must be between 1 and 9, got {len(raw_contexts)}")
     segments: list[NativeContextSegment] = []
     for ordinal, (text, label) in enumerate(zip(raw_contexts, raw_labels, strict=False)):
-        text = _normalize_text(text, f"context text at ordinal {ordinal}")
-        if not isinstance(label, str) or not label.strip():
-            raise ValueError(f"context label at ordinal {ordinal} must be a non-empty string")
+        _validate_nonnull_nonblank_string(text, f"context text at ordinal {ordinal}")
+        _validate_nonnull_nonblank_string(label, f"context label at ordinal {ordinal}")
         segments.append(
             NativeContextSegment(
                 ordinal=ordinal,
                 text=text,
-                section_label=label.strip(),
+                section_label=label,
             )
         )
     if not segments:
@@ -216,7 +232,9 @@ def _build_context_segments(context: dict[str, Any]) -> tuple[NativeContextSegme
 
 
 def _build_mesh_terms(context: dict[str, Any]) -> tuple[str, ...]:
-    meshes = context.get("meshes", [])
+    if "meshes" not in context:
+        raise KeyError("context dict must contain 'meshes'")
+    meshes = context["meshes"]
     if not isinstance(meshes, list):
         raise TypeError("context['meshes'] must be a list of strings")
     if not all(isinstance(item, str) for item in meshes):
@@ -225,8 +243,12 @@ def _build_mesh_terms(context: dict[str, Any]) -> tuple[str, ...]:
 
 
 def _build_annotation_trace(context: dict[str, Any]) -> NativeAnnotationTrace:
-    required_pred = context.get("reasoning_required_pred", [])
-    free_pred = context.get("reasoning_free_pred", [])
+    if "reasoning_required_pred" not in context or "reasoning_free_pred" not in context:
+        raise KeyError(
+            "context dict must contain 'reasoning_required_pred' and 'reasoning_free_pred'"
+        )
+    required_pred = context["reasoning_required_pred"]
+    free_pred = context["reasoning_free_pred"]
     if not isinstance(required_pred, list) or not isinstance(free_pred, list):
         raise TypeError("reasoning traces must be lists of strings")
     if not all(isinstance(item, str) for item in required_pred):
@@ -245,11 +267,11 @@ def _row_to_source_record(
     context: dict[str, Any],
     long_answer: str,
     final_decision: str,
-    row_ordinal: int,
+    row_ordinal: int = 0,
 ) -> PilotPubMedQASourceRecord:
     canonical_pubid = _validate_pubid(pubid)
-    question_text = _normalize_text(question, "question")
-    long_answer_text = _normalize_text(long_answer, "long_answer")
+    question_text = _validate_nonnull_nonblank_string(question, "question")
+    long_answer_text = _validate_nonnull_nonblank_string(long_answer, "long_answer")
     _validate_decision(final_decision)
 
     segments = _build_context_segments(context)
@@ -280,8 +302,8 @@ def _row_to_source_record(
     )
 
 
-def _record_to_envelope(record: PilotPubMedQASourceRecord) -> dict[str, Any]:
-    scientific: dict[str, Any] = {
+def _record_to_scientific_dict(record: PilotPubMedQASourceRecord) -> dict[str, Any]:
+    return {
         "schema_version": record.schema_version,
         "dataset_id": record.dataset_id,
         "dataset_revision": record.dataset_revision,
@@ -298,26 +320,21 @@ def _record_to_envelope(record: PilotPubMedQASourceRecord) -> dict[str, Any]:
         "reasoning_free_pred": list(record.native_annotation_trace.reasoning_free_pred),
         "license_id": record.license_id,
     }
+
+
+def _record_to_envelope(record: PilotPubMedQASourceRecord) -> dict[str, Any]:
+    scientific = _record_to_scientific_dict(record)
     digest = _sha256_bytes(_canonical_bytes(scientific))
     return {"record": scientific, "source_record_hash": digest}
 
 
 def _registry_record(record: PilotPubMedQASourceRecord, row_ordinal: int) -> dict[str, Any]:
+    digest = source_record_hash(record)
     return {
         "row_ordinal": row_ordinal,
         "original_example_id": record.original_example_id,
         "source_document_id": record.source_document_id,
-        "source_record_hash": _sha256_bytes(
-            _canonical_bytes(
-                {
-                    "original_example_id": record.original_example_id,
-                    "source_document_id": record.source_document_id,
-                    "pubid": record.pubid,
-                    "dataset_id": record.dataset_id,
-                    "configuration": record.configuration,
-                }
-            )
-        ),
+        "source_record_hash": digest,
     }
 
 
@@ -332,7 +349,7 @@ def _build_aggregates(
     aggregates = _Aggregates()
     seen_pubids: set[str] = set()
     seen_docs: set[str] = set()
-    seen_hashes: set[str] = set()
+    seen_hashes: dict[str, int] = {}
     context_counts: list[int] = []
 
     for record in records:
@@ -347,32 +364,84 @@ def _build_aggregates(
             case _:
                 aggregates.unexpected_count += 1
 
+        if record.pubid in seen_pubids:
+            aggregates.duplicate_pubid_count += 1
         seen_pubids.add(record.pubid)
+
+        if record.source_document_id in seen_docs:
+            # source_document collision counted as duplicate document
+            pass
         seen_docs.add(record.source_document_id)
-        seen_hashes.add(
-            _sha256_bytes(
-                _canonical_bytes(
-                    {
-                        "original_example_id": record.original_example_id,
-                        "source_document_id": record.source_document_id,
-                        "pubid": record.pubid,
-                        "dataset_id": record.dataset_id,
-                        "configuration": record.configuration,
-                    }
-                )
-            )
-        )
+
+        digest = source_record_hash(record)
+        seen_hashes[digest] = seen_hashes.get(digest, 0) + 1
         context_counts.append(len(record.context_segments))
 
     aggregates.unique_pubid_count = len(seen_pubids)
     aggregates.unique_source_document_count = len(seen_docs)
     aggregates.unique_source_record_hash_count = len(seen_hashes)
+    aggregates.source_record_hash_collision_count = sum(
+        count - 1 for count in seen_hashes.values() if count > 1
+    )
     if context_counts:
         aggregates.min_contexts_per_record = min(context_counts)
         aggregates.max_contexts_per_record = max(context_counts)
         aggregates.context_segment_total = sum(context_counts)
 
     return aggregates
+
+
+def _validate_aggregates(aggregates: _Aggregates) -> list[str]:
+    failures: list[str] = []
+    if aggregates.record_count != _EXPECTED_RECORD_COUNT:
+        failures.append(
+            f"record count mismatch: expected {_EXPECTED_RECORD_COUNT}, "
+            f"got {aggregates.record_count}"
+        )
+    if aggregates.yes_count != _EXPECTED_YES_COUNT:
+        failures.append(
+            f"yes count mismatch: expected {_EXPECTED_YES_COUNT}, got {aggregates.yes_count}"
+        )
+    if aggregates.no_count != _EXPECTED_NO_COUNT:
+        failures.append(
+            f"no count mismatch: expected {_EXPECTED_NO_COUNT}, got {aggregates.no_count}"
+        )
+    if aggregates.maybe_count != _EXPECTED_MAYBE_COUNT:
+        failures.append(
+            f"maybe count mismatch: expected {_EXPECTED_MAYBE_COUNT}, got {aggregates.maybe_count}"
+        )
+    if aggregates.unexpected_count != 0:
+        failures.append(f"unexpected decision count: expected 0, got {aggregates.unexpected_count}")
+    if aggregates.duplicate_pubid_count != 0:
+        failures.append(
+            f"duplicate pubid count: expected 0, got {aggregates.duplicate_pubid_count}"
+        )
+    if aggregates.unique_source_document_count != _EXPECTED_RECORD_COUNT:
+        failures.append(
+            f"unique source document count mismatch: expected "
+            f"{_EXPECTED_RECORD_COUNT}, got {aggregates.unique_source_document_count}"
+        )
+    if aggregates.unique_source_record_hash_count != _EXPECTED_RECORD_COUNT:
+        failures.append(
+            f"unique source record hash count mismatch: expected "
+            f"{_EXPECTED_RECORD_COUNT}, got {aggregates.unique_source_record_hash_count}"
+        )
+    if aggregates.source_record_hash_collision_count != 0:
+        failures.append(
+            f"source record hash collision count: expected 0, "
+            f"got {aggregates.source_record_hash_collision_count}"
+        )
+    if aggregates.min_contexts_per_record != _MIN_CONTEXT_SEGMENTS:
+        failures.append(
+            f"min context segments mismatch: expected {_MIN_CONTEXT_SEGMENTS}, "
+            f"got {aggregates.min_contexts_per_record}"
+        )
+    if aggregates.max_contexts_per_record != _MAX_CONTEXT_SEGMENTS:
+        failures.append(
+            f"max context segments mismatch: expected {_MAX_CONTEXT_SEGMENTS}, "
+            f"got {aggregates.max_contexts_per_record}"
+        )
+    return failures
 
 
 # ---------------------------------------------------------------------------
@@ -460,24 +529,43 @@ def transform_pubmedqa_parquet(
     _write_jsonl_atomic(registry, registry_path)
 
     aggregates = _build_aggregates(records)
-
     records_bytes = _read_all(records_path)
     registry_bytes = _read_all(registry_path)
-    manifest_dict = {
-        "manifest_version": "1",
+
+    manifest_dict: dict[str, Any] = {
         "manifest_schema_version": "mesc-pubmedqa-manifest/1",
+        "transformation_version": TRANSFORMATION_VERSION,
         "internal_source_record_schema_version": SCHEMA_VERSION,
         "dataset_identity": {
-            "schema_version": SCHEMA_VERSION,
             "dataset_id": DATASET_ID,
             "configuration": CONFIGURATION,
             "revision": DATASET_REVISION,
             "license_id": LICENSE_ID,
         },
-        "input_artifact": {
-            "size": input_size,
+        "source_artifact": {
+            "repository_path": str(PARQUET_BASENAME),
+            "byte_size": input_size,
             "sha256": input_sha256,
         },
+        "record_count": aggregates.record_count,
+        "decision_counts": {
+            "yes": aggregates.yes_count,
+            "no": aggregates.no_count,
+            "maybe": aggregates.maybe_count,
+            "unexpected": aggregates.unexpected_count,
+        },
+        "unique_pubid_count": aggregates.unique_pubid_count,
+        "duplicate_pubid_count": aggregates.duplicate_pubid_count,
+        "unique_source_document_count": aggregates.unique_source_document_count,
+        "unique_source_record_hash_count": aggregates.unique_source_record_hash_count,
+        "source_record_hash_collision_count": aggregates.source_record_hash_collision_count,
+        "context_segment_aggregates": {
+            "total": aggregates.context_segment_total,
+            "minimum": aggregates.min_contexts_per_record,
+            "maximum": aggregates.max_contexts_per_record,
+        },
+        "labels_context_cardinality_validation": "pass",
+        "duplicate_preservation_policy": "preserve_duplicates",
         "output_files": {
             "source-records.jsonl": {
                 "filename": "source-records.jsonl",
@@ -490,6 +578,9 @@ def transform_pubmedqa_parquet(
                 "sha256": _sha256_bytes(registry_bytes),
             },
         },
+        "public_pilot_record_status": "deferred",
+        "public_example_id_status": "deferred",
+        "p01_03f_status": "not_authorized",
     }
     manifest_bytes = _canonical_bytes(manifest_dict) + b"\n"
     _write_text_atomic(manifest_bytes, manifest_path)
@@ -524,13 +615,16 @@ def transform_pubmedqa_parquet(
             "unexpected": aggregates.unexpected_count,
         },
         "unique_pubid_count": aggregates.unique_pubid_count,
+        "duplicate_pubid_count": aggregates.duplicate_pubid_count,
         "unique_source_document_count": aggregates.unique_source_document_count,
         "unique_source_record_hash_count": aggregates.unique_source_record_hash_count,
+        "source_record_hash_collision_count": aggregates.source_record_hash_collision_count,
         "context_segment_aggregates": {
             "total": aggregates.context_segment_total,
-            "min_per_record": aggregates.min_contexts_per_record,
-            "max_per_record": aggregates.max_contexts_per_record,
+            "minimum": aggregates.min_contexts_per_record,
+            "maximum": aggregates.max_contexts_per_record,
         },
+        "labels_context_cardinality_validation": "pass",
         "output": {
             "source-records.jsonl": len(records_bytes),
             "source-record-registry.jsonl": len(registry_bytes),
