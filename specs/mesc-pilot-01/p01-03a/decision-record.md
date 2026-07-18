@@ -63,9 +63,51 @@ Rejected alternative: blanket execution authorization through acquisition.
 
 ## Retention and cleanup
 
-Decision: not yet determined.
+Decision: adopted bounded retention and explicit cleanup policy.
 
-Rationale: the current readiness package does not contain sufficient evidence to set retention duration, secure-erasure requirements, or cleanup ownership. Future governance must answer these questions before or alongside acquisition authorization.
+Retention:
+
+* The immutable PubMedQA artifact, once separately authorized and acquired, may be retained locally through:
+  * P01-03 validation
+  * P01-04 split and leakage audit
+  * Pilot-01 experiment execution
+  * research-paper reproducibility review
+* It must not be uploaded to Git, GitHub, Hugging Face, cloud backup, OneDrive, or a public artifact store.
+* Retention does not authorize redistribution.
+
+Cleanup trigger:
+
+Delete the local raw artifact when the earliest of these occurs:
+
+* the dataset revision is superseded and no longer required for audit
+* Pilot-01 is abandoned
+* acquisition authorization is revoked
+* the research project is formally archived and the reproducibility review is complete
+
+Default cleanup deadline:
+
+```text
+Within 30 calendar days of the applicable cleanup trigger
+```
+
+Deletion method:
+
+* ordinary filesystem deletion is sufficient under the current classification because this is public research-source material rather than secrets, credentials, patient records, or private health information
+* do not claim guaranteed secure erasure on SSD storage
+* record deletion time, operator, path, revision, and expected digest
+* confirm the path no longer exists or is empty
+* retain only the repository-safe scientific identity record
+
+Cleanup owner:
+
+```text
+Primary owner: founder/operator of the MedScale research environment
+Execution agent: Hermes only under explicit cleanup authorization
+```
+
+Hermes must not delete acquired artifacts automatically without an explicit cleanup instruction.
+
+Rationale: the current readiness package now contains sufficient evidence to set retention duration, deletion scope, and ownership for cleanup. Future governance must still record actual deletion evidence when cleanup is executed.
 
 ## Boundary between P01-03B and P01-03C
 
