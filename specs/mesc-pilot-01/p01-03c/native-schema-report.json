@@ -1,0 +1,138 @@
+{
+  "schema_version": "1.0",
+  "status": "verified",
+  "inspection_timestamp_utc": "2026-07-18T00:26:01.657484+00:00",
+  "dataset": {
+    "repository": "qiaojin/PubMedQA",
+    "configuration": "pqa_labeled",
+    "revision": "9001f2853fb87cab8d220904e0de81ac6973b318"
+  },
+  "artifact": {
+    "repository_path": "pqa_labeled/train-00000-of-00001.parquet",
+    "size_bytes": 1075513,
+    "pre_inspection_sha256": "3d56bd1abc11884579ecc3aab9dd3cdfce8b7cf54715daeca93b8022b7be231c",
+    "post_inspection_sha256": "3d56bd1abc11884579ecc3aab9dd3cdfce8b7cf54715daeca93b8022b7be231c"
+  },
+  "inspection_environment": {
+    "python_version": "3.12.13",
+    "pyarrow_version": "25.0.0"
+  },
+  "parquet_metadata": {
+    "format_version": "2.6",
+    "created_by": "parquet-cpp-arrow version 12.0.0",
+    "num_rows": 1000,
+    "num_row_groups": 1,
+    "num_columns": 9,
+    "row_group_rows": [1000]
+  },
+  "native_top_level_schema": [
+    {"name": "pubid", "arrow_type": "int32", "nullable": true},
+    {"name": "question", "arrow_type": "string", "nullable": true},
+    {"name": "context", "arrow_type": "struct<contexts: list<item: string>, labels: list<item: string>, meshes: list<item: string>, reasoning_required_pred: list<item: string>, reasoning_free_pred: list<item: string>>", "nullable": true},
+    {"name": "long_answer", "arrow_type": "string", "nullable": true},
+    {"name": "final_decision", "arrow_type": "string", "nullable": true}
+  ],
+  "nested_context_schema": {
+    "top_level_type": "struct<contexts: list<item: string>, labels: list<item: string>, meshes: list<item: string>, reasoning_required_pred: list<item: string>, reasoning_free_pred: list<item: string>>",
+    "nested_members": ["contexts", "labels", "meshes", "reasoning_required_pred", "reasoning_free_pred"],
+    "list_of_strings_confirmed": true,
+    "struct_encountered": true
+  },
+  "nested_member_presence_counts": {
+    "contexts": 1000,
+    "labels": 1000,
+    "meshes": 1000,
+    "reasoning_required_pred": 1000,
+    "reasoning_free_pred": 1000
+  },
+  "nested_member_types": {
+    "contexts": "list<item: string>",
+    "labels": "list<item: string>",
+    "meshes": "list<item: string>",
+    "reasoning_required_pred": "list<item: string>",
+    "reasoning_free_pred": "list<item: string>"
+  },
+  "contexts_list_cardinality": {
+    "min_entries_per_row": 1,
+    "max_entries_per_row": 9
+  },
+  "context_element_quality": {
+    "null_context_entries": 0,
+    "blank_context_entries": 0
+  },
+  "required_column_audit": {
+    "required_columns": ["pubid", "question", "context", "long_answer", "final_decision"],
+    "present": true
+  },
+  "row_and_split_audit": {
+    "row_count": 1000,
+    "row_group_count": 1,
+    "rows_per_row_group": [1000],
+    "top_level_column_count": 9,
+    "artifact_count": 1,
+    "native_split": "train"
+  },
+  "null_counts": {
+    "pubid": 0,
+    "question": 0,
+    "context": 0,
+    "long_answer": 0,
+    "final_decision": 0
+  },
+  "blank_counts": {
+    "question": 0,
+    "long_answer": 0,
+    "final_decision": 0
+  },
+  "final_decision_audit": {
+    "yes": 552,
+    "no": 338,
+    "maybe": 110,
+    "unexpected_values": [],
+    "total_classified": 1000
+  },
+  "pubid_audit": {
+    "null_count": 0,
+    "non_integer_count": 0,
+    "non_positive_count": 0,
+    "unique_count": 1000,
+    "duplicate_count": 0
+  },
+  "context_shape_audit": {
+    "null_context_rows": 0,
+    "missing_contexts_member": 0,
+    "non_list_contexts": 0,
+    "empty_contexts_lists": 0,
+    "null_context_entries": 0,
+    "blank_context_entries": 0,
+    "min_context_entries_per_row": 1,
+    "max_context_entries_per_row": 9,
+    "rows_with_labels": 1000,
+    "rows_with_meshes": 1000,
+    "rows_with_reasoning_required_pred": 1000,
+    "rows_with_reasoning_free_pred": 1000,
+    "context_type_distribution": {
+      "struct_with_list_members": 1000
+    }
+  },
+  "source_document_uniqueness": {
+    "total_rows": 1000,
+    "unique_pubid_count": 1000,
+    "duplicate_pubid_count": 0,
+    "assumption": "one native PubMedQA row per unique pubid",
+    "satisfied": true
+  },
+  "schema_gaps_requiring_p01_03d": [
+    "The native context field is a structured object rather than only a list of evidence snippets.",
+    "The contexts member contains the abstract-snippet list.",
+    "labels, meshes, reasoning_required_pred, and reasoning_free_pred are additional native auxiliary members requiring an explicit mapping decision.",
+    "No field may be silently discarded or semantically reinterpreted."
+  ],
+  "authorization": {
+    "p01_03c_authorized": true,
+    "p01_03c_complete": true,
+    "p01_03d_required": true,
+    "p01_03d_authorized": false,
+    "transformation_authorized": false
+  }
+}
