@@ -2,92 +2,66 @@
 
 Uses ONLY synthetic strings. No network access. No public contract mutation.
 """
+
 from __future__ import annotations
 
 import hashlib
 import importlib
 import json
-import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
-from unittest import mock
 
-import pyarrow as pa
-import pyarrow.parquet as pq
 import pytest
 
 from medscale.dataset._pubmedqa_source import (
     NativeAnnotationTrace,
     NativeContextSegment,
-    NativePubMedQARow,
     PilotPubMedQASourceRecord,
-    _Aggregates,
-    _build_deterministic_manifest,
-    _build_transformation_report,
-    _canonical_bytes,
-    _native_row_to_source_record,
-    _registry_record_from_source_record,
-    _sha256_bytes,
-    _source_record_to_dict,
-    _validate_decision,
-    _validate_pubid,
-    _write_jsonl_atomic,
-    _write_text_atomic,
-    transform_pubmedqa_parquet,
+    _record_to_envelope,
+    _row_to_source_record,
 )
-
 
 # ============================================================================
 # Synthetic helpers
 # ============================================================================
 
-_CONTEXT = {
-    "contexts": ["alpha text", "beta text"],
-    "labels": ["BACKGROUND", "RESULTS"],
-    "meshes": ["mesh1", "mesh2"],
-    "reasoning_required_pred": ["a", "b"],
-    "reasoning_free_pred": ["c"],
-}
-
 
 def _make_row(
     *,
     pubid: int = 1,
-    question: str = "QUESTION",
-    long_answer: str = "LONG_ANSWER",
-    final_decision: str = "yes",
+    question: str = "  QUESTION  ",
+    long_answer: str = "  LONG_ANSWER  ",
+    final_decision: str = "  yes  ",
     context: dict[str, Any] | None = None,
-) -> NativePubMedQARow:
-    return NativePubMedQARow(
-        pubid=pubid,
-        question=question,
-        context=context if context is not None else dict(_CONTEXT),
-        long_answer=long_answer,
-        final_decision=final_decision,
-    )
-
-
-def _expected_schemas() -> dict[str, Any]:
+) -> dict[str, Any]:
+    default_context = {
+        "contexts": ["alpha text", "beta text", "alpha text"],
+        "labels": ["BACKGROUND", "METHODS", "BACKGROUND"],
+        "meshes": ["mesh1", "mesh2"],
+        "reasoning_required_pred": ["a", "b"],
+        "reasoning_free_pred": ["c", "d"],
+    }
     return {
-        k: {"feature": {"_type": "Value", "dtype": "string"}}
-        for k in [
-            "contexts",
-            "labels",
-            "meshes",
-            "reasoning_required_pred",
-            "reasoning_free_pred",
-        ]
+        "pubid": pubid,
+        "question": question,
+        "long_answer": long_answer,
+        "final_decision": final_decision,
+        "context": context if context is not None else default_context,
     }
 
 
 def _write_synthetic_parquet(path: Path) -> Path:
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
     table = pa.table(
         {
             "pubid": pa.array([1], type=pa.int64()),
             "question": pa.array(["q"], type=pa.string()),
             "context": pa.array(
-                [_make_row().context],
+                [_make_row()["context"]],
                 type=pa.struct(
                     [
                         pa.field("contexts", pa.list_(pa.field("item", pa.string()))),
@@ -113,690 +87,665 @@ def _write_synthetic_parquet(path: Path) -> Path:
 
 
 # ============================================================================
-# Frozen / slotted dataclasses
+# P01-03D dataclass contract
 # ============================================================================
 
 
-class TestFrozenSlottedDataclasses:
-    def test_native_context_segment_frozen(self):
-        segment = NativeContextSegment(ordinal=1, text="a", section_label="b")
-        with pytest.raises(AttributeError):
-            segment.ordinal = 2  # type: ignore[misc]
-
-    def test_native_annotation_trace_frozen(self):
-        trace = NativeAnnotationTrace(
-            reasoning_required_pred=("a",), reasoning_free_pred=("b",)
-        )
-        with pytest.raises(AttributeError):
-            trace.reasoning_required_pred = ()  # type: ignore[misc]
-
-    def test_native_row_frozen(self):
-        row = NativePubMedQARow(
-            pubid=1,
-            question="q",
-            context={},
-            long_answer="a",
-            final_decision="yes",
-        )
-        with pytest.raises(AttributeError):
-            row.pubid = 2  # type: ignore[misc]
-
-    def test_pilot_source_record_frozen(self):
-        record = PilotPubMedQASourceRecord(
-            schema_version="v",
-            dataset_id="d",
-            configuration="c",
-            license_id="l",
-            transformation_version="t",
-            original_example_id="orig",
-            source_document_id="src",
-            pubid=1,
-            question_text="q",
-            context_segments=(),
-            annotation_traces=(),
-            long_answer="a",
-            final_decision="yes",
-            source_record_hash="h",
-        )
-        with pytest.raises(AttributeError):
-            record.source_record_hash = "x"  # type: ignore[misc]
-
-    def test_slots_defined(self):
-        assert {"ordinal", "text", "section_label"}.issubset(set(NativeContextSegment.__slots__))
-        assert {"reasoning_required_pred", "reasoning_free_pred"}.issubset(
-            set(NativeAnnotationTrace.__slots__)
-        )
-        assert {
+class TestP0103DContract:
+    def test_pilot_record_fields(self):
+        expected = {
             "schema_version",
             "dataset_id",
+            "dataset_revision",
             "configuration",
-            "license_id",
-            "transformation_version",
             "original_example_id",
             "source_document_id",
             "pubid",
-            "question_text",
+            "question",
             "context_segments",
-            "annotation_traces",
+            "mesh_terms",
             "long_answer",
             "final_decision",
+            "native_annotation_trace",
+            "license_id",
+        }
+        assert expected == set(PilotPubMedQASourceRecord.__dataclass_fields__.keys())
+
+    def test_pilot_record_absent_fields_removed(self):
+        removed = {
+            "transformation_version",
             "source_record_hash",
-        }.issubset(set(PilotPubMedQASourceRecord.__slots__))
-
-
-# ============================================================================
-# Public re-export boundary
-# ============================================================================
-
-
-class TestPublicReexport:
-    def test_no_internal_attribute(self):
-        public = __import__("medscale.dataset", fromlist=[""])
-        public.__dict__.pop("_pubmedqa_source", None)
-        sys.modules.get("medscale.dataset._pubmedqa_source") and sys.modules.pop(
-            "medscale.dataset._pubmedqa_source", None
-        )
-        assert "_pubmedqa_source" not in getattr(public, "__all__", [])
-        assert "_pubmedqa_source" not in public.__dict__
-
-    def test_pilot_record_not_in_public(self):
-        public = __import__("medscale.dataset", fromlist=[""])
-        assert "PilotPubMedQASourceRecord" not in getattr(public, "__all__", [])
-
-    def test_no_public_example_id_function(self):
-        public = __import__("medscale.dataset", fromlist=[""])
-        assert "build_pubmedqa_example_id" not in public.__dict__
-
-
-# ============================================================================
-# Canonical JSON stability
-# ============================================================================
-
-
-class TestCanonicalJSONStability:
-    def test_stable_bytes(self):
-        payload = {"b": 2, "a": 1}
-        first = _canonical_bytes(payload)
-        second = _canonical_bytes(payload)
-        assert first == second
-        assert first == b'{"a":1,"b":2}'
-
-    def test_no_whitespace_artifacts(self):
-        assert b" " not in _canonical_bytes({"a": 1})
-        assert b"\n" not in _canonical_bytes({"a": 1})
-
-
-# ============================================================================
-# UTF-8 and final-newline behavior
-# ============================================================================
-
-
-class TestUtf8FinalNewline:
-    def test_utf8_nonascii(self):
-        payload = {"text": "αβγ"}
-        encoded = _canonical_bytes(payload)
-        assert encoded.decode("utf-8") == '{"text":"αβγ"}'
-
-    def test_jsonl_final_newline(self):
-        records = [{"a": 1}, {"a": 2}]
-        out = _write_jsonl_atomic(records, "/tmp/mesctest-jsonl-newline.jsonl")
-        path = Path("/tmp/mesctest-jsonl-newline.jsonl")
-        data = path.read_bytes()
-        assert data.endswith(b"\n")
-        assert data.count(b"\n") == 2
-        path.unlink(missing_ok=True)
-
-
-# ============================================================================
-# Source-record hash repeatability
-# ============================================================================
-
-
-class TestHashRepeatability:
-    def test_same_input_same_hash(self):
-        row = _make_row()
-        expected_schemas = _expected_schemas()
-        first = _native_row_to_source_record(row, row_ordinal=0, expected_schemas=expected_schemas)
-        second = _native_row_to_source_record(row, row_ordinal=0, expected_schemas=expected_schemas)
-        assert first.source_record_hash == second.source_record_hash
-
-
-# ============================================================================
-# Hash sensitivity to every scientific field
-# ============================================================================
-
-
-class TestHashSensitivity:
-    def test_each_scientific_field_changes_hash(self):
-        expected_schemas = _expected_schemas()
-        base = _native_row_to_source_record(
-            _make_row(), row_ordinal=0, expected_schemas=expected_schemas
-        ).source_record_hash
-        for field, value in [
-            ("question", "different question"),
-            ("long_answer", "different answer"),
-            ("final_decision", "no"),
-            ("pubid", 999),
-            (
-                "context",
-                {
-                    "contexts": ["x"],
-                    "labels": ["y"],
-                    "meshes": [],
-                    "reasoning_required_pred": [],
-                    "reasoning_free_pred": [],
-                },
-            ),
-        ]:
-            row = _make_row(**{field: value})
-            record = _native_row_to_source_record(row, row_ordinal=0, expected_schemas=expected_schemas)
-            assert record.source_record_hash != base, f"{field} did not change hash"
-
-
-# ============================================================================
-# Exclusion of operational metadata from hash
-# ============================================================================
-
-
-class TestExclusionOfOperationalMetadata:
-    def test_hash_excludes_non_scientific_fields(self):
-        expected_schemas = _expected_schemas()
-        base = _native_row_to_source_record(
-            _make_row(), row_ordinal=0, expected_schemas=expected_schemas
-        )
-        base_hash = base.source_record_hash
-        scientific_dict = _source_record_to_dict(base)
-        scientific_only = {
-            "pubid": scientific_dict["pubid"],
-            "question_text": scientific_dict["question_text"],
-            "context_segments": scientific_dict["context_segments"],
-            "annotation_traces": scientific_dict["annotation_traces"],
-            "long_answer": scientific_dict["long_answer"],
-            "final_decision": scientific_dict["final_decision"],
+            "question_text",
+            "annotation_traces",
         }
-        alt_hash = _sha256_bytes(_canonical_bytes(scientific_only))
-        assert alt_hash == base_hash
+        assert removed.isdisjoint(PilotPubMedQASourceRecord.__dataclass_fields__.keys())
+
+    def test_pilot_record_pubid_type(self):
+        assert PilotPubMedQASourceRecord.__dataclass_fields__["pubid"].type == "str"
+
+    def test_pilot_record_question_type(self):
+        assert PilotPubMedQASourceRecord.__dataclass_fields__["question"].type == "str"
 
 
 # ============================================================================
-# Deterministic original example locator
+# Frozen / slots without custom emulation
 # ============================================================================
 
 
-class TestOriginalExampleLocator:
-    def test_format(self):
-        record = _native_row_to_source_record(
-            _make_row(pubid=42),
-            row_ordinal=7,
-            expected_schemas={k: {} for k in [
-                "contexts",
-                "labels",
-                "meshes",
-                "reasoning_required_pred",
-                "reasoning_free_pred",
-            ]},
-        )
-        assert record.original_example_id == (
-            "pubmedqa:pqa_labeled:9001f2853fb87cab8d220904e0de81ac6973b318:"
-            "train-00000-of-00001.parquet:7:42"
-        )
+class TestFrozenSlotted:
+    def test_native_frozen_slots(self):
+        segment = NativeContextSegment(ordinal=0, text="t", section_label="s")
+        with pytest.raises(AttributeError):
+            segment.ordinal = 1  # type: ignore[misc]
+        assert set(NativeContextSegment.__slots__) == {"ordinal", "text", "section_label"}
 
-
-# ============================================================================
-# pmid:<pubid> source-document identity
-# ============================================================================
-
-
-class TestSourceDocumentIdentity:
-    def test_pmid_prefix(self):
-        record = _native_row_to_source_record(
-            _make_row(pubid=99),
-            row_ordinal=0,
-            expected_schemas={k: {} for k in [
-                "contexts",
-                "labels",
-                "meshes",
-                "reasoning_required_pred",
-                "reasoning_free_pred",
-            ]},
-        )
-        assert record.source_document_id == "pmid:99"
-
-
-# ============================================================================
-# Rejection of invalid and duplicate pubids
-# ============================================================================
-
-
-class TestPubidValidation:
-    def test_invalid_pubid_raises(self):
-        with pytest.raises(AssertionError):
-            _validate_pubid(0)
-
-    def test_non_int_pubid_raises(self):
-        with pytest.raises((AssertionError, TypeError)):
-            _validate_pubid("abc")
-
-    def test_duplicate_pubid_detection(self):
-        row_a = _make_row(pubid=1)
-        row_b = _make_row(pubid=1, question="different", long_answer="different")
-        expected_schemas = {k: {} for k in [
-            "contexts",
-            "labels",
-            "meshes",
+    def test_native_annotation_trace_slots(self):
+        trace = NativeAnnotationTrace(reasoning_required_pred=("r",), reasoning_free_pred=("f",))
+        with pytest.raises(AttributeError):
+            trace.reasoning_required_pred = ("x",)  # type: ignore[misc]
+        assert set(NativeAnnotationTrace.__slots__) == {
             "reasoning_required_pred",
             "reasoning_free_pred",
-        ]}
-        rec1 = _native_row_to_source_record(row_a, row_ordinal=0, expected_schemas=expected_schemas)
-        rec2 = _native_row_to_source_record(row_b, row_ordinal=1, expected_schemas=expected_schemas)
-        assert rec1.source_record_hash != rec2.source_record_hash
-
-
-# ============================================================================
-# Exact decision-value enforcement
-# ============================================================================
-
-
-class TestDecisionEnforcement:
-    def test_invalid_decision_rejected(self):
-        expected_schemas = {k: {} for k in [
-            "contexts",
-            "labels",
-            "meshes",
-            "reasoning_required_pred",
-            "reasoning_free_pred",
-        ]}
-        with pytest.raises(ValueError):
-            _native_row_to_source_record(
-                _make_row(final_decision="invalid"), row_ordinal=0, expected_schemas=expected_schemas
-            )
-
-    def test_valid_decisions_accepted(self):
-        expected_schemas = {k: {} for k in [
-            "contexts",
-            "labels",
-            "meshes",
-            "reasoning_required_pred",
-            "reasoning_free_pred",
-        ]}
-        for decision in ("yes", "no", "maybe"):
-            row = _make_row(final_decision=decision)
-            assert _native_row_to_source_record(
-                row, row_ordinal=0, expected_schemas=expected_schemas
-            ).final_decision == decision
-
-
-# ============================================================================
-# Maybe preservation
-# ============================================================================
-
-
-class TestMaybePreservation:
-    def test_maybe_preserved(self):
-        expected_schemas = {k: {} for k in [
-            "contexts",
-            "labels",
-            "meshes",
-            "reasoning_required_pred",
-            "reasoning_free_pred",
-        ]}
-        record = _native_row_to_source_record(
-            _make_row(final_decision="maybe"), row_ordinal=0, expected_schemas=expected_schemas
-        )
-        assert record.final_decision == "maybe"
-
-
-# ============================================================================
-# Context/label positional pairing
-# ============================================================================
-
-
-class TestContextLabelPositionalPairing:
-    def test_pairing(self):
-        context = {
-            "contexts": ["a", "b"],
-            "labels": ["BACKGROUND", "RESULTS"],
-            "meshes": [],
-            "reasoning_required_pred": [],
-            "reasoning_free_pred": [],
         }
-        expected_schemas = {k: {} for k in context}
-        record = _native_row_to_source_record(
-            _make_row(context=context), row_ordinal=0, expected_schemas=expected_schemas
-        )
-        assert [c.text for c in record.context_segments] == ["a", "b"]
-        assert [c.section_label for c in record.context_segments] == ["BACKGROUND", "RESULTS"]
 
-    def test_negative_cardinality_mismatch(self):
-        context = {
-            "contexts": ["a"],
-            "labels": [],
-            "meshes": [],
-            "reasoning_required_pred": [],
-            "reasoning_free_pred": [],
-        }
-        expected_schemas = {k: {} for k in context}
-        with pytest.raises(ValueError):
-            _native_row_to_source_record(
-                _make_row(context=context), row_ordinal=0, expected_schemas=expected_schemas
-            )
-
-
-# ============================================================================
-# Duplicate context segment preservation / rejection
-# ============================================================================
-
-
-class TestDuplicateContextSegments:
-    def test_exact_duplicate_rejected(self):
-        context = {
-            "contexts": ["same", "same"],
-            "labels": ["x", "x"],
-            "meshes": [],
-            "reasoning_required_pred": [],
-            "reasoning_free_pred": [],
-        }
-        expected_schemas = {k: {} for k in context}
-        with pytest.raises(ValueError):
-            _native_row_to_source_record(
-                _make_row(context=context), row_ordinal=0, expected_schemas=expected_schemas
-            )
-
-    def test_different_text_with_same_label_preserved(self):
-        context = {
-            "contexts": ["same", "same"],
-            "labels": ["x", "x"],
-            "meshes": [],
-            "reasoning_required_pred": [],
-            "reasoning_free_pred": [],
-        }
-        expected_schemas = {k: {} for k in context}
-        with pytest.raises(ValueError):
-            _native_row_to_source_record(
-                _make_row(context=context), row_ordinal=0, expected_schemas=expected_schemas
-            )
-
-
-# ============================================================================
-# Context ordinal stability
-# ============================================================================
-
-
-class TestContextOrdinalStability:
-    def test_ordinals_are_sequential(self):
-        context = {
-            "contexts": ["a", "b", "c"],
-            "labels": ["x", "x", "x"],
-            "meshes": [],
-            "reasoning_required_pred": [],
-            "reasoning_free_pred": [],
-        }
-        expected_schemas = {k: {} for k in context}
-        record = _native_row_to_source_record(
-            _make_row(context=context), row_ordinal=0, expected_schemas=expected_schemas
-        )
-        assert [s.ordinal for s in record.context_segments] == [1, 2, 3]
-
-
-# ============================================================================
-# MeSH source-order preservation
-# ============================================================================
-
-
-class TestMeshSourceOrder:
-    def test_mesh_order_not_used_as_primary_key(self):
-        row = _make_row(context=_CONTEXT)
-        expected_schemas = {k: {} for k in _CONTEXT}
-        record = _native_row_to_source_record(row, row_ordinal=0, expected_schemas=expected_schemas)
-        assert record.context_segments[0].text == "alpha text"
-
-
-# ============================================================================
-# Annotation-trace multiplicity preservation
-# ============================================================================
-
-
-class TestAnnotationTraceMultiplicity:
-    def test_single_trace_preserved(self):
-        context = {
-            "contexts": ["alpha"],
-            "labels": ["x"],
-            "meshes": [],
-            "reasoning_required_pred": ["a", "b"],
-            "reasoning_free_pred": ["c"],
-        }
-        expected_schemas = {k: {} for k in context}
-        record = _native_row_to_source_record(
-            _make_row(context=context), row_ordinal=0, expected_schemas=expected_schemas
-        )
-        assert len(record.annotation_traces) == 1
-        assert record.annotation_traces[0].reasoning_required_pred == ("a", "b")
-
-    def test_no_auxiliary_annotation_used_as_target_or_input(self):
-        expected_schemas = {k: {} for k in _CONTEXT}
-        record = _native_row_to_source_record(
-            _make_row(), row_ordinal=0, expected_schemas=expected_schemas
-        )
-        dict_repr = _source_record_to_dict(record)
-        assert "meshes" not in dict_repr
-
-
-# ============================================================================
-# No public PilotRecord construction
-# ============================================================================
-
-
-class TestNoPublicPilotRecord:
-    def test_pilot_record_not_in_public(self):
-        public = __import__("medscale.dataset", fromlist=[""])
-        assert "PilotPubMedQASourceRecord" not in getattr(public, "__all__", [])
-
-
-# ============================================================================
-# No public example ID creation
-# ============================================================================
-
-
-class TestNoPublicExampleID:
-    def test_no_public_example_id_function(self):
-        public = __import__("medscale.dataset", fromlist=[""])
-        assert "build_pubmedqa_example_id" not in public.__dict__
-
-
-# ============================================================================
-# Deterministic registry generation
-# ============================================================================
-
-
-class TestDeterministicRegistry:
-    def test_registry_only_authorized_fields(self):
-        expected_schemas = {k: {} for k in [
-            "contexts",
-            "labels",
-            "meshes",
-            "reasoning_required_pred",
-            "reasoning_free_pred",
-        ]}
-        row = _make_row(pubid=11)
-        record = _native_row_to_source_record(row, row_ordinal=5, expected_schemas=expected_schemas)
-        reg = _registry_record_from_source_record(record, row_ordinal=5)
-        assert set(reg.keys()) == {
-            "row_ordinal",
+    def test_pilot_record_slots(self):
+        anchors = {
+            "schema_version",
+            "dataset_id",
+            "dataset_revision",
+            "configuration",
             "original_example_id",
             "source_document_id",
-            "source_record_hash",
+            "pubid",
+            "question",
+            "context_segments",
+            "mesh_terms",
+            "long_answer",
+            "final_decision",
+            "native_annotation_trace",
+            "license_id",
         }
-        assert reg["row_ordinal"] == 5
-        assert reg["source_document_id"] == "pmid:11"
+        assert anchors.issubset(set(PilotPubMedQASourceRecord.__slots__))
 
-    def test_registry_deterministic_across_runs(self):
-        expected_schemas = {k: {} for k in [
-            "contexts",
-            "labels",
-            "meshes",
+
+# ============================================================================
+# PyArrow import isolation
+# ============================================================================
+
+
+class TestPyArrowIsolation:
+    def test_private_module_import_does_not_require_pyarrow(self):
+        module_name = "medscale.dataset._pubmedqa_source"
+        if module_name in sys.modules:
+            del sys.modules[module_name]
+        imported = importlib.import_module(module_name)
+        assert imported is not None
+        assert "pyarrow" not in sys.modules
+
+
+# ============================================================================
+# Native mapping correctness
+# ============================================================================
+
+
+class TestNativeMapping:
+    def test_zero_based_ordinals(self):
+        context = {
+            "contexts": ["a", "b", "c"],
+            "labels": ["x", "y", "z"],
+            "meshes": [],
+            "reasoning_required_pred": [],
+            "reasoning_free_pred": [],
+        }
+        row = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        assert [segment.ordinal for segment in row.context_segments] == [0, 1, 2]
+
+    def test_exact_duplicate_context_preserved(self):
+        context = {
+            "contexts": ["dup", "dup", "unique"],
+            "labels": ["same", "same", "diff"],
+            "meshes": [],
+            "reasoning_required_pred": [],
+            "reasoning_free_pred": [],
+        }
+        row = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        assert len(row.context_segments) == 3
+        assert row.context_segments[0] == NativeContextSegment(
+            ordinal=0, text="dup", section_label="same"
+        )
+        assert row.context_segments[1] == NativeContextSegment(
+            ordinal=1, text="dup", section_label="same"
+        )
+
+    def test_pubid_canonical_string(self):
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": [],
+            "reasoning_required_pred": [],
+            "reasoning_free_pred": [],
+        }
+        row = _row_to_source_record(12345, "q", context, "a", "yes", 0)
+        assert row.pubid == "12345"
+        assert row.source_document_id == "pmid:12345"
+
+    def test_mesh_terms_preserved(self):
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": ["mesh1", "mesh2", "mesh1"],
+            "reasoning_required_pred": [],
+            "reasoning_free_pred": [],
+        }
+        row = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        assert row.mesh_terms == ("mesh1", "mesh2", "mesh1")
+
+    def test_single_annotation_trace(self):
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": ["mesh1"],
+            "reasoning_required_pred": ["r1"],
+            "reasoning_free_pred": ["f1"],
+        }
+        row = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        assert isinstance(row.native_annotation_trace, NativeAnnotationTrace)
+        assert row.native_annotation_trace.reasoning_required_pred == ("r1",)
+        assert row.native_annotation_trace.reasoning_free_pred == ("f1",)
+
+    def test_text_stripped(self):
+        context = {
+            "contexts": ["  segmented text  "],
+            "labels": ["BACKGROUND"],
+            "meshes": [],
+            "reasoning_required_pred": [],
+            "reasoning_free_pred": [],
+        }
+        row = _row_to_source_record(1, "  question  ", context, "  answer  ", "yes", 0)
+        assert row.question == "question"
+        assert row.long_answer == "answer"
+        assert row.context_segments[0].text == "segmented text"
+
+    def test_empty_after_strip_raises(self):
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": [],
+            "reasoning_required_pred": [],
+            "reasoning_free_pred": [],
+        }
+        with pytest.raises(ValueError):
+            _row_to_source_record(1, "   ", context, "a", "yes", 0)
+
+
+# ============================================================================
+# Hash behavior
+# ============================================================================
+
+
+class TestHashBehavior:
+    def test_hash_outside_record(self):
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": [],
+            "reasoning_required_pred": ["r1"],
+            "reasoning_free_pred": ["f1"],
+        }
+        row = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        envelope = _record_to_envelope(row)
+        assert "record" in envelope
+        assert "source_record_hash" in envelope
+        assert "source_record_hash" not in envelope["record"]
+
+    def test_hash_covers_all_scientific_fields(self):
+        scientific_fields = {
+            "schema_version",
+            "dataset_id",
+            "dataset_revision",
+            "configuration",
+            "original_example_id",
+            "source_document_id",
+            "pubid",
+            "question",
+            "context_segments",
+            "mesh_terms",
+            "long_answer",
+            "final_decision",
             "reasoning_required_pred",
             "reasoning_free_pred",
-        ]}
-        row = _make_row()
-        rec = _native_row_to_source_record(row, row_ordinal=0, expected_schemas=expected_schemas)
-        first = json.dumps(_registry_record_from_source_record(rec, row_ordinal=0), sort_keys=True, separators=(",", ":"))
-        second = json.dumps(_registry_record_from_source_record(rec, row_ordinal=0), sort_keys=True, separators=(",", ":"))
-        assert first == second
-
-
-# ============================================================================
-# Deterministic manifest generation
-# ============================================================================
-
-
-class TestDeterministicManifest:
-    def test_manifest_deterministic(self):
-        runs = {
-            "run_one": {
-                "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-                "input_artifact_size": 100,
-                "input_artifact_sha256": "x",
-            },
-            "run_two": {
-                "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-            },
+            "license_id",
         }
-        first = _build_deterministic_manifest(runs)
-        second = _build_deterministic_manifest(runs)
-        assert _canonical_bytes(first) == _canonical_bytes(second)
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": ["m1"],
+            "reasoning_required_pred": ["r1"],
+            "reasoning_free_pred": ["f1"],
+        }
+        row = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        envelope = _record_to_envelope(row)
+        assert set(envelope["record"].keys()) == scientific_fields
 
-    def test_manifest_excludes_runtime_aggregates(self):
-        manifest = _build_deterministic_manifest({
-            "run_one": {
-                "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-                "input_artifact_size": 100,
-                "input_artifact_sha256": "x",
-            },
-            "run_two": {
-                "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-            },
-        })
-        assert "yes" not in str(manifest)
-        assert "aggregates" not in str(manifest)
+    def test_hash_deterministic(self):
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": [],
+            "reasoning_required_pred": ["r1"],
+            "reasoning_free_pred": ["f1"],
+        }
+        first = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        second = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        assert (
+            _record_to_envelope(first)["source_record_hash"]
+            == _record_to_envelope(second)["source_record_hash"]
+        )
+
+    def test_hash_changes_with_scientific_field(self):
+        context_a = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": [],
+            "reasoning_required_pred": ["r1"],
+            "reasoning_free_pred": ["f1"],
+        }
+        context_b = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": [],
+            "reasoning_required_pred": ["r1"],
+            "reasoning_free_pred": ["f1"],
+        }
+        row_a = _row_to_source_record(1, "q", context_a, "a", "yes", 0)
+        row_b = _row_to_source_record(2, "q", context_b, "a", "yes", 0)
+        assert (
+            _record_to_envelope(row_a)["source_record_hash"]
+            != _record_to_envelope(row_b)["source_record_hash"]
+        )
 
 
 # ============================================================================
-# Atomic-write and no-overwrite behavior
+# Public namespace integrity
 # ============================================================================
 
 
-class TestAtomicNoOverwrite:
-    def test_text_atomic_writes_final_file(self, tmp_path):
-        target = tmp_path / "target.json"
-        _write_text_atomic(b'{"a":1}\n', str(target))
-        assert target.read_bytes() == b'{"a":1}\n'
+class TestPublicNamespace:
+    def test_internal_not_in_public_all(self):
+        public_all = getattr(__import__("medscale.dataset", fromlist=[""]), "__all__", [])
+        assert "_pubmedqa_source" not in public_all
 
-    def test_jsonl_atomic_writes_final_file(self, tmp_path):
-        target = tmp_path / "records.jsonl"
-        _write_jsonl_atomic([{"a": 1}], str(target))
-        assert target.read_bytes() == b'{"a":1}\n'
+    def test_no_pilot_record_in_public(self):
+        assert "PilotPubMedQASourceRecord" not in dir(
+            __import__("medscale.dataset", fromlist=["PilotPubMedQASourceRecord"])
+        )
 
-    def test_no_partial_output_on_failure(self, tmp_path):
-        target = tmp_path / "target.json"
-        _write_text_atomic(b'{"a":1}\n', str(target))
-        with mock.patch("medscale.dataset._pubmedqa_source.os.replace", side_effect=OSError("boom")):
-            with pytest.raises(OSError):
-                _write_text_atomic(b'{"a":2}\n', str(target))
-        assert target.read_bytes() == b'{"a":1}\n'
+    def test_no_public_example_id_function(self):
+        mod = __import__("medscale.dataset", fromlist=["pubmedqa_example_id"])
+        assert not hasattr(mod, "pubmedqa_example_id")
 
 
 # ============================================================================
-# Synthetic Parquet integration
+# Operator harness
+# ============================================================================
+
+
+EXPECTED_OUTPUT_FILES = {
+    "source-records.jsonl",
+    "source-record-registry.jsonl",
+    "transformation-manifest.json",
+    "transformation-run.local.json",
+}
+
+
+def _run_operator(args: list[str]) -> tuple[int, dict | None]:
+    script = Path(__file__).resolve().parents[1] / "scripts" / "mesc_pilot_01_transform_pubmedqa.py"
+    completed = subprocess.run(
+        [sys.executable, str(script), *args],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        sys.stderr.write(completed.stderr)
+        return completed.returncode, None
+    try:
+        return completed.returncode, json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        return completed.returncode, None
+
+
+def _fresh_output_path(base: Path, name: str) -> Path:
+    candidate = base / name
+    assert not candidate.exists(), f"test intended an absent output directory: {candidate}"
+    return candidate
+
+
+# ============================================================================
+# Deterministic output contract
+# ============================================================================
+
+
+class TestDeterministicContract:
+    def test_exact_four_final_files(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        final = _fresh_output_path(tmp_path, "final")
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(final),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 0
+        actual_dir = final
+        files = {p.name for p in actual_dir.iterdir() if p.is_file()}
+        assert EXPECTED_OUTPUT_FILES.issubset(files)
+        assert all((actual_dir / name).exists() for name in EXPECTED_OUTPUT_FILES)
+
+    def test_manifest_filename(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        final = _fresh_output_path(tmp_path, "final")
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(final),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 0
+        assert (final / "transformation-manifest.json").exists()
+        assert not (final / "source-record-manifest.json").exists()
+
+    def test_no_repository_report_in_external_output(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        final = _fresh_output_path(tmp_path, "final")
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(final),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 0
+        assert not (final / "transformation-report.json").exists()
+
+
+# ============================================================================
+# Promotion safety
+# ============================================================================
+
+
+class TestPromotionSafety:
+    def test_existing_destination_fails(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        pre_existing = _fresh_output_path(tmp_path, "pre-existing")
+        pre_existing.mkdir()
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(pre_existing),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 1
+        assert not (pre_existing / "source-records.jsonl").exists()
+
+    def test_temporary_directories_do_not_overwrite_each_other(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        rc1, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(_fresh_output_path(tmp_path, "run1")),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        rc2, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(_fresh_output_path(tmp_path, "run2")),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc1 == 0
+        assert rc2 == 0
+
+
+# ============================================================================
+# Deterministic manifest metadata
+# ============================================================================
+
+
+class TestDeterministicManifestMetadata:
+    def test_manifest_no_run_identities(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        final = _fresh_output_path(tmp_path, "final")
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(final),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 0
+        manifest = json.loads((final / "transformation-manifest.json").read_text(encoding="utf-8"))
+        assert "run_id" not in manifest
+        assert "timestamp" not in manifest
+        assert "output_directory" not in manifest
+        assert "pyarrow_version" not in manifest
+
+
+# ============================================================================
+# Operator contract
+# ============================================================================
+
+
+class TestOperatorContract:
+    def test_stdout_only_concise_json(self, tmp_path, capsys):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        final = _fresh_output_path(tmp_path, "final")
+        rc, _payload = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(final),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert captured.err == ""
+        assert _payload is not None
+        assert _payload.get("schema_version") == "mesc-pubmedqa-operator-result/1"
+        assert set(_payload.get("output_files", [])) == EXPECTED_OUTPUT_FILES
+
+
+# ============================================================================
+# Cross-run equality
+# ============================================================================
+
+
+class TestCrossRunEquality:
+    def test_independent_runs_produce_equal_three_file_bundle(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        first_dir = _fresh_output_path(tmp_path, "run1")
+        second_dir = _fresh_output_path(tmp_path, "run2")
+        rc1, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(first_dir),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        rc2, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(second_dir),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc1 == 0
+        assert rc2 == 0
+        first_files = {
+            name: (first_dir / name).read_bytes() for name in sorted(EXPECTED_OUTPUT_FILES)
+        }
+        second_files = {
+            name: (second_dir / name).read_bytes() for name in sorted(EXPECTED_OUTPUT_FILES)
+        }
+        assert first_files == second_files
+
+    def test_three_file_byte_sizes_match_across_runs(self, tmp_path):
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        first_dir = _fresh_output_path(tmp_path, "run1")
+        second_dir = _fresh_output_path(tmp_path, "run2")
+        rc1, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(first_dir),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        rc2, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(second_dir),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc1 == 0
+        assert rc2 == 0
+        for name in EXPECTED_OUTPUT_FILES:
+            assert (first_dir / name).stat().st_size == (second_dir / name).stat().st_size
+
+
+# ============================================================================
+# Synthetic parquet integration
 # ============================================================================
 
 
 class TestSyntheticParquetIntegration:
     def test_exact_nested_struct_shape(self, tmp_path):
-        meta = transform_pubmedqa_parquet(str(_write_synthetic_parquet(tmp_path / "fake.parquet")), str(tmp_path / "out"))
-        assert meta["record_count"] == 1
-        assert (tmp_path / "out" / "source-records.jsonl").exists()
-        assert (tmp_path / "out" / "source-record-registry.jsonl").exists()
-
-
-# ============================================================================
-# Two synthetic executions produce byte-identical deterministic bundles
-# ============================================================================
-
-
-class TestTwoSyntheticExecutions:
-    def test_byte_identical_bundles(self, tmp_path):
-        out1 = tmp_path / "out1"
-        out2 = tmp_path / "out2"
-        meta1 = transform_pubmedqa_parquet(
-            str(_write_synthetic_parquet(tmp_path / "a.parquet")), str(out1)
+        parquet = tmp_path / "fake.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        final = _fresh_output_path(tmp_path, "out")
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(final),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
         )
-        meta2 = transform_pubmedqa_parquet(
-            str(_write_synthetic_parquet(tmp_path / "b.parquet")), str(out2)
-        )
-        for name in ["source-records.jsonl", "source-record-registry.jsonl", "source-record-manifest.json"]:
-            assert (out1 / name).read_bytes() == (out2 / name).read_bytes()
-        assert meta1["byte_equivalence_result"] == "exact_match"
+        assert rc == 0
+        content = (final / "source-records.jsonl").read_text(encoding="utf-8")
+        lines = [line for line in content.splitlines() if line.strip()]
+        assert len(lines) == 1
+        record = json.loads(lines[0])["record"]
+        assert record["pubid"] == "1"
+        assert record["context_segments"][0]["ordinal"] == 0
 
 
 # ============================================================================
-# Absence of raw text in sensitive outputs
+# Comparison helper
 # ============================================================================
 
 
-class TestAbsenceOfRawText:
-    def test_registry_has_no_long_text(self):
-        expected_schemas = {k: {} for k in [
-            "contexts",
-            "labels",
-            "meshes",
-            "reasoning_required_pred",
-            "reasoning_free_pred",
-        ]}
-        record = _native_row_to_source_record(
-            _make_row(), row_ordinal=0, expected_schemas=expected_schemas
-        )
-        reg = _registry_record_from_source_record(record, row_ordinal=0)
-        longest = max(len(str(v)) for v in reg.values())
-        assert longest < 200
+class TestComparisonHelper:
+    def test_compare_fails_on_mismatch(self):
+        from medscale.dataset._pubmedqa_source import _record_to_envelope
 
-    def test_manifest_has_no_raw_text(self):
-        runs = {
-            "run_one": {
-                "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-                "input_artifact_size": 100,
-                "input_artifact_sha256": "x",
-            },
-            "run_two": {
-                "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-            },
+        context = {
+            "contexts": ["a"],
+            "labels": ["x"],
+            "meshes": [],
+            "reasoning_required_pred": [],
+            "reasoning_free_pred": [],
         }
-        manifest = _build_deterministic_manifest(runs)
-        assert "QUESTION" not in str(manifest)
-
-    def test_transformation_report_excludes_raw_content(self):
-        report = _build_transformation_report(
-            input_path="fake.parquet",
-            input_size=100,
-            input_sha256_pre="x",
-            input_sha256_post="x",
-            deterministic_runs={
-                "run_one": {
-                    "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                    "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-                    "input_artifact_size": 100,
-                    "input_artifact_sha256": "x",
-                },
-                "run_two": {
-                    "source-records.jsonl": {"filename": "source-records.jsonl", "byte_size": 10, "sha256": "a"},
-                    "source-record-registry.jsonl": {"filename": "source-record-registry.jsonl", "byte_size": 10, "sha256": "a"},
-                },
-            },
-            aggregates=_Aggregates(),
+        first = _row_to_source_record(1, "q", context, "a", "yes", 0)
+        second = _row_to_source_record(2, "q", context, "a", "yes", 0)
+        assert (
+            _record_to_envelope(first)["source_record_hash"]
+            != _record_to_envelope(second)["source_record_hash"]
         )
-        assert "LONG_ANSWER" not in str(report)

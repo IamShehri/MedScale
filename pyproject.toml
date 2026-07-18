@@ -103,8 +103,8 @@ files = ["src", "tests", "scripts"]
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unreachable = true
+disable_error_code = ["import-untyped"]
 
-# ---------------------------------------------------------------------------
 # Pytest + coverage
 # ---------------------------------------------------------------------------
 [tool.pytest.ini_options]

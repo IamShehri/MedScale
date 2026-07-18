@@ -1,240 +1,295 @@
-"""Deterministic PubMedQA Layer-1 source transformation orchestrator.
+"""Transform PubMedQA parquet into deterministic MedScale Layer-1 source records.
 
-Reads the approved PubMedQA Parquet artifact twice into sibling temporary
-directories, verifies that three deterministic output files are byte-for-byte
-identical, and atomically promotes one run to the final output directory.
+Exit codes:
+  0 - success
+  1 - validation/existing-output failure
+  2 - input not found / args failure
+  3 - unexpected error
 """
 
 from __future__ import annotations
 
 import argparse
 import hashlib
-import os
+import json
 import shutil
 import sys
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
-# Network isolation must be established before any Hugging Face / dataset import
-# is attempted.
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
+# ============================================================================
+# Dimensions
+# ============================================================================
 
 
-@dataclass(frozen=True)
+CONFIGURATION: str = "pqa_labeled"
+DATASET_ID: str = "pubmedqa"
+DATASET_REVISION: str = "9001f2853fb87cab8d220904e0de81ac6973b318"
+LICENSE_ID: str = "PubMedQA-PQA-L"
+PARQUET_BASENAME: str = "train-00000-of-00001.parquet"
+SCHEMA_VERSION: str = "mesc-pubmedqa-source-record/1"
+TRANSFORMATION_RUN_SCHEMA: str = "mesc-pubmedqa-operator-result/1"
+
+
+# ============================================================================
+# Artifacts
+# ============================================================================
+
+
+@dataclass(frozen=True, slots=True)
 class RunArtifacts:
-    directory: Path
-    source_records_path: Path
+    output_directory: Path
+    records_path: Path
+    records_size: int
+    records_sha256: str
     registry_path: Path
-    manifest_path: Path
-    report_path: Path
-    local_report_path: Path
-    source_records_sha256: str
-    registry_sha256: str
-    manifest_sha256: str
-    source_records_size: int
     registry_size: int
+    registry_sha256: str
+    manifest_path: Path
     manifest_size: int
+    manifest_sha256: str
+    manifest_bytes: bytes
+    local_path: Path
+    records_bytes: bytes
+    registry_bytes: bytes
 
 
-def _file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+# ============================================================================
+# Readers / helpers
+# ============================================================================
 
 
-def _file_size(path: Path) -> int:
-    return path.stat().st_size
+def _read_all(path: Path) -> bytes:
+    return path.read_bytes()
 
 
-def _prepare_run_directory(final_output: Path, run_index: int) -> Path:
-    sibling_dir = final_output.parent
-    run_dir = sibling_dir / f"{final_output.name}-run-{run_index}"
-    if run_dir.exists():
-        shutil.rmtree(run_dir)
-    run_dir.mkdir(parents=True, exist_ok=True)
-    return run_dir
+def _sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
 
 
-def _collect_artifacts(run_dir: Path) -> RunArtifacts:
-    source_records_path = run_dir / "source-records.jsonl"
-    registry_path = run_dir / "source-record-registry.jsonl"
-    manifest_path = run_dir / "source-record-manifest.json"
-    report_path = run_dir / "transformation-report.json"
-    local_report_path = run_dir / "transformation-run.local.json"
-    return RunArtifacts(
-        directory=run_dir,
-        source_records_path=source_records_path,
-        registry_path=registry_path,
-        manifest_path=manifest_path,
-        report_path=report_path,
-        local_report_path=local_report_path,
-        source_records_sha256=_file_sha256(source_records_path),
-        registry_sha256=_file_sha256(registry_path),
-        manifest_sha256=_file_sha256(manifest_path),
-        source_records_size=_file_size(source_records_path),
-        registry_size=_file_size(registry_path),
-        manifest_size=_file_size(manifest_path),
+def _unique_temp_dir(final_output: Path) -> Path:
+    parent = final_output.parent
+    for _ in range(1000):
+        candidate = parent / f".{final_output.name}-tmp-{uuid.uuid4().hex}"
+        if not candidate.exists():
+            return candidate
+    raise RuntimeError("unable to allocate unique temporary run directory")
+
+
+# ============================================================================
+# Promotion / inventory
+# ============================================================================
+
+
+def _promote(source: RunArtifacts, final_output: Path) -> None:
+    rename_src = source.records_path.parent
+    rename_src.replace(final_output)
+
+
+def _write_inventory(final_output: Path) -> None:
+    def _digest(name: str) -> dict[str, int | str]:
+        target = final_output / name
+        return {
+            "size": target.stat().st_size,
+            "sha256": _sha256_bytes(_read_all(target)),
+        }
+
+    inventory = {
+        "schema_version": "mesc-pubmedqa-output-inventory/1",
+        "output_directory": str(final_output),
+        "files": {
+            "source-records.jsonl": _digest("source-records.jsonl"),
+            "source-record-registry.jsonl": _digest("source-record-registry.jsonl"),
+            "transformation-manifest.json": _digest("transformation-manifest.json"),
+            "transformation-run.local.json": _digest("transformation-run.local.json"),
+        },
+    }
+    path = final_output / "preexisting-output-inventory.local.json"
+    payload = (
+        json.dumps(
+            inventory,
+            sort_keys=True,
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+        )
+        + "\n"
     )
+    path.write_text(payload, encoding="utf-8")
 
 
-def _compare_artifacts(a: RunArtifacts, b: RunArtifacts) -> list[str]:
-    failures: list[str] = []
+# ============================================================================
+# Compare
+# ============================================================================
+
+
+def _compare_runs(first: RunArtifacts, second: RunArtifacts) -> list[str]:
     fields = [
-        ("filenames", (a.source_records_path.name, b.source_records_path.name)),
-        ("source-records length", (a.source_records_size, b.source_records_size)),
-        ("source-records SHA-256", (a.source_records_sha256, b.source_records_sha256)),
         (
-            "source-record-registry length",
-            (a.registry_size, b.registry_size),
+            "source-records.jsonl",
+            first.records_size,
+            second.records_size,
+            first.records_sha256,
+            second.records_sha256,
         ),
         (
-            "source-record-registry SHA-256",
-            (a.registry_sha256, b.registry_sha256),
+            "source-record-registry.jsonl",
+            first.registry_size,
+            second.registry_size,
+            first.registry_sha256,
+            second.registry_sha256,
         ),
         (
-            "source-record-manifest length",
-            (a.manifest_size, b.manifest_size),
-        ),
-        (
-            "source-record-manifest SHA-256",
-            (a.manifest_sha256, b.manifest_sha256),
+            "transformation-manifest.json",
+            first.manifest_size,
+            second.manifest_size,
+            first.manifest_sha256,
+            second.manifest_sha256,
         ),
     ]
-    for label, values in fields:
-        if values[0] != values[1]:
-            failures.append(f"{label} mismatch: {values[0]!r} != {values[1]!r}")
-    for left, right in [
-        (a.source_records_path.name, b.source_records_path.name),
-        (a.registry_path.name, b.registry_path.name),
-        (a.manifest_path.name, b.manifest_path.name),
-    ]:
-        if left != right:
-            failures.append(f"filename mismatch: {left!r} != {right!r}")
-    with a.source_records_path.open("rb") as fa, b.source_records_path.open("rb") as fb:
-        if fa.read() != fb.read():
-            failures.append("source-records.jsonl full-byte mismatch")
-    with a.registry_path.open("rb") as fa, b.registry_path.open("rb") as fb:
-        if fa.read() != fb.read():
-            failures.append("source-record-registry.jsonl full-byte mismatch")
-    with a.manifest_path.open("rb") as fa, b.manifest_path.open("rb") as fb:
-        if fa.read() != fb.read():
-            failures.append("source-record-manifest.json full-byte mismatch")
+    failures: list[str] = []
+    for name, size_a, size_b, hash_a, hash_b in fields:
+        if size_a != size_b:
+            failures.append(f"{name} size mismatch: {size_a} != {size_b}")
+        if hash_a != hash_b:
+            failures.append(f"{name} sha256 mismatch: {hash_a} != {hash_b}")
+    if first.records_bytes != second.records_bytes:
+        failures.append("source-records.jsonl full-byte mismatch")
+    if first.registry_bytes != second.registry_bytes:
+        failures.append("source-record-registry.jsonl full-byte mismatch")
+    if first.manifest_bytes != second.manifest_bytes:
+        failures.append("transformation-manifest.json full-byte mismatch")
     return failures
 
 
-def _promote(run: RunArtifacts, final_output: Path) -> None:
-    if final_output.exists():
-        shutil.rmtree(final_output)
-    final_output.mkdir(parents=True, exist_ok=True)
-    for source in run.directory.iterdir():
-        target = final_output / source.name
-        if source.is_file():
-            shutil.copy2(source, target)
+# ============================================================================
+# Execute a single run
+# ============================================================================
 
 
-def _print_summary(run: RunArtifacts) -> None:
-    sys.stdout.write(
-        f"source-records.jsonl   -> {run.source_records_path}  "
-        f"({run.source_records_size} bytes, sha256 {run.source_records_sha256})\n"
+def _execute_run(
+    input_path: Path,
+    expected_sha256: str,
+    expected_size: int,
+    run_dir: Path,
+) -> RunArtifacts:
+    from medscale.dataset._pubmedqa_source import transform_pubmedqa_parquet
+
+    transform_pubmedqa_parquet(
+        input_path,
+        run_dir,
+        expected_input_sha256=expected_sha256,
+        expected_input_size=expected_size,
     )
-    sys.stdout.write(
-        f"source-record-registry.jsonl -> {run.registry_path}  "
-        f"({run.registry_size} bytes, sha256 {run.registry_sha256})\n"
-    )
-    sys.stdout.write(
-        f"source-record-manifest.json  -> {run.manifest_path}  "
-        f"({run.manifest_size} bytes, sha256 {run.manifest_sha256})\n"
-    )
-    sys.stdout.write(
-        "\nDeterministic bundle promoted to final output directory. Raw text is not printed.\n"
+    records_path = run_dir / "source-records.jsonl"
+    registry_path = run_dir / "source-record-registry.jsonl"
+    manifest_path = run_dir / "transformation-manifest.json"
+    local_path = run_dir / "transformation-run.local.json"
+    records_bytes = _read_all(records_path)
+    registry_bytes = _read_all(registry_path)
+    manifest_bytes = _read_all(manifest_path)
+    return RunArtifacts(
+        output_directory=run_dir,
+        records_path=records_path,
+        records_size=records_path.stat().st_size,
+        records_sha256=_sha256_bytes(records_bytes),
+        registry_path=registry_path,
+        registry_size=registry_path.stat().st_size,
+        registry_sha256=_sha256_bytes(registry_bytes),
+        manifest_path=manifest_path,
+        manifest_size=manifest_path.stat().st_size,
+        manifest_sha256=_sha256_bytes(manifest_bytes),
+        manifest_bytes=manifest_bytes,
+        local_path=local_path,
+        records_bytes=records_bytes,
+        registry_bytes=registry_bytes,
     )
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Deterministic PubMedQA Layer-1 source transformation orchestrator"
-    )
-    parser.add_argument(
-        "--input",
-        required=True,
-        help="Path to approved PubMedQA Parquet artifact",
-    )
-    parser.add_argument(
-        "--output-dir",
-        required=True,
-        help="Final output directory for deterministic source records",
-    )
-    parser.add_argument(
-        "--expected-sha256",
-        required=True,
-        help="Expected SHA-256 of the input Parquet artifact",
-    )
-    parser.add_argument(
-        "--expected-size",
-        type=int,
-        required=True,
-        help="Expected size in bytes of the input Parquet artifact",
-    )
-    args = parser.parse_args(argv)
+# ============================================================================
+# Main
+# ============================================================================
 
+
+def _parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Transform PubMedQA parquet")
+    parser.add_argument("--input", required=True, help="Source parquet file")
+    parser.add_argument("--output-dir", required=True, help="Final output directory")
+    parser.add_argument("--expected-sha256", default=None, help="Expected input SHA-256")
+    parser.add_argument("--expected-size", default=None, type=int, help="Expected input byte size")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str]) -> int:
+    args = _parse_args(argv)
     input_path = Path(args.input).resolve()
-    output_dir = Path(args.output_dir).resolve()
+    final_output = Path(args.output_dir).resolve()
+    expected_sha256 = args.expected_sha256
+    expected_size = args.expected_size
+
     if not input_path.is_file():
-        raise SystemExit(f"input artifact not found: {input_path}")
-    if input_path.stat().st_size != args.expected_size:
-        raise SystemExit(
-            f"input size mismatch: expected {args.expected_size}, got {input_path.stat().st_size}"
-        )
-    actual_sha256 = hashlib.sha256(input_path.read_bytes()).hexdigest()
-    if actual_sha256 != args.expected_sha256:
-        raise SystemExit(
-            f"input SHA-256 mismatch: expected {args.expected_sha256}, got {actual_sha256}"
-        )
-
-    from medscale.dataset._pubmedqa_source import (
-        transform_pubmedqa_parquet,
-    )
-
-    # Two runs into sibling temporary directories.
-    run_one_dir = _prepare_run_directory(output_dir, 1)
-    run_two_dir = _prepare_run_directory(output_dir, 2)
-
-    run_one_meta = transform_pubmedqa_parquet(
-        str(input_path),
-        str(run_one_dir),
-        expected_input_sha256=args.expected_sha256,
-        expected_input_size=args.expected_size,
-        run_label="run-one",
-    )
-    run_two_meta = transform_pubmedqa_parquet(
-        str(input_path),
-        str(run_two_dir),
-        expected_input_sha256=args.expected_sha256,
-        expected_input_size=args.expected_size,
-        run_label="run-two",
-    )
-
-    run_one = _collect_artifacts(run_one_dir)
-    run_two = _collect_artifacts(run_two_dir)
-
-    comparison_failures = _compare_artifacts(run_one, run_two)
-    if comparison_failures:
-        sys.stderr.write("Byte-for-byte comparison failed:\n")
-        for failure in comparison_failures:
-            sys.stderr.write(f"  - {failure}\n")
-        shutil.rmtree(run_one_dir, ignore_errors=True)
-        shutil.rmtree(run_two_dir, ignore_errors=True)
+        print(json.dumps({"error": "input artifact not found"}, sort_keys=True))
         return 2
+    if final_output.exists():
+        print(json.dumps({"error": "final output already exists"}, sort_keys=True))
+        return 1
 
-    _promote(run_one, output_dir)
-    shutil.rmtree(run_one_dir, ignore_errors=True)
-    shutil.rmtree(run_two_dir, ignore_errors=True)
-    _print_summary(run_one)
-    return 0
+    input_size = input_path.stat().st_size
+    if expected_size is not None and expected_size != input_size:
+        print(json.dumps({"error": "input size mismatch"}, sort_keys=True))
+        return 1
+
+    input_sha256 = _sha256_bytes(_read_all(input_path))
+    if expected_sha256 is not None and expected_sha256 != input_sha256:
+        print(json.dumps({"error": "input sha256 mismatch"}, sort_keys=True))
+        return 1
+
+    temp_dir = _unique_temp_dir(final_output)
+    try:
+        first = _execute_run(input_path, expected_sha256, expected_size, temp_dir)
+        second_temp = _unique_temp_dir(final_output)
+        try:
+            second = _execute_run(input_path, expected_sha256, expected_size, second_temp)
+        finally:
+            shutil.rmtree(second_temp, ignore_errors=True)
+        failures = _compare_runs(first, second)
+        if failures:
+            print(
+                json.dumps(
+                    {
+                        "error": "determinism-check failed",
+                        "failures": failures,
+                    },
+                    sort_keys=True,
+                )
+            )
+            return 1
+        _promote(first, final_output)
+        _write_inventory(final_output)
+        print(
+            json.dumps(
+                {
+                    "schema_version": TRANSFORMATION_RUN_SCHEMA,
+                    "output_files": [
+                        "source-records.jsonl",
+                        "source-record-registry.jsonl",
+                        "transformation-manifest.json",
+                        "transformation-run.local.json",
+                    ],
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+    finally:
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except Exception as exc:
+        print(json.dumps({"error": f"unexpected error: {exc}"}, sort_keys=True))
+        sys.exit(3)
