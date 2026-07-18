@@ -1,7 +1,7 @@
 # MESC Pilot-01 — P01-03 Data Model
 
 Status: **planning data model**
-Authorization: P01-03 *** authorized; execution not authorized
+Authorization: P01-03D schema-gap resolution authorized and complete; P01-03E transformation not authorized
 Freeze date: 2026-07-17
 
 ---
@@ -116,8 +116,6 @@ Full `PilotRecord` construction requires manual annotation for unavailable field
 | `source.license_id` | `PubMedQA-PQA-L` | derived |
 | `question` | native `question` | native |
 | `evidence[].text` | native `context.contexts` entries | native source segments |
-| `evidence[].section_label` | native `context.labels` positional metadata | native section metadata |
-| `evidence[].ordinal` | native context list ordinal | derived |
 | `evidence[].evidence_id` | deterministic derivation | derived |
 | `evidence[].sentence_index` | ordinal in normalized context list | derived |
 | `evidence[].source_document_id` | same as `source.source_document_id` | derived |
@@ -132,6 +130,15 @@ Full `PilotRecord` construction requires manual annotation for unavailable field
 | `provenance.annotation_method` | `native`, `derived`, or `manual` | mixed |
 | `provenance.annotation_revision` | annotation protocol version or empty | derived |
 | `provenance.synthetic` | false for real data | derived |
+
+NativeContextSegment.ordinal and NativeContextSegment.section_label remain
+internal Layer-1 source-record fields. P01-03D does not extend the public
+PilotEvidence schema.
+
+If P01-03E is separately authorized, NativeContextSegment.ordinal maps to
+the existing evidence[].sentence_index field. Section labels remain internal
+source metadata unless a separate public-contract decision explicitly
+authorizes a PilotEvidence field for them.
 
 ---
 

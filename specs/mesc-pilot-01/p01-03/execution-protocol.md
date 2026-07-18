@@ -138,7 +138,12 @@ Prohibited normalizations:
 
 ---
 
-## A5 — Construct evidence objects
+## A5 — Populate internal source-record structures
+
+Populate the internal `context_segments`, `mesh_terms`, and
+`native_annotation_trace` structures deterministically. Only
+`context.contexts` entries are candidates for later `PilotEvidence` mapping.
+MeSH terms and reasoning annotation traces remain internal source metadata.
 
 Map `context.contexts`, `context.labels`, `context.meshes`, `context.reasoning_required_pred`, and `context.reasoning_free_pred` records deterministically.
 
@@ -154,7 +159,7 @@ Rules:
 - `len(labels) == len(contexts)` is enforced in P01-03E; fail closed on mismatch.
 - `meshes` are retained as document metadata, not evidence objects.
 - `reasoning_required_pred` and `reasoning_free_pred` are retained as annotation traces, not model inputs.
-- Source-document linkage: every segment and trace carries the same `source_document_id` as the parent record.
+- Source-document linkage is owned by the parent `PilotPubMedQASourceRecord`. `NativeContextSegment` and `NativeAnnotationTrace` do not duplicate `source_document_id`.
 
 Do not assert that context elements are gold rationales. Record them as source-provided context segments.
 
