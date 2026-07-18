@@ -1,0 +1,224 @@
+{
+  "schema_version": "mesc-pubmedqa-schema-gap/1",
+  "status": "resolved",
+  "freeze_date_utc": "2026-07-18T01:11:00+00:00",
+  "dataset_identity": {
+    "dataset_id": "qiaojin/PubMedQA",
+    "configuration": "pqa_labeled",
+    "revision": "9001f2853fb87cab8d220904e0de81ac6973b318"
+  },
+  "merged_evidence_reference": {
+    "report_path": "specs/mesc-pilot-01/p01-03c/native-schema-report.json",
+    "status": "verified",
+    "top_level_field_count": 5,
+    "physical_leaf_column_count": 9,
+    "column_count_semantics": "physical leaf columns",
+    "row_count": 1000,
+    "row_group_count": 1
+  },
+  "primary_source_citation": {
+    "paper_title": "PubMedQA: A Dataset for Biomedical Research Question Answering",
+    "authors": [
+      "Qiao Jin",
+      "Bhuwan Dhingra",
+      "Zhengping Liu",
+      "William W. Cohen",
+      "Xinghua Lu"
+    ],
+    "acl_anthology_id": "D19-1259",
+    "doi": "10.18653/v1/D19-1259"
+  },
+  "native_context_field_semantics": {
+    "contexts": "contains the structured abstract excluding its conclusion",
+    "long_answer": "contains the abstract conclusion",
+    "final_decision": "is the agreed yes/no/maybe ground-truth decision",
+    "reasoning_required_pred": "preserves the annotation made using question and context",
+    "reasoning_free_pred": "preserves the annotation made using question, context, and long_answer",
+    "meshes": "are document-topic metadata derived from Medical Subject Headings"
+  },
+  "mapping_policy": {
+    "1_contexts": {
+      "target": "NativeContextSegment",
+      "definition": {
+        "ordinal": "int",
+        "text": "str",
+        "section_label": "str"
+      },
+      "rules": [
+        "preserve every entry",
+        "preserve source order",
+        "preserve text exactly at the source-record layer",
+        "do not summarize, rewrite, split, merge, or deduplicate",
+        "duplicate text entries remain separate segments with distinct ordinals",
+        "context text is source-provided context, not a gold rationale"
+      ],
+      "supersedes": "prior generic instruction to deduplicate context entries"
+    },
+    "2_labels": {
+      "target": "context_segments[i].section_label",
+      "rules": [
+        "labels represent structured-abstract section metadata",
+        "labels are not classification labels",
+        "labels are not sentence-level evidence labels",
+        "labels are not gold rationales",
+        "preserve exact source values",
+        "require len(labels) == len(contexts) during P01-03E",
+        "any cardinality mismatch must fail closed",
+        "do not insert, infer, or synthesize missing labels"
+      ],
+      "positional_pairing": "not executed during P01-03D; this stage records the policy only"
+    },
+    "3_meshes": {
+      "target": "mesh_terms",
+      "definition": {
+        "type": "tuple[str, ...]"
+      },
+      "rules": [
+        "treat them as document-level topic metadata",
+        "preserve exact values and source order",
+        "do not convert them into evidence objects",
+        "do not treat them as targets or rationales",
+        "exclude them from the default Pilot-01 model input",
+        "retain them in the internal source record for provenance and later controlled analysis"
+      ]
+    },
+    "4_reasoning_required_pred": {
+      "target": "native_annotation_trace.reasoning_required_pred",
+      "definition": {
+        "type": "tuple[str, ...]"
+      },
+      "rules": [
+        "preserve source values and multiplicity",
+        "treat as a native human-annotation trace",
+        "do not rename it as a model prediction",
+        "do not use it as the target decision",
+        "do not use it as a model input",
+        "do not use it in scoring or training",
+        "do not collapse the list to a scalar without a later verified cardinality rule"
+      ]
+    },
+    "5_reasoning_free_pred": {
+      "target": "native_annotation_trace.reasoning_free_pred",
+      "definition": {
+        "type": "tuple[str, ...]"
+      },
+      "rules": [
+        "preserve source values and multiplicity",
+        "treat as a native human-annotation trace produced with long_answer available",
+        "do not use it as the target decision",
+        "do not use it as a model input",
+        "do not use it in scoring or training",
+        "do not collapse the list to a scalar without a later verified cardinality rule"
+      ]
+    },
+    "6_final_decision": {
+      "target": "final_decision",
+      "definition": "the only native consensus target decision",
+      "allowed_values": ["yes", "no", "maybe"],
+      "rules": [
+        "maybe must not be converted to abstain",
+        "neither reasoning annotation trace overrides final_decision",
+        "disagreement analysis is outside P01-03D"
+      ]
+    },
+    "7_long_answer": {
+      "target": "long_answer",
+      "definition": "the native conclusion and answer text",
+      "rules": [
+        "retain it in the internal source record",
+        "exclude it from reasoning-required model input",
+        "its use in reasoning-free or auxiliary-supervision experiments requires a separately defined experiment configuration",
+        "do not derive claims or rationales from it during P01-03D"
+      ]
+    }
+  },
+  "updated_internal_model": {
+    "note": "PilotRecord remains the only public contract root. This is an internal Layer-1 representation.",
+    "NativeAnnotationTrace": {
+      "reasoning_required_pred": "tuple[str, ...]",
+      "reasoning_free_pred": "tuple[str, ...]"
+    },
+    "NativeContextSegment": {
+      "ordinal": "int",
+      "text": "str",
+      "section_label": "str"
+    },
+    "PilotPubMedQASourceRecord": {
+      "schema_version": "mesc-pubmedqa-source/1",
+      "dataset_id": "str",
+      "dataset_revision": "str",
+      "configuration": "str",
+      "original_example_id": "str",
+      "source_document_id": "str",
+      "pubid": "str",
+      "question": "str",
+      "context_segments": "tuple[NativeContextSegment, ...]",
+      "mesh_terms": "tuple[str, ...]",
+      "long_answer": "str",
+      "final_decision": "str",
+      "native_annotation_trace": "NativeAnnotationTrace",
+      "license_id": "str"
+    },
+    "full_pilot_record_construction": "deferred"
+  },
+  "internal_source_record_hash_policy": {
+    "deterministic_hash_payload": [
+      "internal_schema_version",
+      "dataset_identity",
+      "dataset_revision",
+      "configuration",
+      "original_example_id",
+      "source_document_id",
+      "pubid",
+      "question",
+      "every_context_segment_ordinal",
+      "every_context_segment_text",
+      "every_context_segment_section_label",
+      "mesh_terms_in_source_order",
+      "long_answer",
+      "final_decision",
+      "reasoning_required_annotation_trace_in_source_order",
+      "reasoning_free_annotation_trace_in_source_order",
+      "license_identity"
+    ],
+    "excluded_from_hash": [
+      "timestamps",
+      "local_paths",
+      "usernames",
+      "hostnames",
+      "hardware",
+      "runtime_durations",
+      "split_assignments",
+      "annotation_ui_state"
+    ],
+    "note": "This internal hash does not change or replace the public PilotRecord content-hash contract."
+  },
+  "label_leakage_boundary": {
+    "default_reasoning_required_inputs": [
+      "question",
+      "ordered context segment text"
+    ],
+    "not_default_model_inputs": [
+      "final_decision",
+      "long_answer",
+      "reasoning_required_pred",
+      "reasoning_free_pred",
+      "meshes"
+    ],
+    "section_labels_policy": "retained as metadata; including them in a model input requires an explicit experiment configuration and must not occur implicitly"
+  },
+  "fail_closed_invariants": [
+    "labels/context cardinality mismatch",
+    "missing structured-context member",
+    "invalid annotation-trace values when validation is performed",
+    "any implicit use of auxiliary annotations as model features or targets",
+    "any silent field discard"
+  ],
+  "authorization_boundary": {
+    "p01_03d_authorized": true,
+    "p01_03d_complete": true,
+    "p01_03e_required": true,
+    "p01_03e_authorized": false,
+    "transformation_authorized": false
+  }
+}
