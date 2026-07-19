@@ -736,6 +736,8 @@ _OPERATOR_SPEC = importlib.util.spec_from_file_location(
     "mesc_pilot_01_transform_pubmedqa_under_test",
     Path(__file__).resolve().parents[1] / "scripts" / "mesc_pilot_01_transform_pubmedqa.py",
 )
+if _OPERATOR_SPEC is None or _OPERATOR_SPEC.loader is None:
+    raise RuntimeError("failed to load the PubMedQA transformation operator")
 _OPERATOR_MODULE = importlib.util.module_from_spec(_OPERATOR_SPEC)
 sys.modules[_OPERATOR_SPEC.name] = _OPERATOR_MODULE
 _OPERATOR_SPEC.loader.exec_module(_OPERATOR_MODULE)
