@@ -10,7 +10,6 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
-import contextlib
 import hashlib
 import json
 import os
@@ -79,24 +78,25 @@ def _unique_temp_dir(final_output: Path) -> Path:
     raise RuntimeError("unable to allocate unique temporary run directory")
 
 
+def _is_path_equal_or_descendant(candidate: Path, ancestor: Path) -> bool:
+    try:
+        candidate.relative_to(ancestor)
+        return True
+    except ValueError:
+        return False
+
+
 def _is_safe_output_parent(final_output: Path) -> None:
-    repo_root = Path(__file__).resolve().parents[2]
-    raw_root = repo_root / "data" / "raw"
+    repo_root = Path(__file__).resolve().parents[1]
+    raw_root = (repo_root / "data" / "raw").resolve()
     resolved = final_output.resolve()
-    if str(resolved).startswith(str(repo_root)):
+    if _is_path_equal_or_descendant(resolved, raw_root):
+        raise ValueError("output path must not be inside the raw-data directory")
+    if _is_path_equal_or_descendant(resolved, repo_root):
         raise ValueError("output path must not be inside the MedScale repository")
-    onedrive_markers = ["OneDrive", "OneDriveTemp", "OneDrive for Business"]
+    onedrive_markers = ("OneDrive", "OneDriveTemp", "OneDrive for Business")
     if any(marker in str(resolved) for marker in onedrive_markers):
         raise ValueError("output path must not be inside OneDrive")
-    try:
-        resolved.relative_to(raw_root)
-        raise ValueError("output path must not be inside the raw-data directory")
-    except ValueError:
-        if "output path must not be inside the raw-data directory" in str(resolved):
-            raise
-        # not under raw root — safe
-    with contextlib.suppress(ValueError):
-        _ = os.path.commonpath([str(resolved), str(repo_root)])
 
 
 # ============================================================================

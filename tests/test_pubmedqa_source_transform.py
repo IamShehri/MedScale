@@ -730,6 +730,114 @@ class TestSyntheticParquetIntegration:
 
 
 # ============================================================================
+# Operator output-path safety
+# ============================================================================
+_OPERATOR_SPEC = importlib.util.spec_from_file_location(
+    "mesc_pilot_01_transform_pubmedqa_under_test",
+    Path(__file__).resolve().parents[1] / "scripts" / "mesc_pilot_01_transform_pubmedqa.py",
+)
+_OPERATOR_MODULE = importlib.util.module_from_spec(_OPERATOR_SPEC)
+sys.modules[_OPERATOR_SPEC.name] = _OPERATOR_MODULE
+_OPERATOR_SPEC.loader.exec_module(_OPERATOR_MODULE)
+_is_safe_output_parent = _OPERATOR_MODULE._is_safe_output_parent
+
+
+class TestOperatorOutputPathSafety:
+    def test_repository_root_level(self) -> None:
+        operator_script = (
+            Path(__file__).resolve().parents[1] / "scripts" / "mesc_pilot_01_transform_pubmedqa.py"
+        )
+        repo_root = operator_script.parents[1]
+        computed = Path(operator_script).resolve().parents[1]
+        assert computed == repo_root
+        repo_output = repo_root / "output"
+        with pytest.raises(ValueError, match="must not be inside the MedScale repository"):
+            _is_safe_output_parent(repo_output)
+
+    def test_output_directly_inside_repository_rejected(self) -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        repo_output = repo_root / "output"
+        with pytest.raises(ValueError, match="must not be inside the MedScale repository"):
+            _is_safe_output_parent(repo_output)
+
+    def test_output_nested_inside_repository_rejected(self) -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        nested_output = repo_root / "sub" / "output"
+        with pytest.raises(ValueError, match="must not be inside the MedScale repository"):
+            _is_safe_output_parent(nested_output)
+
+    def test_output_inside_raw_directory_rejected(self) -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        raw_output = repo_root / "data" / "raw" / "output"
+        with pytest.raises(ValueError, match="must not be inside the raw-data directory"):
+            _is_safe_output_parent(raw_output)
+
+    def test_external_sibling_accepted(self, tmp_path: Path) -> None:
+        sibling = tmp_path / "repo-output"
+        try:
+            _is_safe_output_parent(sibling)
+        except ValueError:
+            pytest.fail("external sibling path was incorrectly rejected")
+
+    def test_external_sibling_textual_prefix_accepted(self, tmp_path: Path) -> None:
+        textual_sibling = tmp_path / "repo-extra"
+        try:
+            _is_safe_output_parent(textual_sibling)
+        except ValueError:
+            pytest.fail("sibling path sharing a textual prefix was incorrectly rejected")
+
+    def test_onedrive_marker_rejected(self, tmp_path: Path) -> None:
+        onedrive_output = tmp_path / "OneDrive" / "output"
+        onedrive_output.mkdir(parents=True)
+        with pytest.raises(ValueError, match="must not be inside OneDrive"):
+            _is_safe_output_parent(onedrive_output)
+
+    def test_existing_destination_fails(self, tmp_path: Path) -> None:
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        pre_existing = _fresh_output_path(tmp_path, "pre-existing")
+        pre_existing.mkdir()
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(pre_existing),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 1
+        assert not (pre_existing / "source-records.jsonl").exists()
+
+    def test_deterministic_synthetic_transformation_unchanged(self, tmp_path: Path) -> None:
+        parquet = tmp_path / "source.parquet"
+        _write_synthetic_parquet(parquet)
+        sha = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        final = _fresh_output_path(tmp_path, "final")
+        rc, _ = _run_operator(
+            [
+                "--input",
+                str(parquet),
+                "--output-dir",
+                str(final),
+                "--expected-sha256",
+                sha,
+                "--expected-size",
+                str(parquet.stat().st_size),
+            ]
+        )
+        assert rc == 0
+        actual_dir = final
+        files = {p.name for p in actual_dir.iterdir() if p.is_file()}
+        assert EXPECTED_OUTPUT_FILES.issubset(files)
+        assert all((actual_dir / name).exists() for name in EXPECTED_OUTPUT_FILES)
+
+
+# ============================================================================
 # Comparison helper
 # ============================================================================
 
