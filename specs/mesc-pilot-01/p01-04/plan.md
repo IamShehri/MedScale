@@ -8,7 +8,7 @@ Status: **specification and policy only — no execution authorized**
 
 | Stage | Name | Authorization required | Current status |
 |-------|------|----------------------|----------------|
-| P01-04A | Specification and Policy Ratification | Founder ratification | **Under review** |
+| P01-04A | Specification and Policy Ratification | Founder ratification | **Ratified** |
 | P01-04B | Split Contracts and Tooling | Separate founder authorization | Not authorized |
 | P01-04C | Fixture and Dry-Run Qualification | Separate founder authorization | Not authorized |
 | P01-04D | Formal Split Generation | Separate founder authorization | Not authorized |

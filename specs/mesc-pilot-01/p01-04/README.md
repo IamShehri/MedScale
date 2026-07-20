@@ -14,8 +14,8 @@ P01-04A exists solely to record the canonical specification, scientific policy, 
 
 | Layer | Authority | Current status |
 |-------|-----------|----------------|
-| Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Pending** — decision records are proposed for founder ratification by this package. |
-| P01-04A specification | This package | **Under review** |
+| Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Ratified** |
+| P01-04A specification | This package | **Ratified** |
 | P01-04 execution | Separate authorization required | **Not authorized** |
 | P01-04B tooling implementation | Separate authorization required | **Not authorized** |
 | P01-04C–G stages | Separate authorizations each | **Not authorized** |
@@ -23,7 +23,9 @@ P01-04A exists solely to record the canonical specification, scientific policy, 
 
 ## Stage status
 
-P01-04A is a documentation-only stage. No code, no dataset execution, no split generation, no leakage audit, no real partition membership has been created. The documents below are proposals awaiting founder ratification.
+P01-04A was ratified for specification and policy only on 2026-07-20.
+No code execution, split generation, leakage audit, or partition membership
+has been authorized. Review reference: `P01-04A-final-ratification-review-20260720-707195f1`.
 
 ## Package contents
 

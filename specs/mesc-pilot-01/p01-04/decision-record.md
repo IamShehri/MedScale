@@ -4,6 +4,14 @@ Status: **specification and policy only — no execution authorized**
 
 This record contains founder policy decisions for P01-04 split and leakage auditing. Implementation and execution decisions are not marked complete; they remain pending separate authorization.
 
+## Founder ratification metadata
+
+- Ratification status: Ratified for specification and policy only
+- Ratification date: 2026-07-20
+- Review reference: P01-04A-final-ratification-review-20260720-707195f1
+- Ratified PR head: 707195f12294d2c3e6e1d483bd1398493f023cb9
+- Execution status: Not authorized
+
 ---
 
 ## D1 — Partition set
