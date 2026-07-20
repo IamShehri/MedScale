@@ -51,12 +51,28 @@ Note: P01-02 completed dataset identity, rights documentation, and immutable rev
 - Stop conditions: schema revision uncontrolled; full copyrighted content introduced; annotation fields fabricated without authorization.
 - Authorization status: PLANNING AUTHORIZED / EXECUTION NOT AUTHORIZED.
 
+## P01-04A — P01-04 split and leakage specification
+
+- Prerequisites: P01-03G promotion merged and verified; P01-03G handoff package complete on canonical main.
+- Outputs: `specs/mesc-pilot-01/p01-04/*` specification and policy documents.
+- Acceptance criteria: all eight required documents present and validated; creator policy decisions reflected; no execution claims present.
+- Stop conditions: execution claims introduced; source-data redistribution claims asserted beyond canonical rights record; paths exceed `specs/mesc-pilot-01/p01-04/**` plus minimum necessary `plan.md`/`tasks.md` updates.
+- Authorization status: DOCUMENTATION STAGE ONLY — EXECUTION NOT AUTHORIZED.
+
 ## P01-04 — Frozen split and leakage audit
 
-- Prerequisites: transformed dataset validated; source-document grouping finalized.
+- Prerequisites: P01-04A specification ratified; P01-04B tooling implemented and accepted; P01-04C fixture qualification accepted.
 - Outputs: deterministic grouped split manifest; leakage audit report; split hash.
 - Acceptance criteria: source-document-grouped deterministic splitting; exact/normalized/near-duplicate leakage detection; cross-split overlap reported; split hash reproducible; split assignment does not affect scientific identity.
 - Stop conditions: split randomness introduced outside documented seed; leakage findings suppressed.
+- Authorization status: NOT AUTHORIZED.
+
+## P01-04B — P01-04 tooling and contract implementation
+
+- Prerequisites: P01-04A specification ratified; founder authorization for tooling implementation.
+- Outputs: grouped deterministic allocation implementation; artifact schemas; canonical serialization; leakage-detection primitives; safe output boundaries; formal execution entry point; regression fixtures.
+- Acceptance criteria: implementation is consistent with ratified P01-04A policy; deterministic serialization and fingerprinting behavior are fixture-validated; execution safety controls are reviewable; no real split artifacts are produced during implementation or qualification.
+- Stop conditions: implementation diverges from ratified specification; execution controls allow unauthorized seeding, mutation, or writeback; fixtures contain real partition membership; scope expands beyond contracts and tooling without separate authorization.
 - Authorization status: NOT AUTHORIZED.
 
 ## P01-05 — B0/B1 baseline runner
