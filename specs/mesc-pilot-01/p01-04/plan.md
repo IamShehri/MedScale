@@ -62,7 +62,7 @@ Each stage transition requires explicit founder authorization. Authorization for
 
 Stop without mutation if:
 
-- canonical main has moved from `5bb780c7873c1c7270447f212ab4844cbf3afdfc`;
+- the canonical main SHA does not match the exact SHA recorded in the applicable founder execution authorization;
 - P01-03G artifacts have changed;
 - any documentation contradicts a ratified decision;
 - a document claims execution has started;
