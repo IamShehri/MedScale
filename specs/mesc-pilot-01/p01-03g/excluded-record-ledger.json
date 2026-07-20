@@ -1,0 +1,22 @@
+{
+  "accepted_raw_artifact_size_bytes": 1075513,
+  "accepted_record_count": 1000,
+  "accepted_source_record_count": 1000,
+  "accepted_source_record_registry_count": 1000,
+  "collision_count": 0,
+  "deduplicated_count": "not_recorded",
+  "duplicate_count": 0,
+  "excluded_record_count": 0,
+  "filtered_count": "not_recorded",
+  "p01_03f_record_validation_failed": 0,
+  "p01_03f_record_validation_passed": 1000,
+  "p01_03f_registry_validation_failed": 0,
+  "p01_03f_registry_validation_passed": 1000,
+  "skipped_count": "not_recorded",
+  "unique_example_id_count": 1000,
+  "v2_evidence": {
+    "evidence_type": "evidence-root-compromise",
+    "label": "P01-03G V2 evidence-integrity incident",
+    "schema_version": "mesc-pubmedqa-v2-incident/1"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "canonical_main": "306c1aabd53e715646e8ed807b4d45c1f6662e8a",
+  "fingerprint": {
+    "fingerprint_payload_sha256": "df913fee1569dd7044d45ebf3c582b40ca30cf2b7b72cf63ac81fb36432ff516",
+    "fingerprint_payload_size": 568,
+    "fingerprint_schema": "mesc-pubmedqa-dataset-fingerprint/2"
+  },
+  "medscale_artifacts": {
+    "handoff_candidate": "P01-03G Corrected Candidate V3",
+    "validation": "P01-03F Formal Validation Invocation 2"
+  },
+  "schema_version": "mesc-pubmedqa-p01-03-provenance/1",
+  "source_artifact": {
+    "byte_size": 1075513,
+    "repository_path": "train-00000-of-00001.parquet",
+    "sha256": "3d56bd1abc11884579ecc3aab9dd3cdfce8b7cf54715daeca93b8022b7be231c"
+  },
+  "source_dataset": "qiaojin/PubMedQA",
+  "source_revision": "9001f2853fb87cab8d220904e0de81ac6973b318",
+  "transformation_identity": {
+    "schema": "mesc-pubmedqa-manifest/1",
+    "sha256": "6d9fbf1022f077d7e23ff9f8d48244996d45a15dbe705a40437c201baa41fe68",
+    "size": 1380,
+    "transformation_version": "mesc-pubmedqa-transform/1"
+  },
+  "transformation_run_identity": {
+    "sha256": "4ce017ef8eabea872076c95c244289196ad8fa34fcf49fea33abc2782ec91957",
+    "size": 195,
+    "status": "complete"
+  },
+  "validation_identity": {
+    "artifact_name": "parsed-summary.json",
+    "artifact_sha256": "84f3c55b7e691cb67d7c140a3cd7cf94d8e94d31483724c7d6a83b0374869ed6",
+    "artifact_size": 504,
+    "evidence_identity": {
+      "evidence_type": "validation_invocation",
+      "label": "P01-03F Formal Validation Invocation 2",
+      "schema_version": "mesc-pubmedqa-validation-evidence/1"
+    },
+    "invocation_number": 2,
+    "schema": "mesc-pubmedqa-validation-report/1"
+  }
+}

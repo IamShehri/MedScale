@@ -1,0 +1,40 @@
+{
+  "fingerprint_payload_sha256": "df913fee1569dd7044d45ebf3c582b40ca30cf2b7b72cf63ac81fb36432ff516",
+  "fingerprint_payload_size": 568,
+  "fingerprint_schema": "mesc-pubmedqa-dataset-fingerprint/2",
+  "logical_payload": {
+    "raw_artifact": {
+      "sha256": "3d56bd1abc11884579ecc3aab9dd3cdfce8b7cf54715daeca93b8022b7be231c",
+      "size": 1075513
+    },
+    "source_record_registry": {
+      "sha256": "26f8fec3881b77092f26690a30e8a01a7863cd9d4eddb5a8169b1e4cdd3a51af",
+      "size": 272664
+    },
+    "source_records": {
+      "sha256": "22495853cf8a395f962f9d2a2f9023ecb277f2b10cd875f69aa4b592d5b00dce",
+      "size": 2770193
+    },
+    "transformation_manifest": {
+      "sha256": "6d9fbf1022f077d7e23ff9f8d48244996d45a15dbe705a40437c201baa41fe68",
+      "size": 1380
+    },
+    "transformation_run_local": {
+      "sha256": "4ce017ef8eabea872076c95c244289196ad8fa34fcf49fea33abc2782ec91957",
+      "size": 195
+    }
+  },
+  "presentation_file_sha256": "af4848ff337c80ca73828229ed02df08ec0cf1372af9e93974cf2ce4bba12a3b",
+  "presentation_file_size": 1224,
+  "schema_version": "mesc-pubmedqa-dataset-fingerprint/2",
+  "serialization": {
+    "allow_nan": false,
+    "ensure_ascii": false,
+    "indent": 2,
+    "separators": [
+      ",",
+      ": "
+    ],
+    "sort_keys": true
+  }
+}

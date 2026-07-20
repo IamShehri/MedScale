@@ -1,0 +1,32 @@
+{
+  "accepted_validation_report": {
+    "artifact_name": "parsed-summary.json",
+    "artifact_schema": "mesc-pubmedqa-validation-report/1",
+    "artifact_sha256": "84f3c55b7e691cb67d7c140a3cd7cf94d8e94d31483724c7d6a83b0374869ed6",
+    "artifact_size": 504,
+    "authorized": true,
+    "bundle_inventory_match": true,
+    "bundle_mutation_count": 0,
+    "byte_equivalence": "exact_match",
+    "canonical_repository_commit": "306c1aabd53e715646e8ed807b4d45c1f6662e8a",
+    "evidence_identity": {
+      "evidence_type": "validation_invocation",
+      "label": "P01-03F Formal Validation Invocation 2",
+      "schema_version": "mesc-pubmedqa-validation-evidence/1"
+    },
+    "exit_code": 0,
+    "invocation_number": 2,
+    "issues_count": 0,
+    "public_contract_unchanged": true,
+    "raw_artifact_unchanged": true,
+    "record_validation_failed": 0,
+    "record_validation_passed": 1000,
+    "registry_validation_failed": 0,
+    "registry_validation_passed": 1000,
+    "status": "pass",
+    "stderr": "",
+    "success": true,
+    "transformation_rerun": false
+  },
+  "schema_version": "mesc-pubmedqa-p01-03-validation-report-reference/1"
+}
