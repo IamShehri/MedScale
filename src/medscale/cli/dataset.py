@@ -95,16 +95,22 @@ def _freeze_command(dataset_dir: Path, created_at: str) -> int:
         license_summary=_build_license_summary(records),
         software_version=_software_version,
     )
-    write_manifest(manifest, dataset_dir / "manifest.json")
-    write_checksums(compute_dataset_checksums(dataset_dir), dataset_dir / "checksums")
     dataset_dir_resolved = dataset_dir.resolve()
+    # Order matters: the fingerprint is computed over the base manifest (it
+    # cannot include itself), the final manifest is written, and only THEN are
+    # checksums taken — checksums must hash the exact bytes that ship.
+    # Computing checksums before the fingerprint rewrite left
+    # checksums/manifest.json.sha256 stale, so freeze invalidated itself.
+    write_manifest(manifest, dataset_dir / "manifest.json")
     fingerprint = compute_dataset_fingerprint(dataset_dir_resolved)
     payload = manifest.to_dict()
     payload["dataset_fingerprint"] = fingerprint
     dataset_dir.joinpath("manifest.json").write_text(
         json.dumps(payload, sort_keys=True, indent=2) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
+    write_checksums(compute_dataset_checksums(dataset_dir), dataset_dir / "checksums")
     report = validate_dataset(dataset_dir_resolved)
     print(report.to_summary())
     return 0 if report.passed else 1
@@ -116,7 +122,7 @@ def _init_command(dataset_id: str, root: Path, write: bool) -> int:
         return _common.fail(f"{dataset_dir} already exists; use --write to mutate explicitly")
     if write:
         dataset_dir.mkdir(parents=True, exist_ok=True)
-        (dataset_dir / "schema.json").write_text("{}", encoding="utf-8")
+        (dataset_dir / "schema.json").write_text("{}", encoding="utf-8", newline="\n")
         (dataset_dir / "splits").mkdir(exist_ok=True)
         (dataset_dir / "metadata").mkdir(exist_ok=True)
         (dataset_dir / "checksums").mkdir(exist_ok=True)

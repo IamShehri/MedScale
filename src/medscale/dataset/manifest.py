@@ -91,7 +91,9 @@ def _serialize_manifest(manifest: DatasetManifest) -> str:
 
 def write_manifest(manifest: DatasetManifest, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(_serialize_manifest(manifest), encoding="utf-8")
+    # LF is pinned: checksum files hash these exact bytes, so Windows CRLF
+    # translation would make dataset checksums platform-dependent (ADR-0030).
+    path.write_text(_serialize_manifest(manifest), encoding="utf-8", newline="\n")
 
 
 def _load_json(path: Path) -> object:
@@ -163,4 +165,4 @@ def write_checksums(checksums: dict[str, str], checksums_dir: Path) -> None:
     checksums_dir.mkdir(parents=True, exist_ok=True)
     for relative_name, digest in sorted(checksums.items()):
         target = checksums_dir / f"{Path(relative_name).name}.sha256"
-        target.write_text(f"{digest}\n", encoding="utf-8")
+        target.write_text(f"{digest}\n", encoding="utf-8", newline="\n")

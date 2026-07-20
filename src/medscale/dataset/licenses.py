@@ -50,5 +50,7 @@ def write_licenses_metadata(
         "unknown_count": summary.get("unknown", 0),
     }
     path = license_dir / "licenses.json"
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
     return path
