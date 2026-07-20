@@ -585,10 +585,18 @@ def transform_pubmedqa_parquet(
     manifest_bytes = _canonical_bytes(manifest_dict) + b"\n"
     _write_text_atomic(manifest_bytes, manifest_path)
 
+    # The pre/post hash pair exists to PROVE the input was never touched; the
+    # post hash is recomputed and enforced, not merely recorded.
+    input_sha256_post = _sha256_file(input_path)
+    if input_sha256_post != input_sha256:
+        raise RuntimeError(
+            "input artifact changed during transformation: "
+            f"pre={input_sha256} post={input_sha256_post}"
+        )
     local_report = {
         "status": "complete",
         "input_sha256_pre": input_sha256,
-        "input_sha256_post": _sha256_file(input_path),
+        "input_sha256_post": input_sha256_post,
     }
     _write_text_atomic(_canonical_bytes(local_report) + b"\n", local_report_path)
 
@@ -605,7 +613,7 @@ def transform_pubmedqa_parquet(
         "input": {
             "size": input_size,
             "sha256_pre": input_sha256,
-            "sha256_post": input_sha256,
+            "sha256_post": input_sha256_post,
         },
         "record_count": aggregates.record_count,
         "decision_aggregates": {
