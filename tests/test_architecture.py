@@ -210,3 +210,18 @@ def test_collaboration_does_not_import_forbidden_modules() -> None:
         if _unit_of(p) == "collaboration" and bool(forbidden & _imports_of(p))
     ]
     assert not offenders, "collaboration imports forbidden modules:\n  " + "\n  ".join(offenders)
+
+
+def test_no_module_package_name_collisions() -> None:
+    """A sibling ``name.py`` next to a ``name/`` package is permanently shadowed.
+
+    Python resolves the package, so the module is dead code that still ships in
+    the wheel (the audit found ``medscale/evidence.py`` shadowed by
+    ``medscale/evidence/`` — and it raised ImportError if ever executed).
+    """
+    collisions = [
+        str(path.relative_to(_SRC))
+        for path in sorted(_SRC.rglob("*.py"))
+        if path.with_suffix("").is_dir()
+    ]
+    assert not collisions, "modules shadowed by same-named packages:\n  " + "\n  ".join(collisions)
