@@ -1,0 +1,6 @@
+{
+  "description": "Transformation version from accepted P01-03E Attempt-2 bundle",
+  "transformation_identifier": "mesc-pubmedqa-transform",
+  "transformation_major_version": 1,
+  "transformation_version": "mesc-pubmedqa-transform/1"
+}

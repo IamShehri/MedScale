@@ -1,0 +1,8 @@
+{
+  "boundary_note": "The responsibilities listed below are reserved for P01-04 only. P01-03G does not execute, assign, or claim completion of any of these items.",
+  "p01_03g_boundary": true,
+  "p01_04_authorized": false,
+  "p01_04_started": false,
+  "permitted_handoff_component": true,
+  "responsibilities": []
+}

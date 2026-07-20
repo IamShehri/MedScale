@@ -1,0 +1,49 @@
+{
+  "candidate_version": "P01-03G Corrected Candidate V3",
+  "canonical_main": "306c1aabd53e715646e8ed807b4d45c1f6662e8a",
+  "canonical_tree": "2156f6c573e9d47f07c328adb0da78000ed5d65e",
+  "incident_history": [
+    "V1 was an initial local candidate requiring correction",
+    "V2 passed generation but was later invalidated by an evidence-integrity incident: result/p01-03-closeout-record.json was mutated by an appended invalid JSON fragment (line 78 column 3, char 3891)",
+    "V2 must not be used for promotion or as scientific source material",
+    "V3 was independently generated from frozen P01-03E Attempt-2 bundle and P01-03F Formal Validation Invocation 2 evidence; V3 does not restore or repair V2"
+  ],
+  "p01_03e_accepted_state": {
+    "evidence_type": "frozen-bundle",
+    "label": "P01-03E Attempt-2",
+    "record_count": 1000,
+    "schema_version": "mesc-pubmedqa-source/1"
+  },
+  "p01_03f_invocation_1": {
+    "classification": "frozen",
+    "root_cause": "validator byte-equivalence scope defect",
+    "status": "failed"
+  },
+  "p01_03f_invocation_2": {
+    "classification": "accepted",
+    "evidence_identity": {
+      "evidence_type": "validation_invocation",
+      "label": "P01-03F Formal Validation Invocation 2",
+      "schema_version": "mesc-pubmedqa-validation-evidence/1"
+    },
+    "exit_code": 0,
+    "invocation_number": 2,
+    "status": "pass",
+    "success": true
+  },
+  "p01_04": {
+    "authorized": false,
+    "responsibilities": [
+      "grouped split assignment",
+      "train/validation/test/holdout assignment",
+      "leakage auditing",
+      "leakage finding resolution",
+      "split-assignment leakage audit report generation",
+      "P01-04 formal authorization execution"
+    ]
+  },
+  "phase": "P01-03",
+  "pilot": "Pilot-01",
+  "schema_version": "mesc-pubmedqa-p01-03-closeout/2",
+  "status": "accepted"
+}

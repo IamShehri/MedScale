@@ -1,0 +1,6 @@
+{
+  "description": "P01-03 handoff artifact schema version for V3",
+  "schema_identifier": "mesc-pubmedqa-p01-03-handoff",
+  "schema_major_version": 1,
+  "schema_version": "mesc-pubmedqa-p01-03-handoff/1"
+}
