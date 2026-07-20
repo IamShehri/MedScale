@@ -1,8 +1,7 @@
 """The `medscale` command-line entry point.
 
-A thin dispatcher over subcommands. Today the only subcommand is ``screen`` (the human
-literature-screening workflow); more land as their phases arrive. Kept deliberately
-minimal — no framework, just argv dispatch.
+A thin dispatcher over subcommands (screen, extract, check, stats, snapshot, bench,
+dataset, fhir). Kept deliberately minimal — no framework, just argv dispatch.
 """
 
 from __future__ import annotations
@@ -56,6 +55,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("  stats    machine-readable corpus/screening/evidence statistics")
         print("  snapshot capture or --verify a citable knowledge-state identity")
         print("  bench    list/validate/run snapshot-bound evidence benchmarks")
+        print("  dataset  init/preview/validate/freeze deterministic dataset artifacts")
+        print("  fhir     validate FHIR payloads and store deterministic reports")
         print("\nrun `medscale <command> --help` for options and examples;")
         print("new here? start with docs/guides/research_quickstart.md")
         return 0 if args else 1

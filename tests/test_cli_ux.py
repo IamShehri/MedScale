@@ -178,3 +178,15 @@ def test_amend_requires_record_argument(tmp_path: Path, capsys: pytest.CaptureFi
     _seed_corpus(tmp_path)
     assert cli.main(["screen", "amend", "--root", str(tmp_path)]) == 2
     assert "--record" in capsys.readouterr().err
+
+
+def test_help_lists_every_dispatchable_subcommand(capsys: pytest.CaptureFixture[str]) -> None:
+    """`medscale --help` must not omit shipped commands (audit F-10: dataset
+    and fhir were dispatchable but undocumented)."""
+    from medscale.cli import _SUBCOMMANDS
+    from medscale.cli import main as cli_main
+
+    assert cli_main(["--help"]) == 0
+    out = capsys.readouterr().out
+    for command in _SUBCOMMANDS:
+        assert f"  {command}" in out, f"--help must list the {command!r} command"
