@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from medscale.mesc.split import (
     PilotLeakageAuditReport,
     PilotLeakageFinding,
     PilotSplitAssignment,
     PilotSplitManifest,
+    PilotSplitNotAuthorizedError,
     SourceDocumentGroupedSplitter,
 )
 
@@ -74,16 +77,37 @@ def test_split_manifest_product_split_assignments_three_way() -> None:
     assert manifest.holdout_example_ids == ()
 
 
-def test_grouped_splitter_assigns_all_examples() -> None:
+def test_grouped_splitter_refuses_unauthorized_allocation() -> None:
+    """P01-04B gate: the splitter must never silently fabricate assignments.
+
+    An earlier stub assigned every example to ``train`` and returned a
+    well-formed manifest — indistinguishable from a real split downstream.
+    Until P01-04B is authorized, invoking allocation must fail loudly.
+    """
     splitter = SourceDocumentGroupedSplitter(seed="grouped-seed")
-    manifest = splitter.assign(["e1", "e2", "e3"], ["d1", "d2", "d3"])
-    assert len(manifest.train_example_ids) == 3
-    assert manifest.validation_example_ids == ()
-    assert manifest.test_example_ids == ()
-    assert manifest.holdout_example_ids == ()
-    assert manifest.split_hash == ""
-    assert manifest.computed_split_hash != ""
-    assert len(manifest.computed_split_hash) == 16
+    with pytest.raises(PilotSplitNotAuthorizedError, match="P01-04B"):
+        splitter.assign(["e1", "e2", "e3"], ["d1", "d2", "d3"])
+
+
+def test_grouped_splitter_refusal_is_typed_not_implemented() -> None:
+    """The gate error is catchable both as the domain type and NotImplementedError."""
+    splitter = SourceDocumentGroupedSplitter()
+    with pytest.raises(NotImplementedError):
+        splitter.assign([], [])
+    assert issubclass(PilotSplitNotAuthorizedError, NotImplementedError)
+
+
+def test_grouped_splitter_never_returns_a_manifest() -> None:
+    """No input shape may slip past the authorization gate to a manifest."""
+    splitter = SourceDocumentGroupedSplitter(seed="any")
+    for example_ids, doc_ids in (
+        ([], []),
+        (["e1"], ["d1"]),
+        (["e1", "e2"], ["d1", "d1"]),
+        (["e1"], ["d1", "d2"]),
+    ):
+        with pytest.raises(PilotSplitNotAuthorizedError):
+            splitter.assign(example_ids, doc_ids)
 
 
 def test_leakage_audit_reports_findings() -> None:

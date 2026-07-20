@@ -26,6 +26,7 @@ from medscale.mesc.split import (
     PilotLeakageAuditReport,
     PilotSplitAssignment,
     PilotSplitManifest,
+    PilotSplitNotAuthorizedError,
     SourceDocumentGroupedSplitter,
 )
 
@@ -43,6 +44,7 @@ __all__ = [
     "PilotSourceIdentity",
     "PilotSplitAssignment",
     "PilotSplitManifest",
+    "PilotSplitNotAuthorizedError",
     "PilotTarget",
     "SourceDocumentGroupedSplitter",
     "pilot_abstention_precision_recall",
