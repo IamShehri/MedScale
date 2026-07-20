@@ -93,26 +93,37 @@ class PilotSplitManifest:
         }
 
 
+class PilotSplitNotAuthorizedError(NotImplementedError):
+    """Raised when unimplemented Pilot-01 split allocation is invoked.
+
+    The real source-document-grouped allocation algorithm is P01-04B scope and
+    must not exist — even as a silent placeholder — before that stage is
+    formally authorized.
+    """
+
+
 class SourceDocumentGroupedSplitter:
+    """Placeholder for the P01-04B source-document-grouped split allocator.
+
+    The data-model classes above (``PilotSplitAssignment``,
+    ``PilotSplitManifest``) are stable contracts. Allocation itself is NOT
+    implemented: an earlier stub silently assigned every example to ``train``,
+    which is indistinguishable from a real split manifest downstream. Until
+    P01-04B is authorized and the founder-ratified split policy is implemented,
+    ``assign`` refuses to run.
+    """
+
     def __init__(self, seed: str = "mesc-pilot-01") -> None:
         self.seed = seed
 
     def assign(
         self, example_ids: Sequence[str], source_document_ids: Sequence[str]
     ) -> PilotSplitManifest:
-        if len(example_ids) != len(source_document_ids):
-            raise ValueError("example_ids and source_document_ids must have the same length")
-        assignments = []
-        for index, example_id in enumerate(example_ids):
-            assignments.append(
-                PilotSplitAssignment(
-                    example_id=example_id,
-                    split="train",
-                    source_document_id=source_document_ids[index],
-                    partition_key=str(index),
-                )
-            )
-        return PilotSplitManifest(split_assignments=tuple(assignments), split_seed=self.seed)
+        raise PilotSplitNotAuthorizedError(
+            "SourceDocumentGroupedSplitter.assign is not implemented: real split "
+            "allocation is P01-04B scope and requires explicit authorization. "
+            "Refusing to fabricate split assignments."
+        )
 
 
 @dataclass(frozen=True)
