@@ -30,7 +30,7 @@ P01-04 of any stage requires:
 
 ## Outputs
 
-P0-04A produces:
+P01-04A produces:
 
 - `specs/mesc-pilot-01/p01-04/README.md`
 - `specs/mesc-pilot-01/p01-04/plan.md`

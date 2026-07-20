@@ -124,7 +124,7 @@ Deterministic constrained-apportionment algorithm:
    - every class total exactly;
    - every partition total exactly.
 3. Minimize the sum of squared deviations from the ideal matrix.
-4. Break ties by lexicographically comparing the integer vector in this order:
+4. Break ties by selecting the lexicographically smallest integer vector, compared in this order:
    - label order: `yes`, `no`, `maybe`
    - partition order: `train`, `validation`, `test`
 

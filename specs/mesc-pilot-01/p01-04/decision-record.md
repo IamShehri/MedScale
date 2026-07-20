@@ -82,7 +82,7 @@ Deterministic constrained-apportionment algorithm:
    - every class total exactly;
    - every partition total exactly.
 3. Minimize the sum of squared deviations from the ideal matrix.
-4. Break ties by lexicographically comparing the integer vector in this order:
+4. Break ties by selecting the lexicographically smallest integer vector, compared in this order:
    - label order: `yes`, `no`, `maybe`
    - partition order: `train`, `validation`, `test`
 
@@ -143,7 +143,7 @@ Changing the seed, algorithm version, grouping unit, ratios, stratifier, normali
 
 ## D7 — Minimum sizes
 
-Decision: The formal split must contain exactly at least 100 validation examples and at least 100 test examples.
+Decision: The formal split must contain at least 100 validation examples and at least 100 test examples.
 
 The ratified exact totals of 150 each satisfy these minima.
 

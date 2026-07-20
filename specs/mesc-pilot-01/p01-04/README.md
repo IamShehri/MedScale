@@ -2,7 +2,7 @@
 
 Status: **specification and policy only — no execution authorized**
 Branch: `docs/mesc-p01-04a-spec-policy`
-Canonical base: `5bb780c7873c1c7270447f212ab4844cbf3afdfc`
+Ratification review baseline: cd0f72b0ee9720f06d95dfa01862a4f403c31b16
 
 ---
 
@@ -14,7 +14,7 @@ P01-04A exists solely to record the canonical specification, scientific policy, 
 
 | Layer | Authority | Current status |
 |-------|-----------|----------------|
-| Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Pending** — decision records are placeholders awaiting founder record |
+| Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Pending** — decision records are proposed for founder ratification by this package. |
 | P01-04A specification | This package | **Under review** |
 | P01-04 execution | Separate authorization required | **Not authorized** |
 | P01-04B tooling implementation | Separate authorization required | **Not authorized** |
