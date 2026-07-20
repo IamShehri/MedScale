@@ -754,8 +754,23 @@ class TestOperationalReport:
         path = bundle / "transformation-run.local.json"
         path.write_bytes(b'{"status":"complete"}')
         agg, issues = _validate_local_report(str(path), "a" * 64)
-        assert issues == []
         assert agg.get("expected_raw_sha256_match") is False
+        assert any(
+            "does not attest the expected raw-artifact hash" in issue.message for issue in issues
+        )
+
+    def test_local_report_matching_attestation_passes(self, tmp_path: Path) -> None:
+        bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
+        path = bundle / "transformation-run.local.json"
+        data = {
+            "status": "complete",
+            "input_sha256_pre": "a" * 64,
+            "input_sha256_post": "a" * 64,
+        }
+        path.write_bytes(_canonical(data) + b"\n")
+        agg, issues = _validate_local_report(str(path), "a" * 64)
+        assert issues == []
+        assert agg.get("expected_raw_sha256_match") is True
 
     def test_local_report_secret_like_key_does_not_crash(self, tmp_path: Path) -> None:
         bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
@@ -1024,3 +1039,57 @@ class TestAggregateInvariants:
         bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
         report = validate_pubmedqa_bundle(bundle, authorized=True)
         assert report.schema_version == "mesc-pubmedqa-validation/1"
+
+
+# ---------------------------------------------------------------------------
+# Registry cross-check through the PUBLIC API (regression: cross-check sets
+# used to be harvested from the registry itself, so registry-vs-records
+# validation was circular and a corrupted registry passed formal validation).
+# ---------------------------------------------------------------------------
+
+
+class TestRegistryCrossCheckPublicApi:
+    def _tamper_registry_field(self, bundle: Path, field_name: str, value: str) -> None:
+        path = bundle / "source-record-registry.jsonl"
+        entry = json.loads(path.read_bytes().splitlines()[0])
+        entry[field_name] = value
+        path.write_bytes(_canonical(entry) + b"\n")
+
+    def test_corrupted_registry_hash_fails_via_public_api(self, tmp_path: Path) -> None:
+        bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
+        assert validate_pubmedqa_bundle(bundle, authorized=True).success is True
+        self._tamper_registry_field(bundle, "source_record_hash", "0" * 64)
+        report = validate_pubmedqa_bundle(bundle, authorized=True)
+        assert report.success is False
+        assert any("hash not present in source records" in i.message for i in report.issues)
+        assert report.registry_validation_failed == 1
+
+    def test_orphan_registry_example_id_fails_via_public_api(self, tmp_path: Path) -> None:
+        bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
+        self._tamper_registry_field(bundle, "original_example_id", "missing:example:id")
+        report = validate_pubmedqa_bundle(bundle, authorized=True)
+        assert report.success is False
+        assert any("orphan registry entry" in i.message for i in report.issues)
+
+    def test_registry_document_id_mismatch_fails_via_public_api(self, tmp_path: Path) -> None:
+        bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
+        self._tamper_registry_field(bundle, "source_document_id", "pmid:999999")
+        report = validate_pubmedqa_bundle(bundle, authorized=True)
+        assert report.success is False
+        assert any("document-id mismatch" in i.message for i in report.issues)
+
+    def test_pristine_bundle_still_passes_via_public_api(self, tmp_path: Path) -> None:
+        bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
+        report = validate_pubmedqa_bundle(bundle, authorized=True)
+        assert report.success is True
+        assert report.registry_validation_passed == 1
+        assert report.registry_validation_failed == 0
+
+    def test_local_report_attestation_enforced_via_public_api(self, tmp_path: Path) -> None:
+        bundle, _ = _build_valid_bundle(tmp_path, record_count=1)
+        # Helper's local report is {"status": "complete"} with no hash keys.
+        report = validate_pubmedqa_bundle(bundle, authorized=True, expected_raw_sha256="a" * 64)
+        assert report.success is False
+        assert any(
+            "does not attest the expected raw-artifact hash" in i.message for i in report.issues
+        )

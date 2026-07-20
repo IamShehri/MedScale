@@ -748,10 +748,25 @@ def _validate_local_report(
             )
         ]
     issues: list[ValidationIssue] = []
+    # The transform operator writes `input_sha256_pre` / `input_sha256_post`
+    # (see medscale.dataset._pubmedqa_source). An earlier revision of this
+    # check read keys no writer ever produced and its result was discarded by
+    # the caller, so the local-report attestation was never enforced.
     expected_raw_sha256_match = expected_raw_sha256 is None or (
-        report.get("raw_artifact_pre_sha256") == expected_raw_sha256
-        and report.get("raw_artifact_post_sha256") == expected_raw_sha256
+        report.get("input_sha256_pre") == expected_raw_sha256
+        and report.get("input_sha256_post") == expected_raw_sha256
     )
+    if not expected_raw_sha256_match:
+        issues.append(
+            ValidationIssue(
+                field="local_report.input_sha256",
+                message=(
+                    "local report does not attest the expected raw-artifact hash "
+                    "(input_sha256_pre/input_sha256_post)"
+                ),
+                severity="error",
+            )
+        )
     return {"expected_raw_sha256_match": expected_raw_sha256_match}, issues
 
 
@@ -938,50 +953,39 @@ def validate_pubmedqa_bundle(
             )
         )
     issues.extend(record_issues)
-    registry_entries, _registry_load_errors = _load_jsonl(
-        (bundle_dir / "source-record-registry.jsonl").as_posix()
-    )
-    if not registry_entries and _registry_load_errors:
-        issues.append(
-            ValidationIssue(
-                field="source-record-registry.jsonl",
-                message="registry file missing or invalid",
-                severity="error",
-            )
-        )
-    valid_registry_hashes: set[str] = set()
+    # Pinned public behavior: a missing registry file raises FileNotFoundError
+    # (unlike the other bundle files, which degrade to error issues).
+    registry_path = bundle_dir / "source-record-registry.jsonl"
+    if not registry_path.is_file():
+        raise FileNotFoundError(f"registry file not found: {registry_path.name}")
+    # The registry cross-check sets MUST come from the source-records file.
+    # An earlier revision harvested them from the registry itself, so the
+    # registry-vs-records checks compared the registry against its own values
+    # and could never fail (stabilization audit F-3: a corrupted registry hash
+    # passed formal validation).
+    record_hashes: set[str] = set()
     doc_ids: set[str] = set()
     example_ids: set[str] = set()
-    if registry_entries:
-        for entry in registry_entries:
-            if entry.get("source_record_hash"):
-                valid_registry_hashes.add(entry["source_record_hash"])
-            if entry.get("source_document_id"):
-                doc_ids.add(entry["source_document_id"])
-            if entry.get("original_example_id"):
-                example_ids.add(entry["original_example_id"])
-    if not valid_registry_hashes or not doc_ids:
+    try:
         records_list, _record_load_errors = _load_jsonl(
             (bundle_dir / "source-records.jsonl").as_posix()
         )
-        for entry in records_list:
-            inner_value = entry.get("record")
-            if isinstance(inner_value, dict):
-                inner = inner_value
-                if isinstance(inner.get("source_document_id"), str):
-                    doc_ids.add(inner["source_document_id"])
-                if isinstance(inner.get("original_example_id"), str):
-                    example_ids.add(inner["original_example_id"])
-            else:
-                inner = entry
-                if isinstance(inner.get("source_document_id"), str):
-                    doc_ids.add(inner["source_document_id"])
-                if isinstance(inner.get("original_example_id"), str):
-                    example_ids.add(inner["original_example_id"])
+    except FileNotFoundError:
+        records_list = []
+    for entry in records_list:
+        hash_value = entry.get("source_record_hash")
+        if isinstance(hash_value, str):
+            record_hashes.add(hash_value)
+        inner_value = entry.get("record")
+        inner = inner_value if isinstance(inner_value, dict) else entry
+        if isinstance(inner.get("source_document_id"), str):
+            doc_ids.add(inner["source_document_id"])
+        if isinstance(inner.get("original_example_id"), str):
+            example_ids.add(inner["original_example_id"])
     registry_aggregates, registry_issues, registry_validation_passed, registry_validation_failed = (
         _validate_registry(
             (bundle_dir / "source-record-registry.jsonl").as_posix(),
-            valid_registry_hashes,
+            record_hashes,
             doc_ids,
             example_ids,
         )
