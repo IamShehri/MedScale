@@ -36,6 +36,15 @@ Stop conditions: license unresolved; full-text rights asserted without evidence
 ```
 
 ```text
+P01-T03A — P01-04 split and leakage specification
+Status: DOCUMENTATION STAGE ONLY — EXECUTION NOT AUTHORIZED
+Prerequisites: P01-03G promotion merged and verified; separate founder authorization
+Outputs: `specs/mesc-pilot-01/p01-04/*` specification and policy documents
+Acceptance: all eight required documents present; founder policy decisions reflected; no execution claims present
+Stop conditions: execution claims introduced; source-data redistribution claims asserted beyond canonical rights record; paths exceed `specs/mesc-pilot-01/p01-04/**`
+```
+
+```text
 P01-T04 — Acquire PQA-L
 Status: PLANNING AUTHORIZED / EXECUTION NOT AUTHORIZED
 Prerequisites: P01-03 planning complete; separate acquisition authorization
