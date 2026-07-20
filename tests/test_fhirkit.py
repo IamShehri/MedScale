@@ -121,3 +121,57 @@ def test_storage_contract_is_content_addressed() -> None:
     report = validate_fhir(_rule_input())
     json_text = report_to_json(report)
     assert json_text == report_to_json(report)
+
+
+# ---------------------------------------------------------------------------
+# External-validator scratch-file safety (regression: the scratch payload used
+# to be written to a RELATIVE path in the caller's CWD and then deleted,
+# destroying any pre-existing user file of the same name).
+# ---------------------------------------------------------------------------
+
+
+def _echo_empty_report_command() -> list[str]:
+    import sys as _sys
+
+    return [_sys.executable, "-c", "print('{}')"]
+
+
+def _echo_input_path_command() -> list[str]:
+    import sys as _sys
+
+    return [
+        _sys.executable,
+        "-c",
+        "import json, sys; print(json.dumps({'warnings': [sys.argv[1]]}))",
+    ]
+
+
+def test_external_validator_never_clobbers_cwd_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from medscale.fhirkit import validate_fhir_with_validator
+
+    monkeypatch.chdir(tmp_path)
+    victim = tmp_path / "medscale-fhirkit-input.json"
+    victim.write_text("precious user data", encoding="utf-8", newline="\n")
+
+    report = validate_fhir_with_validator(_rule_input(), command=_echo_empty_report_command())
+
+    assert report.input_hash
+    assert victim.exists(), "pre-existing user file must survive external validation"
+    assert victim.read_text(encoding="utf-8") == "precious user data"
+
+
+def test_external_validator_scratch_file_is_isolated_and_cleaned(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from medscale.fhirkit import validate_fhir_with_validator
+
+    monkeypatch.chdir(tmp_path)
+    report = validate_fhir_with_validator(_rule_input(), command=_echo_input_path_command())
+
+    scratch = Path(report.warnings[0])
+    assert scratch.name == "medscale-fhirkit-input.json"
+    assert scratch.parent.resolve() != tmp_path.resolve(), "scratch file must not live in CWD"
+    assert not scratch.exists(), "scratch file must be removed after validation"
+    assert not scratch.parent.exists(), "scratch directory must be removed after validation"

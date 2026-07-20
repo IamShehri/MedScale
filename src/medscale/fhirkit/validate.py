@@ -6,6 +6,7 @@ import contextlib
 import json
 import os
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -93,16 +94,23 @@ def validate_fhir_with_validator(
     validator_version = FHIR_VALIDATOR_VERSION
 
     if command is not None:
-        input_path = Path("medscale-fhirkit-input.json")
+        # The scratch payload lives in a private temporary directory: writing a
+        # relative path would clobber (and then delete) a same-named file in the
+        # caller's working directory.
+        scratch_dir = Path(tempfile.mkdtemp(prefix="medscale-fhirkit-"))
+        input_path = scratch_dir / "medscale-fhirkit-input.json"
         try:
             input_path.write_text(
                 json.dumps(input_payload, sort_keys=True, ensure_ascii=False),
                 encoding="utf-8",
+                newline="\n",
             )
             raw_stdout = _run_validator(command, input_path)
         finally:
-            with contextlib.suppress(FileNotFoundError):
+            with contextlib.suppress(OSError):
                 input_path.unlink()
+            with contextlib.suppress(OSError):
+                scratch_dir.rmdir()
     else:
         raise FhirMissingDependencyError(
             "No external validator command was provided. "
