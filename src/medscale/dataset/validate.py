@@ -188,20 +188,24 @@ def validate_dataset(dataset_dir: Path) -> DatasetValidationReport:
         issues.append(ValidationIssue("checksums/", "missing sibling .sha256 files"))
     else:
         for relative_name, expected_digest in expected_checksums.items():
-            if relative_name.endswith(".json"):
+            # Accept both writer-style names ("schema.json") and the ADR-0030
+            # extensionless spellings ("schema"): normalize before lookup.
+            if relative_name.endswith(".json") or relative_name == "README.md":
                 artifact_name = relative_name
             else:
                 artifact_name = f"{relative_name}.json"
-            if artifact_name == "manifest.json":
-                artifact_path = dataset_dir / "manifest.json"
-            elif artifact_name == "schema.json":
-                artifact_path = dataset_dir / "schema.json"
+            # Location table mirrors compute_dataset_checksums: metadata files
+            # live under metadata/, splits under splits/, the rest at the root.
+            if artifact_name in {"manifest.json", "schema.json", "README.md"}:
+                artifact_path = dataset_dir / artifact_name
             elif artifact_name in {
                 "train.json",
                 "validation.json",
                 "test.json",
             }:
                 artifact_path = dataset_dir / "splits" / artifact_name
+            elif artifact_name in {"license.json", "statistics.json"}:
+                artifact_path = dataset_dir / "metadata" / artifact_name
             else:
                 artifact_path = (dataset_dir / artifact_name).resolve()
             if not _inside_dataset_root(artifact_path, dataset_dir):

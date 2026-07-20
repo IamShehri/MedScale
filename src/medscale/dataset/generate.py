@@ -83,7 +83,9 @@ def write_licenses_metadata(
         "unknown_count": summary.get("unknown", 0),
     }
     path = license_dir / "licenses.json"
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
     return path
 
 
@@ -96,6 +98,7 @@ def write_dataset_records(
     path.write_text(
         json.dumps(list(records), indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
 
@@ -110,7 +113,14 @@ def write_split_files(
     for partition in ("train", "validation", "test"):
         ids = list(getattr(split_result, partition))
         items = [mapping[record_id] for record_id in ids if record_id in mapping]
-        write_dataset_records(splits_dir / f"{partition}.json", items)
+        # splits/<partition>.json is a FILE in the ADR-0030 layout; routing it
+        # through write_dataset_records used to create a directory of that name,
+        # which crashed validate_dataset and broke fingerprints/checksums.
+        (splits_dir / f"{partition}.json").write_text(
+            json.dumps(items, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
 
 
 def write_dataset(

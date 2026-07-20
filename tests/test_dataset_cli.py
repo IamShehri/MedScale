@@ -95,3 +95,61 @@ def test_dataset_validate_exits_zero_for_valid_dataset(tmp_path: Path) -> None:
             hashlib.sha256(path.read_bytes()).hexdigest() + "\n", encoding="utf-8"
         )
     assert main(["validate", str(dataset_dir)]) == 0
+
+
+def test_dataset_freeze_produces_self_consistent_checksums(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Regression (audit F-6): freeze used to checksum the manifest BEFORE
+    rewriting it with the fingerprint, so checksums/manifest.json.sha256 never
+    matched the shipped manifest and freeze failed its own validation."""
+    monkeypatch.chdir(tmp_path)
+    root = tmp_path / "data" / "datasets"
+    dataset_dir = root / "medscale-dataset-v1"
+    corpus = root / "corpus" / "records.jsonl"
+    corpus.parent.mkdir(parents=True)
+    corpus.write_text(
+        json.dumps({"record_id": "r-1", "license_spdx": "MIT"}) + "\n", encoding="utf-8"
+    )
+    dataset_dir.mkdir(parents=True)
+    (dataset_dir / "schema.json").write_text("{}", encoding="utf-8")
+    splits = dataset_dir / "splits"
+    splits.mkdir()
+    for name in ("train", "validation", "test"):
+        (splits / f"{name}.json").write_text("[]", encoding="utf-8")
+    metadata = dataset_dir / "metadata"
+    metadata.mkdir()
+    (metadata / "license.json").write_text(
+        json.dumps(
+            {
+                "spdx_id": "MIT",
+                "source_scope": ["synthetic"],
+                "redistribution_allowed": True,
+                "attribution_required": False,
+                "commercial_allowed": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    exit_code = main(
+        [
+            "freeze",
+            "medscale-dataset-v1",
+            "--root",
+            str(root),
+            "--created-at",
+            "2026-07-13T00:00:00+00:00",
+        ]
+    )
+
+    manifest_bytes = (dataset_dir / "manifest.json").read_bytes()
+    recorded = (
+        (dataset_dir / "checksums" / "manifest.json.sha256").read_text(encoding="utf-8").strip()
+    )
+    assert recorded == hashlib.sha256(manifest_bytes).hexdigest(), (
+        "checksums must hash the exact manifest bytes that ship"
+    )
+    assert json.loads(manifest_bytes)["dataset_fingerprint"]
+    assert b"\r" not in manifest_bytes
+    assert exit_code == 0
