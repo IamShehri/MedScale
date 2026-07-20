@@ -861,3 +861,46 @@ class TestComparisonHelper:
             _record_to_envelope(first)["source_record_hash"]
             != _record_to_envelope(second)["source_record_hash"]
         )
+
+
+# ---------------------------------------------------------------------------
+# Input-unchanged attestation (regression: the run report used to copy the
+# pre-hash into sha256_post without recomputing, and nothing compared the
+# recomputed post-hash to the pre-hash).
+# ---------------------------------------------------------------------------
+
+
+class TestInputAttestation:
+    def test_post_hash_is_recomputed_and_attested(self, tmp_path: Path) -> None:
+        from medscale.dataset._pubmedqa_source import transform_pubmedqa_parquet
+
+        parquet = _write_synthetic_parquet(tmp_path / "input.parquet")
+        expected = hashlib.sha256(parquet.read_bytes()).hexdigest()
+        report = transform_pubmedqa_parquet(parquet, tmp_path / "out")
+        assert report["input"]["sha256_pre"] == expected
+        assert report["input"]["sha256_post"] == expected
+        local = json.loads(
+            (tmp_path / "out" / "transformation-run.local.json").read_text(encoding="utf-8")
+        )
+        assert local["input_sha256_pre"] == expected
+        assert local["input_sha256_post"] == expected
+
+    def test_input_mutation_during_transform_raises(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import medscale.dataset._pubmedqa_source as source_module
+
+        parquet = _write_synthetic_parquet(tmp_path / "input.parquet")
+        real_sha256_file = source_module._sha256_file
+        calls = {"count": 0}
+
+        def unstable_sha256_file(path: Path) -> str:
+            calls["count"] += 1
+            if calls["count"] >= 2:  # post-transform recomputation
+                return "0" * 64
+            return real_sha256_file(path)
+
+        monkeypatch.setattr(source_module, "_sha256_file", unstable_sha256_file)
+        with pytest.raises(RuntimeError, match="changed during transformation"):
+            source_module.transform_pubmedqa_parquet(parquet, tmp_path / "out")
+        assert calls["count"] >= 2
