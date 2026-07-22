@@ -377,7 +377,7 @@ def test_join_labels_rejects_non_integer_row_ordinals(value: object) -> None:
     valid = _ordered(0, source_document_id="doc")
     invalid = OrderedExampleRow(
         original_example_id="fixture-example-1",
-        row_ordinal=value,
+        row_ordinal=cast(int, value),
         source_document_id="doc",
     )
     labels = [_source_label(0), _source_label(1)]
@@ -407,7 +407,7 @@ def test_rank_groups_rejects_non_integer_labeled_example_ordinals(value: object)
             example_id="mesc-pilot-01:" + "a0" * 32,
             original_example_id="fixture-example-0",
             source_document_id="doc",
-            row_ordinal=value,
+            row_ordinal=cast(int, value),
             decision="yes",
         ),
     )
@@ -426,27 +426,43 @@ def test_rank_groups_rejects_non_integer_labeled_example_ordinals(value: object)
         ("train", None),
         ("train", -1),
         ("validation", True),
+        ("validation", False),
         ("validation", 0.5),
+        ("validation", 1.0),
+        ("validation", "1"),
+        ("validation", None),
+        ("validation", -1),
+        ("test", True),
+        ("test", False),
+        ("test", 0.5),
         ("test", 1.0),
         ("test", "1"),
         ("test", None),
         ("test", -1),
     ],
 )
-def test_constrained_apportionment_rejects_non_integer_targets(field: str, value: object) -> None:
-    targets = {
-        "yes": 1,
-        "no": 1,
-        "maybe": 1,
+def test_allocate_indivisible_groups_rejects_non_integer_targets(field: str, value: object) -> None:
+    examples = _joined(
+        [
+            (0, "doc", "yes"),
+            (1, "doc", "no"),
+            (2, "doc", "maybe"),
+        ]
+    )
+    base_targets = {
+        "yes": LabelTarget("yes", train=1, validation=0, test=0),
+        "no": LabelTarget("no", train=0, validation=1, test=0),
+        "maybe": LabelTarget("maybe", train=0, validation=0, test=1),
     }
-    partitions = {
-        "train": 1,
-        "validation": 1,
-        "test": 1,
-    }
-    partitions[field] = value
-    with pytest.raises(SplitInputError, match="non-negative integer"):
-        constrained_apportionment(targets, partitions)
+    if field == "train":
+        yes_target = LabelTarget("yes", cast(int, value), 0, 0)
+    elif field == "validation":
+        yes_target = LabelTarget("yes", 0, cast(int, value), 0)
+    else:
+        yes_target = LabelTarget("yes", 0, 0, cast(int, value))
+    targets = (yes_target, base_targets["no"], base_targets["maybe"])
+    with pytest.raises(SplitInputError, match=field):
+        allocate_indivisible_groups(examples, targets)
 
 
 def test_non_negative_integers_accept_zero_and_positive_across_entrypoints() -> None:
