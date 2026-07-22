@@ -204,8 +204,7 @@ def join_labels(
     for row in ordered_rows:
         _required_nonblank(row.original_example_id, "original_example_id")
         _required_nonblank(row.source_document_id, "source_document_id")
-        if row.row_ordinal < 0:
-            raise SplitInputError("row_ordinal must be non-negative")
+        _required_nonnegative_int(row.row_ordinal, "row_ordinal")
         if row.original_example_id in ordered_by_id:
             raise SplitInputError(
                 f"duplicate ordered original_example_id: {row.original_example_id}"
@@ -369,10 +368,9 @@ def rank_groups(examples: Sequence[LabeledExample]) -> tuple[RankedGroup, ...]:
         _required_nonblank(example.example_id, "example_id")
         _required_nonblank(example.original_example_id, "original_example_id")
         _required_nonblank(example.source_document_id, "source_document_id")
+        _required_nonnegative_int(example.row_ordinal, "row_ordinal")
         if example.decision not in DECISIONS:
             raise SplitInputError(f"invalid decision: {example.decision!r}")
-        if example.row_ordinal < 0:
-            raise SplitInputError("row_ordinal must be non-negative")
         if example.example_id in seen_example_ids:
             raise SplitInputError(f"duplicate example_id: {example.example_id}")
         if example.row_ordinal in seen_ordinals:
@@ -432,8 +430,9 @@ def allocate_indivisible_groups(
     for target in targets:
         if target.decision in target_by_decision:
             raise SplitInputError(f"duplicate target decision: {target.decision}")
-        if any(value < 0 for value in (target.train, target.validation, target.test)):
-            raise SplitInputError("label targets must be non-negative")
+        _required_nonnegative_int(target.train, "train")
+        _required_nonnegative_int(target.validation, "validation")
+        _required_nonnegative_int(target.test, "test")
         target_by_decision[target.decision] = target
     if set(target_by_decision) != set(DECISIONS):
         raise SplitInputError(f"targets must contain exactly {DECISIONS}")
@@ -511,3 +510,11 @@ def _validate_exact_keys(values: Mapping[str, int], expected: Sequence[str], fie
             f"{field} keys must be exactly {tuple(expected)}; "
             f"missing={sorted(required - actual)}, unexpected={sorted(actual - required)}"
         )
+
+
+def _required_nonnegative_int(value: object, field: str) -> int:
+    if not isinstance(value, int) or isinstance(value, bool):
+        raise SplitInputError(f"{field} must be a non-negative integer, got {value!r}")
+    if value < 0:
+        raise SplitInputError(f"{field} must be a non-negative integer, got {value!r}")
+    return value

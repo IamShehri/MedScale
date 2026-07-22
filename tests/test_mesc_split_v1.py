@@ -359,3 +359,108 @@ def test_private_core_writes_no_artifacts(tmp_path: Path) -> None:
 def test_public_splitter_remains_fail_closed() -> None:
     with pytest.raises(PilotSplitNotAuthorizedError, match="P01-04B"):
         SourceDocumentGroupedSplitter().assign(["fixture"], ["fixture-document"])
+
+
+@pytest.mark.parametrize(
+    ("value",),
+    [
+        (True,),
+        (False,),
+        (0.5,),
+        (1.0,),
+        ("1",),
+        (None,),
+        (-1,),
+    ],
+)
+def test_join_labels_rejects_non_integer_row_ordinals(value: object) -> None:
+    valid = _ordered(0, source_document_id="doc")
+    invalid = OrderedExampleRow(
+        original_example_id="fixture-example-1",
+        row_ordinal=value,
+        source_document_id="doc",
+    )
+    labels = [_source_label(0), _source_label(1)]
+    with pytest.raises(SplitInputError, match="row_ordinal"):
+        join_labels(
+            [valid, invalid],
+            labels,
+            transformation_version="fixture-transform/1",
+        )
+
+
+@pytest.mark.parametrize(
+    ("value",),
+    [
+        (True,),
+        (False,),
+        (0.5,),
+        (1.0,),
+        ("1",),
+        (None,),
+        (-1,),
+    ],
+)
+def test_rank_groups_rejects_non_integer_labeled_example_ordinals(value: object) -> None:
+    examples = (
+        LabeledExample(
+            example_id="mesc-pilot-01:" + "a0" * 32,
+            original_example_id="fixture-example-0",
+            source_document_id="doc",
+            row_ordinal=value,
+            decision="yes",
+        ),
+    )
+    with pytest.raises(SplitInputError, match="row_ordinal"):
+        rank_groups(examples)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("train", True),
+        ("train", False),
+        ("train", 0.5),
+        ("train", 1.0),
+        ("train", "1"),
+        ("train", None),
+        ("train", -1),
+        ("validation", True),
+        ("validation", 0.5),
+        ("test", 1.0),
+        ("test", "1"),
+        ("test", None),
+        ("test", -1),
+    ],
+)
+def test_constrained_apportionment_rejects_non_integer_targets(field: str, value: object) -> None:
+    targets = {
+        "yes": 1,
+        "no": 1,
+        "maybe": 1,
+    }
+    partitions = {
+        "train": 1,
+        "validation": 1,
+        "test": 1,
+    }
+    partitions[field] = value
+    with pytest.raises(SplitInputError, match="non-negative integer"):
+        constrained_apportionment(targets, partitions)
+
+
+def test_non_negative_integers_accept_zero_and_positive_across_entrypoints() -> None:
+    # row_ordinals and labeled-example ordinals
+    examples = _joined(
+        [
+            (0, "doc", "yes"),
+            (1, "doc", "yes"),
+        ]
+    )
+    assert rank_groups(examples)
+
+    # valid zero/positive partition targets execute without raising.
+    constrained_apportionment(
+        {"yes": 2, "no": 2, "maybe": 2},
+        {"train": 2, "validation": 2, "test": 2},
+    )
