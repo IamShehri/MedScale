@@ -36,8 +36,20 @@ Formal generation accepts only:
 - `specs/mesc-pilot-01/p01-03g/source-document-id-registry.jsonl`
 - `specs/mesc-pilot-01/p01-03g/transformed-dataset-identity.json`
 - `specs/mesc-pilot-01/p01-04/decision-record.md`
+- the accepted external `source-records.jsonl`, read-only and outside the repository,
+  solely as the per-example `final_decision` label source
 
 Input identities must be verified against recorded SHA-256 digests before every formal operation. Any input mismatch stops execution.
+
+Before the external `source-records.jsonl` is read, its identity must equal both
+attested values from the accepted P01-03G transformed-dataset identity:
+
+- SHA-256: `22495853cf8a395f962f9d2a2f9023ecb277f2b10cd875f69aa4b592d5b00dce`
+- byte size: `2770193`
+
+The external file must not be copied into the repository. P01-04 may retain only
+the identity fields and `final_decision` needed for the fail-closed label join;
+question, context, answer, and annotation content must not appear in split outputs.
 
 ## Independent generations
 
