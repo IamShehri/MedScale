@@ -32,9 +32,9 @@ __all__ = [
     "validate_package_installed",
 ]
 
-#: The only model identifiers B0 will serve. These are the two ratified student
-#: candidates. No other model is accepted, and no Chinese model, embedding model,
-#: reranker, or teacher may ever be added to this set.
+#: The only model identifiers ratified for MESC B0. Models outside this
+#: allowlist, embedding models, rerankers and teacher models are outside the
+#: authorized B0 phase and require separate governance approval.
 APPROVED_B0_MODELS: frozenset[str] = frozenset(
     {"google/medgemma-1.5-4b-it", "meta-llama/Llama-3.2-3B-Instruct"}
 )

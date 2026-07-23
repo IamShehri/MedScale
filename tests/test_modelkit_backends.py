@@ -306,7 +306,7 @@ def test_both_approved_models_validate() -> None:
         "some/unapproved-model",
     ],
 )
-def test_unapproved_and_chinese_models_are_rejected(model_id: str) -> None:
+def test_models_outside_b0_allowlist_are_rejected(model_id: str) -> None:
     with pytest.raises(BackendUnsupportedModelError, match="model_id must be one of"):
         validate_generation_config(_config(model_id=model_id))
 
