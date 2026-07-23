@@ -3,10 +3,15 @@
 Everything here is import-safe without ``transformers`` installed. Configuration
 validation is deterministic, typed, and must run *before* any runtime/model
 construction so an unapproved or nondeterministic request never reaches a loader.
+
+For reproducibility, model and tokenizer revisions must be exact immutable commit
+SHAs (full lowercase 40-hex); mutable references such as ``main`` or tags are
+rejected.
 """
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from medscale.backends.common import (
@@ -21,6 +26,8 @@ __all__ = [
     "SUPPORTED_DTYPES",
     "TransformersConfigError",
     "TransformersGenerationConfig",
+    "is_commit_sha",
+    "require_commit_sha",
     "validate_generation_config",
     "validate_package_installed",
 ]
@@ -33,6 +40,8 @@ APPROVED_B0_MODELS: frozenset[str] = frozenset(
 )
 SUPPORTED_DTYPES: frozenset[str] = frozenset({"float32", "float16", "bfloat16"})
 SUPPORTED_DEVICES: frozenset[str] = frozenset({"cpu", "cuda"})
+
+_COMMIT_SHA = re.compile(r"^[0-9a-f]{40}$")
 
 
 class TransformersConfigError(BackendError):
@@ -53,16 +62,38 @@ def validate_package_installed() -> None:
         )
 
 
+def is_commit_sha(value: object) -> bool:
+    """True only for a full lowercase 40-character hexadecimal commit SHA."""
+    return isinstance(value, str) and _COMMIT_SHA.fullmatch(value) is not None
+
+
+def require_commit_sha(value: object, field: str) -> str:
+    """Return ``value`` if it is an immutable commit SHA; else raise, fail-closed.
+
+    Rejects branch names, tags, abbreviated SHAs, uppercase hex, blank and
+    whitespace-padded strings, and non-string values.
+    """
+    if not is_commit_sha(value):
+        raise TransformersConfigError(
+            f"{field} must be a full lowercase 40-hex commit SHA "
+            f"(branch names, tags, abbreviated or uppercase SHAs are rejected), got {value!r}"
+        )
+    assert isinstance(value, str)
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class TransformersGenerationConfig:
     """Explicit, deterministic B0 generation configuration.
 
     Values are validated by :func:`validate_generation_config`, never silently
-    coerced. B0 permits only greedy, deterministic, local-files-only generation.
+    coerced. B0 permits only greedy, deterministic, local-files-only generation
+    at immutable model and tokenizer revisions.
     """
 
     model_id: str
-    revision: str
+    model_revision: str
+    tokenizer_revision: str
     max_new_tokens: int
     seed: int
     do_sample: bool = False
@@ -87,8 +118,8 @@ def validate_generation_config(config: TransformersGenerationConfig) -> None:
         raise BackendUnsupportedModelError(
             f"model_id must be one of {sorted(APPROVED_B0_MODELS)}, got {config.model_id!r}"
         )
-    if not isinstance(config.revision, str) or not config.revision.strip():
-        raise TransformersConfigError("model revision must be an explicit non-blank string")
+    require_commit_sha(config.model_revision, "model_revision")
+    require_commit_sha(config.tokenizer_revision, "tokenizer_revision")
     if config.do_sample:
         raise TransformersConfigError(
             "B0 requires deterministic greedy generation: do_sample must be False"

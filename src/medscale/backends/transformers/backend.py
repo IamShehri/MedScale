@@ -2,7 +2,8 @@
 
 No model, tokenizer, ``torch``, or pipeline is imported or constructed at module
 import time. Runtime construction is separated from generation and injected, so
-tests exercise the whole boundary with fakes and never touch a real model, the
+tests exercise the whole boundary — including the real PyTorch adapter — with
+fake ``torch``/tokenizer/model objects, and never touch a real model, the
 network, or the filesystem. Production generation never echoes the prompt: only
 the newly generated tokens are decoded and returned.
 """
@@ -10,6 +11,7 @@ the newly generated tokens are decoded and returned.
 from __future__ import annotations
 
 import importlib
+from dataclasses import dataclass
 from typing import Any, Protocol
 
 from medscale.backends.common import BackendError
@@ -27,6 +29,7 @@ from medscale.modelkit.interfaces import (
 )
 
 __all__ = [
+    "EncodedInput",
     "TransformersBackend",
     "TransformersDecodeError",
     "TransformersGenerateError",
@@ -55,20 +58,37 @@ class TransformersDecodeError(BackendError):
     """Decoding of generated tokens failed."""
 
 
-class TransformersRuntime(Protocol):
-    """The injectable runtime boundary: encode, generate, decode, revision.
+@dataclass(frozen=True, slots=True)
+class EncodedInput:
+    """A typed encoded-input boundary; no hidden or global runtime state.
 
-    ``generate`` must return the full token sequence (the exact prompt tokens
+    ``input_ids`` and ``attention_mask`` are plain integer tuples used for
+    deterministic prompt-prefix verification. ``backend_input`` carries the
+    optional backend tensors for the real runtime and is ``None`` for fakes.
+    """
+
+    input_ids: tuple[int, ...]
+    attention_mask: tuple[int, ...]
+    backend_input: Any = None
+
+
+class TransformersRuntime(Protocol):
+    """The injectable runtime boundary: encode, generate, decode, revisions.
+
+    ``generate`` returns the full token sequence (the exact prompt tokens
     followed by newly generated tokens), so the generator can strip the prompt
     prefix and never echo it.
     """
 
     @property
-    def revision(self) -> str: ...
+    def model_revision(self) -> str: ...
 
-    def encode(self, text: str) -> tuple[int, ...]: ...
+    @property
+    def tokenizer_revision(self) -> str: ...
 
-    def generate(self, input_ids: tuple[int, ...], *, max_new_tokens: int) -> tuple[int, ...]: ...
+    def encode(self, text: str) -> EncodedInput: ...
+
+    def generate(self, encoded: EncodedInput, *, max_new_tokens: int) -> tuple[int, ...]: ...
 
     def decode(self, token_ids: tuple[int, ...]) -> str: ...
 
@@ -81,24 +101,29 @@ class TransformersBackend:
 class TransformersTextGenerator:
     """Deterministic generator over an injected :class:`TransformersRuntime`.
 
-    Configuration is validated before anything else; a mismatched runtime
-    revision is rejected. The returned completion contains only the generated
-    tokens, never the prompt.
+    Configuration is validated before anything else; a runtime whose resolved
+    model/tokenizer revisions do not match the validated config is rejected. The
+    returned completion contains only the generated tokens, never the prompt.
     """
 
     def __init__(
         self, config: TransformersGenerationConfig, *, runtime: TransformersRuntime
     ) -> None:
         validate_generation_config(config)
-        if runtime.revision != config.revision:
+        if runtime.model_revision != config.model_revision:
             raise TransformersLoadError(
-                f"runtime revision {runtime.revision!r} does not match "
-                f"config revision {config.revision!r}"
+                f"runtime model_revision {runtime.model_revision!r} does not match "
+                f"config {config.model_revision!r}"
+            )
+        if runtime.tokenizer_revision != config.tokenizer_revision:
+            raise TransformersLoadError(
+                f"runtime tokenizer_revision {runtime.tokenizer_revision!r} does not match "
+                f"config {config.tokenizer_revision!r}"
             )
         self._config = config
         self._runtime = runtime
         self._ref = ModelRef(
-            model_id=config.model_id, revision=config.revision, backend="transformers"
+            model_id=config.model_id, revision=config.model_revision, backend="transformers"
         )
 
     @property
@@ -106,13 +131,13 @@ class TransformersTextGenerator:
         return self._ref
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
-        input_ids = self._encode(request.prompt)
-        output_ids = self._generate(input_ids)
-        if output_ids[: len(input_ids)] != input_ids:
+        encoded = self._encode(request.prompt)
+        output_ids = self._generate(encoded)
+        if output_ids[: len(encoded.input_ids)] != encoded.input_ids:
             raise TransformersGenerateError(
                 "generation output does not begin with the exact prompt tokens"
             )
-        new_ids = output_ids[len(input_ids) :]
+        new_ids = output_ids[len(encoded.input_ids) :]
         text = self._decode(new_ids)
         finish = (
             FinishReason.LENGTH
@@ -121,20 +146,20 @@ class TransformersTextGenerator:
         )
         return GenerationResult(text=text, model=self._ref, finish_reason=finish)
 
-    def _encode(self, prompt: str) -> tuple[int, ...]:
+    def _encode(self, prompt: str) -> EncodedInput:
         try:
-            return tuple(int(token) for token in self._runtime.encode(prompt))
+            return self._runtime.encode(prompt)
         except TransformersTokenizeError:
             raise
         except Exception as exc:  # normalize any tokenizer failure
             raise TransformersTokenizeError(f"tokenization failed: {exc}") from exc
 
-    def _generate(self, input_ids: tuple[int, ...]) -> tuple[int, ...]:
+    def _generate(self, encoded: EncodedInput) -> tuple[int, ...]:
         try:
             return tuple(
                 int(token)
                 for token in self._runtime.generate(
-                    input_ids, max_new_tokens=self._config.max_new_tokens
+                    encoded, max_new_tokens=self._config.max_new_tokens
                 )
             )
         except TransformersGenerateError:
@@ -167,62 +192,150 @@ class TransformersSpanExtractor:
         )
 
 
-class _RealTransformersRuntime:
-    """The production runtime wrapper. Never exercised by the test suite.
+def _valid_token_id(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 0
 
-    Uses ``importlib`` so mypy/tooling never statically follows the optional
-    ``transformers`` dependency, and loads with ``local_files_only`` and
-    ``trust_remote_code=False`` so no download or remote code path is possible.
+
+def _resolve_dtype(torch_module: Any, name: str) -> Any:
+    if name not in ("float32", "float16", "bfloat16"):
+        raise TransformersLoadError(f"unsupported dtype {name!r}")
+    dtype = getattr(torch_module, name, None)
+    if dtype is None:
+        raise TransformersLoadError(f"torch exposes no dtype {name!r}")
+    return dtype
+
+
+def _resolve_device(torch_module: Any, device: str) -> str:
+    if device not in ("cpu", "cuda"):
+        raise TransformersLoadError(f"unsupported device {device!r}")
+    if device == "cuda" and not bool(torch_module.cuda.is_available()):
+        raise TransformersLoadError("CUDA device requested but CUDA is not available")
+    return device
+
+
+def _resolve_pad_eos(tokenizer: Any) -> tuple[int, int]:
+    eos = getattr(tokenizer, "eos_token_id", None)
+    if not _valid_token_id(eos):
+        raise TransformersLoadError(f"tokenizer eos_token_id is missing or malformed: {eos!r}")
+    assert isinstance(eos, int)
+    pad = getattr(tokenizer, "pad_token_id", None)
+    if not _valid_token_id(pad):
+        pad = eos  # use eos as pad only because eos is validated above
+    assert isinstance(pad, int)
+    return pad, eos
+
+
+class _RealTransformersRuntime:
+    """Production runtime adapter over injected ``torch``/tokenizer/model objects.
+
+    Correctness (attention mask, device placement, dtype, ``eval``,
+    ``inference_mode``, pad/eos) is exercised in tests with fakes; the real
+    objects are supplied only by :func:`build_transformers_runtime`.
     """
 
-    def __init__(self, *, tokenizer: Any, model: Any, revision: str) -> None:
-        self._tokenizer = tokenizer
+    def __init__(
+        self,
+        *,
+        torch_module: Any,
+        tokenizer: Any,
+        model: Any,
+        model_revision: str,
+        tokenizer_revision: str,
+        device: str,
+        dtype: str,
+    ) -> None:
+        self._torch = torch_module
+        self._tok = tokenizer
         self._model = model
-        self._revision = revision
+        self._model_revision = model_revision
+        self._tokenizer_revision = tokenizer_revision
+        self._device = _resolve_device(torch_module, device)
+        self._dtype = _resolve_dtype(torch_module, dtype)
+        self._pad_id, self._eos_id = _resolve_pad_eos(tokenizer)
+        self._model.to(self._device)
 
     @property
-    def revision(self) -> str:
-        return self._revision
+    def model_revision(self) -> str:
+        return self._model_revision
 
-    def encode(self, text: str) -> tuple[int, ...]:
-        encoded: Any = self._tokenizer(text)
-        return tuple(int(token) for token in encoded["input_ids"])
+    @property
+    def tokenizer_revision(self) -> str:
+        return self._tokenizer_revision
 
-    def generate(self, input_ids: tuple[int, ...], *, max_new_tokens: int) -> tuple[int, ...]:
-        output: Any = self._model.generate(
-            [list(input_ids)], max_new_tokens=max_new_tokens, do_sample=False, num_beams=1
+    def encode(self, text: str) -> EncodedInput:
+        enc: Any = self._tok(text, return_tensors="pt")
+        input_ids_tensor: Any = enc["input_ids"]
+        attention_mask_tensor: Any = enc["attention_mask"]
+        input_ids = tuple(int(token) for token in input_ids_tensor[0])
+        attention_mask = tuple(int(mask) for mask in attention_mask_tensor[0])
+        return EncodedInput(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            backend_input=(input_ids_tensor, attention_mask_tensor),
         )
+
+    def generate(self, encoded: EncodedInput, *, max_new_tokens: int) -> tuple[int, ...]:
+        input_ids_tensor, attention_mask_tensor = encoded.backend_input
+        input_ids_dev = input_ids_tensor.to(self._device)
+        attention_mask_dev = attention_mask_tensor.to(self._device)
+        self._model.eval()
+        with self._torch.inference_mode():
+            output: Any = self._model.generate(
+                input_ids=input_ids_dev,
+                attention_mask=attention_mask_dev,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                num_beams=1,
+                pad_token_id=self._pad_id,
+                eos_token_id=self._eos_id,
+            )
         return tuple(int(token) for token in output[0])
 
     def decode(self, token_ids: tuple[int, ...]) -> str:
-        return str(self._tokenizer.decode(list(token_ids), skip_special_tokens=True))
+        return str(self._tok.decode(list(token_ids), skip_special_tokens=True))
 
 
 def build_transformers_runtime(config: TransformersGenerationConfig) -> TransformersRuntime:
     """Construct the real runtime after validating config and dependency presence.
 
-    Loads tokenizer and model at the same explicit revision, local-files-only,
-    with remote code disabled. This is the production path and is not invoked by
-    the deterministic test suite.
+    Loads the tokenizer and model at their explicit immutable revisions,
+    local-files-only, with remote code disabled. ``torch`` and ``transformers``
+    are imported lazily, never at module import time. Not invoked by the
+    deterministic test suite.
     """
     validate_generation_config(config)
     validate_package_installed()
     try:
-        module: Any = importlib.import_module("transformers")
-        tokenizer: Any = module.AutoTokenizer.from_pretrained(
+        transformers: Any = importlib.import_module("transformers")
+        torch_module: Any = importlib.import_module("torch")
+        dtype = _resolve_dtype(torch_module, config.dtype)
+        _resolve_device(torch_module, config.device)
+        tokenizer: Any = transformers.AutoTokenizer.from_pretrained(
             config.model_id,
-            revision=config.revision,
+            revision=config.tokenizer_revision,
             trust_remote_code=config.trust_remote_code,
             local_files_only=config.local_files_only,
         )
-        model: Any = module.AutoModelForCausalLM.from_pretrained(
+        model: Any = transformers.AutoModelForCausalLM.from_pretrained(
             config.model_id,
-            revision=config.revision,
+            revision=config.model_revision,
             trust_remote_code=config.trust_remote_code,
             local_files_only=config.local_files_only,
+            torch_dtype=dtype,
         )
+    except TransformersLoadError:
+        raise
     except Exception as exc:  # normalize any load failure to a typed error
         raise TransformersLoadError(
-            f"failed to load {config.model_id}@{config.revision} locally: {exc}"
+            f"failed to load {config.model_id} at model={config.model_revision} "
+            f"tokenizer={config.tokenizer_revision} locally: {exc}"
         ) from exc
-    return _RealTransformersRuntime(tokenizer=tokenizer, model=model, revision=config.revision)
+    return _RealTransformersRuntime(
+        torch_module=torch_module,
+        tokenizer=tokenizer,
+        model=model,
+        model_revision=config.model_revision,
+        tokenizer_revision=config.tokenizer_revision,
+        device=config.device,
+        dtype=config.dtype,
+    )

@@ -107,6 +107,12 @@ def test_non_utf8_fails_closed() -> None:
         load_b0_inputs_from_bytes(b"\xff\xfe not utf8\n")
 
 
+def test_utf8_bom_rejected_explicitly() -> None:
+    data = b"\xef\xbb\xbf" + _jsonl([_record(0)])
+    with pytest.raises(PilotLoaderError, match="byte-order mark"):
+        load_b0_inputs_from_bytes(data)
+
+
 def test_missing_and_unexpected_fields_fail_closed() -> None:
     missing = _record(0)
     del missing["question"]

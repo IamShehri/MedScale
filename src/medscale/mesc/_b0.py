@@ -6,23 +6,25 @@ reranker or embedding model, and no model-family combination. The runner is
 dependency-injected with a generator, so the full pipeline is exercised with a
 deterministic fake and never touches a real model, the network, or training.
 
-The gold decision never enters a prompt and is never passed to the generator.
-Canonical result bytes and the run digest exclude timestamps, elapsed time,
-machine paths, hostnames, and any nondeterministic ordering.
+The gold decision never enters a prompt and is never passed to the generator. A
+reproducible runtime manifest (code commit, immutable revisions, library and
+runtime versions, device, dtype) is recorded and its reproducibility-relevant
+fields are covered by the canonical run digest. The digest excludes hostnames,
+absolute paths, and wall-clock/elapsed time.
 """
 
 from __future__ import annotations
 
-import platform
+import contextlib
 import re
 import sys
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
 from medscale.backends.common import BackendError
-from medscale.backends.transformers.validation import APPROVED_B0_MODELS
+from medscale.backends.transformers.validation import APPROVED_B0_MODELS, is_commit_sha
 from medscale.mesc._pilot_loader import B0InputDataset, B0InputRecord
 from medscale.mesc._split_v1 import (
     DECISIONS,
@@ -34,16 +36,19 @@ from medscale.modelkit.interfaces import GenerationRequest, GenerationResult
 
 __all__ = [
     "B0_EVIDENCE_CONDITION",
+    "MANIFEST_PACKAGES",
     "PROMPT_TEMPLATE_VERSION",
     "B0Aggregate",
     "B0Config",
     "B0ConfigError",
-    "B0Environment",
     "B0ExampleScore",
     "B0Generator",
     "B0Prediction",
     "B0Report",
+    "B0RuntimeManifest",
+    "VersionSource",
     "build_b0_prompt",
+    "capture_runtime_manifest",
     "parse_b0_output",
     "report_to_document",
     "run_b0",
@@ -54,14 +59,25 @@ __all__ = [
 B0_EVIDENCE_CONDITION = "none"
 PROMPT_TEMPLATE_VERSION = "mesc-b0-prompt/1"
 B0_EXPERIMENT_ID = "mesc-b0"
+MANIFEST_PACKAGES: tuple[str, ...] = (
+    "medscale",
+    "transformers",
+    "torch",
+    "tokenizers",
+    "huggingface-hub",
+    "safetensors",
+)
 
 _ParseState = str  # one of: "parsed", "unparseable", "ambiguous", "generation_failed"
 _WORD = re.compile(r"[a-z]+")
 _DECISION_KEYS: tuple[str, ...] = DECISIONS
 
+#: Resolve a distribution name to its installed version string.
+VersionSource = Callable[[str], str]
+
 
 class B0ConfigError(ValueError):
-    """Raised when a B0 experiment configuration is invalid."""
+    """Raised when a B0 experiment configuration or manifest is invalid."""
 
 
 class B0Generator(Protocol):
@@ -84,20 +100,25 @@ class B0Config:
 
 
 @dataclass(frozen=True, slots=True)
-class B0Environment:
-    """Non-canonical reproducibility metadata; never part of the run digest."""
+class B0RuntimeManifest:
+    """Reproducibility manifest; every field below enters the canonical digest."""
 
+    code_commit: str
     python_version: str
-    python_implementation: str
-    code_commit: str | None = None
-
-    @classmethod
-    def capture(cls, *, code_commit: str | None = None) -> B0Environment:
-        return cls(
-            python_version=".".join(str(part) for part in sys.version_info[:3]),
-            python_implementation=platform.python_implementation(),
-            code_commit=code_commit,
-        )
+    medscale_version: str
+    transformers_version: str
+    torch_version: str
+    tokenizers_version: str
+    huggingface_hub_version: str
+    safetensors_version: str
+    model_revision: str
+    tokenizer_revision: str
+    device: str
+    dtype: str
+    quantization: str
+    seed: int
+    prompt_template_version: str
+    evidence_condition: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -145,12 +166,62 @@ class B0Report:
     run_id: str
     run_digest: str
     config: B0Config
+    manifest: B0RuntimeManifest
     input_sha256: str
     input_size: int
     predictions: tuple[B0Prediction, ...]
     scores: tuple[B0ExampleScore, ...]
     aggregate: B0Aggregate
-    environment: B0Environment
+
+
+def _default_package_version(package: str) -> str:
+    import importlib.metadata
+
+    try:
+        return importlib.metadata.version(package)
+    except importlib.metadata.PackageNotFoundError:
+        return "unknown"
+
+
+def capture_runtime_manifest(
+    *,
+    code_commit: str,
+    config: B0Config,
+    device: str,
+    dtype: str,
+    quantization: str,
+    version_source: VersionSource | None = None,
+) -> B0RuntimeManifest:
+    """Build the reproducibility manifest, capturing library versions on demand.
+
+    ``code_commit`` must be an explicit full lowercase 40-hex SHA (never inferred
+    from a working directory). Library versions are read only when this function
+    is called (after the execution boundary), via ``version_source`` so tests can
+    inject them without real packages.
+    """
+    if not is_commit_sha(code_commit):
+        raise B0ConfigError(
+            f"code_commit must be an explicit full lowercase 40-hex SHA, got {code_commit!r}"
+        )
+    resolve = version_source if version_source is not None else _default_package_version
+    return B0RuntimeManifest(
+        code_commit=code_commit,
+        python_version=".".join(str(part) for part in sys.version_info[:3]),
+        medscale_version=resolve("medscale"),
+        transformers_version=resolve("transformers"),
+        torch_version=resolve("torch"),
+        tokenizers_version=resolve("tokenizers"),
+        huggingface_hub_version=resolve("huggingface-hub"),
+        safetensors_version=resolve("safetensors"),
+        model_revision=config.model_revision,
+        tokenizer_revision=config.tokenizer_revision,
+        device=device,
+        dtype=dtype,
+        quantization=quantization,
+        seed=config.seed,
+        prompt_template_version=config.prompt_template_version,
+        evidence_condition=config.evidence_condition,
+    )
 
 
 def validate_b0_config(config: B0Config) -> None:
@@ -162,11 +233,17 @@ def validate_b0_config(config: B0Config) -> None:
     for value, field in (
         (config.experiment_id, "experiment_id"),
         (config.experiment_version, "experiment_version"),
-        (config.model_revision, "model_revision"),
-        (config.tokenizer_revision, "tokenizer_revision"),
     ):
         if not isinstance(value, str) or not value.strip():
             raise B0ConfigError(f"{field} must be a non-blank string")
+    for value, field in (
+        (config.model_revision, "model_revision"),
+        (config.tokenizer_revision, "tokenizer_revision"),
+    ):
+        if not is_commit_sha(value):
+            raise B0ConfigError(
+                f"{field} must be a full lowercase 40-hex commit SHA, got {value!r}"
+            )
     if config.prompt_template_version != PROMPT_TEMPLATE_VERSION:
         raise B0ConfigError(
             f"prompt_template_version must be {PROMPT_TEMPLATE_VERSION!r}, "
@@ -183,6 +260,33 @@ def validate_b0_config(config: B0Config) -> None:
         )
     if not _is_int(config.seed) or config.seed < 0:
         raise B0ConfigError(f"seed must be a non-negative integer, got {config.seed!r}")
+
+
+def _require_manifest_matches_config(config: B0Config, manifest: B0RuntimeManifest) -> None:
+    if not is_commit_sha(manifest.code_commit):
+        raise B0ConfigError(
+            "manifest code_commit must be a full lowercase 40-hex SHA, "
+            f"got {manifest.code_commit!r}"
+        )
+    pairs = (
+        (manifest.model_revision, config.model_revision, "model_revision"),
+        (manifest.tokenizer_revision, config.tokenizer_revision, "tokenizer_revision"),
+        (
+            manifest.prompt_template_version,
+            config.prompt_template_version,
+            "prompt_template_version",
+        ),
+        (manifest.evidence_condition, config.evidence_condition, "evidence_condition"),
+    )
+    for manifest_value, config_value, field in pairs:
+        if manifest_value != config_value:
+            raise B0ConfigError(
+                f"manifest {field} {manifest_value!r} does not match config {config_value!r}"
+            )
+    if manifest.seed != config.seed:
+        raise B0ConfigError(
+            f"manifest seed {manifest.seed!r} does not match config {config.seed!r}"
+        )
 
 
 def build_b0_prompt(record: B0InputRecord) -> str:
@@ -217,14 +321,16 @@ def run_b0(
     dataset: B0InputDataset,
     generator: B0Generator,
     *,
-    environment: B0Environment | None = None,
+    manifest: B0RuntimeManifest,
 ) -> B0Report:
     """Execute B0 zero-shot over the dataset with an injected generator.
 
-    Configuration is validated before the generator is ever invoked. A generation
-    failure is represented deterministically and never scored as correct.
+    Configuration and manifest are validated before the generator is ever
+    invoked. A generation failure is represented deterministically and never
+    scored as correct.
     """
     validate_b0_config(config)
+    _require_manifest_matches_config(config, manifest)
     predictions: list[B0Prediction] = []
     scores: list[B0ExampleScore] = []
     for record in dataset.records:
@@ -281,19 +387,19 @@ def run_b0(
         )
     aggregate = _aggregate(predictions, scores)
     canonical = _canonical_payload(
-        config, dataset.input_sha256, dataset.input_size, predictions, aggregate
+        config, manifest, dataset.input_sha256, dataset.input_size, predictions, aggregate
     )
     run_digest = sha256_hexdigest(canonical)
     return B0Report(
         run_id=f"mesc-b0-run-{run_digest}",
         run_digest=run_digest,
         config=config,
+        manifest=manifest,
         input_sha256=dataset.input_sha256,
         input_size=dataset.input_size,
         predictions=tuple(predictions),
         scores=tuple(scores),
         aggregate=aggregate,
-        environment=environment if environment is not None else B0Environment.capture(),
     )
 
 
@@ -326,8 +432,30 @@ def _aggregate(
     )
 
 
+def _manifest_payload(manifest: B0RuntimeManifest) -> dict[str, object]:
+    return {
+        "code_commit": manifest.code_commit,
+        "python_version": manifest.python_version,
+        "medscale_version": manifest.medscale_version,
+        "transformers_version": manifest.transformers_version,
+        "torch_version": manifest.torch_version,
+        "tokenizers_version": manifest.tokenizers_version,
+        "huggingface_hub_version": manifest.huggingface_hub_version,
+        "safetensors_version": manifest.safetensors_version,
+        "model_revision": manifest.model_revision,
+        "tokenizer_revision": manifest.tokenizer_revision,
+        "device": manifest.device,
+        "dtype": manifest.dtype,
+        "quantization": manifest.quantization,
+        "seed": manifest.seed,
+        "prompt_template_version": manifest.prompt_template_version,
+        "evidence_condition": manifest.evidence_condition,
+    }
+
+
 def _canonical_payload(
     config: B0Config,
+    manifest: B0RuntimeManifest,
     input_sha256: str,
     input_size: int,
     predictions: list[B0Prediction],
@@ -337,14 +465,10 @@ def _canonical_payload(
         "experiment_id": config.experiment_id,
         "experiment_version": config.experiment_version,
         "model_id": config.model_id,
-        "model_revision": config.model_revision,
-        "tokenizer_revision": config.tokenizer_revision,
-        "prompt_template_version": config.prompt_template_version,
-        "evidence_condition": config.evidence_condition,
         "max_new_tokens": config.max_new_tokens,
-        "seed": config.seed,
         "input_sha256": input_sha256,
         "input_size": input_size,
+        "manifest": _manifest_payload(manifest),
         "predictions": [
             {
                 "example_id": prediction.example_id,
@@ -370,9 +494,10 @@ def _canonical_payload(
 
 
 def report_to_document(report: B0Report) -> dict[str, object]:
-    """Full serializable report: canonical result plus non-canonical environment."""
+    """Full serializable report: canonical result plus verbose per-example output."""
     canonical = _canonical_payload(
         report.config,
+        report.manifest,
         report.input_sha256,
         report.input_size,
         list(report.predictions),
@@ -392,15 +517,28 @@ def report_to_document(report: B0Report) -> dict[str, object]:
             }
             for prediction in report.predictions
         ],
-        "environment": {
-            "python_version": report.environment.python_version,
-            "python_implementation": report.environment.python_implementation,
-            "code_commit": report.environment.code_commit,
-        },
     }
 
 
 def write_b0_report(report: B0Report, path: Path) -> None:
-    """Write the report as canonical UTF-8 JSON. The caller controls the path."""
-    document = report_to_document(report)
-    path.write_bytes(canonical_json_bytes(document) + b"\n")
+    """Atomically write the report; never silently overwrite an existing file.
+
+    Bytes are written to a sibling temporary file, flushed and closed, then
+    atomically published with ``Path.replace``. On any failure the temporary file
+    is removed and no partial or completed artifact remains.
+    """
+    if path.exists():
+        raise FileExistsError(f"refusing to overwrite existing output: {path}")
+    data = canonical_json_bytes(report_to_document(report)) + b"\n"
+    tmp = path.with_name(path.name + ".partial")
+    published = False
+    try:
+        with tmp.open("wb") as handle:
+            handle.write(data)
+            handle.flush()
+        tmp.replace(path)
+        published = True
+    finally:
+        if not published:
+            with contextlib.suppress(FileNotFoundError):
+                tmp.unlink()

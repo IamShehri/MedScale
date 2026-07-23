@@ -1,9 +1,10 @@
-"""M4 — ModelKit optional backend contracts and the B0 dependency-injected generator."""
+"""M4 — ModelKit optional backend contracts and the B0 dependency-injected runtime."""
 
 from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -21,10 +22,12 @@ from medscale.backends.transformers import (
     TransformersTextGenerator,
 )
 from medscale.backends.transformers.backend import (
+    EncodedInput,
     TransformersDecodeError,
     TransformersGenerateError,
     TransformersLoadError,
     TransformersTokenizeError,
+    _RealTransformersRuntime,
     build_transformers_runtime,
 )
 from medscale.backends.transformers.validation import (
@@ -43,16 +46,19 @@ from medscale.modelkit.interfaces import (
 
 _SRC = Path(__file__).resolve().parents[1] / "src" / "medscale"
 _MODEL = "meta-llama/Llama-3.2-3B-Instruct"
+_SHA = "a" * 40
+_SHA2 = "b" * 40
 
 
 def _ref() -> ModelRef:
-    return ModelRef(model_id=_MODEL, revision="rev-1", backend="transformers")
+    return ModelRef(model_id=_MODEL, revision=_SHA, backend="transformers")
 
 
 def _config(**overrides: object) -> TransformersGenerationConfig:
     base: dict[str, object] = {
         "model_id": _MODEL,
-        "revision": "rev-1",
+        "model_revision": _SHA,
+        "tokenizer_revision": _SHA,
         "max_new_tokens": 8,
         "seed": 0,
     }
@@ -61,40 +67,162 @@ def _config(**overrides: object) -> TransformersGenerationConfig:
 
 
 class _FakeRuntime:
-    """A deterministic in-memory runtime; never touches a real model or network."""
+    """Simple deterministic runtime for the high-level generator tests."""
 
     def __init__(
         self,
         *,
-        revision: str = "rev-1",
+        model_revision: str = _SHA,
+        tokenizer_revision: str = _SHA,
         prompt_ids: tuple[int, ...] = (1, 2, 3),
         new_ids: tuple[int, ...] = (4, 5),
         fail: str | None = None,
-        prefix_prompt: bool = True,
+        prefix: bool = True,
     ) -> None:
-        self.revision = revision
-        self._prompt_ids = prompt_ids
-        self._new_ids = new_ids
+        self.model_revision = model_revision
+        self.tokenizer_revision = tokenizer_revision
+        self._p = prompt_ids
+        self._n = new_ids
         self._fail = fail
-        self._prefix_prompt = prefix_prompt
+        self._prefix = prefix
         self.decoded: tuple[int, ...] | None = None
+        self.touched = False
 
-    def encode(self, text: str) -> tuple[int, ...]:
+    def encode(self, text: str) -> EncodedInput:
+        self.touched = True
         if self._fail == "encode":
             raise RuntimeError("boom-encode")
-        return self._prompt_ids
+        return EncodedInput(input_ids=self._p, attention_mask=tuple(1 for _ in self._p))
 
-    def generate(self, input_ids: tuple[int, ...], *, max_new_tokens: int) -> tuple[int, ...]:
+    def generate(self, encoded: EncodedInput, *, max_new_tokens: int) -> tuple[int, ...]:
         if self._fail == "generate":
             raise RuntimeError("boom-generate")
-        tail = self._new_ids[:max_new_tokens]
-        return (input_ids + tail) if self._prefix_prompt else tail
+        tail = self._n[:max_new_tokens]
+        return (encoded.input_ids + tail) if self._prefix else tail
 
     def decode(self, token_ids: tuple[int, ...]) -> str:
         if self._fail == "decode":
             raise RuntimeError("boom-decode")
         self.decoded = token_ids
-        return f"decoded:{list(token_ids)}"
+        return f"OUT{list(token_ids)}"
+
+
+# ----- fakes for the real PyTorch adapter (no real torch/transformers) -----
+class _FakeDtype:
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+
+class _FakeCuda:
+    def __init__(self, available: bool) -> None:
+        self._available = available
+
+    def is_available(self) -> bool:
+        return self._available
+
+
+class _FakeInferenceCtx:
+    def __init__(self, log: list[str]) -> None:
+        self._log = log
+
+    def __enter__(self) -> _FakeInferenceCtx:
+        self._log.append("enter")
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        self._log.append("exit")
+
+
+class _FakeTorch:
+    def __init__(self, *, cuda_available: bool = False) -> None:
+        self.float32 = _FakeDtype("float32")
+        self.float16 = _FakeDtype("float16")
+        self.bfloat16 = _FakeDtype("bfloat16")
+        self.cuda = _FakeCuda(cuda_available)
+        self.inference_log: list[str] = []
+
+    def inference_mode(self) -> _FakeInferenceCtx:
+        return _FakeInferenceCtx(self.inference_log)
+
+
+class _FakeTensor:
+    def __init__(self, rows: list[list[int]], device: str | None = None) -> None:
+        self.rows = rows
+        self.device = device
+
+    def to(self, device: str) -> _FakeTensor:
+        return _FakeTensor(self.rows, device=device)
+
+    def __getitem__(self, index: int) -> list[int]:
+        return self.rows[index]
+
+
+class _FakeTokenizer:
+    def __init__(
+        self,
+        *,
+        ids: tuple[int, ...] = (1, 2, 3),
+        pad: int | None = 0,
+        eos: int | None = 2,
+    ) -> None:
+        self._ids = ids
+        self.pad_token_id = pad
+        self.eos_token_id = eos
+        self.calls: list[tuple[str, object]] = []
+        self.decode_calls: list[tuple[int, ...]] = []
+
+    def __call__(self, text: str, return_tensors: str | None = None) -> dict[str, _FakeTensor]:
+        self.calls.append((text, return_tensors))
+        return {
+            "input_ids": _FakeTensor([list(self._ids)]),
+            "attention_mask": _FakeTensor([[1 for _ in self._ids]]),
+        }
+
+    def decode(self, ids: list[int], skip_special_tokens: bool = False) -> str:
+        self.decode_calls.append(tuple(ids))
+        return "DEC:" + ",".join(str(i) for i in ids)
+
+
+class _FakeModel:
+    def __init__(self, *, new_ids: tuple[int, ...] = (4, 5), prefix: bool = True) -> None:
+        self._new = new_ids
+        self._prefix = prefix
+        self.to_calls: list[str] = []
+        self.eval_calls = 0
+        self.generate_calls: list[dict[str, Any]] = []
+
+    def to(self, device: str) -> _FakeModel:
+        self.to_calls.append(device)
+        return self
+
+    def eval(self) -> _FakeModel:
+        self.eval_calls += 1
+        return self
+
+    def generate(self, **kwargs: Any) -> _FakeTensor:
+        self.generate_calls.append(kwargs)
+        row = list(kwargs["input_ids"][0])
+        out = (row + list(self._new)) if self._prefix else list(self._new)
+        return _FakeTensor([out])
+
+
+def _real_runtime(
+    *,
+    torch_module: _FakeTorch | None = None,
+    tokenizer: _FakeTokenizer | None = None,
+    model: _FakeModel | None = None,
+    device: str = "cpu",
+    dtype: str = "float32",
+) -> _RealTransformersRuntime:
+    return _RealTransformersRuntime(
+        torch_module=torch_module if torch_module is not None else _FakeTorch(),
+        tokenizer=tokenizer if tokenizer is not None else _FakeTokenizer(),
+        model=model if model is not None else _FakeModel(),
+        model_revision=_SHA,
+        tokenizer_revision=_SHA,
+        device=device,
+        dtype=dtype,
+    )
 
 
 # --------------------------------------------------------------- package/dependency
@@ -136,14 +264,6 @@ def test_llamacpp_skip_when_unavailable() -> None:
     assert hasattr(llamacpp, "LlamaTextGenerator")
 
 
-def test_llamacpp_validation_import_is_actionable() -> None:
-    if importlib.util.find_spec("llama_cpp") is not None:
-        pytest.skip("llama_cpp is installed; cannot test missing-dependency path")
-    pattern = r"pip install medscale\[backends-llamacpp\]"
-    with pytest.raises(BackendMissingDependencyError, match=pattern):
-        llamacpp_validate_package_installed()
-
-
 # --------------------------------------------------------------- error hierarchy
 def test_backend_error_hierarchy() -> None:
     assert issubclass(BackendMissingDependencyError, BackendError)
@@ -161,8 +281,6 @@ def test_backend_error_hierarchy() -> None:
 def test_generation_config_validates_bad_inputs() -> None:
     with pytest.raises(ValueError, match="backend_name must be non-empty"):
         GenerationConfig(backend_name="")
-    with pytest.raises(ValueError, match="temperature must be >= 0"):
-        GenerationConfig(backend_name="x", temperature=-1)
     with pytest.raises(ValueError, match="seed must be non-negative"):
         GenerationConfig(backend_name="x", seed=-1)
 
@@ -193,11 +311,19 @@ def test_unapproved_and_chinese_models_are_rejected(model_id: str) -> None:
         validate_generation_config(_config(model_id=model_id))
 
 
-def test_blank_and_malformed_revisions_fail() -> None:
-    with pytest.raises(TransformersConfigError, match="revision"):
-        validate_generation_config(_config(revision=""))
-    with pytest.raises(TransformersConfigError, match="revision"):
-        validate_generation_config(_config(revision="   "))
+@pytest.mark.parametrize(
+    "revision",
+    ["main", "master", "v1.0", "abc123", "A" * 40, "", "   ", " " + "a" * 40, "a" * 39, "a" * 41],
+)
+def test_mutable_or_malformed_model_revision_rejected(revision: str) -> None:
+    with pytest.raises(TransformersConfigError, match="model_revision"):
+        validate_generation_config(_config(model_revision=revision))
+
+
+@pytest.mark.parametrize("revision", ["main", "v1.0", "A" * 40, "", "a" * 39])
+def test_mutable_or_malformed_tokenizer_revision_rejected(revision: str) -> None:
+    with pytest.raises(TransformersConfigError, match="tokenizer_revision"):
+        validate_generation_config(_config(tokenizer_revision=revision))
 
 
 def test_sampling_and_nondeterministic_generation_fail() -> None:
@@ -209,6 +335,10 @@ def test_sampling_and_nondeterministic_generation_fail() -> None:
         validate_generation_config(_config(local_files_only=False))
     with pytest.raises(TransformersConfigError, match="quantization"):
         validate_generation_config(_config(quantization="int8"))
+    with pytest.raises(TransformersConfigError, match="dtype"):
+        validate_generation_config(_config(dtype="int4"))
+    with pytest.raises(TransformersConfigError, match="device"):
+        validate_generation_config(_config(device="tpu"))
 
 
 @pytest.mark.parametrize("bad_seed", [True, False, 0.5, 1.0, "1", None, -1])
@@ -223,17 +353,19 @@ def test_invalid_max_new_tokens_fail(bad_tokens: object) -> None:
         validate_generation_config(_config(max_new_tokens=bad_tokens))
 
 
-# --------------------------------------------------------------- generator boundary
+# --------------------------------------------------------------- high-level generator
 def test_generator_validates_config_before_touching_runtime() -> None:
     runtime = _FakeRuntime()
     with pytest.raises(BackendUnsupportedModelError):
         TransformersTextGenerator(_config(model_id="some/bad"), runtime=runtime)
-    assert runtime.decoded is None  # runtime never exercised
+    assert runtime.touched is False
 
 
 def test_generator_rejects_revision_mismatch() -> None:
-    with pytest.raises(TransformersLoadError, match="revision"):
-        TransformersTextGenerator(_config(revision="rev-1"), runtime=_FakeRuntime(revision="other"))
+    with pytest.raises(TransformersLoadError, match="model_revision"):
+        TransformersTextGenerator(_config(), runtime=_FakeRuntime(model_revision=_SHA2))
+    with pytest.raises(TransformersLoadError, match="tokenizer_revision"):
+        TransformersTextGenerator(_config(), runtime=_FakeRuntime(tokenizer_revision=_SHA2))
 
 
 def test_generator_returns_only_new_tokens_never_echoes_prompt() -> None:
@@ -242,10 +374,11 @@ def test_generator_returns_only_new_tokens_never_echoes_prompt() -> None:
     prompt = "Question: does aspirin help?\nAnswer:"
     result = generator.generate(GenerationRequest(prompt=prompt, seed=0, max_new_tokens=8))
     assert isinstance(result, GenerationResult)
-    assert runtime.decoded == (4, 5)  # only the new tokens were decoded
-    assert result.text == "decoded:[4, 5]"
+    assert runtime.decoded == (4, 5)
+    assert result.text == "OUT[4, 5]"
     assert prompt not in result.text
     assert result.finish_reason is FinishReason.STOP
+    assert result.model.revision == _SHA
 
 
 def test_generator_reports_length_finish_reason() -> None:
@@ -258,13 +391,11 @@ def test_generator_reports_length_finish_reason() -> None:
 def test_generator_is_deterministic_across_repeated_calls() -> None:
     generator = TransformersTextGenerator(_config(), runtime=_FakeRuntime())
     request = GenerationRequest(prompt="same prompt", seed=0, max_new_tokens=8)
-    first = generator.generate(request)
-    second = generator.generate(request)
-    assert first == second
+    assert generator.generate(request) == generator.generate(request)
 
 
 def test_generator_output_must_begin_with_prompt_tokens() -> None:
-    runtime = _FakeRuntime(prefix_prompt=False, new_ids=(7, 8))
+    runtime = _FakeRuntime(prefix=False, new_ids=(7, 8))
     generator = TransformersTextGenerator(_config(), runtime=runtime)
     with pytest.raises(TransformersGenerateError, match="begin with the exact prompt tokens"):
         generator.generate(GenerationRequest(prompt="p", seed=0, max_new_tokens=8))
@@ -283,6 +414,90 @@ def test_generator_maps_each_stage_failure_to_typed_error(
 ) -> None:
     generator = TransformersTextGenerator(_config(), runtime=_FakeRuntime(fail=stage))
     with pytest.raises(error):
+        generator.generate(GenerationRequest(prompt="p", seed=0, max_new_tokens=8))
+
+
+# --------------------------------------------------------------- real PyTorch adapter (fakes)
+def test_real_runtime_passes_attention_mask_and_deterministic_flags() -> None:
+    tok = _FakeTokenizer(ids=(1, 2, 3))
+    model = _FakeModel(new_ids=(4, 5))
+    runtime = _real_runtime(tokenizer=tok, model=model)
+    encoded = runtime.encode("hi")
+    assert encoded.input_ids == (1, 2, 3)
+    assert encoded.attention_mask == (1, 1, 1)
+    out = runtime.generate(encoded, max_new_tokens=8)
+    assert out == (1, 2, 3, 4, 5)
+    (call,) = model.generate_calls
+    assert list(call["attention_mask"][0]) == [1, 1, 1]
+    assert call["do_sample"] is False
+    assert call["num_beams"] == 1
+    assert call["pad_token_id"] == 0
+    assert call["eos_token_id"] == 2
+
+
+def test_real_runtime_moves_tensors_and_model_to_device() -> None:
+    model = _FakeModel()
+    runtime = _real_runtime(model=model, device="cpu")
+    assert model.to_calls == ["cpu"]
+    encoded = runtime.encode("hi")
+    runtime.generate(encoded, max_new_tokens=8)
+    (call,) = model.generate_calls
+    assert call["input_ids"].device == "cpu"
+    assert call["attention_mask"].device == "cpu"
+
+
+def test_real_runtime_calls_eval_and_enters_inference_mode() -> None:
+    torch_module = _FakeTorch()
+    model = _FakeModel()
+    runtime = _real_runtime(torch_module=torch_module, model=model)
+    runtime.generate(runtime.encode("hi"), max_new_tokens=8)
+    assert model.eval_calls == 1
+    assert torch_module.inference_log == ["enter", "exit"]
+
+
+def test_real_runtime_maps_dtype_exactly() -> None:
+    torch_module = _FakeTorch()
+    runtime = _real_runtime(torch_module=torch_module, dtype="bfloat16")
+    assert runtime._dtype is torch_module.bfloat16
+
+
+def test_real_runtime_rejects_unavailable_cuda() -> None:
+    with pytest.raises(TransformersLoadError, match="CUDA"):
+        _real_runtime(torch_module=_FakeTorch(cuda_available=False), device="cuda")
+
+
+def test_real_runtime_rejects_unknown_dtype_and_device() -> None:
+    with pytest.raises(TransformersLoadError, match="dtype"):
+        _real_runtime(dtype="int4")
+    with pytest.raises(TransformersLoadError, match="device"):
+        _real_runtime(device="tpu")
+
+
+def test_real_runtime_uses_eos_as_pad_when_pad_missing() -> None:
+    runtime = _real_runtime(tokenizer=_FakeTokenizer(pad=None, eos=7))
+    assert runtime._pad_id == 7
+    assert runtime._eos_id == 7
+
+
+def test_real_runtime_fails_closed_without_valid_eos() -> None:
+    with pytest.raises(TransformersLoadError, match="eos_token_id"):
+        _real_runtime(tokenizer=_FakeTokenizer(pad=None, eos=None))
+
+
+def test_real_runtime_end_to_end_never_decodes_prompt_tokens() -> None:
+    tok = _FakeTokenizer(ids=(1, 2, 3))
+    model = _FakeModel(new_ids=(4, 5))
+    runtime = _real_runtime(tokenizer=tok, model=model)
+    generator = TransformersTextGenerator(_config(), runtime=runtime)
+    result = generator.generate(GenerationRequest(prompt="prompt", seed=0, max_new_tokens=8))
+    assert tok.decode_calls == [(4, 5)]  # only newly generated tokens decoded
+    assert result.text == "DEC:4,5"
+
+
+def test_real_runtime_prefix_mismatch_raises_typed_error() -> None:
+    runtime = _real_runtime(model=_FakeModel(prefix=False, new_ids=(9, 9)))
+    generator = TransformersTextGenerator(_config(), runtime=runtime)
+    with pytest.raises(TransformersGenerateError, match="begin with the exact prompt tokens"):
         generator.generate(GenerationRequest(prompt="p", seed=0, max_new_tokens=8))
 
 

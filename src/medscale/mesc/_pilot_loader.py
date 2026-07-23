@@ -218,6 +218,11 @@ def load_b0_inputs_from_bytes(
         raise PilotLoaderError(f"input size mismatch: expected {expected_size}, got {actual_size}")
     if expected_sha256 is not None and expected_sha256 != actual_sha256:
         raise PilotLoaderError("input SHA-256 mismatch")
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raise PilotLoaderError(
+            "input begins with a UTF-8 byte-order mark (BOM); "
+            "remove the BOM (it is not silently stripped)"
+        )
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as exc:
