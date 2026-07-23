@@ -14,13 +14,47 @@ from typing import NoReturn
 import pytest
 
 from medscale import cli
+from medscale.backends.transformers.backend import TransformersLoadError
+from medscale.cli import mesc_eval
 from medscale.evidence_store import load_evidence
 from medscale.litdb import RawRetrieval
 from medscale.litdb.records import EvidenceTier, Identifiers, LiteratureRecord
 from medscale.litdb.review import ReviewDecision, current_reviews, make_event
 from medscale.litdb.review import append_events as append_review_events
 from medscale.litdb.store import write_corpus
+from medscale.mesc._b0 import B0Config
+from medscale.modelkit.interfaces import GenerationRequest, GenerationResult, ModelRef
 from medscale.provenance import Provenance, SourceAPI
+
+_B0_MODEL = "meta-llama/Llama-3.2-3B-Instruct"
+_B0_SHA = "a" * 40
+_B0_COMMIT = "c" * 40
+
+
+class _FakeB0Generator:
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        return GenerationResult(
+            text="yes",
+            model=ModelRef(model_id=_B0_MODEL, revision=_B0_SHA, backend="transformers"),
+        )
+
+
+def _fake_b0_factory(config: B0Config) -> _FakeB0Generator:
+    return _FakeB0Generator()
+
+
+def _failing_b0_factory(config: B0Config) -> _FakeB0Generator:
+    raise TransformersLoadError("simulated local load failure")
+
+
+def _write_b0_input(path: Path) -> None:
+    path.write_text(
+        '{"example_id":"e0","row_ordinal":0,"source_document_id":"pmid:1",'
+        '"dataset_id":"ds","dataset_revision":"rev-1","configuration":"cfg",'
+        '"question":"does aspirin help?","context":["some context"],"decision":"yes"}\n',
+        encoding="utf-8",
+    )
+
 
 _TS = "2026-07-12T00:00:00+00:00"
 
@@ -190,3 +224,113 @@ def test_help_lists_every_dispatchable_subcommand(capsys: pytest.CaptureFixture[
     out = capsys.readouterr().out
     for command in _SUBCOMMANDS:
         assert f"  {command}" in out, f"--help must list the {command!r} command"
+
+
+# ---------------------------------------------------------------- mesc-eval (B0)
+def _base_args(tmp_path: Path) -> list[str]:
+    return [
+        "--input",
+        str(tmp_path / "in.jsonl"),
+        "--output",
+        str(tmp_path / "out.json"),
+        "--model-id",
+        _B0_MODEL,
+        "--model-revision",
+        _B0_SHA,
+        "--tokenizer-revision",
+        _B0_SHA,
+        "--code-commit",
+        _B0_COMMIT,
+    ]
+
+
+def test_mesc_eval_runs_with_injected_generator(tmp_path: Path) -> None:
+    _write_b0_input(tmp_path / "in.jsonl")
+    rc = mesc_eval.main(_base_args(tmp_path), generator_factory=_fake_b0_factory)
+    assert rc == 0
+    assert (tmp_path / "out.json").is_file()
+
+
+def test_mesc_eval_requires_arguments(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    assert mesc_eval.main(["--output", str(tmp_path / "o.json")]) == 2
+    assert "--input is required" in capsys.readouterr().err
+
+
+def test_mesc_eval_missing_input_file_is_friendly(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    rc = mesc_eval.main(_base_args(tmp_path), generator_factory=_fake_b0_factory)
+    assert rc == 2
+    assert "input file not found" in capsys.readouterr().err
+
+
+def test_mesc_eval_refuses_to_overwrite_output(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _write_b0_input(tmp_path / "in.jsonl")
+    (tmp_path / "out.json").write_text("existing", encoding="utf-8")
+    rc = mesc_eval.main(_base_args(tmp_path), generator_factory=_fake_b0_factory)
+    assert rc == 2
+    assert "output already exists" in capsys.readouterr().err
+
+
+def test_mesc_eval_rejects_unapproved_model(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _write_b0_input(tmp_path / "in.jsonl")
+    args = _base_args(tmp_path)
+    args[args.index(_B0_MODEL)] = "Qwen/Qwen2.5-7B-Instruct"
+    rc = mesc_eval.main(args, generator_factory=_fake_b0_factory)
+    assert rc == 2
+    assert "model_id must be one of" in capsys.readouterr().err
+
+
+def test_mesc_eval_validates_before_constructing_runtime(tmp_path: Path) -> None:
+    """A bad model id must fail before the generator factory is ever called."""
+    _write_b0_input(tmp_path / "in.jsonl")
+    called = {"n": 0}
+
+    def _spy_factory(config: B0Config) -> _FakeB0Generator:
+        called["n"] += 1
+        return _FakeB0Generator()
+
+    args = _base_args(tmp_path)
+    args[args.index(_B0_MODEL)] = "Qwen/Qwen2.5-7B-Instruct"
+    assert mesc_eval.main(args, generator_factory=_spy_factory) == 2
+    assert called["n"] == 0
+
+
+def test_mesc_eval_requires_code_commit(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    _write_b0_input(tmp_path / "in.jsonl")
+    args = _base_args(tmp_path)
+    index = args.index("--code-commit")
+    del args[index : index + 2]
+    assert mesc_eval.main(args, generator_factory=_fake_b0_factory) == 2
+    assert "--code-commit is required" in capsys.readouterr().err
+
+
+def test_mesc_eval_rejects_mutable_revision(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _write_b0_input(tmp_path / "in.jsonl")
+    args = _base_args(tmp_path)
+    args[args.index(_B0_SHA)] = "main"
+    assert mesc_eval.main(args, generator_factory=_fake_b0_factory) == 2
+    assert "model_revision" in capsys.readouterr().err
+
+
+def test_mesc_eval_backend_failure_uses_engine_exit_code(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _write_b0_input(tmp_path / "in.jsonl")
+    rc = mesc_eval.main(_base_args(tmp_path), generator_factory=_failing_b0_factory)
+    assert rc == 1
+    assert "backend error" in capsys.readouterr().err
+
+
+def test_mesc_eval_help_makes_no_training_or_clinical_claim() -> None:
+    description = mesc_eval.DESCRIPTION.lower()
+    assert "no training" in description
+    assert "no retrieval" in description
+    assert "no real split execution" in description
+    assert "no clinical claim" in description

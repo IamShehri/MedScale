@@ -16,6 +16,7 @@ from medscale.cli import check as check_cli
 from medscale.cli import dataset as dataset_cli
 from medscale.cli import extract as extract_cli
 from medscale.cli import fhir as fhir_cli
+from medscale.cli import mesc_eval as mesc_eval_cli
 from medscale.cli import research as research_cli
 from medscale.cli import screen as screen_cli
 
@@ -28,6 +29,7 @@ _SUBCOMMANDS = {
     "bench": bench_cli.main,
     "dataset": dataset_cli.main,
     "fhir": fhir_cli.main,
+    "mesc-eval": mesc_eval_cli.main,
 }
 
 
@@ -57,6 +59,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("  bench    list/validate/run snapshot-bound evidence benchmarks")
         print("  dataset  init/preview/validate/freeze deterministic dataset artifacts")
         print("  fhir     validate FHIR payloads and store deterministic reports")
+        print("  mesc-eval deterministic B0 zero-shot evaluation (research baseline)")
         print("\nrun `medscale <command> --help` for options and examples;")
         print("new here? start with docs/guides/research_quickstart.md")
         return 0 if args else 1
