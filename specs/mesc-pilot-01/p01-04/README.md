@@ -13,19 +13,63 @@ P01-04A exists solely to record the canonical specification, scientific policy, 
 ## Authority hierarchy
 
 | Layer | Authority | Current status |
-|-------|-----------|----------------|
+|---|---|---|
 | Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Ratified** |
 | P01-04A specification | This package | **Ratified** |
-| P01-04 execution | Separate authorization required | **Not authorized** |
-| P01-04B tooling implementation | Separate authorization required | **Not authorized** |
+| P01-04B1 implementation | Fixture-only deterministic split core adopted on canonical main (`2937d735df09851384bfa9a15fb8b1f908c62b6d`) | **Adopted** |
+| P01-04B2 specification | Remaining tooling entry gate | **In preparation** |
+| P01-04B overall | Tooling complete and accepted | **Not met** |
 | P01-04C–G stages | Separate authorizations each | **Not authorized** |
 | P01-05 and later | Separate authorization | **Not authorized** |
+| Formal split execution | Separate authorization required | **Not authorized** |
 
 ## Stage status
 
 P01-04A was ratified for specification and policy only on 2026-07-20.
 No code execution, split generation, leakage audit, or partition membership
 has been authorized. Review reference: `P01-04A-final-ratification-review-20260720-707195f1`.
+
+## P01-04B1 — Fixture-only deterministic split core (adopted)
+
+PR #51 adopted the fixture-only deterministic split core on canonical main.
+The adopted behavior is private, in-memory, and synthetic-fixture-safe.
+It does not authorize real split generation or public splitter activation.
+
+- Reviewed PR head: `34774a8308818d5c3b4875920be34728ddf18f22`
+- Merge commit: `2937d735df09851384bfa9a15fb8b1f908c62b6d`
+
+Adopted behavior includes canonical full-SHA-256 example-ID derivation,
+identity-only extraction from source-record envelopes, fail-closed label joins,
+exact constrained apportionment, deterministic SHA-256 source-document ranking,
+indivisible group allocation, canonical JSON-byte primitives, and synthetic fixture tests.
+
+P01-04B1 intentionally does not provide filesystem entry points,
+make `SourceDocumentGroupedSplitter.assign()` publicly executable,
+create formal split artifacts, generate or disclose real partition membership,
+implement leakage auditing, or authorize P01-04C–G.
+
+## MESC B0 deterministic execution spine (adopted separately)
+
+PR #52 adopted the deterministic B0 execution spine on canonical main.
+This is a separate workstream from P01-04B1 split-tooling nomenclature.
+It does not authorize model or dataset download, real inference, training,
+formal metrics, partition generation, validation/test access, or clinical claims.
+
+- Reviewed PR head: `23841257f7b189628abe47d0b709775275de341a`
+- Merge commit: `3edf328f583f13fcd9d566e5080ec3cce83ae178`
+
+## Nomenclature boundary
+
+| Name | Workstream | Status |
+|---|---|---|
+| P01-04B1 | Split-tooling subphase (pure deterministic split core) | Adopted |
+| MESC B0 | Model-execution spine | Adopted |
+| MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
+| P01-04B2 | Remaining tooling entry gate | Specification in preparation |
+
+P01-04B1 and MESC B0/B1 are different workstreams and are not interchangeable.
+P01-04B1 does not authorize model execution.
+MESC B0/B1 adoption does not authorize split generation.
 
 ## Package contents
 
