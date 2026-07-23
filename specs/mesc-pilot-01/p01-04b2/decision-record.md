@@ -46,12 +46,12 @@ D1–D10 remain ratified policy as recorded in `specs/mesc-pilot-01/p01-04/decis
 
 ### PD-2 — Split-hash identity
 
-**Proposed decision:** Distinguish two hash identities:
+**Proposed decision:** Distinguish two hash values with different authority:
 
-- `split_hash` (16-hex truncated SHA-256): authoritative for in-memory manifest integrity and B1 compatibility.
-- `split_fingerprint` (64-hex full SHA-256): authoritative for formal artifact fingerprint and cross-generation verification.
+- `split_fingerprint` (64 lowercase hexadecimal characters; full SHA-256 over the defined canonical split bundle) is the **sole authoritative split identity** for every formal artifact and all cross-generation verification. The canonical bundle must bind all assignment rows, source-document group structure, `split_seed`, `algorithm_version`, and `schema_version`.
+- `split_hash` (16 lowercase hexadecimal characters; truncated SHA-256) is a **compatibility and display value only**, retained for B1 `PilotSplitManifest.computed_split_hash`. It is never authoritative, must never identify a promotable artifact, and must never be used for cross-generation equality.
 
-The 16-hex digest must not be silently treated as equivalent to a 64-hex fingerprint in any formal artifact.
+The 16-hex compatibility value must never be silently treated as equivalent to the full 64-hex fingerprint.
 
 **Status:** PENDING FOUNDER DECISION
 
@@ -107,7 +107,7 @@ The 16-hex digest must not be silently treated as equivalent to a 64-hex fingerp
 - token-set Jaccard: tokenization on whitespace/punctuation boundary, Jaccard >= 0.90 threshold
 - empty token sets: classified as non-leakage with explicit evidence
 - finding identifiers: deterministic, stable across reruns
-- suppression: prohibited; all findings must be classified or explicitly documented as suppressed (which is a stop condition)
+- **suppression is prohibited.** Every finding must carry an explicit `classification` of `unresolved`, `false_positive`, or `confirmed_leakage`. A finding remains `unresolved` unless it is classified as `false_positive` with supporting evidence or as `confirmed_leakage`. The `suppressed` flag must always be `false`. Setting `suppressed=true`, silently dropping a finding, or omitting a finding without classification is a hard stop condition that halts the audit.
 
 **Status:** PENDING FOUNDER DECISION
 
