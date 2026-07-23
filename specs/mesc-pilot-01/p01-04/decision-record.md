@@ -221,3 +221,26 @@ A different official split, seed, ratio, grouping unit, stratification method, o
 - no silent replacement of version 1.
 
 **Status**: Ratified for specification only. Execution not authorized.
+
+---
+
+## Implementation Status Appendix
+
+This appendix records implementation and adoption status. It does not amend,
+repeal, or reinterpret D1–D10. D1–D10 remain ratified policy as recorded above.
+
+- D1–D10 remain ratified policy; no founder ratification in this appendix.
+- P01-04B1 implements only private pure primitives: `PilotSplitAssignment`,
+  `PilotSplitManifest`, `PilotSplitNotAuthorizedError`, `SourceDocumentGroupedSplitter` fail-closed,
+  `PilotLeakageFinding`, `PilotLeakageAuditReport`, and `_split_v1` private core.
+- No partition membership has been generated, disclosed, or promoted.
+- Public tooling, artifact builders, leakage-detection library, CLI entry point,
+  write-path protections, and end-to-end synthetic qualification remain incomplete.
+- B2 recommendations in `specs/mesc-pilot-01/p01-04b2/decision-record.md` are proposals
+  pending founder ratification; they are not accepted decisions.
+- Implementation adoption does not equal execution authorization.
+  P01-04B1 adoption does not authorize real split generation.
+  B2 specification does not authorize B2 implementation.
+  B2 implementation does not authorize execution.
+  Execution authorization requires explicit founder authorization for each stage
+  (P01-04B, P01-04C, P01-04D, P01-04E, P01-04F, P01-04G).

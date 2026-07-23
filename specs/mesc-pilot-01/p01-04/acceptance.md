@@ -47,6 +47,34 @@ P01-04B passes acceptance when:
 
 P01-04B acceptance requires a separate founder authorization.
 
+## P01-04B — Implementation Status Matrix
+
+The following matrix maps each P01-04B acceptance criterion to its current
+implementation status on canonical main at `3edf328f583f13fcd9d566e5080ec3cce83ae178`.
+
+The matrix does not mark P01-04B accepted. P01-04B overall remains incomplete.
+
+| P01-04B criterion | Current status |
+|---|---|
+| Private pure grouped allocation | SATISFIED BY B1 |
+| Canonical example-ID derivation | SATISFIED BY B1 |
+| Fail-closed label join | SATISFIED BY B1 |
+| Exact constrained apportionment | SATISFIED BY B1 |
+| SHA-256 group ranking | SATISFIED BY B1 |
+| Public `SourceDocumentGroupedSplitter` | UNSATISFIED |
+| Leakage primitives | UNSATISFIED |
+| Artifact builders and schemas in code | UNSATISFIED |
+| Full split-fingerprint artifact | REQUIRES CONTRACT DECISION |
+| Safe fixture-only integration entry point | UNSATISFIED |
+| Write-path and overwrite protections | UNSATISFIED |
+| Integrated synthetic 1,000-row qualification | UNSATISFIED |
+| Real P01-03G execution | PROHIBITED / NOT AN ACCEPTANCE ACTION |
+
+P01-04B1 satisfies the private pure split-core criteria only.
+No real partition membership has been generated or disclosed.
+Public tooling, artifact builders, leakage checks, execution controls,
+and end-to-end synthetic qualification remain incomplete.
+
 ---
 
 ## P01-04C — Fixture Qualification

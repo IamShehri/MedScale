@@ -45,6 +45,46 @@ Stop conditions: execution claims introduced; source-data redistribution claims 
 ```
 
 ```text
+P01-T03B1 — Implement fixture-only deterministic split core
+
+Implementation status:
+COMPLETED AND ADOPTED
+
+Execution status:
+NOT AUTHORIZED
+
+Reviewed head:
+34774a8308818d5c3b4875920be34728ddf18f22
+
+Merge:
+2937d735df09851384bfa9a15fb8b1f908c62b6d
+
+Boundary:
+Private in-memory synthetic-fixture primitives only.
+No public splitter activation and no real partition generation.
+```
+
+```text
+P01-T03B2 — Define remaining P01-04B tooling entry gate
+
+Documentation status:
+IN PROGRESS
+
+Implementation status:
+NOT AUTHORIZED
+
+Execution status:
+NOT AUTHORIZED
+
+Outputs:
+P01-04 state reconciliation and P01-04B2 entry-gate package.
+
+Acceptance:
+Independent review confirms that scope, contracts, pending decisions,
+implementation increments and execution prohibitions are complete and consistent.
+```
+
+```text
 P01-T04 — Acquire PQA-L
 Status: PLANNING AUTHORIZED / EXECUTION NOT AUTHORIZED
 Prerequisites: P01-03 planning complete; separate acquisition authorization
@@ -91,12 +131,35 @@ Stop conditions: LLM judge substituted for manual review; insufficient coverage
 
 ```text
 P01-T09 — Implement B0/B1 runner
+
+MESC B0 implementation:
+Deterministic execution spine adopted at merge
+3edf328f583f13fcd9d566e5080ec3cce83ae178.
+
+MESC B1 model-runner implementation:
+Not complete unless separately evidenced and authorized.
+
+Real B0/B1 execution:
+Not authorized.
+
 Status: NOT AUTHORIZED
 Prerequisites: P01-08 complete
 Outputs: deterministic runner; run manifest schema; missing-metric policy
 Acceptance: no unauthorized weight access; abstention behavior preserved
 Stop conditions: executable without authorization; scientific identity mutated
 ```
+
+## Nomenclature note
+
+| Name | Workstream | Status |
+|---|---|---|
+| P01-04B1 | Split-tooling subphase | Adopted |
+| MESC B0 | Model-execution spine | Adopted |
+| MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
+| P01-04B2 | Remaining tooling entry gate | Specification in preparation |
+
+P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
+refer to different workstreams and are not interchangeable.
 
 ```text
 P01-T10 — Perform Colab feasibility test
