@@ -4,9 +4,28 @@ Status: **specification and entry-gate proposal only — implementation and exec
 
 ---
 
-## Phase overview
+Status: **design decisions ratified — implementation and execution not authorized**
 
-P01-04B2 decomposes the remaining P01-04B tooling work into four bounded increments. Each increment requires separate implementation authorization. Authorization for an earlier increment does not automatically authorize a later increment.
+Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
+Canonical baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
+
+## Increment dependency DAG
+
+B2A has no B2 implementation predecessor.
+B2B requires B2A contract acceptance.
+B2C requires B2A and B2B acceptance.
+B2D requires B2A, B2B and B2C acceptance.
+
+Each increment still requires:
+- separate authorization;
+- atomic PR;
+- exact-head CI;
+- independent Opus review;
+- separate merge decision.
+
+Ratification of this package does not authorize B2A.
+
+P01-04B2 decomposes the remaining work into four bounded increments: B2A artifact types/canonical serialization, B2B leakage primitives, B2C fixture-only facade/integration entry point, and B2D integrated qualification and P01-04B acceptance review. Each increment requires separate founder authorization, exact-head CI, and independent Opus review. Ratification of P01-04B2 design decisions does not authorize any B2 increment.
 
 | Increment | Name | Authorization required | Current status |
 |---|---|---|---|
@@ -127,7 +146,7 @@ Each increment requires:
 
 1. Founder authorization for that specific increment.
 2. Atomic PR with independent Opus review.
-3. Canonical main at exact `3edf328f583f13fcd9d566e5080ec3cce83ae178` at time of authorization.
+3. Canonical main at exact `ce1272235cb48dbacdb18f20e1ae8db695b01328` at time of authorization.
 4. No real P01-03G registry execution.
 5. No automatic authorization of the next increment.
 

@@ -1,6 +1,6 @@
 # MESC Pilot-01 — P01-04B2 Specification
 
-Status: **specification and entry-gate proposal only — implementation and execution not authorized**
+Status: **design decisions ratified — implementation and execution not authorized**
 
 ---
 
@@ -17,7 +17,10 @@ The remaining work required for P01-04B acceptance includes:
 5. A fixture-only integration entry point with write-path and overwrite protections.
 6. Complete synthetic acceptance tests demonstrating the above.
 
-P01-04B2 defines the entry gate for this remaining work. It does not implement any of it.
+This document defines the ratified design for the remaining P01-04B tooling entry gate between P01-04B1 and P01-04C. The design decisions are resolved by founding owner ratification; implementation and execution remain unauthorized.
+
+Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
+Canonical baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
 
 ## Scope boundaries
 
@@ -81,7 +84,7 @@ All JSONL outputs must use:
 - separators: `(",", ":")`;
 - no indentation;
 - terminal newline policy: LF at end of each line;
-- identical output on repeated runs with identical inputs and identical Python version.
+|- identical output on repeated runs with identical inputs across supported runtimes.
 
 ### 4. Split fingerprint construction and verification
 

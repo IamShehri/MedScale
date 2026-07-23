@@ -1,13 +1,17 @@
 # MESC Pilot-01 — P01-04B2 Contracts
 
-Status: **specification and entry-gate proposal only — implementation and execution not authorized**
+Status: **design decisions ratified — implementation and execution not authorized**
+
+Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
+Canonical baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
 
 This document defines proposed type contracts for P01-04B2 tooling. No Python implementation is authorized. Types are proposed for later review and implementation after separate founder authorization.
+
+B2 defines an extended versioned leakage schema that wraps the frozen B1 contracts at the boundary; it does not mutate or silently reinterpret B1 fields.
 
 All types exclude raw question, context, answer, or per-example label content from promotable artifacts, per P01-04A decision D9.
 
 ---
-
 ## Stable type definitions
 
 ### `SplitPolicy`
@@ -20,7 +24,7 @@ Stable identifier for a complete split policy configuration.
 | `algorithm_version` | string | Algorithm version | Must match D10 versioning scheme |
 | `grouping_key` | string | Grouping unit | Must equal `source_document_id` unless founder amendment |
 | `stratification_field` | string | Stratification field | Must equal `decision` unless founder amendment |
-| `partitions` | array of strings | Partition names | Must be subset of `["train", "validation", "test", "holdout"]` |
+| `partitions` | array of strings | Partition names | Must be subset of `["train", "validation", "test"]` |
 | `target_counts` | object | partition -> integer | Must sum to total dataset size |
 | `target_ratios` | object | partition -> float | Informative only; not used for computation |
 | `holdout_included` | boolean | Holdout flag | `false` for version 1 per D8 |
@@ -28,12 +32,10 @@ Stable identifier for a complete split policy configuration.
 | `rank_key_schema` | object | Ranking key definition | Must match D6 canonical key schema |
 | `serialization_rules` | object | Encoding and formatting | Must match D6 serialization rules |
 | `apportionment_method` | string | Algorithm description | Must describe constrained minimum-deviation apportionment |
-| `ratified_at` | string | ISO date only | No timestamp; no runtime generation |
 
 Promotable: yes
-Prohibited fields: `generated_at` (use `ratified_at`), local paths, usernames, hostnames, timestamps
-
-Canonical ordering: recursive key sort; UTF-8; `ensure_ascii=False`; `allow_nan=False`; separators `(",", ":"`; no BOM; LF lines.
+Prohibited fields: `ratified_at`, `generated_at`, local paths, usernames, hostnames, timestamps
+Canonical ordering: recursive key sort; UTF-8; `ensure_ascii=False`; `allow_nan=False`; separators `(",", ":")`; no BOM; LF lines.
 
 ### `GroupRegistryEntry`
 
@@ -50,9 +52,8 @@ One JSON object per source-document group in `group-registry.jsonl`.
 
 Promotable: yes
 Prohibited content: question text, context text, labels, local paths, usernames, hostnames, timestamps
-
 Serialization order: `(assigned_split, group_id)` ascending within file.
-Canonical JSON: sorted keys, UTF-8, no BOM, LF lines.
+Canonical JSON: sorted keys, UTF-8, no BOM, LF lines, no indentation.
 
 ### `ExampleSplitRegistryEntry`
 
@@ -68,9 +69,8 @@ One JSON object per example in `example-split-registry.jsonl`.
 
 Promotable: yes
 Prohibited content: question text, context text, labels, local paths, usernames, hostnames, timestamps
-
 Serialization order: `(assigned_split, row_ordinal)` ascending within file.
-Canonical JSON: sorted keys, UTF-8, no BOM, LF lines.
+Canonical JSON: sorted keys, UTF-8, no BOM, LF lines, no indentation.
 
 ### `SplitSummary`
 
@@ -83,14 +83,13 @@ Aggregate summary in `split-summary.json`.
 | `partition_counts` | object | partition -> integer | Must sum to `record_count` |
 | `label_distributions_by_partition` | object | partition -> {label -> count} | Must match D4 ratified target matrix within integer rounding |
 | `algorithm_version` | string | Algorithm version | Must match SplitPolicy |
-| `split_hash` | string | 16-hex SHA-256 digest | Truncated from canonical payload; for in-memory integrity only |
-| `split_fingerprint` | string | 64-hex SHA-256 digest | Full fingerprint of complete canonical payload |
-| `generated_at` | string | ISO date only | No timestamp; no runtime generation |
+| `split_hash` | string | 16-hex SHA-256 digest | Truncated from canonical payload; B1 compatibility only; never authoritative |
+| `split_fingerprint` | string | 64-hex SHA-256 digest | Full fingerprint of complete canonical payload; sole authoritative identity |
 
 Promotable: yes
-Prohibited fields: local paths, usernames, hostnames, execution durations, command logs
+Prohibited fields: local paths, usernames, hostnames, execution durations, command logs, timestamps
 
-Note: `split_hash` is the B1 truncated digest (16 hex). `split_fingerprint` is the proposed B2 full digest (64 hex). They are not interchangeable. See `decision-record.md` for pending founder decision on authoritative identity.
+Note: `split_hash` is the B1 truncated digest (16 hex). `split_fingerprint` is the authoritative B2 full digest (64 hex). They are not interchangeable.
 
 ### `SplitFingerprint`
 
@@ -103,13 +102,34 @@ Full fingerprint in `split-fingerprint.json`.
 | `sha_method` | string | Hash method | Must equal `SHA-256` |
 | `schema_version` | string | Schema version | Future-proofing |
 | `canonical_manifest_reference` | string | Manifest reference | Stable reference, not local path |
-| `input_artifact_sha256s` | object | path -> SHA-256 | Only for non-repository inputs; repository paths excluded |
-| `generated_at` | string | ISO date only | No timestamp |
+| `input_artifact_sha256s` | object | stable id -> SHA-256 | Only for non-repository inputs; repository paths excluded |
 
 Promotable: yes
-Prohibited fields: local paths, hostnames, usernames, command logs, workspace locations
+Prohibited fields: local paths, hostnames, usernames, command logs, workspace locations, timestamps
 
-The `input_artifact_sha256s` field must not expose repository-internal paths. Only external input artifacts (e.g., `source-records.jsonl` identity reference) may be recorded by stable identifier.
+The `input_artifact_sha256s` field must not expose repository-internal paths. Only external input artifacts may be recorded by stable identifier.
+
+### `SplitFingerprintBundle`
+
+Canonical bundle manifest bound into the authoritative fingerprint.
+
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `bundle_schema_version` | string | Bundle schema version | Stable version |
+| `policy_id` | string | Policy identifier | Must match SplitPolicy |
+| `algorithm_version` | string | Algorithm version | Must match SplitPolicy |
+| `split_seed` | string | Domain-separation value | Not an RNG seed |
+| `canonical_artifact_role` | string | Role identifier | Stable role |
+| `artifact_sha256` | string | 64-hex SHA-256 | Exact canonical artifact bytes |
+| `artifact_byte_size` | integer | Byte size | Exact byte length |
+| `schema_version` | string | Artifact schema version | Stable schema version |
+
+Promotable: yes
+Binding requirement: The bundle binds the exact canonical bytes of the group-registry artifact, example-split-registry artifact, split-summary identity core, excluded-or-unassigned ledger, and any other ratified formal split artifact. Artifact entries are ordered by stable artifact role.
+
+Split-summary identity core exclusion: The artifact bound as the split-summary identity core must exclude `split_fingerprint` itself, provenance dates, local/runtime metadata, and command evidence.
+
+Any mismatch in fingerprint, artifact hash, or artifact byte size is fail-closed.
 
 ### `ExcludedOrUnassignedLedger`
 
@@ -120,10 +140,14 @@ Ledger of examples excluded or unassigned from the split.
 | `count` | integer | Excluded count | Non-negative |
 | `reason` | string | Exclusion reason | Must be documented in decision record |
 | `excluded_ids` | array of strings | Excluded identifiers | Must match canonical registry |
-| `generated_at` | string | ISO date only | No timestamp |
 
 Promotable: yes
-Prohibited fields: local paths, usernames, hostnames, timestamps beyond ISO date
+Prohibited fields: local paths, usernames, hostnames, timestamps
+
+---
+## Leakage contracts
+
+B2 defines an extended versioned leakage schema that wraps the frozen B1 contracts at the boundary; it does not mutate or silently reinterpret B1 fields.
 
 ### `LeakageFinding`
 
@@ -131,18 +155,18 @@ Single leakage finding in `leakage-audit-report.json`.
 
 | Field | Type | Purpose | Constraints |
 |---|---|---|---|
-| `finding_id` | string | Stable identifier | Deterministic across reruns |
-| `finding_type` | string | One of: `exact_example`, `source_document`, `exact_question`, `normalized_question`, `near_duplicate_question`, `context_overlap` | Enumerated |
+| `finding_id` | string | Stable identifier | Deterministic over finding schema version, finding type, sorted example IDs, sorted source-document IDs, sorted partitions, and normalized score representation |
+| `finding_type` | string | One of: `exact_example`, `source_document`, `exact_question`, `normalized_question`, `near_duplicate_question`, `context_overlap`, `empty_normalized_question` | Enumerated |
 | `example_ids` | array of strings | Examples involved | Must match canonical registry |
 | `source_document_ids` | array of strings | Source documents involved | Must match canonical registry |
 | `partitions` | array of strings | Partitions involved | Must be subset of canonical partitions |
-| `score` | float or null | Similarity score | Jaccard for near-duplicate; null for exact matches |
+| `score` | float or null | Similarity score | Jaccard for near-duplicate; null for exact matches; never fabricated |
 | `shared_surface` | array of strings | What was shared | Must not contain raw text |
 | `classification` | string | `unresolved`, `false_positive`, `confirmed_leakage` | Must not be suppressed |
 | `evidence_reference` | string or null | Supporting evidence | Stable reference, not local path |
 | `suppressed` | boolean | Suppression flag | Must be `false`; suppression is prohibited |
 
-Promotable: yes, if and only if raw text is absent from all fields
+Promotable: yes, if and only if no finding contains raw text
 Prohibited content: raw question text, context text, answer text, local paths, usernames, hostnames, timestamps
 
 ### `LeakageAuditReport`
@@ -151,46 +175,115 @@ Aggregate leakage audit result.
 
 | Field | Type | Purpose | Constraints |
 |---|---|---|---|
-| `findings` | array of `LeakageFinding` | All findings | Must include all findings; suppression prohibited |
+| `findings` | array of `LeakageFinding` | All findings | Must include all findings; suppression prohibited; report must not be empty for leakage-positive qualification fixtures |
 | `leaked` | boolean | True if unresolved findings | Computed from findings |
 | `finding_count` | integer | Total findings | Count of `findings` array |
 | `detection_methods` | array of strings | Methods applied | Ordered list |
-| `generated_at` | string | ISO date only | No timestamp |
+| `normalization_record` | object | Normalization steps applied | Records NFKC, case folding, whitespace collapse |
 
 Promotable: yes, if and only if no finding contains raw text
 Prohibited content: raw question text, context text, answer text, local paths, usernames, hostnames, timestamps
 
-### Fixture-only execution request/result types
+Note: The audit report is expected to be non-empty for leakage-positive qualification fixtures. A vacuous empty report is not an acceptable qualification outcome.
 
-Proposed request type (design only, not implemented):
+### `CanonicalJsonBytes`
 
-- `fixture_rows`: injected synthetic rows only
-- `fixture_source_document_ids`: corresponding source-document IDs
-- `policy_override`: optional policy reference (must be ratified)
-- `seed`: domain-separation value (not RNG seed)
-- `request_id`: stable request identifier
+Canonical JSON serialization contract shared by all promotable types.
 
-Proposed result type (design only, not implemented):
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `encoding` | string | Text encoding | Must equal `UTF-8` |
+| `bom` | boolean | BOM presence | Must be `false` |
+| `key_ordering` | string | Key sort order | Must equal `recursive_lexicographic` |
+| `ensure_ascii` | boolean | ASCII escaping | Must be `false` |
+| `allow_nan` | boolean | NaN allowance | Must be `false` |
+| `separators` | string | JSON separators | Must equal `(",", ":")` |
+| `indentation` | integer | Indent width | Must equal `0` |
+| `line_ending` | string | Line ending | Must equal `LF` |
+| `terminal_newline` | boolean | Final LF | Must be `true` for multi-line JSONL; single-object JSON ends with exactly one LF |
 
-- `split_manifest`: `PilotSplitManifest` equivalent
-- `summary`: `SplitSummary`
-- `fingerprint`: `SplitFingerprint`
-- `audit_report`: `LeakageAuditReport` (always empty for fixture input)
-- `execution_evidence_ref`: stable reference to external evidence (not path)
+Promotable: yes as a schema definition artifact
+Binding: identical inputs must produce byte-identical outputs across supported Python 3.11 and 3.12; Windows, Linux and macOS; locale settings; time zones.
 
-### Authorization and path-safety errors
+### `CanonicalJsonlBytes`
+
+JSONL serialization contract for line-oriented artifact files.
+
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `encoding` | string | Text encoding | Must equal `UTF-8` |
+| `bom` | boolean | BOM presence | Must be `false` |
+| `key_ordering` | string | Key sort order | Must equal `recursive_lexicographic` |
+| `ensure_ascii` | boolean | ASCII escaping | Must be `false` |
+| `allow_nan` | boolean | NaN allowance | Must be `false` |
+| `separators` | string | JSON separators | Must equal `(",", ":")` |
+| `indentation` | integer | Indent width | Must equal `0` |
+| `line_ending` | string | Line ending | Must equal `LF` |
+| `terminal_newline` | boolean | Final LF per object | Must be `true` |
+| `blank_lines` | boolean | Blank-line allowance | Must be `false` |
+| `empty_file_behavior` | string | Zero-record behavior | Must equal `zero_byte_file` |
+
+Promotable: yes as a schema definition artifact
+
+---
+## Fixture-only execution types
+
+B2 leakage contracts extend and wrap the frozen B1 contracts at the boundary;
+they do not mutate or silently reinterpret B1 fields. `PilotSplitAssignment`,
+`PilotSplitManifest`, `PilotLeakageFinding`, and `PilotLeakageAuditReport`
+remain frozen in B1.
+
+### `FixtureSplitRequest`
+
+Structural fixture identity required for any B2 facade invocation.
+
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `fixture_namespace` | string | Approved namespace | Must match `mesc-fixture/p01-04b2/<fixture-schema-version>/<fixture-id>` |
+| `fixture_schema_version` | string | Schema version | Stable version |
+| `fixture_id` | string | Fixture identifier | Approved fixture ID |
+| `fixture_sha256` | string | 64-hex SHA-256 | Fingerprint of approved fixture bytes |
+| `fixture_only` | boolean | Fixture-only marker | Must be `true` |
+| `non_evidence` | boolean | Non-evidence marker | Must be `true` |
+| `synthetic_identity_proof` | string | Proven synthetic batch | Approved synthetic batch reference |
+| `request_id` | string | Stable request identifier | Deterministic request identity |
+| `seed` | string | Domain-separation value | Not an RNG seed |
+
+Promotable: no
+External-evidence-only: no
+Binding: No filename, directory name, or path heuristic may establish fixture identity. Synthetic identity must be proven by approved fixture namespace, fixture schema version, fixture fingerprint, and explicit `fixture_only=true` marker.
+
+### `FixtureSplitResult`
+
+Result of a fixture-only facade invocation.
+
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `split_manifest` | object | Manifest summary | Wraps B1 `PilotSplitManifest` at the boundary |
+| `summary` | object | Split summary | `SplitSummary` |
+| `fingerprint` | object | Full fingerprint | `SplitFingerprint` |
+| `audit_report` | object | Leakage report | `LeakageAuditReport`; expected non-empty for leakage-positive qualification |
+| `execution_evidence_ref` | string | External evidence reference | Stable reference, not local path |
+
+Promotable: no
+External-evidence-only: yes
+Note: The `audit_report` is expected to be non-empty for leakage-positive qualification fixtures. A vacuous empty audit report is not an acceptable qualification outcome.
+
+---
+## Authorization and path-safety errors
 
 Proposed error enumerations (design only, not implemented):
 
-- `PilotSplitNotAuthorizedError(NotImplementedError)`: real split not authorized (already implemented in B1)
-- `FixtureOnlyModeError(RuntimeError)`: attempted real-registry invocation
-- `PathSafetyViolation(ValueError)`: output path outside designated workspace
-- `ConcurrencyViolation(RuntimeError)`: concurrent writer detected
-- `InvalidInputError(ValueError)`: input fails identity verification
-- `ArtifactOverwriteError(PermissionError)`: write would overwrite existing artifact
+| Error | Base | Meaning |
+|---|---|---|
+| `PilotSplitNotAuthorizedError` | `NotImplementedError` | Real split not authorized (already implemented in B1) |
+| `FixtureOnlyModeError` | `RuntimeError` | Attempted real-registry invocation |
+| `PathSafetyViolation` | `ValueError` | Output path outside designated workspace |
+| `ConcurrencyViolation` | `RuntimeError` | Concurrent writer detected |
+| `InvalidInputError` | `ValueError` | Input fails identity verification |
+| `ArtifactOverwriteError` | `PermissionError` | Write would overwrite existing artifact |
 
 ---
-
 ## Type promotion rules
 
 | Type | Promotable | External-evidence-only |
@@ -200,11 +293,13 @@ Proposed error enumerations (design only, not implemented):
 | `ExampleSplitRegistryEntry` | Yes | No |
 | `SplitSummary` | Yes | No |
 | `SplitFingerprint` | Yes | No |
+| `SplitFingerprintBundle` | Yes | No |
 | `ExcludedOrUnassignedLedger` | Yes | No |
+| `CanonicalJsonBytes` | Yes | No |
+| `CanonicalJsonlBytes` | Yes | No |
 | `LeakageFinding` | Yes, if no raw text | No |
 | `LeakageAuditReport` | Yes, if no raw text | No |
 | Fixture request/result | No | Yes |
 
-Promotable types must pass the promotable-artifact scan: no runtime metadata, no local paths, no timestamps beyond ISO date, no usernames, no hostnames, no command logs, no workspace locations.
-
+Promotable types must pass the promotable-artifact scan: no runtime metadata, no local paths, no timestamps, no usernames, no hostnames, no command logs, no workspace locations.
 External-evidence-only types must remain outside the repository and outside the evidence root, referenced by stable identity only.

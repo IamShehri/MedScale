@@ -18,9 +18,10 @@ P01-04B2 does not authorize implementation. It does not authorize execution. It 
 | Layer | Authority | Current status |
 |---|---|---|
 | Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Ratified** (P01-04A) |
+| Founder authorization | P01-04B2 design decisions (FD-B2-1 through FD-B2-8) | **Ratified on 2026-07-24** |
 | P01-04A specification | `specs/mesc-pilot-01/p01-04/*` | **Ratified** |
-| P01-04B1 implementation | Fixture-only deterministic split core | **Adopted** on canonical main (`2937d73`) |
-| P01-04B2 specification | Remaining tooling entry gate | **In preparation** |
+| P01-04B1 implementation | Fixture-only deterministic split core | **Adopted** on canonical main (`ce12722`) |
+| P01-04B2 design | B2 facade, leakage, fixtures, fingerprint, atomic publication | **Ratified**; implementation not authorized |
 | P01-04B overall | Tooling complete and accepted | **Not met** |
 | P01-04C–G stages | Separate authorizations each | **Not authorized** |
 | Formal split execution | Separate authorization required | **Not authorized** |
@@ -28,16 +29,17 @@ P01-04B2 does not authorize implementation. It does not authorize execution. It 
 ## Authority hierarchy
 
 1. Founder ratification of P01-04A policy decisions (D1–D10) is the highest current authority.
-2. P01-04B1 adopted code on canonical main is the highest current implementation authority.
-3. P01-04B2 defines the next implementation gate; it does not create authority.
+2. Founder ratification of P01-04B2 design decisions (FD-B2-1 through FD-B2-8) on 2026-07-24 is binding for design.
+3. P01-04B1 adopted code on canonical main is the highest current implementation authority.
 4. No P01-04B2 document authorizes code changes, execution, or promotion of P01-04C–G.
 
-P01-04B2 explicitly defers to P01-04A decision-record.md for all founder policy decisions. If any P01-04B2 proposal conflicts with D1–D10, D1–D10 control.
+P01-04B2 explicitly defers to P01-04A decision-record.md for all founder policy decisions. If any P01-04B2 proposal conflicts with D1–D10, D1–D10 control. A subordinate implementation-design ratification note in `p01-04/decision-record.md` referencing FD-B2-1 through FD-B2-8 does not amend D1–D10.
 
 ## Exact canonical baseline
 
-- Canonical main: `3edf328f583f13fcd9d566e5080ec3cce83ae178`
-- Subject: `feat(mesc): add deterministic B0 zero-shot execution spine`
+- Canonical main: `ce1272235cb48dbacdb18f20e1ae8db695b01328`
+- Subject: `docs(mesc): reconcile P01-04B state and define B2 gate`
+- PR #53 merge: `ce1272235cb48dbacdb18f20e1ae8db695b01328`
 - P01-04B1 merge: `2937d735df09851384bfa9a15fb8b1f908c62b6d`
 - P01-04B1 reviewed PR head: `34774a8308818d5c3b4875920be34728ddf18f22`
 
@@ -113,5 +115,6 @@ P01-04B2 does not authorize and does not reference:
 | `contracts.md` | Proposed type contracts without Python implementation |
 | `data-model.md` | Entity relationships and data flow |
 | `research.md` | Design evidence and gap analysis |
-| `decision-record.md` | Proposed decisions pending founder ratification |
-| `implementation-task.md` | Future implementation brief (not authorized) |
+|| `decision-record.md` | Founder-ratified design decisions (FD-B2-1 through FD-B2-8) and historical proposed decisions (PD-1 through PD-8) |
+|| `founder-ratification.md` | Canonical founder-authorization record for FD-B2-1 through FD-B2-8 |
+|| `implementation-task.md` | Future implementation brief (not authorized) |

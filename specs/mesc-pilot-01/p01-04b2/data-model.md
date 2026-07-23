@@ -1,9 +1,11 @@
 # MESC Pilot-01 — P01-04B2 Data Model
 
-Status: **specification and entry-gate proposal only — implementation and execution not authorized**
+Status: **design decisions ratified — implementation and execution not authorized**
+
+Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
+Canonical baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
 
 ---
-
 ## Entity relationships
 
 P01-04B2 defines the following entity relationships for future tooling. No real data is produced in this task.
@@ -18,7 +20,7 @@ OrderedExampleRow
   +-- source_document_id: string (grouping key)
   +-- row_ordinal: integer (position in ordered registry)
   +-- final_decision: string (yes/no/maybe/abstain)
-  +-- split_assignment: string (train/validation/test/holdout) — future only
+  +-- split_assignment: string (train/validation/test) — future only
 ```
 
 Constraints:
@@ -37,14 +39,14 @@ SourceLabelRow
   +-- source_document_id: string (stable identifier)
   +-- example_count: integer (number of examples in this group)
   +-- row_ordinals: list of integer (positions in ordered registry)
-  +-- group_assignment: string (train/validation/test/holdout) — future only
+  +-- group_assignment: string (train/validation/test) — future only
 ```
 
 Constraints:
 - `source_document_id` must be a full SHA-256 hex digest.
 - `example_count` must be non-negative.
 - `row_ordinals` must be sorted ascending.
-- `group_assignment` must not be populated until P01-04D authorization.
+- `group_assignment` must not be populated until P01-04D or later authorization.
 
 ### `LabeledExample`
 
@@ -62,7 +64,7 @@ LabeledExample
 ```
 
 Constraints:
-- `stratum` must be derived from `final_decision` using D4 strata: `yes`, `no`, `maybe`, `abstain`.
+- `stratum` must be derived from `final_decision` using D4 strata.
 - `rank_key` must be the canonical JSON serialization per D6 rules.
 - `rank_digest` must be the lowercase SHA-256 hex digest of `rank_key`.
 - `LabeledExample` instances are transient in-memory objects. They must not be serialized to promotable artifacts.
@@ -81,7 +83,7 @@ LabelTarget
 ```
 
 Constraints:
-- `target_count` must sum across partitions to the D4 label totals (552/338/110).
+- `target_count` must sum across partitions to the D4 label totals.
 - `actual_count` must equal `target_count` after apportionment.
 - `deviation` must be minimized per D5 constrained apportionment rules.
 - `LabelTarget` instances are transient in-memory objects.
@@ -104,8 +106,8 @@ Constraints:
 - `rank_digest` determines group ordering within stratum.
 - `source_document_id` is the collision tie-breaker.
 - `row_ordinal` is the final defensive tie-breaker.
-- `assigned_partition` must not be populated until P01-04D authorization.
-- `partition_key` must not be populated until P01-04D authorization.
+- `assigned_partition` must not be populated until P01-04D or later authorization.
+- `partition_key` must not be populated until P01-04D or later authorization.
 
 ### `GroupAssignment`
 
@@ -201,7 +203,6 @@ External Execution Evidence (not promotable)
 Promotable records may reference external evidence using stable identifiers (SHA-256 digest or UUID) but must not include local paths, workspace paths, usernames, hostnames, or timestamps beyond ISO date.
 
 ---
-
 ## Identity and digest behavior
 
 | Identity type | Format | Where used | Authoritative |
@@ -211,6 +212,86 @@ Promotable records may reference external evidence using stable identifiers (SHA
 | `group_id` | Deterministic from group content | Group registries | Derived |
 | `finding_id` | Deterministic string | Leakage findings | Derived |
 | `split_hash` | 16-hex SHA-256 | In-memory manifest integrity | B1 only |
-| `split_fingerprint` | 64-hex SHA-256 | `split-fingerprint.json` | Proposed B2 |
+| `split_fingerprint` | 64-hex SHA-256 | `split-fingerprint.json` | Yes (B2) |
 
 No truncated digest may be silently treated as equivalent to a full fingerprint in any formal artifact.
+
+---
+## Provenance envelope separation
+
+Founder-ratification dates belong only in:
+- the repository decision/authorization record;
+- the external provenance envelope.
+
+Generation dates and execution times belong only in external execution evidence.
+External provenance is non-promotable, outside the evidence root, excluded from split-fingerprint payloads, and referenced only by stable identity where required.
+
+---
+## Fixture-only entities
+
+### `FixtureSuite`
+
+Versioned collection of approved fixtures.
+
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `fixture_suite_id` | string | Stable suite identifier | Namespace `mesc-fixture/p01-04b2/<fixture-schema-version>` |
+| `fixture_schema_version` | string | Schema version | Stable version per suite |
+| `fixture_id` | string | Fixture identifier | Approved fixture ID |
+| `fixture_sha256` | string | 64-hex SHA-256 | Fingerprint of approved fixture bytes |
+| `fixture_only` | boolean | Fixture-only marker | Must be `true` |
+| `non_evidence` | boolean | Non-evidence marker | Must be `true` |
+| `namespace` | string | Approved namespace | `mesc-fixture/p01-04b2/<fixture-schema-version>/<fixture-id>` |
+| `synthetic_identity_proof` | string | Proven synthetic batch | Approved synthetic batch reference |
+
+Promotable: no
+Non-promotable: yes
+Binding: No filename, directory name, or path heuristic may establish fixture identity. Synthetic identity must be proven by approved fixture namespace, fixture schema version, fixture fingerprint, and explicit `fixture_only=true` marker.
+
+### `FixtureSplitRequest`
+
+Structural fixture identity required for any B2 facade invocation.
+
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `fixture_namespace` | string | Approved namespace | Must match `mesc-fixture/p01-04b2/<fixture-schema-version>/<fixture-id>` |
+| `fixture_schema_version` | string | Schema version | Stable version |
+| `fixture_id` | string | Fixture identifier | Approved fixture ID |
+| `fixture_sha256` | string | 64-hex SHA-256 | Fingerprint of approved fixture bytes |
+| `fixture_only` | boolean | Fixture-only marker | Must be `true` |
+| `non_evidence` | boolean | Non-evidence marker | Must be `true` |
+| `synthetic_identity_proof` | string | Proven synthetic batch | Approved synthetic batch reference |
+| `request_id` | string | Stable request identifier | Deterministic request identity |
+| `seed` | string | Domain-separation value | Not an RNG seed |
+
+Promotable: no
+External-evidence-only: no
+Binding: No filename, directory name, or path heuristic may establish fixture identity. `FixtureSplitRequest` cannot be created from arbitrary registry rows, filesystem paths, P01-03G rows, external source-record rows, or evidence-root references.
+
+### `FixtureSplitResult`
+
+Result of a fixture-only facade invocation.
+
+| Field | Type | Purpose | Constraints |
+|---|---|---|---|
+| `split_manifest` | object | Manifest summary | Wraps B1 `PilotSplitManifest` at the boundary |
+| `summary` | object | Split summary | `SplitSummary` |
+| `fingerprint` | object | Full fingerprint | `SplitFingerprint` |
+| `audit_report` | object | Leakage report | `LeakageAuditReport`; expected non-empty for leakage-positive qualification |
+| `execution_evidence_ref` | string | External evidence reference | Stable reference, not local path |
+
+Promotable: no
+External-evidence-only: yes
+Note: The `audit_report` is expected to be non-empty for leakage-positive qualification fixtures.
+
+---
+## Formal P01-04D boundary
+
+The eventual formal P01-04D executor must be a separate private/formal entry point under separate authorization. It must not reuse the B2 fixture facade or its typed request boundary.
+
+B2 cannot read:
+- P01-03G registry paths;
+- external source-record files;
+- evidence-root locations.
+
+B2 cannot publish formal evidence.

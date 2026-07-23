@@ -42,7 +42,7 @@ D1–D10 remain ratified policy as recorded in `specs/mesc-pilot-01/p01-04/decis
 
 **Recommended path:** Private implementation with guarded public facade (option 4), using explicit fixture-only request type (option 1) for integration entry point.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ### PD-2 — Split-hash identity
 
@@ -53,7 +53,7 @@ D1–D10 remain ratified policy as recorded in `specs/mesc-pilot-01/p01-04/decis
 
 The 16-hex compatibility value must never be silently treated as equivalent to the full 64-hex fingerprint.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ### PD-3 — Date fields and reproducibility
 
@@ -64,7 +64,7 @@ The 16-hex compatibility value must never be silently treated as equivalent to t
 - No runtime timestamps in any deterministic artifact.
 - Date fields excluded from fingerprint payloads to ensure reproducibility across time zones and clock drift.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ### PD-4 — Canonical JSONL
 
@@ -77,11 +77,11 @@ The 16-hex compatibility value must never be silently treated as equivalent to t
 - terminal newline at end of each line;
 - `ensure_ascii=False`;
 - `allow_nan=False`;
-- separators: `(",", ":")`;
-- no indentation;
-- identical output on repeated runs with identical inputs and identical Python version.
+|- separators: `(",", ":")`;
+|- no indentation;
+|- identical output on repeated runs with identical inputs across supported runtimes.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ### PD-5 — Atomic publication and concurrency
 
@@ -94,7 +94,7 @@ The 16-hex compatibility value must never be silently treated as equivalent to t
 - invalidated candidate preservation (never overwritten or deleted);
 - cleanup of failed writes from workspace only, never from evidence root or repository.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ### PD-6 — Leakage normalization
 
@@ -109,7 +109,7 @@ The 16-hex compatibility value must never be silently treated as equivalent to t
 - finding identifiers: deterministic, stable across reruns
 - **suppression is prohibited.** Every finding must carry an explicit `classification` of `unresolved`, `false_positive`, or `confirmed_leakage`. A finding remains `unresolved` unless it is classified as `false_positive` with supporting evidence or as `confirmed_leakage`. The `suppressed` flag must always be `false`. Setting `suppressed=true`, silently dropping a finding, or omitting a finding without classification is a hard stop condition that halts the audit.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ### PD-7 — Fixture identity
 
@@ -122,7 +122,7 @@ The 16-hex compatibility value must never be silently treated as equivalent to t
 - cannot be confused with formal dataset evidence;
 - produces byte-identical repeated outputs.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ### PD-8 — Entry-point and CLI boundary
 
@@ -135,7 +135,7 @@ The 16-hex compatibility value must never be silently treated as equivalent to t
 - requires no real execution authorization;
 - defines exit-code classes consistent with MedScale CLI governance.
 
-**Status:** PENDING FOUNDER DECISION
+**Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 ---
 

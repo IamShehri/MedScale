@@ -10,8 +10,8 @@ Status: **specification and policy only — no execution authorized**
 |-------|------|----------------------|----------------|
 | P01-04A | Specification and Policy Ratification | Founder ratification | **Ratified** |
 | P01-04B | Split Contracts and Tooling | Separate founder authorization | Incomplete; B1 adopted privately; B2 specification in preparation |
-|| P01-04B1 | Pure deterministic split core | Adopted on canonical main (`2937d73`) | **ADOPTED** — private, in-memory, fixture-only; execution authority: none |
-|| P01-04B2 | Remaining tooling entry gate | Separate founder authorization | **SPECIFICATION ONLY** — implementation not authorized; execution not authorized |
+|| P01-04B1 | Pure deterministic split core | Adopted on canonical main (`ce1272235cb48dbacdb18f20e1ae8db695b01328`) | **ADOPTED** — private, in-memory, fixture-only; execution authority: none |
+|| P01-04B2 | Remaining tooling entry gate | Founder-ratified design decisions FD-B2-1 through FD-B2-8 (2026-07-24) | **DESIGN RATIFIED** — implementation not authorized; execution not authorized |
 || P01-04B acceptance | Tooling complete and accepted | **NOT MET** |
 | P01-04C | Fixture and Dry-Run Qualification | Separate founder authorization | Not authorized |
 | P01-04D | Formal Split Generation | Separate founder authorization | Not authorized |
