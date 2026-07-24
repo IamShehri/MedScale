@@ -48,7 +48,17 @@ P01-04B acceptance requires a separate founder authorization.
 ## P01-04B — Implementation Status Matrix
 
 The following matrix maps each P01-04B acceptance criterion to its current
-implementation status on canonical main at `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
+implementation status on canonical main at `3edf328f583f13fcd9d566e5080ec3cce83ae178`.
+
+Current maintenance note:
+
+The founder-ratified B2 design reconciliation is maintained on canonical
+documentation baseline
+`ce1272235cb48dbacdb18f20e1ae8db695b01328`.
+
+This current-maintenance baseline does not rewrite the historical implementation
+snapshot recorded above.
+
 
 The matrix does not mark P01-04B accepted. P01-04B overall remains incomplete.
 

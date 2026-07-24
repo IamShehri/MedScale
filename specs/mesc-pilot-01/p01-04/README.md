@@ -1,14 +1,28 @@
-# MESC Pilot-01 — P01-04 Specification and Policy Ratification
+# MESC Pilot-01 — P01-04A Specification and Policy Ratification
 
 Status: **specification and policy only — no execution authorized**
-Branch: `docs/mesc-p01-04b2-founder-ratification`
-Ratification review baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`
+Branch: `docs/mesc-p01-04a-spec-policy`
+Ratification review baseline: cd0f72b0ee9720f06d95dfa01862a4f403c31b16
 
 ---
 
+## Current maintenance context
+
+This historical P01-04A ratification package is currently maintained as part
+of the broader P01-04 governance record.
+
+Current maintenance branch:
+`docs/mesc-p01-04b2-founder-ratification`
+
+Current canonical documentation baseline:
+`ce1272235cb48dbacdb18f20e1ae8db695b01328`
+
+These current-maintenance references do not replace, amend, or reinterpret the
+original P01-04A ratification branch or review baseline.
+
 ## Purpose
 
-P01-04 exists solely to record the canonical specification, scientific policy, artifact contracts, acceptance criteria, and execution-safety protocol for the future split-and-leakage-audit phase (P01-04). Nothing in this package authorizes execution.
+P01-04A exists solely to record the canonical specification, scientific policy, artifact contracts, acceptance criteria, and execution-safety protocol for the future split-and-leakage-audit phase (P01-04). Nothing in this package authorizes execution.
 
 ## Authority hierarchy
 
@@ -86,11 +100,11 @@ MESC B0/B1 adoption does not authorize split generation.
 
 ## Relationship to P01-03G
 
-P01-04 depends on P01-03G. The ordered example registry (`specs/mesc-pilot-01/p01-03g/ordered-example-id-registry.jsonl`) and the source-document registry (`specs/mesc-pilot-01/p01-03g/source-document-id-registry.jsonl`) are the authoritative inputs for any future formal split generation. Those records must not be modified under P01-04.
+P01-04A depends on P01-03G. The ordered example registry (`specs/mesc-pilot-01/p01-03g/ordered-example-id-registry.jsonl`) and the source-document registry (`specs/mesc-pilot-01/p01-03g/source-document-id-registry.jsonl`) are the authoritative inputs for any future formal split generation. Those records must not be modified under P01-04A.
 
 ## Execution prohibition
 
-P01-04 does not authorize and does not reference:
+P01-04A does not authorize and does not reference:
 
 - split generation
 - group assignment

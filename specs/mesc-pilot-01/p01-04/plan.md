@@ -19,6 +19,17 @@ Status: **specification and policy only — no execution authorized**
 | P01-04F | Freeze and Independent Acceptance | Separate founder authorization | Not authorized |
 | P01-04G | Repository Promotion and Closeout | Separate promotion authorization | Not authorized |
 
+### Current maintenance note
+
+The P01-04A row above preserves the historical identity of the ratified policy
+phase. This document is currently maintained under the broader P01-04 record
+on canonical baseline
+`ce1272235cb48dbacdb18f20e1ae8db695b01328`.
+
+The current maintenance context does not replace the original P01-04A
+ratification identity or authority.
+
+
 No P01-04 stage authorizes P01-05.
 
 ## Prerequisites
