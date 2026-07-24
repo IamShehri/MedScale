@@ -1,17 +1,20 @@
 # MESC Pilot-01 — P01-04B2 Contracts
 
-Status: **design decisions ratified — implementation and execution not authorized**
+Status: **founder-ratified design contracts — implementation and execution not authorized**
 
 Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
 Canonical baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
 
-This document defines proposed type contracts for P01-04B2 tooling. No Python implementation is authorized. Types are proposed for later review and implementation after separate founder authorization.
+This document records the founder-ratified design contracts for P01-04B2
+tooling. No Python implementation is authorized. Types are proposed for later
+review and implementation after separate founder authorization.
 
 B2 defines an extended versioned leakage schema that wraps the frozen B1 contracts at the boundary; it does not mutate or silently reinterpret B1 fields.
 
 All types exclude raw question, context, answer, or per-example label content from promotable artifacts, per P01-04A decision D9.
 
 ---
+
 ## Stable type definitions
 
 ### `SplitPolicy`
@@ -145,9 +148,13 @@ Promotable: yes
 Prohibited fields: local paths, usernames, hostnames, timestamps
 
 ---
+
 ## Leakage contracts
 
-B2 defines an extended versioned leakage schema that wraps the frozen B1 contracts at the boundary; it does not mutate or silently reinterpret B1 fields.
+B2 leakage contracts extend and wrap the frozen B1 contracts at the boundary;
+they do not mutate or silently reinterpret B1 fields.
+`PilotSplitAssignment`, `PilotSplitManifest`, `PilotLeakageFinding`, and
+`PilotLeakageAuditReport` remain frozen in B1.
 
 ### `LeakageFinding`
 
@@ -184,7 +191,7 @@ Aggregate leakage audit result.
 Promotable: yes, if and only if no finding contains raw text
 Prohibited content: raw question text, context text, answer text, local paths, usernames, hostnames, timestamps
 
-Note: The audit report is expected to be non-empty for leakage-positive qualification fixtures. A vacuous empty report is not an acceptable qualification outcome.
+Note: The audit report is expected to be non-empty for leakage-positive qualification fixtures. A vacuous empty audit report is not an acceptable qualification outcome.
 
 ### `CanonicalJsonBytes`
 
@@ -226,12 +233,13 @@ JSONL serialization contract for line-oriented artifact files.
 Promotable: yes as a schema definition artifact
 
 ---
+
 ## Fixture-only execution types
 
 B2 leakage contracts extend and wrap the frozen B1 contracts at the boundary;
-they do not mutate or silently reinterpret B1 fields. `PilotSplitAssignment`,
-`PilotSplitManifest`, `PilotLeakageFinding`, and `PilotLeakageAuditReport`
-remain frozen in B1.
+they do not mutate or silently reinterpret B1 fields.
+`PilotSplitAssignment`, `PilotSplitManifest`, `PilotLeakageFinding`, and
+`PilotLeakageAuditReport` remain frozen in B1.
 
 ### `FixtureSplitRequest`
 
@@ -270,20 +278,19 @@ External-evidence-only: yes
 Note: The `audit_report` is expected to be non-empty for leakage-positive qualification fixtures. A vacuous empty audit report is not an acceptable qualification outcome.
 
 ---
+
 ## Authorization and path-safety errors
 
-Proposed error enumerations (design only, not implemented):
+Design enumerations (founder-ratified design only, not implemented):
 
 | Error | Base | Meaning |
 |---|---|---|
 | `PilotSplitNotAuthorizedError` | `NotImplementedError` | Real split not authorized (already implemented in B1) |
 | `FixtureOnlyModeError` | `RuntimeError` | Attempted real-registry invocation |
-| `PathSafetyViolation` | `ValueError` | Output path outside designated workspace |
-| `ConcurrencyViolation` | `RuntimeError` | Concurrent writer detected |
 | `InvalidInputError` | `ValueError` | Input fails identity verification |
-| `ArtifactOverwriteError` | `PermissionError` | Write would overwrite existing artifact |
 
 ---
+
 ## Type promotion rules
 
 | Type | Promotable | External-evidence-only |

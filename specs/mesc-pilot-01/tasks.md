@@ -1,7 +1,7 @@
 # MESC Pilot-01 — Tasks
 
 Status: **foundation task registry**
-Authorization: Foundation authorized; execution not authorized
+Authorization: Foundation *** execution not authorized
 Freeze date: 2026-07-17
 
 ---
@@ -84,7 +84,7 @@ NOT AUTHORIZED
 P01-T03B3 — Ratify P01-04B2 design decisions
 
 Founder authorization:
-ISSUED ON 2026-07-24
+FOUNDER RATIFIED ON 2026-07-24
 
 Canonical adoption:
 PENDING MERGE OF THIS DOCUMENTATION PR
@@ -164,6 +164,8 @@ Acceptance: no unauthorized weight access; abstention behavior preserved
 Stop conditions: executable without authorization; scientific identity mutated
 ```
 
+---
+
 ## Nomenclature note
 
 | Name | Workstream | Status |
@@ -171,7 +173,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | P01-04B1 | Split-tooling subphase | Adopted |
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
-| P01-04B2 | Remaining tooling entry gate | Specification in preparation |
+| P01-04B2 | Remaining tooling design gate | Design ratified; implementation and execution not authorized |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.

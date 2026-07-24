@@ -97,13 +97,13 @@ Deterministic constrained-apportionment algorithm:
 Expected target matrix for the current 1,000-example dataset:
 
 | Decision | Train | Validation | Test | Total |
-| -------- | ----: | ---------: | ---: | ----: |
-| yes      |   386 |         83 |   83 |   552 |
-| no       |   237 |         50 |   51 |   338 |
-| maybe    |    77 |         17 |   16 |   110 |
-| total    |   700 |        150 |  150 |  1000 |
+|---|---|---|---|---|
+| yes | 386 | 83 | 83 | 552 |
+| no | 237 | 50 | 51 | 338 |
+| maybe | 77 | 17 | 16 | 110 |
+| total | 700 | 150 | 150 | 1000 |
 
-These are aggregate policy targets only. Example membership must not be calculated or disclosed during P01-04A.
+These are aggregate policy targets only. Example membership must not be calculated or disclosed during P01-04.
 
 **Status**: Ratified for specification only. Execution not authorized.
 
@@ -236,9 +236,9 @@ repeal, or reinterpret D1–D10. D1–D10 remain ratified policy as recorded abo
 - No partition membership has been generated, disclosed, or promoted.
 - Public tooling, artifact builders, leakage-detection library, CLI entry point,
   write-path protections, and end-to-end synthetic qualification remain incomplete.
-|- B2 recommendations in `specs/mesc-pilot-01/p01-04b2/decision-record.md` were reviewed by independent Opus and ratified by the founder as design decisions FD-B2-1 through FD-B2-8 on 2026-07-24; they do not amend D1–D10.
-|- Any future B2 implementation or execution authorization requires separate founder authorization and remains nil.
-|- On conflict between this appendix and D1–D10, D1–D10 control.
+- B2 recommendations in `specs/mesc-pilot-01/p01-04b2/decision-record.md` were reviewed by independent Opus and ratified by the founder as design decisions FD-B2-1 through FD-B2-8 on 2026-07-24; they do not amend D1–D10.
+- Any future B2 implementation or execution authorization requires separate founder authorization and remains nil.
+- On conflict between this appendix and D1–D10, D1–D10 control.
 - Implementation adoption does not equal execution authorization.
   P01-04B1 adoption does not authorize real split generation.
   B2 specification does not authorize B2 implementation.

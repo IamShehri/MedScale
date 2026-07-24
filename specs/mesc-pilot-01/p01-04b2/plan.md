@@ -1,9 +1,5 @@
 # MESC Pilot-01 — P01-04B2 Plan
 
-Status: **specification and entry-gate proposal only — implementation and execution not authorized**
-
----
-
 Status: **design decisions ratified — implementation and execution not authorized**
 
 Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
@@ -88,32 +84,35 @@ No increment authorizes P01-04C–G.
 
 ### P01-04B2C — Fixture-only public facade and integration entry point
 
-**Purpose:** Define the public deterministic splitter facade and fixture-only entry point design without implementing them.
+**Purpose:** Define the separate in-memory fixture-only facade design without implementing it.
 
 **Deliverables:**
 
-- `SourceDocumentGroupedSplitter` public facade design (not current fail-closed stub; this is the future authorized version)
-- Explicit fixture-only request type design
-- Authorization token or capability design
-- Private implementation with guarded public facade design
-- Integration entry point design (fixture-only, no real registry)
-- CLI boundary design (no CLI code in this task)
+- `FixtureSplitFacade` design (separate from the existing private split core)
+- `FixtureSplitRequest` structure and validation rules
+- No CLI component
+- No filesystem input or output path acceptance
+- No publication side effects
+- Formal P01-04D execution entry point remains separate under separate authorization
 
 **Exit criteria for this increment:**
 
-- Public facade cannot be invoked accidentally against canonical real inputs
-- Synthetic fixture injection is the only supported input path
-- Write-path protections are designed (not implemented)
-- No real execution is possible through the facade
+- Facade accepts only structurally verified in-memory `FixtureSplitRequest`
+- No capability or token is required
+- No B2 CLI exists
+- No arbitrary filesystem input path is accepted
+- No arbitrary filesystem output path is accepted
+- The fixture facade performs no publication
+- Existing `SourceDocumentGroupedSplitter.assign()` remains unconditionally fail-closed
 - No Python implementation is authorized
 
 ### P01-04B2D — Integrated synthetic qualification and P01-04B acceptance review
 
-**Purpose:** Define the integrated synthetic qualification test strategy and P01-04B acceptance review process.
+**Purpose:** Define the integrated synthetic qualification test strategy using all three fixtures and P01-04B acceptance review process.
 
 **Deliverables:**
 
-- Synthetic 1,000-row fixture strategy specification
+- Qualified synthetic fixture suite (`exact-reference-1000-v1`, `constraint-stress-1000-v1`, `leakage-positive-v1`)
 - Integration test design (byte-identical output, target counts 700/150/150, label reconciliation, zero group overlaps)
 - Split fingerprint reproducibility test design
 - P01-04B acceptance review protocol
@@ -121,8 +120,9 @@ No increment authorizes P01-04C–G.
 
 **Exit criteria for this increment:**
 
-- 1,000-row fixture strategy is documented
-- All P01-04B acceptance criteria have a mapped implementation path
+- All three fixtures are present and validated
+- Qualification is byte-identical across supported Python versions and operating systems
+- All P01-04B acceptance criteria have a mapped execution path
 - No real P01-03G membership is generated during qualification
 - P01-04B acceptance can be evaluated independently of implementation
 
@@ -146,7 +146,7 @@ Each increment requires:
 
 1. Founder authorization for that specific increment.
 2. Atomic PR with independent Opus review.
-3. Canonical main at exact `ce1272235cb48dbacdb18f20e1ae8db695b01328` at time of authorization.
+3. Each future increment authorization must record the exact then-current canonical main.
 4. No real P01-03G registry execution.
 5. No automatic authorization of the next increment.
 

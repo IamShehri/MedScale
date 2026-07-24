@@ -1,43 +1,31 @@
-# MESC Pilot-01 — P01-04B2 Decision Record
+# MESC Pilot-01 — P01-04B2 Founder Ratification
 
-Status: **design decisions ratified — implementation and execution not authorized**
+Status: **design decisions founder-ratified — implementation and execution not authorized**
 
-This document records the founder-ratified architecture decisions for P01-04B2
-tooling. The eight decisions below are resolved and binding for design.
-None of them authorizes implementation or execution. Ratified decisions in
-`specs/mesc-pilot-01/p01-04/decision-record.md` (D1–D10) are unchanged and
-remain the authoritative longitudinal record.
+Founder: Abdulaziz M. Alshehri
 
----
-## Ratified decisions (P01-04A — not repeated here)
+Ratification date: 2026-07-24
 
-D1–D10 remain ratified policy as recorded in `specs/mesc-pilot-01/p01-04/decision-record.md`.
-They are not re-ratified here. Any P01-04B2 design that conflicts with D1–D10
-is subordinate to D1–D10.
+Canonical documentation baseline: ce1272235cb48dbacdb18f20e1ae8db695b01328
 
-A subordinate implementation-design ratification note was appended to
-`specs/mesc-pilot-01/p01-04/decision-record.md` referencing FD-B2-1 through
-FD-B2-8. That note does not amend D1–D10. D1–D10 control on conflict. No
-implementation or execution authority follows from ratification of this package.
+PR #53 merge: ce1272235cb48dbacdb18f20e1ae8db695b01328
 
----
-## Implementation status
+Ratification PR: #54
 
-| Decision area | Status |
-|---|---|
-| D1–D10 ratified policy | Ratified (P01-04A); unchanged |
-| P01-04B1 pure split core | Implemented and adopted on canonical main (`ce12722`) |
-| B2 design decisions (FD-B2-1 through FD-B2-8) | Founder ratified 2026-07-24; implementation not authorized |
-| Public splitter facade | Not implemented; reserved for separate authorization |
-| Leakage-detection library | Not implemented; reserved for separate authorization |
-| Artifact builders | Not implemented; reserved for separate authorization |
-| Split fingerprint artifact (64-hex) | Designed; not implemented |
-| CLI entry point | Not implemented; deferred |
-| Real split execution | Not authorized |
-| Leakage audit execution | Not authorized |
-| P01-04C–G stages | Not authorized |
+Ratification branch: docs/mesc-p01-04b2-founder-ratification
+
+Repository adoption: PENDING MERGE OF PR #54
+
+Implementation: NOT AUTHORIZED
+
+Execution: NOT AUTHORIZED
 
 ---
+
+D1–D10 remain ratified policy as recorded in `specs/mesc-pilot-01/p01-04/decision-record.md`. They are not re-ratified here. Any P01-04B2 design that conflicts with D1–D10 is subordinate to D1–D10. No implementation or execution authority follows from ratification of this package.
+
+---
+
 ## Ratified decisions
 
 ### FD-B2-1 — Fixture-only facade and public splitter boundary
@@ -45,7 +33,7 @@ implementation or execution authority follows from ratification of this package.
 **Status:** FOUNDER RATIFIED ON 2026-07-24 — IMPLEMENTATION AND EXECUTION NOT AUTHORIZED
 
 **Historical proposal context (PD-1):**
-`SourceDocumentGroupedSplitter.assign()` in its future authorized form must accept only synthetic fixture rows and must refuse canonical real inputs.
+Existing `SourceDocumentGroupedSplitter.assign()` under future implementation must accept only synthetic fixture rows and must refuse canonical real inputs.
 
 Alternatives considered:
 1. Explicit fixture-only request type injected at call time
@@ -338,7 +326,7 @@ Every fixture must:
 * rejects external source-record files;
 * rejects evidence-root destinations;
 * requires no real execution authorization;
-* defines exit-code classes consistent with MedScale CLI governance.
+* exit-code classes consistent with MedScale CLI governance.
 
 **Founder-ratified decision:**
 
@@ -356,6 +344,7 @@ Every fixture must:
 12. B2 cannot publish formal evidence.
 
 ---
+
 ## Boundary violations to avoid
 
 The following are explicitly prohibited in any implementation authorized under P01-04B2:
@@ -370,6 +359,7 @@ The following are explicitly prohibited in any implementation authorized under P
 * claiming leakage is ruled out.
 
 ---
+
 ## Ratification does not imply authorization
 
 Completion of P01-04B2 documentation does not authorize implementation.

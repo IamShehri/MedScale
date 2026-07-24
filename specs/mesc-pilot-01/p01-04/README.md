@@ -1,14 +1,14 @@
-# MESC Pilot-01 — P01-04A Specification and Policy Ratification
+# MESC Pilot-01 — P01-04 Specification and Policy Ratification
 
 Status: **specification and policy only — no execution authorized**
-Branch: `docs/mesc-p01-04a-spec-policy`
-Ratification review baseline: cd0f72b0ee9720f06d95dfa01862a4f403c31b16
+Branch: `docs/mesc-p01-04b2-founder-ratification`
+Ratification review baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`
 
 ---
 
 ## Purpose
 
-P01-04A exists solely to record the canonical specification, scientific policy, artifact contracts, acceptance criteria, and execution-safety protocol for the future split-and-leakage-audit phase (P01-04). Nothing in this package authorizes execution.
+P01-04 exists solely to record the canonical specification, scientific policy, artifact contracts, acceptance criteria, and execution-safety protocol for the future split-and-leakage-audit phase (P01-04). Nothing in this package authorizes execution.
 
 ## Authority hierarchy
 
@@ -16,8 +16,8 @@ P01-04A exists solely to record the canonical specification, scientific policy, 
 |---|---|---|
 | Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Ratified** |
 | P01-04A specification | This package | **Ratified** |
-| P01-04B1 implementation | Fixture-only deterministic split core adopted on canonical main (`ce1272235cb48dbacdb18f20e1ae8db695b01328`) | **Adopted** |
-| P01-04B2 design | Founder-ratified entry gate (FD-B2-1–FD-B2-8) | **Design ratified on 2026-07-24** |
+| P01-04B1 implementation | Fixture-only deterministic split core | **Adopted**; original adoption merge `2937d735df09851384bfa9a15fb8b1f908c62b6d`; current canonical main `ce1272235cb48dbacdb18f20e1ae8db695b01328`; private, in-memory, fixture-only; execution authority: none |
+| P01-04B2 design | Founder-ratified entry gate (FD-B2-1–FD-B2-8) | **Design ratified on 2026-07-24**; implementation not authorized; execution not authorized |
 | P01-04B overall | Incomplete; B2A–B2D not started | **Not met** |
 | P01-04C–G stages | Separate authorizations each | **Not authorized** |
 | P01-05 and later | Separate authorization | **Not authorized** |
@@ -65,7 +65,7 @@ formal metrics, partition generation, validation/test access, or clinical claims
 | P01-04B1 | Split-tooling subphase (pure deterministic split core) | Adopted |
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
-| P01-04B2 | Remaining tooling entry gate | Specification in preparation |
+| P01-04B2 | Remaining tooling design gate | Design ratified; implementation and execution not authorized |
 
 P01-04B1 and MESC B0/B1 are different workstreams and are not interchangeable.
 P01-04B1 does not authorize model execution.
@@ -86,11 +86,11 @@ MESC B0/B1 adoption does not authorize split generation.
 
 ## Relationship to P01-03G
 
-P01-04A depends on P01-03G. The ordered example registry (`specs/mesc-pilot-01/p01-03g/ordered-example-id-registry.jsonl`) and the source-document registry (`specs/mesc-pilot-01/p01-03g/source-document-id-registry.jsonl`) are the authoritative inputs for any future formal split generation. Those records must not be modified under P01-04A.
+P01-04 depends on P01-03G. The ordered example registry (`specs/mesc-pilot-01/p01-03g/ordered-example-id-registry.jsonl`) and the source-document registry (`specs/mesc-pilot-01/p01-03g/source-document-id-registry.jsonl`) are the authoritative inputs for any future formal split generation. Those records must not be modified under P01-04.
 
 ## Execution prohibition
 
-P01-04A does not authorize and does not reference:
+P01-04 does not authorize and does not reference:
 
 - split generation
 - group assignment
