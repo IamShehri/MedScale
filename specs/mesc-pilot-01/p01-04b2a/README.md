@@ -16,12 +16,11 @@ Canonical planning baseline:
 
 ## Purpose
 
-This package proposes the exact implementation boundary for **P01-04B2A —
-Deterministic Artifact Types and Canonical Serialization**. It freezes artifact
-contracts, identifies future implementation and test paths, records the
-remaining B2A-specific founder decisions, and requests founder authorization.
-It does not grant that authorization and it does not authorize any further
-increment.
+This package proposes the exact implementation boundary for P01-04B2A —
+Deterministic Artifact Types and Canonical Serialization. It proposes the
+artifact contracts to be frozen only if explicitly ratified by the founder,
+identifies future implementation and test paths, records the remaining
+B2A-specific founder decisions, and requests founder authorization.
 
 PD-B2A-1 through PD-B2A-8 remain pending on this head.
 

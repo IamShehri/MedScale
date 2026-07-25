@@ -84,7 +84,7 @@ NOT AUTHORIZED
 P01-T03B3 — Ratify P01-04B2 design decisions
 
 Founder authorization:
-*** RATIFIED ON 2026-07-24
+FOUNDER RATIFIED ON 2026-07-24
 
 Canonical adoption:
 1a9169f7229bb72eba6772448724c54ec71937c5
