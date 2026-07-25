@@ -160,3 +160,18 @@ Stop without mutation if:
 - any document claims leakage has been ruled out;
 - any document includes source-data redistribution claims beyond canonical rights record;
 - an unauthorized path is modified.
+
+
+## B2A as first implementation increment
+
+P01-04B2A is the first proposed implementation increment.
+
+Sequencing:
+
+- B2A accepted before B2B.
+- B2A + B2B accepted before B2C.
+- B2A + B2B + B2C accepted before B2D.
+
+Each increment still requires separate authorization, atomic PR, exact-head CI,
+independent Opus review, and separate merge decision. Ratification of this
+documentation package does not authorize B2A.

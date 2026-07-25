@@ -260,3 +260,26 @@ Stop conditions: claims exceed executed phases; full article text outside docume
 - NOT AUTHORIZED: work may not begin without explicit authorization.
 - BLOCKED: prerequisite unsatisfied or rights/access unresolved.
 - DEFERRED: explicit decision to postpone with documented rationale.
+
+
+```text
+P01-T03B4 — P01-04B2A implementation authorization gate
+
+Documentation status:
+DOCUMENTATION IN PREPARATION
+
+Founder authorization:
+PENDING
+
+Implementation status:
+NOT AUTHORIZED
+
+Execution status:
+NOT AUTHORIZED
+
+Canonical adoption:
+PENDING MERGE OF THIS DOCUMENTATION PR
+
+Scope:
+P01-04B2A authorization gate only.
+```

@@ -117,3 +117,11 @@ P01-04B2 does not authorize and does not reference:
 | `decision-record.md` | Ratified design decisions (FD-B2-1 through FD-B2-8) and historical proposed decisions (PD-1 through PD-8) |
 | `founder-ratification.md` | Canonical founder-authorization record for FD-B2-1 through FD-B2-8 |
 | `implementation-task.md` | Future implementation brief (not authorized) |
+
+
+## B2A authorization gate
+
+Current B2A status:
+in preparation / founder decision pending
+
+This does not change the adopted FD-B2 decisions or implementation boundaries.
