@@ -1,7 +1,7 @@
 # MESC Pilot-01 — Tasks
 
 Status: **foundation task registry**
-Authorization: Foundation authorized; execution not authorized
+Authorization: Foundation *** execution not authorized
 Freeze date: 2026-07-17
 
 ---
@@ -68,7 +68,26 @@ No public splitter activation and no real partition generation.
 P01-T03B2 — Define remaining P01-04B tooling entry gate
 
 Documentation status:
-IN PROGRESS
+COMPLETED AND ADOPTED
+
+Adoption merge:
+ce1272235cb48dbacdb18f20e1ae8db695b01328
+
+Implementation status:
+NOT AUTHORIZED
+
+Execution status:
+NOT AUTHORIZED
+```
+
+```text
+P01-T03B3 — Ratify P01-04B2 design decisions
+
+Founder authorization:
+FOUNDER RATIFIED ON 2026-07-24
+
+Canonical adoption:
+PENDING MERGE OF THIS DOCUMENTATION PR
 
 Implementation status:
 NOT AUTHORIZED
@@ -76,12 +95,8 @@ NOT AUTHORIZED
 Execution status:
 NOT AUTHORIZED
 
-Outputs:
-P01-04 state reconciliation and P01-04B2 entry-gate package.
-
-Acceptance:
-Independent review confirms that scope, contracts, pending decisions,
-implementation increments and execution prohibitions are complete and consistent.
+Scope:
+FD-B2-1 through FD-B2-8 only.
 ```
 
 ```text
@@ -134,7 +149,7 @@ P01-T09 — Implement B0/B1 runner
 
 MESC B0 implementation:
 Deterministic execution spine adopted at merge
-3edf328f583f13fcd9d566e5080ec3cce83ae178.
+ce1272235cb48dbacdb18f20e1ae8db695b01328.
 
 MESC B1 model-runner implementation:
 Not complete unless separately evidenced and authorized.
@@ -149,6 +164,8 @@ Acceptance: no unauthorized weight access; abstention behavior preserved
 Stop conditions: executable without authorization; scientific identity mutated
 ```
 
+---
+
 ## Nomenclature note
 
 | Name | Workstream | Status |
@@ -156,7 +173,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | P01-04B1 | Split-tooling subphase | Adopted |
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
-| P01-04B2 | Remaining tooling entry gate | Specification in preparation |
+| P01-04B2 | Remaining tooling design gate | Design ratified; implementation and execution not authorized |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.

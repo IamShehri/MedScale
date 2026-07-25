@@ -15,8 +15,8 @@ P01-04A passes acceptance when:
 3. No document claims execution has started.
 4. No document claims leakage has been ruled out.
 5. No document includes source-data redistribution claims not present in the canonical `rights-and-provenance-record.json`.
-6. No document contains placeholder, TODO, FIXME, or TBD markers.
-7. No document contains unresolved conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`).
+6. No document contains placeholder text or markers indicating unfinished drafting work.
+7. No document contains unresolved merge-conflict markers.
 8. No document contains local paths, usernames, hostnames, or timestamps.
 9. Cross-document references are internally consistent.
 10. `git diff --check` produces no whitespace errors.
@@ -32,18 +32,16 @@ P01-04A acceptance does not authorize P01-04B or any later stage.
 
 P01-04B passes acceptance when:
 
-1. `SourceDocumentGroupedSplitter` is implemented with deterministic grouped assignment (not the current stub).
-2. Leakage-detection primitives are implemented for exact example identity, source-document identity, exact-question equality, normalized-question equality, and token-set Jaccard near-duplicate detection.
-3. Canonical split-hash computation is implemented consistent with P01-03G fingerprint methodology.
-4. All output artifact schemas match the contracts in `artifact-contracts.md`.
-5. CLI or formal execution entry point exists with write-path safety controls.
-6. Fixture tests pass for:
-   - 1,000-row deterministic output (byte-identical on repeated runs);
-   - exact target counts 700/150/150;
-   - label-distribution reconciliation;
-   - zero cross-partition group overlaps;
-   - split fingerprint reproducibility.
-7. No execution against the real P01-03G registry.
+1. Existing `SourceDocumentGroupedSplitter.assign()` remains unconditionally fail-closed.
+2. A separate fixture-only `FixtureSplitFacade` is defined for B2 synthetic fixture execution.
+3. Library-only, in-memory execution path is established for B2.
+4. No formal B2 CLI is part of P01-04B acceptance.
+5. The full 64-hex `split_fingerprint` artifact is ratified as the authoritative split identity.
+6. The 16-hex `split_hash` remains a B1 compatibility/display value; it is not authoritative.
+7. Leakage normalization rules follow FD-B2-6.
+8. Three synthetic fixtures (`exact-reference-1000-v1`, `constraint-stress-1000-v1`, `leakage-positive-v1`) are the qualification suite.
+9. All rank-determining inputs are stable synthetic values; outputs are byte-identical across supported runtimes when inputs are identical.
+10. No real P01-03G registry membership is generated or disclosed during P01-04B acceptance.
 
 P01-04B acceptance requires a separate founder authorization.
 
@@ -52,23 +50,32 @@ P01-04B acceptance requires a separate founder authorization.
 The following matrix maps each P01-04B acceptance criterion to its current
 implementation status on canonical main at `3edf328f583f13fcd9d566e5080ec3cce83ae178`.
 
+Current maintenance note:
+
+The founder-ratified B2 design reconciliation is maintained on canonical
+documentation baseline
+`ce1272235cb48dbacdb18f20e1ae8db695b01328`.
+
+This current-maintenance baseline does not rewrite the historical implementation
+snapshot recorded above.
+
+
 The matrix does not mark P01-04B accepted. P01-04B overall remains incomplete.
 
-| P01-04B criterion | Current status |
-|---|---|
-| Private pure grouped allocation | SATISFIED BY B1 |
-| Canonical example-ID derivation | SATISFIED BY B1 |
-| Fail-closed label join | SATISFIED BY B1 |
-| Exact constrained apportionment | SATISFIED BY B1 |
-| SHA-256 group ranking | SATISFIED BY B1 |
-| Public `SourceDocumentGroupedSplitter` | UNSATISFIED |
-| Leakage primitives | UNSATISFIED |
-| Artifact builders and schemas in code | UNSATISFIED |
-| Full split-fingerprint artifact | REQUIRES CONTRACT DECISION |
-| Safe fixture-only integration entry point | UNSATISFIED |
-| Write-path and overwrite protections | UNSATISFIED |
-| Integrated synthetic 1,000-row qualification | UNSATISFIED |
-| Real P01-03G execution | PROHIBITED / NOT AN ACCEPTANCE ACTION |
+Public SourceDocumentGroupedSplitter activation:
+NOT AN ACCEPTANCE REQUIREMENT — MUST REMAIN FAIL-CLOSED
+
+Separate FixtureSplitFacade:
+UNSATISFIED
+
+Full split-fingerprint:
+DESIGN RATIFIED — IMPLEMENTATION UNSATISFIED
+
+CLI:
+DEFERRED / NOT PART OF B2 ACCEPTANCE
+
+Three-fixture integrated qualification:
+UNSATISFIED
 
 P01-04B1 satisfies the private pure split-core criteria only.
 No real partition membership has been generated or disclosed.

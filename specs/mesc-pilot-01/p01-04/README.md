@@ -6,6 +6,20 @@ Ratification review baseline: cd0f72b0ee9720f06d95dfa01862a4f403c31b16
 
 ---
 
+## Current maintenance context
+
+This historical P01-04A ratification package is currently maintained as part
+of the broader P01-04 governance record.
+
+Current maintenance branch:
+`docs/mesc-p01-04b2-founder-ratification`
+
+Current canonical documentation baseline:
+`ce1272235cb48dbacdb18f20e1ae8db695b01328`
+
+These current-maintenance references do not replace, amend, or reinterpret the
+original P01-04A ratification branch or review baseline.
+
 ## Purpose
 
 P01-04A exists solely to record the canonical specification, scientific policy, artifact contracts, acceptance criteria, and execution-safety protocol for the future split-and-leakage-audit phase (P01-04). Nothing in this package authorizes execution.
@@ -16,9 +30,9 @@ P01-04A exists solely to record the canonical specification, scientific policy, 
 |---|---|---|
 | Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Ratified** |
 | P01-04A specification | This package | **Ratified** |
-| P01-04B1 implementation | Fixture-only deterministic split core adopted on canonical main (`2937d735df09851384bfa9a15fb8b1f908c62b6d`) | **Adopted** |
-| P01-04B2 specification | Remaining tooling entry gate | **In preparation** |
-| P01-04B overall | Tooling complete and accepted | **Not met** |
+| P01-04B1 implementation | Fixture-only deterministic split core | **Adopted**; original adoption merge `2937d735df09851384bfa9a15fb8b1f908c62b6d`; current canonical main `ce1272235cb48dbacdb18f20e1ae8db695b01328`; private, in-memory, fixture-only; execution authority: none |
+| P01-04B2 design | Founder-ratified entry gate (FD-B2-1–FD-B2-8) | **Design ratified on 2026-07-24**; implementation not authorized; execution not authorized |
+| P01-04B overall | Incomplete; B2A–B2D not started | **Not met** |
 | P01-04C–G stages | Separate authorizations each | **Not authorized** |
 | P01-05 and later | Separate authorization | **Not authorized** |
 | Formal split execution | Separate authorization required | **Not authorized** |
@@ -65,7 +79,7 @@ formal metrics, partition generation, validation/test access, or clinical claims
 | P01-04B1 | Split-tooling subphase (pure deterministic split core) | Adopted |
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
-| P01-04B2 | Remaining tooling entry gate | Specification in preparation |
+| P01-04B2 | Remaining tooling design gate | Design ratified; implementation and execution not authorized |
 
 P01-04B1 and MESC B0/B1 are different workstreams and are not interchangeable.
 P01-04B1 does not authorize model execution.

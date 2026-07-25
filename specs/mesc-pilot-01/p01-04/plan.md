@@ -7,17 +7,28 @@ Status: **specification and policy only — no execution authorized**
 ## Phase overview
 
 | Stage | Name | Authorization required | Current status |
-|-------|------|----------------------|----------------|
+|---|---|---|---|
 | P01-04A | Specification and Policy Ratification | Founder ratification | **Ratified** |
-| P01-04B | Split Contracts and Tooling | Separate founder authorization | Incomplete; B1 adopted privately; B2 specification in preparation |
-|| P01-04B1 | Pure deterministic split core | Adopted on canonical main (`2937d73`) | **ADOPTED** — private, in-memory, fixture-only; execution authority: none |
-|| P01-04B2 | Remaining tooling entry gate | Separate founder authorization | **SPECIFICATION ONLY** — implementation not authorized; execution not authorized |
-|| P01-04B acceptance | Tooling complete and accepted | **NOT MET** |
+| P01-04B | Split Contracts and Tooling | Separate founder authorization | Incomplete; B1 adopted; B2 design ratified; B2A–B2D not authorized |
+| P01-04B1 | Pure deterministic split core | Adopted by PR #51 merge `2937d735df09851384bfa9a15fb8b1f908c62b6d` | **ADOPTED** — private, in-memory, fixture-only; execution authority: none |
+| P01-04B2 | Remaining tooling design gate | Founder-ratified FD-B2-1 through FD-B2-8 | **DESIGN RATIFIED** — implementation and execution not authorized |
+| P01-04B acceptance | Tooling complete and accepted | Separate founder acceptance | **NOT MET** |
 | P01-04C | Fixture and Dry-Run Qualification | Separate founder authorization | Not authorized |
 | P01-04D | Formal Split Generation | Separate founder authorization | Not authorized |
 | P01-04E | Leakage Audit and Finding Resolution | Separate founder authorization | Not authorized |
 | P01-04F | Freeze and Independent Acceptance | Separate founder authorization | Not authorized |
 | P01-04G | Repository Promotion and Closeout | Separate promotion authorization | Not authorized |
+
+### Current maintenance note
+
+The P01-04A row above preserves the historical identity of the ratified policy
+phase. This document is currently maintained under the broader P01-04 record
+on canonical baseline
+`ce1272235cb48dbacdb18f20e1ae8db695b01328`.
+
+The current maintenance context does not replace the original P01-04A
+ratification identity or authority.
+
 
 No P01-04 stage authorizes P01-05.
 

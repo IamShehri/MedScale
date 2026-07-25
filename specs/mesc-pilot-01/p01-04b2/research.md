@@ -1,12 +1,15 @@
 # MESC Pilot-01 — P01-04B2 Research
 
-Status: **specification and entry-gate proposal only — implementation and execution not authorized**
+Status: **design decisions ratified — implementation and execution not authorized**
+
+Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
+Canonical baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
 
 ---
-
+## B1 source inspection
 ## B1 source inspection
 
-The following is derived from static inspection of canonical main at `3edf328f583f13fcd9d566e5080ec3cce83ae178` only. No real execution occurred.
+The following is derived from static inspection of canonical main at `ce1272235cb48dbacdb18f20e1ae8db695b01328` only. No real execution occurred.
 
 ### Adopted classes in `src/medscale/mesc/split.py`
 

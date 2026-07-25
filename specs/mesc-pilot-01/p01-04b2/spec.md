@@ -1,8 +1,9 @@
 # MESC Pilot-01 — P01-04B2 Specification
 
-Status: **specification and entry-gate proposal only — implementation and execution not authorized**
+Status: **design decisions founder-ratified — implementation and execution not authorized**
 
----
+Founder ratification: FD-B2-1 through FD-B2-8, 2026-07-24.
+Canonical baseline: `ce1272235cb48dbacdb18f20e1ae8db695b01328`.
 
 ## Problem statement
 
@@ -10,14 +11,14 @@ P01-04B1 adopted a fixture-only deterministic split core. The adopted behavior s
 
 The remaining work required for P01-04B acceptance includes:
 
-1. A public, deterministic in-memory splitter facade that can be tested with synthetic fixtures while remaining impossible to invoke accidentally against canonical real inputs.
+1. A public deterministic in-memory splitter facade that can be tested with synthetic fixtures while remaining impossible to invoke accidentally against canonical real inputs.
 2. Typed artifact builders for canonical JSONL serialization of split registries.
 3. Split fingerprint construction and verification (distinct from the 16-hex truncated hash B1 already provides).
 4. Leakage-detection primitives (exact identity, normalized equality, token-set Jaccard near-duplicate).
-5. A fixture-only integration entry point with write-path and overwrite protections.
+5. A fixture-only integration entry point.
 6. Complete synthetic acceptance tests demonstrating the above.
 
-P01-04B2 defines the entry gate for this remaining work. It does not implement any of it.
+This document defines the founder-ratified design for the remaining P01-04B tooling entry gate between P01-04B1 and P01-04C. The design decisions are resolved by the founder; implementation and execution remain unauthorized.
 
 ## Scope boundaries
 
@@ -26,9 +27,8 @@ P01-04B2 covers:
 - Public facade and safety boundary design for deterministic split allocation
 - Artifact type definitions and canonical serialization rules
 - Leakage-detection primitive specifications (library design, not execution)
-- Fixture-only entry point design (CLI boundary proposal only)
 - Split fingerprint artifact schema and verification rules
-- Synthetic 1,000-row fixture strategy
+- Synthetic fixture suite (`exact-reference-1000-v1`, `constraint-stress-1000-v1`, `leakage-positive-v1`)
 
 P01-04B2 does not cover:
 
@@ -41,91 +41,56 @@ P01-04B2 does not cover:
 - Any modification to `src/medscale/mesc/split.py` data contracts (`PilotSplitAssignment`, `PilotSplitManifest`, `PilotLeakageFinding`, `PilotLeakageAuditReport`)
 - Any modification to P01-04A decisions D1–D10
 
-## Required future behavior (proposed, not authorized)
+## Ratified design requirements
 
-### 1. Public splitter facade
+The following requirements are founder-ratified. They do not authorize implementation.
 
-The future tooling must provide a public deterministic in-memory splitter facade that:
+### B2C — Fixture-only public facade and integration entry point
 
-- accepts synthetic fixture rows only;
-- refuses canonical real inputs without explicit authorization;
-- produces byte-identical outputs on repeated runs with identical inputs;
+B2C is library-only and in-memory.
+
+The facade:
+
+- accepts only a structurally verified in-memory `FixtureSplitRequest`;
 - raises a distinct error on any real-registry invocation attempt;
-- never writes to disk unless explicitly authorized.
+- produces deterministic output in memory only;
+- performs no publication;
+- accepts no arbitrary filesystem input path;
+- accepts no arbitrary filesystem output path;
+- requires no capability token or external authorization;
+- performs no write-path, overwrite, or concurrency handling.
 
-The facade must be testable without any real dataset, model, or registry access.
+The facade is separate from the existing `SourceDocumentGroupedSplitter.assign()` fail-closed stub.
 
-### 2. Typed artifact builders
+The future formal P01-04D executor is a separate private entry point under separate authorization.
 
-Future artifact builders must produce:
+B2 does not add a CLI. CLI work is deferred beyond B2D and requires separate founder authorization.
 
-- `group-registry.jsonl` — one JSON object per source-document group
-- `example-split-registry.jsonl` — one JSON object per example
-- `split-summary.json` — aggregate counts and label distributions
-- `split-fingerprint.json` — full 64-hex SHA-256 fingerprint of canonical payload
-- `excluded-or-unassigned-ledger.json` — any unassigned examples
+### B2D — Integrated synthetic qualification
 
-All artifacts must use canonical JSON serialization with deterministic byte output.
+Qualification uses exactly three fixtures:
 
-### 3. Canonical serialization
+- `exact-reference-1000-v1`
+- `constraint-stress-1000-v1`
+- `leakage-positive-v1`
 
-All JSONL outputs must use:
+No document may reduce qualification to one generic 1,000-row fixture.
 
-- sorted keys (recursive);
-- UTF-8 encoding;
-- no BOM;
-- LF-only line endings;
-- object ordering: `(assigned_split, group_id)` for group registry; `(assigned_split, row_ordinal)` for example registry;
-- `ensure_ascii=False`;
-- `allow_nan=False`;
-- separators: `(",", ":")`;
-- no indentation;
-- terminal newline policy: LF at end of each line;
-- identical output on repeated runs with identical inputs and identical Python version.
+### B2 identity and fingerprint
 
-### 4. Split fingerprint construction and verification
+Full 64-hex `split_fingerprint` is the sole authoritative identity. The 16-hex `split_hash` is B1 compatibility/display-only.
 
-Future tooling must distinguish:
+### Promotable artifact constraints
 
-- `split_hash` (16-hex truncated SHA-256): already implemented in B1 for in-memory manifest integrity;
-- `split-fingerprint.json` (full 64-hex SHA-256): proposed new artifact covering the complete canonical split payload including all assignment rows, group structure, and schema version.
+No date or timestamp field is permitted in a fingerprinted promotable split artifact.
 
-The split fingerprint must be recomputable from the promoted artifacts alone and must equal the value recorded in `split-summary.json`.
+No Python-version-pinning limitation applies. Canonical JSON/JSONL is stable across Python 3.11/3.12 and supported operating systems.
 
-### 5. Leakage-detection primitives
+Atomic publication, no-overwrite and concurrency controls apply to separately authorized artifact-publication components. They are not filesystem output behavior of `FixtureSplitFacade`.
 
-Future leakage-detection primitives must provide:
+### Leakage policy
 
-- exact-example cross-partition check (byte-identical `example_id` in multiple partitions);
-- source-document cross-partition check (byte-identical `source_document_id` in multiple partitions);
-- exact-question equality (byte-identical question text);
-- normalized-question equality (NFKC, case-folded, whitespace-collapsed);
-- token-set Jaccard near-duplicate detection (threshold >= 0.90);
-- deterministic finding identifiers (stable across reruns);
-- no suppression of findings;
-- no leakage of raw question, context, or answer text into promotable artifacts.
-
-### 6. Fixture-only integration entry point
-
-The future fixture-only entry point must:
-
-- accept only synthetic fixture inputs (injected rows or fixture file path);
-- reject canonical P01-03G registry paths;
-- reject external evidence-root destinations;
-- require no real execution authorization;
-- produce deterministic outputs writeable only to a designated workspace;
-- support exit-code classes consistent with MedScale CLI governance.
-
-### 7. Write-path and overwrite protections
-
-Future write-path controls must:
-
-- require unique temporary names for all in-progress writes;
-- enforce no-overwrite semantics on completed artifacts;
-- use atomic rename for finalization;
-- reject concurrent writer attempts;
-- preserve invalidated candidates without modification;
-- cleanup failed writes from the workspace only, never from the evidence root or repository.
+Exact and normalized leakage rules follow FD-B2-6. Empty normalized questions are not automatically classified clean. Suppression is prohibited. A positive qualification fixture produces non-empty expected findings.
 
 ## Safe-publication constraints
 
@@ -138,7 +103,7 @@ No P01-04B2 artifact or interface may expose:
 - local paths
 - usernames
 - hostnames
-- runtime timestamps (beyond ISO date in ratified fields)
+- runtime timestamps
 - command logs
 - workspace locations
 
