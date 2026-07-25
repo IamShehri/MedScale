@@ -72,3 +72,27 @@ D1–D10 and FD-B2-1 through FD-B2-8 remain controlling on conflict.
 B2A artifacts remain in-memory only. Filesystem writes, atomic publication,
 CLI surfaces, and integration fixtures are out of scope for B2A and require
 separate founder authorization.
+
+
+## Non-circular fingerprint proposal
+
+The following behavior is proposed as a pending founder decision and is not
+authoritative until explicitly ratified.
+
+- `split_summary` descriptor hashes only canonical bytes of `SplitSummaryIdentityCore`.
+- Those bytes exclude `split_fingerprint`, authoritative use of B1 `split_hash`, dates, timestamps, provenance, runtime metadata, paths, hostnames, usernames, command logs, and environment data.
+- `SplitFingerprintRecord` is produced only after the fingerprint is calculated.
+- `SplitFingerprintRecord` is not one of its own four fingerprint inputs.
+- A display or final summary may include the computed fingerprint after calculation, but its final bytes are not recursively fingerprinted.
+
+Proposed validation sequence:
+
+1. Canonicalize fingerprint-free `SplitSummaryIdentityCore`.
+2. Calculate its `split_summary` descriptor.
+3. Validate all four required descriptors.
+4. Construct `SplitFingerprintIdentity`.
+5. Canonicalize that identity.
+6. Compute the full SHA-256 fingerprint.
+7. Construct `SplitFingerprintRecord`.
+8. Recompute all bound hashes, byte sizes, and final fingerprint during verification.
+9. Reject every mismatch.

@@ -174,3 +174,53 @@ Proposed private error types:
 
 These errors are private contract failures. CLI exit-code semantics are not
 reused inside the library.
+
+
+## Exact schema identifiers
+
+Proposed role schema identifiers for version 1:
+
+- `split_summary`: `mesc-pilot-01-split-summary-identity-core/1`
+- `excluded_ledger`: `mesc-pilot-01-excluded-ledger/1`
+- `bundle`: `mesc-pilot-01-split-fingerprint-bundle/1`
+- `group_registry`: `mesc-pilot-01-group-registry/1`
+- `example_registry`: `mesc-pilot-01-example-registry/1`
+
+Exactly one role-compatible schema version is valid for each role in version 1.
+Role or version mismatch fails closed. Empty, malformed, unknown, and
+unsupported versions fail closed. Another role or version requires a newly
+ratified bundle schema. All such failures use `invalid_schema_version`.
+
+## Canonical key order
+
+Object keys are sorted by ascending Unicode code-point sequence using direct,
+case-sensitive string comparison.
+
+Ordering is not locale-aware, case-folded, normalized, filesystem-derived, or
+insertion-order-derived.
+
+Strings that cannot be encoded as valid UTF-8 must fail closed with:
+`canonicalization_failure`
+
+## Non-circular fingerprint proposal
+
+The following behavior is proposed as a pending founder decision and is not
+authoritative until explicitly ratified.
+
+- `split_summary` descriptor hashes only canonical bytes of `SplitSummaryIdentityCore`.
+- Those bytes exclude `split_fingerprint`, authoritative use of B1 `split_hash`, dates, timestamps, provenance, runtime metadata, paths, hostnames, usernames, command logs, and environment data.
+- `SplitFingerprintRecord` is produced only after the fingerprint is calculated.
+- `SplitFingerprintRecord` is not one of its own four fingerprint inputs.
+- A display or final summary may include the computed fingerprint after calculation, but its final bytes are not recursively fingerprinted.
+
+Proposed validation sequence:
+
+1. Canonicalize fingerprint-free `SplitSummaryIdentityCore`.
+2. Calculate its `split_summary` descriptor.
+3. Validate all four required descriptors.
+4. Construct `SplitFingerprintIdentity`.
+5. Canonicalize that identity.
+6. Compute the full SHA-256 fingerprint.
+7. Construct `SplitFingerprintRecord`.
+8. Recompute all bound hashes, byte sizes, and final fingerprint during verification.
+9. Reject every mismatch.

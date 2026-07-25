@@ -23,6 +23,14 @@ remaining B2A-specific founder decisions, and requests founder authorization.
 It does not grant that authorization and it does not authorize any further
 increment.
 
+PD-B2A-1 through PD-B2A-8 remain pending on this head.
+
+Merge of this pending-decision head does not authorize implementation.
+
+Founder authorization must be recorded through a later additive commit or
+separate authorization record, followed by fresh exact-head CI, independent
+Opus review and ChatGPT merge authorization.
+
 PR #54 ratified the P01-04B2 *design* package; it did not authorize B2A
 implementation or execution. Merge of this documentation PR must not be
 interpreted as implementation authorization unless the founder decision record

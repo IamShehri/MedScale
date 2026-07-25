@@ -72,15 +72,18 @@ Stop without mutation if:
 - founder authorization is absent or later withdrawn;
 - the canonical main SHA differs from the recorded authorization baseline;
 - any proposed file path conflicts with P01-04A or frozen B1 boundaries;
-- any implementation begins before explicit authorization and exact-head CI;
+- Stop if implementation begins before explicit founder authorization.
+- Stop if Ready or merge is attempted before exact-head CI and independent Opus review are complete.
 - any hidden execution, data access, or external I/O is introduced;
 - any document claims B2A is accepted or implemented.
 
 ## Execution rules
 
 - One atomic implementation PR only.
-- One exact-head CI run only.
-- One independent Opus review only.
+- Exact-head CI is required for every head submitted for review.
+- CI reruns are permitted for transient infrastructure failures and additive corrective commits.
+- Independent Opus review is required.
+- An additive corrective commit after review requires a delta re-review.
 - No push or PR before explicit founder authorization unless later instructed.
 - No merge until explicit founder/ChatGPT authorization after Opus review.
 - B2B authorization is not granted by B2A authorization.

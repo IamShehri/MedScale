@@ -44,7 +44,8 @@ or execution. Separate founder authorization is required.
 
 P01-04B2A passes implementation acceptance when:
 
-1. Implementation is limited to the four authorized paths:
+1. If B2A is explicitly authorized by the founder, implementation is limited to
+the following four paths:
    - `src/medscale/mesc/_canonical_json_v1.py`
    - `src/medscale/mesc/_split_artifacts_v1.py`
    - `tests/test_mesc_canonical_json_v1.py`
@@ -80,3 +81,40 @@ P01-04B2A does not authorize and does not reference:
 - model access, inference, training, metrics, or benchmark evaluation;
 - P01-04B2B, P01-04B2C, P01-04B2D, or any later stage;
 - P01-04C–G or P01-05 or later.
+
+
+## Implementation acceptance rules
+
+If B2A is explicitly authorized by the founder, implementation acceptance
+requires the following rules in addition to the criteria above.
+
+- `split_summary` descriptor hashes only canonical bytes of `SplitSummaryIdentityCore`.
+- Those bytes exclude `split_fingerprint`, authoritative use of B1 `split_hash`, dates, timestamps, provenance, runtime metadata, paths, hostnames, usernames, command logs, and environment data.
+- `SplitFingerprintRecord` is produced only after the fingerprint is calculated.
+- `SplitFingerprintRecord` is not one of its own four fingerprint inputs.
+- A display or final summary may include the computed fingerprint after calculation, but its final bytes are not recursively fingerprinted.
+
+Proposed validation sequence:
+
+1. Canonicalize fingerprint-free `SplitSummaryIdentityCore`.
+2. Calculate its `split_summary` descriptor.
+3. Validate all four required descriptors.
+4. Construct `SplitFingerprintIdentity`.
+5. Canonicalize that identity.
+6. Compute the full SHA-256 fingerprint.
+7. Construct `SplitFingerprintRecord`.
+8. Recompute all bound hashes, byte sizes, and final fingerprint during verification.
+9. Reject every mismatch.
+
+Exact schema identifiers for version 1:
+
+- `split_summary`: `mesc-pilot-01-split-summary-identity-core/1`
+- `excluded_ledger`: `mesc-pilot-01-excluded-ledger/1`
+- `bundle`: `mesc-pilot-01-split-fingerprint-bundle/1`
+- `group_registry`: `mesc-pilot-01-group-registry/1`
+- `example_registry`: `mesc-pilot-01-example-registry/1`
+
+Object keys are sorted by ascending Unicode code-point sequence using direct,
+case-sensitive string comparison. Ordering is not locale-aware, case-folded,
+normalized, filesystem-derived, or insertion-order-derived. Strings that cannot
+be encoded as valid UTF-8 must fail closed with `canonicalization_failure`.
