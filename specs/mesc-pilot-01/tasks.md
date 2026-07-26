@@ -269,13 +269,22 @@ Stop conditions: claims exceed executed phases; full article text outside docume
 
 
 ```text
-P01-T03B4 — P01-04B2A implementation authorization gate
+P01-T03B4 — P01-04B2A contract authorization gate
 
 Documentation status:
-DOCUMENTATION IN PREPARATION
+COMPLETED AND ADOPTED
 
 Founder authorization:
-PENDING
+FD-B2A-1 THROUGH FD-B2A-8 RATIFIED ON 2026-07-26
+
+Canonical adoption:
+5c083a0c5f23d0f9837e7543c444633a68524e67
+
+Adoption PR:
+#55
+
+Reviewed PR head:
+edc09743a1aa9478c2accbe9debb8fcc5bcbe268
 
 Implementation status:
 NOT AUTHORIZED
@@ -283,9 +292,16 @@ NOT AUTHORIZED
 Execution status:
 NOT AUTHORIZED
 
-Canonical adoption:
-PENDING MERGE OF THIS DOCUMENTATION PR
+Acceptance status:
+B2A NOT ACCEPTED
+
+Portability status:
+WINDOWS AND MACOS EVIDENCE OPEN
+
+Downstream status:
+B2B NOT AUTHORIZED
 
 Scope:
-P01-04B2A authorization gate only.
+FD-B2A-1 through FD-B2A-8, including the FD-B2A-5
+non-circular fingerprint clarification and binding N-12 sequencing decision.
 ```
