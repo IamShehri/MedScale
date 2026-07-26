@@ -122,6 +122,19 @@ P01-04B2 does not authorize and does not reference:
 ## B2A authorization gate
 
 Current B2A status:
-in preparation / founder decision pending
+contract decisions founder-ratified and adopted on canonical main
+
+- FD-B2A-1 through FD-B2A-8 were ratified by the founder on 2026-07-26.
+- Adopted on canonical main at `5c083a0c5f23d0f9837e7543c444633a68524e67`.
+- Adoption PR `#55` is merged.
+- B2A implementation is **not authorized**.
+- Execution is **not authorized**.
+- B2A is **not accepted**.
+- Windows and macOS portability evidence remains **open**.
+- B2B remains **not authorized**.
+- P01-04B remains **incomplete and not accepted**.
+
+Ratification freezes the B2A contract decisions only. It grants no
+implementation, execution, or validation-infrastructure authority.
 
 This does not change the adopted FD-B2 decisions or implementation boundaries.

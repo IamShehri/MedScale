@@ -1,7 +1,7 @@
 # MESC Pilot-01 — P01-04B2A Authorization Gate
 
 Status:
-**PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING**
+**FOUNDER-RATIFIED CONTRACT GATE — ADOPTED ON CANONICAL MAIN**
 
 Implementation:
 **NOT AUTHORIZED**
@@ -9,31 +9,57 @@ Implementation:
 Execution:
 **NOT AUTHORIZED**
 
+Acceptance:
+**B2A NOT ACCEPTED**
+
 Canonical planning baseline:
 `1a9169f7229bb72eba6772448724c54ec71937c5`
+
+Canonical adoption:
+`5c083a0c5f23d0f9837e7543c444633a68524e67`
+
+Adoption PR:
+`#55`
+
+Reviewed PR head:
+`edc09743a1aa9478c2accbe9debb8fcc5bcbe268`
+
+Founder decision date:
+`2026-07-26`
+
+Canonical founder record:
+`founder-ratification.md`
 
 ---
 
 ## Purpose
 
-This package proposes the exact implementation boundary for P01-04B2A —
-Deterministic Artifact Types and Canonical Serialization. It proposes the
-artifact contracts to be frozen only if explicitly ratified by the founder,
-identifies future implementation and test paths, records the remaining
-B2A-specific founder decisions, and requests founder authorization.
+This package defines the exact implementation boundary for P01-04B2A —
+Deterministic Artifact Types and Canonical Serialization. It records the
+artifact contracts, identifies future implementation and test paths, and
+carries the B2A-specific founder decisions.
 
-PD-B2A-1 through PD-B2A-8 remain pending on this head.
+## Package state after adoption
 
-Merge of this pending-decision head does not authorize implementation.
+The proposal documents in this package — `spec.md`, `contracts.md`,
+`decision-record.md`, `plan.md`, `acceptance.md` and `implementation-task.md` —
+preserve their reviewed pre-ratification wording. Their pending-decision
+markers describe the state at the reviewed head and are retained as a
+historical record; they are not the current authority.
 
-Founder authorization must be recorded through a later additive commit or
-separate authorization record, followed by fresh exact-head CI, independent
-Opus review and ChatGPT merge authorization.
+The additive `founder-ratification.md` record is controlling for authority.
+Under it:
 
-PR #54 ratified the P01-04B2 *design* package; it did not authorize B2A
-implementation or execution. Merge of this documentation PR must not be
-interpreted as implementation authorization unless the founder decision record
-in this package explicitly grants it.
+- PD-B2A-1 through PD-B2A-8 were adopted as FD-B2A-1 through FD-B2A-8 on
+  2026-07-26;
+- FD-B2A-5 incorporates the clarification and validation sequence recorded
+  under the historical proposal label PD-B2A-5.1;
+- ratification freezes the contract decisions only;
+- implementation remains separately unauthorized.
+
+PR #54 ratified the P01-04B2 *design* package; PR #55 adopted this B2A contract
+gate. Neither authorizes B2A implementation or execution. Merging or recording
+this documentation does not authorize implementation.
 
 ## Authority hierarchy
 
@@ -43,7 +69,7 @@ in this package explicitly grants it.
 | P01-04A specification | `specs/mesc-pilot-01/p01-04/*` | **Ratified** |
 | P01-04B1 implementation | Fixture-only deterministic split core | **Adopted**; private, in-memory, fixture-only; execution authority: none |
 | P01-04B2 design | Founder-ratified entry gate (FD-B2-1 through FD-B2-8) | **Design ratified**; implementation not authorized; execution not authorized |
-| P01-04B2A design | Deterministic artifact types and canonical serialization | **Proposed**; founder decision pending; implementation not authorized |
+| P01-04B2A contracts | Deterministic artifact types and canonical serialization (FD-B2A-1 through FD-B2A-8) | **Founder-ratified 2026-07-26**; adopted on canonical main (`5c083a0c5f23d0f9837e7543c444633a68524e67`); implementation not authorized; execution not authorized; **B2A not accepted** |
 | P01-04B overall | Tooling complete and accepted | **Not met** |
 | P01-04B2B–B2D | Separately proposed increments | **Not authorized** |
 | P01-04C–G stages | Separate authorizations each | **Not authorized** |
@@ -81,14 +107,32 @@ B2B requires separate authorization after B2A acceptance. B2C requires
 separate authorization after B2A and B2B acceptance. B2D requires separate
 authorization after B2A, B2B, and B2C acceptance.
 
+## N-12 binding sequencing consequences
+
+The founder-ratified N-12 decision recorded in `founder-ratification.md` binds
+the following:
+
+- Linux evidence on Python 3.11 and Python 3.12 is partial evidence only.
+- B2A cannot be accepted while the Windows and macOS portability evidence
+  remains open.
+- Validation-infrastructure or workflow changes require separate founder
+  authorization; this package authorizes none.
+- B2B remains blocked until B2A acceptance.
+- Merging or recording this documentation does not authorize implementation.
+
+Until that evidence is produced and independently reviewed, B2A remains not
+accepted, the portability obligation remains open, and no artifact may be
+promoted on the claim of completed cross-platform determinism.
+
 ## Document index
 
 | File | Purpose |
 |---|---|
 | `README.md` | This document |
+| `founder-ratification.md` | Canonical additive founder-authority record for FD-B2A-1 through FD-B2A-8 and N-12 |
 | `spec.md` | Functional scope, non-goals, deterministic behavior, security/provenance boundaries |
-| `contracts.md` | Proposed canonical value domain, serialization contracts, artifact descriptors, identity model, error taxonomy |
-| `decision-record.md` | Proposed PD-B2A-1 through PD-B2A-8 pending founder decision |
+| `contracts.md` | Canonical value domain, serialization contracts, artifact descriptors, identity model, error taxonomy |
+| `decision-record.md` | Historical PD-B2A-1 through PD-B2A-8 proposals as reviewed before ratification |
 | `plan.md` | Documentation gate, founder decision, implementation authorization, exact-head CI, Opus review, merge decision |
 | `acceptance.md` | Documentation-gate acceptance, future implementation acceptance, execution prohibitions |
 | `implementation-task.md` | Future implementation and test brief; not executable without explicit founder authorization |
