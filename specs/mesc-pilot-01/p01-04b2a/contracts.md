@@ -31,6 +31,23 @@ or canonical decimal-string representation frozen by contract.
 
 Object keys must be strings. Non-string object keys are rejected.
 
+### Boolean and integer are distinct types
+
+Boolean and integer are distinct types within the canonical value domain. Both
+remain permitted values, but they are never interchangeable:
+
+- A boolean is never accepted where an integer is required, including
+  `byte_size`.
+- An integer is never accepted where a boolean is required.
+- Implementations must not treat `bool` as a subtype of integer, and must not
+  rely on any language-level subtyping that would admit a boolean wherever an
+  integer is required.
+- Violations fail closed with `unsupported_value_type`.
+
+This rule is normative and is stated identically in `decision-record.md` under
+PD-B2A-2. It does not alter the permitted value domain above and does not alter
+the prohibition on binary floating-point values.
+
 ## Canonical JSON and JSONL rules
 
 - UTF-8 only; no BOM.

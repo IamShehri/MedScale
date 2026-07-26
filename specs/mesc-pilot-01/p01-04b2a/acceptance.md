@@ -52,7 +52,29 @@ the following four paths:
    - `tests/test_mesc_split_artifacts_v1.py`
 2. All available quality gates pass on the exact-head CI.
 3. Deterministic golden vectors are byte-identical across Python 3.11, 3.12,
-   Windows, Linux, and macOS.
+   Windows, Linux, and macOS. This requirement is retained in full and is not
+   satisfied by the evidence currently obtainable. It is discharged in two
+   separately evidenced parts:
+
+   a. **Discharged by the B2A implementation PR (available evidence).**
+      Current repository CI provides Linux evidence only, and tests exactly
+      Python 3.11 and Python 3.12. Byte-identical golden vectors across Linux
+      with Python 3.11 and Python 3.12 may therefore be evaluated by the B2A
+      implementation PR on its exact head.
+
+   b. **Not discharged by the B2A implementation PR (open obligation).**
+      Windows and macOS byte-identity evidence does not currently exist and has
+      not been produced. The B2A implementation PR is not authorized to modify
+      `.github/**`, so it cannot create that evidence. Per PD-B2A-8, Windows and
+      macOS evidence requires separately authorized validation infrastructure,
+      which this package does not authorize.
+
+   Until that infrastructure is separately authorized and the evidence is
+   produced, the Windows and macOS portability obligation remains an explicitly
+   recorded open item. It must not be treated as satisfied, waived, or removed,
+   and no document may claim that cross-platform evidence has already been
+   produced. B2A implementation acceptance under this criterion is therefore
+   partial and conditional: satisfying part (a) does not discharge part (b).
 4. Full 64-hex `split_fingerprint` is the sole authoritative fingerprint.
 5. No date, timestamp, path, username, hostname, runtime version, or command
    log is stored in promoted artifact types.

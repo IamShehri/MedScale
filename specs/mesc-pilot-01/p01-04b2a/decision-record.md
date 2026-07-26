@@ -48,6 +48,24 @@ Proposal:
   contract;
 - removes cross-runtime float-rendering ambiguity.
 
+Boolean and integer are distinct types within the canonical value domain. Both
+remain permitted values, but they are never interchangeable:
+
+- A boolean is never accepted where an integer is required, including
+  `byte_size`.
+- An integer is never accepted where a boolean is required.
+- Implementations must not treat `bool` as a subtype of integer, and must not
+  rely on any language-level subtyping that would admit a boolean wherever an
+  integer is required.
+- Violations fail closed with `unsupported_value_type`.
+
+This rule is normative and is stated identically in `contracts.md` under the
+canonical value domain. It does not alter the permitted value domain above and
+does not alter the prohibition on binary floating-point values.
+
+PD-B2A-2 remains PENDING FOUNDER DECISION. This clarification is proposed, not
+ratified.
+
 ## PD-B2A-3 — Canonical JSON and JSONL
 
 PENDING FOUNDER DECISION
