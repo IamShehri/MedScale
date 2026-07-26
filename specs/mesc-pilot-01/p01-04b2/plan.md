@@ -40,22 +40,32 @@ No increment authorizes P01-04C–G.
 
 **Deliverables:**
 
-- `SplitPolicy` type (stable fields, canonical ordering, serialization)
-- `GroupRegistryEntry` type (stable fields, canonical ordering, serialization)
-- `ExampleSplitRegistryEntry` type (stable fields, canonical ordering, serialization)
-- `SplitSummary` type (stable fields, canonical ordering, serialization)
-- `SplitFingerprint` type (stable fields, canonical ordering, serialization)
-- `ExcludedOrUnassignedLedger` type (stable fields, canonical ordering, serialization)
-- Leakage-related types: `LeakageFinding`, `LeakageAuditReport`
-- Fixture-only execution request/result types
-- Authorization and path-safety error enumerations
+- `CanonicalJsonValue`
+- canonical in-memory JSON serializer
+- canonical in-memory JSONL serializer
+- `SplitArtifactRole`
+- `SplitArtifactDescriptor`
+- `SplitSummaryIdentityCore`
+- `SplitFingerprintIdentity`
+- `SplitFingerprintRecord`
+- private canonicalization and validation errors
+- synthetic unit and golden-vector tests
+
+LeakageFinding, LeakageAuditReport, leakage normalization, leakage classification and leakage-specific errors belong to B2B or later.
+
+FixtureSplitRequest, FixtureSplitResult and fixture-facade integration belong to B2C.
+
+Filesystem publication, atomic writes, overwrite protection, concurrency controls and path-safety behavior are outside B2A and require separate authorization consistent with FD-B2-5.
+
+B2A performs no filesystem I/O.
 
 **Exit criteria for this increment:**
 
-- All types have stable field definitions
-- All types have canonical serialization rules
-- No type contains prohibited fields (raw text, labels, local paths, timestamps)
-- Serialization rules are consistent across all types
+- All B2A deliverables have stable definitions and deterministic canonical serialization rules
+- `SplitSummaryIdentityCore`, `SplitFingerprintIdentity`, and `SplitFingerprintRecord` use a non-circular fingerprint construction
+- Typed private validation errors are defined for canonicalization failures and schema violations
+- Synthetic unit and golden-vector tests exist for all B2A contracts
+- No leakage, fixture-facade, path-safety, or filesystem-publication behavior is introduced in B2A
 - No Python implementation is authorized
 
 ### P01-04B2B — Leakage primitive library
@@ -160,3 +170,18 @@ Stop without mutation if:
 - any document claims leakage has been ruled out;
 - any document includes source-data redistribution claims beyond canonical rights record;
 - an unauthorized path is modified.
+
+
+## B2A as first implementation increment
+
+P01-04B2A is the first proposed implementation increment.
+
+Sequencing:
+
+- B2A accepted before B2B.
+- B2A + B2B accepted before B2C.
+- B2A + B2B + B2C accepted before B2D.
+
+Each increment still requires separate authorization, atomic PR, exact-head CI,
+independent Opus review, and separate merge decision. Ratification of this
+documentation package does not authorize B2A.

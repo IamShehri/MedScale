@@ -87,7 +87,13 @@ Founder authorization:
 FOUNDER RATIFIED ON 2026-07-24
 
 Canonical adoption:
-PENDING MERGE OF THIS DOCUMENTATION PR
+1a9169f7229bb72eba6772448724c54ec71937c5
+
+Adoption PR:
+#54
+
+Adopted:
+2026-07-25
 
 Implementation status:
 NOT AUTHORIZED
@@ -260,3 +266,26 @@ Stop conditions: claims exceed executed phases; full article text outside docume
 - NOT AUTHORIZED: work may not begin without explicit authorization.
 - BLOCKED: prerequisite unsatisfied or rights/access unresolved.
 - DEFERRED: explicit decision to postpone with documented rationale.
+
+
+```text
+P01-T03B4 — P01-04B2A implementation authorization gate
+
+Documentation status:
+DOCUMENTATION IN PREPARATION
+
+Founder authorization:
+PENDING
+
+Implementation status:
+NOT AUTHORIZED
+
+Execution status:
+NOT AUTHORIZED
+
+Canonical adoption:
+PENDING MERGE OF THIS DOCUMENTATION PR
+
+Scope:
+P01-04B2A authorization gate only.
+```
