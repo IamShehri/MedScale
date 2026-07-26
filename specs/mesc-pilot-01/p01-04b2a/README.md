@@ -124,6 +124,27 @@ Until that evidence is produced and independently reviewed, B2A remains not
 accepted, the portability obligation remains open, and no artifact may be
 promoted on the claim of completed cross-platform determinism.
 
+## Cross-platform portability validation gate
+
+A separate documentation package proposes the design of the validation
+infrastructure that binding N-12 requires:
+
+`../p01-04b2a-portability/`
+
+Current state of that gate:
+
+- portability infrastructure gate **proposed**;
+- founder decision **pending**;
+- infrastructure implementation **not authorized**;
+- existing CI remains **Linux-only** (`ubuntu-latest`, Python 3.11 and 3.12);
+- Windows and macOS portability evidence remains **open**;
+- B2A remains **not accepted**;
+- B2B remains **not authorized**.
+
+That package designs infrastructure only. It does not alter FD-B2A-1 through
+FD-B2A-8, does not authorize implementation or execution, and does not produce
+or claim any portability evidence.
+
 ## Document index
 
 | File | Purpose |

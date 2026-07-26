@@ -1,0 +1,174 @@
+# P01-04B2A Cross-Platform Portability Validation Infrastructure — Decision Record
+
+```text
+Status:
+PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Canonical planning baseline:
+`0884971f68619be8f25c3b905a3dcad7c5212101`
+
+---
+
+## Controlling authority
+
+D1–D10 (P01-04A) remain ratified policy and control on conflict. FD-B2-1
+through FD-B2-8 and FD-B2A-1 through FD-B2A-8 remain the controlling design and
+contract authority; this package neither amends nor reinterprets them. Binding
+N-12 remains in force exactly as ratified.
+
+Every decision below is a proposal awaiting an explicit founder decision. None
+is ratified. Recording them grants no authority, and merging this package grants
+no authority.
+
+---
+
+## PD-PV-1 — Dedicated workflow boundary
+
+A new dedicated portability workflow is proposed at
+`.github/workflows/mesc-b2a-portability.yml`. The existing general workflow
+`.github/workflows/ci.yml` is **not** modified and keeps its current
+`ubuntu-latest` / Python 3.11 and 3.12 scope. Separating the workflows keeps the
+fast general gate unchanged and confines six-cell cost and failure modes to the
+portability gate.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-2 — Exact six-cell matrix
+
+The required matrix is exactly three operating systems by two Python versions:
+`ubuntu-latest`, `windows-latest` and `macos-latest`, each with Python 3.11 and
+3.12. `fail-fast: false` applies. No cell may be silently skipped; if an
+authorized cell cannot run, the workflow fails rather than reporting success on
+partial coverage.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-3 — Least privilege and immutable dependencies
+
+The workflow runs with `contents: read` only, no secrets, no write permissions,
+no OIDC, no publication and no release creation. Third-party actions are pinned
+to immutable full commit SHAs. Dependencies come only from the repository's
+locked `uv` environment. No cache may carry generated evidence between runs.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-4 — Exact future repository paths
+
+Infrastructure implementation is limited to exactly:
+
+```text
+.github/workflows/mesc-b2a-portability.yml
+tests/_mesc_b2a_portability.py
+tests/test_mesc_b2a_portability.py
+```
+
+No other path may be created or modified by the infrastructure pull request.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-5 — Synthetic deterministic evidence set
+
+Each cell emits exactly `canonical.json`, `canonical.jsonl` and `manifest.json`
+from identical fixed synthetic inputs. The compared bytes carry no timestamps,
+dates, paths, usernames, hostnames, OS name, Python version, runtime version,
+run metadata, command logs or environment-specific metadata. OS and Python
+identity live only in the matrix cell, the artifact name and the evidence
+envelope.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-6 — Fail-closed aggregate verifier
+
+A separate aggregate job requires all six matrix jobs, downloads exactly six
+artifacts, and verifies exact artifact cardinality, exact file cardinality,
+canonical manifests, recomputed SHA-256 values, recomputed byte sizes, and
+byte-for-byte equality of all three compared files across all six cells. It
+fails closed with typed, human-readable categories and emits evidence only after
+every comparison passes.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-7 — Evidence-envelope separation
+
+`portability-evidence.json` is validation evidence only. It never enters
+`split_fingerprint`, never becomes a promoted B2A artifact, never alters the
+four required split artifact roles, and never implies B2A acceptance by its
+existence alone.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-8 — Controlled triggers and retention
+
+Proposed triggers are `pull_request` for exact-head review evidence and
+`workflow_dispatch` for canonical-main acceptance evidence, with path filtering
+limited to the B2A and portability paths. No schedules, webhooks, secrets or
+automatic data/model execution. Proposed artifact retention is 14 days unless
+the founder selects another period.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-9 — Implementation and merge sequencing
+
+B2A code is implemented and reviewed under its own separate authorization,
+limited to its four already-ratified implementation and test paths, and may be
+merged only in a state recorded explicitly as `IMPLEMENTED BUT NOT ACCEPTED`.
+The portability infrastructure is implemented afterwards, on a canonical main
+that already contains the B2A implementation. B2A implementation and
+infrastructure implementation must never be combined into one pull request.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+## PD-PV-10 — Acceptance remains a separate authority act
+
+Passing the portability workflow does not automatically accept B2A. B2A
+acceptance requires canonical-main evidence produced by `workflow_dispatch`,
+independent Opus review of that evidence, and a separate founder/ChatGPT
+acceptance decision. Only after B2A acceptance may B2B authorization be
+considered.
+
+```text
+PENDING FOUNDER DECISION
+```
+
+---
+
+## Requested founder action
+
+The founder is asked to decide PD-PV-1 through PD-PV-10. A decision on these
+contracts does not by itself authorize infrastructure implementation, B2A
+implementation, execution, evidence production, or B2A acceptance; each remains
+a separate act.
