@@ -305,3 +305,51 @@ Scope:
 FD-B2A-1 through FD-B2A-8, including the FD-B2A-5
 non-circular fingerprint clarification and binding N-12 sequencing decision.
 ```
+
+```text
+P01-T03B5 — P01-04B2A cross-platform validation-infrastructure gate
+
+Documentation status:
+COMPLETED AND ADOPTED
+
+Founder authorization:
+FD-PV-1 THROUGH FD-PV-10 RATIFIED ON 2026-07-27
+
+Reviewed PR head:
+c555144b480b2334aeaaab0864cad59efe0a1e46
+
+Adoption PR:
+#57 (DRAFT; NOT MERGED)
+
+FD-PV-6 numeric limits:
+1048576 BYTES COMPRESSED AND 4194304 BYTES EXTRACTED PER ARTIFACT;
+6291456 BYTES COMPRESSED AND 25165824 BYTES EXTRACTED ACROSS SIX ARTIFACTS
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+
+Portability status:
+LINUX-ONLY EVIDENCE AVAILABLE; WINDOWS AND MACOS OPEN
+
+Prerequisite:
+P01-T03B4 COMPLETED AND ADOPTED
+
+Downstream status:
+B2B NOT AUTHORIZED
+
+Scope:
+Design and founder-decision gate for deterministic six-cell
+cross-platform golden-vector evidence infrastructure.
+```
