@@ -2,7 +2,7 @@
 
 ```text
 Status:
-PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
 
 Infrastructure implementation:
 NOT AUTHORIZED
@@ -23,14 +23,19 @@ NOT ACHIEVED
 Canonical planning baseline:
 `0884971f68619be8f25c3b905a3dcad7c5212101`
 
+Founder ratification:
+`FD-PV-1` through `FD-PV-10` ratified on 2026-07-27; see
+`founder-ratification.md`.
+
 ---
 
 ## Purpose
 
-This package proposes the design of a future, separately authorized
-cross-platform portability-validation infrastructure for P01-04B2A. It exists so
-the founder can decide the infrastructure contracts **before** any workflow file,
-test file, or B2A implementation file is written.
+This package designs a future, separately authorized cross-platform
+portability-validation infrastructure for P01-04B2A. It exists so the founder
+could decide the infrastructure contracts **before** any workflow file, test
+file, or B2A implementation file is written. Those contracts were ratified on
+2026-07-27 as `FD-PV-1` through `FD-PV-10`; implementation remains unauthorized.
 
 This package designs infrastructure. It does not build it, run it, or produce
 evidence with it.
@@ -121,7 +126,8 @@ B2A and does not unblock B2B.
 |---|---|
 | `README.md` | This document: purpose, authority relationship, boundaries |
 | `spec.md` | Proposed infrastructure contract: paths, matrix, evidence, aggregation, security |
-| `decision-record.md` | PD-PV-1 through PD-PV-10, pending founder decision |
+| `decision-record.md` | PD-PV-1 through PD-PV-10, adopted as FD-PV-1 through FD-PV-10 |
+| `founder-ratification.md` | Canonical founder record of FD-PV-1 through FD-PV-10 and the FD-PV-6 numeric limits |
 | `plan.md` | The full controlled sequence and its prohibitions |
 | `acceptance.md` | Documentation-gate, future-infrastructure, and future-B2A-acceptance criteria |
 | `implementation-task.md` | Future builder brief; not executable without separate authorization |

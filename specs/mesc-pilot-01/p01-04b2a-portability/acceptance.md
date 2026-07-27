@@ -2,7 +2,7 @@
 
 ```text
 Status:
-PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
 
 Infrastructure implementation:
 NOT AUTHORIZED
@@ -23,6 +23,10 @@ NOT ACHIEVED
 Canonical planning baseline:
 `0884971f68619be8f25c3b905a3dcad7c5212101`
 
+Founder ratification:
+`FD-PV-1` through `FD-PV-10` ratified on 2026-07-27; see
+`founder-ratification.md`.
+
 Acceptance is defined in three separate layers. Satisfying an earlier layer
 never satisfies a later one.
 
@@ -34,8 +38,9 @@ Applies to this documentation pull request only.
 
 | Criterion | Requirement |
 |---|---|
-| Path scope | Exactly eight authorized documentation paths |
-| Decisions visible | PD-PV-1 through PD-PV-10 all present and all pending |
+| Path scope | Exactly nine authorized documentation paths |
+| Decisions visible | PD-PV-1 through PD-PV-10 all present, adopted as FD-PV-1 through FD-PV-10 |
+| Numeric limits | The FD-PV-6 compressed and extracted byte limits recorded exactly |
 | No implementation authority | No document authorizes infrastructure or B2A implementation |
 | No workflow change | No `.github/**` path changed |
 | No source or test change | No `src/**` or `tests/**` path changed |
@@ -53,7 +58,7 @@ Applies to this documentation pull request only.
 Do not treat this gate as satisfied if any document authorizes implementation or
 execution, claims Windows or macOS evidence exists, claims B2A is accepted,
 claims P01-04B is complete, modifies a B2A contract or the founder-ratification
-record, or modifies a path outside the eight authorized paths.
+record, or modifies a path outside the nine authorized paths.
 
 ---
 

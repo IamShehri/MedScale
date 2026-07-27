@@ -6,7 +6,7 @@ THIS TASK IS NOT EXECUTABLE WITHOUT A SEPARATE FOUNDER IMPLEMENTATION AUTHORIZAT
 
 ```text
 Status:
-PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
 
 Infrastructure implementation:
 NOT AUTHORIZED
@@ -27,6 +27,10 @@ NOT ACHIEVED
 Canonical planning baseline:
 `0884971f68619be8f25c3b905a3dcad7c5212101`
 
+Founder ratification:
+`FD-PV-1` through `FD-PV-10` ratified on 2026-07-27; see
+`founder-ratification.md`.
+
 This document is a brief describing what a future, separately authorized builder
 would do. It records a design; it instructs no one to act now. Reading it grants
 nothing.
@@ -35,7 +39,8 @@ nothing.
 
 ## Preconditions before this brief becomes actionable
 
-1. PD-PV-1 through PD-PV-10 decided by the founder.
+1. PD-PV-1 through PD-PV-10 decided by the founder. **Satisfied 2026-07-27**
+   by `FD-PV-1` through `FD-PV-10`; see `founder-ratification.md`.
 2. A separate infrastructure-implementation authorization naming an exact
    canonical baseline.
 3. The B2A implementation already present on that canonical baseline, merged in
@@ -113,13 +118,37 @@ files across all six cells — failing closed with typed categories and emitting
 
 ## Negative tests
 
-`tests/test_mesc_b2a_portability.py` must cover every proposed failure category
-with a deterministic negative test: `missing_matrix_cell`,
-`duplicate_matrix_cell`, `unexpected_matrix_cell`, `missing_evidence_file`,
-`unexpected_evidence_file`, `manifest_schema_mismatch`, `invalid_sha256`,
-`byte_size_mismatch`, `content_hash_mismatch`, `cross_platform_byte_mismatch`,
-`forbidden_runtime_metadata`, `noncanonical_manifest`,
-`evidence_generation_failure`.
+`tests/test_mesc_b2a_portability.py` must cover every failure category in
+`spec.md` §11 with a deterministic negative test. All twenty-one categories:
+
+```text
+missing_matrix_cell
+duplicate_matrix_cell
+unexpected_matrix_cell
+missing_evidence_file
+unexpected_evidence_file
+manifest_schema_mismatch
+invalid_sha256
+byte_size_mismatch
+content_hash_mismatch
+cross_platform_byte_mismatch
+forbidden_runtime_metadata
+noncanonical_manifest
+evidence_generation_failure
+bom_present
+malformed_utf8
+invalid_json
+invalid_jsonl
+duplicate_json_object_key
+aggregate_verifier_internal_error
+unsafe_archive_entry
+artifact_size_limit_exceeded
+```
+
+Every category must fail closed. In particular, a negative test must prove that
+duplicate JSON object keys are rejected rather than silently resolved by
+last-wins parsing, and that an aggregate verifier internal error can never
+produce a passing result.
 
 Negative tests use synthetic in-memory fixtures and must not require a real
 multi-platform run.
@@ -127,9 +156,27 @@ multi-platform run.
 ## Security controls
 
 `contents: read` only. No secrets, no write permissions, no OIDC, no
-publication, no releases, no evidence-bearing cache. Third-party actions pinned
-to immutable full commit SHAs. Dependencies only from the locked `uv`
-environment. No dataset, model, network, or external corpus access.
+publication, no releases, no evidence-bearing cache. **Every `uses:` entry,
+including GitHub-owned actions such as checkout, upload-artifact and
+download-artifact, must be pinned to an immutable full commit SHA**; no tag-only
+reference such as `@v4` is permitted. Dependencies only from the locked `uv`
+environment.
+
+Network access follows the FD-PV-3 two-plane boundary. Total network isolation
+is not achievable on a hosted runner and must not be claimed. Only
+infrastructure-plane activity is permitted — GitHub Actions orchestration,
+repository checkout, immutable Action retrieval, authorized Python setup, and
+locked dependency resolution from the repository-configured index — and that
+activity must never supply evidence inputs. The prohibited data plane covers
+P01-03G, datasets, model weights, model APIs, medical and biomedical corpora,
+inference, retrieval, training services, benchmark services, external evidence
+sources, arbitrary URLs, and user-supplied network locations. No downloaded
+network content may enter any evidence file, hash, or comparison input.
+
+Artifact size limits are fixed by FD-PV-6 at `1048576` bytes compressed and
+`4194304` bytes extracted per artifact, and `6291456` bytes compressed and
+`25165824` bytes extracted across exactly six artifacts. Enforce them before or
+during bounded extraction and fail closed with `artifact_size_limit_exceeded`.
 
 ## Stop conditions
 

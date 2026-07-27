@@ -310,10 +310,20 @@ non-circular fingerprint clarification and binding N-12 sequencing decision.
 P01-T03B5 — P01-04B2A cross-platform validation-infrastructure gate
 
 Documentation status:
-IN PREPARATION
+COMPLETED AND ADOPTED
 
 Founder authorization:
-PENDING
+FD-PV-1 THROUGH FD-PV-10 RATIFIED ON 2026-07-27
+
+Reviewed PR head:
+c555144b480b2334aeaaab0864cad59efe0a1e46
+
+Adoption PR:
+#57 (DRAFT; NOT MERGED)
+
+FD-PV-6 numeric limits:
+1048576 BYTES COMPRESSED AND 4194304 BYTES EXTRACTED PER ARTIFACT;
+6291456 BYTES COMPRESSED AND 25165824 BYTES EXTRACTED ACROSS SIX ARTIFACTS
 
 Infrastructure implementation:
 NOT AUTHORIZED

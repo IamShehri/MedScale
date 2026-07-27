@@ -2,7 +2,7 @@
 
 ```text
 Status:
-PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
 
 Infrastructure implementation:
 NOT AUTHORIZED
@@ -23,6 +23,10 @@ NOT ACHIEVED
 Canonical planning baseline:
 `0884971f68619be8f25c3b905a3dcad7c5212101`
 
+Founder ratification:
+`FD-PV-1` through `FD-PV-10` ratified on 2026-07-27; see
+`founder-ratification.md`.
+
 ---
 
 ## Controlled sequence
@@ -33,7 +37,7 @@ produced its recorded outcome.
 | # | Step | Actor | Gate |
 |---|---|---|---|
 | 1 | Cross-platform validation-infrastructure documentation gate | Builder | This package. No code. No self-authorization. |
-| 2 | Founder decision on the proposed infrastructure contracts | Founder | Decision on PD-PV-1 through PD-PV-10. |
+| 2 | Founder decision on the proposed infrastructure contracts | Founder | **Completed 2026-07-27.** PD-PV-1 through PD-PV-10 adopted as FD-PV-1 through FD-PV-10, with the FD-PV-6 numeric limits selected. |
 | 3 | Separate B2A implementation authorization | Founder | Explicit, naming a canonical baseline. |
 | 4 | Atomic B2A implementation PR | Builder | Limited to the four already-ratified B2A implementation and test paths. |
 | 5 | Exact-head Linux CI and independent Opus review | CI / Opus | Linux evidence only; partial by construction. |

@@ -2,7 +2,7 @@
 
 ```text
 Status:
-PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
 
 Infrastructure implementation:
 NOT AUTHORIZED
@@ -23,6 +23,10 @@ NOT ACHIEVED
 Canonical planning baseline:
 `0884971f68619be8f25c3b905a3dcad7c5212101`
 
+Founder ratification:
+`FD-PV-1` through `FD-PV-10` ratified on 2026-07-27; see
+`founder-ratification.md`.
+
 ---
 
 ## Controlling authority
@@ -32,9 +36,11 @@ through FD-B2-8 and FD-B2A-1 through FD-B2A-8 remain the controlling design and
 contract authority; this package neither amends nor reinterprets them. Binding
 N-12 remains in force exactly as ratified.
 
-Every decision below is a proposal awaiting an explicit founder decision. None
-is ratified. Recording them grants no authority, and merging this package grants
-no authority.
+Every decision below was ratified by the founder on 2026-07-27 and adopted as
+`FD-PV-1` through `FD-PV-10`; the canonical record is `founder-ratification.md`.
+Ratification freezes these design decisions only. It grants no
+infrastructure-implementation, B2A-implementation, execution, or
+evidence-production authority, and merging this package grants no authority.
 
 ---
 
@@ -48,7 +54,7 @@ fast general gate unchanged and confines six-cell cost and failure modes to the
 portability gate.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-1
 ```
 
 ## PD-PV-2 — Exact six-cell matrix
@@ -69,7 +75,7 @@ permission to exclude it, and any future removal, exclusion, or downgrade of a
 cell requires a new founder decision.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-2
 ```
 
 ## PD-PV-3 — Least privilege and immutable dependencies
@@ -101,7 +107,7 @@ content may enter `canonical.json`, `canonical.jsonl`, `manifest.json`,
 `portability-evidence.json`, or any hash or comparison input.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-3
 ```
 
 ## PD-PV-4 — Exact future repository paths
@@ -117,7 +123,7 @@ tests/test_mesc_b2a_portability.py
 No other path may be created or modified by the infrastructure pull request.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-4
 ```
 
 ## PD-PV-5 — Synthetic deterministic evidence set
@@ -137,7 +143,7 @@ bytes, and the portability harness must preserve those exact bytes when writing
 them.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-5
 ```
 
 ## PD-PV-6 — Fail-closed aggregate verifier
@@ -167,15 +173,29 @@ paths, and case-colliding names where the extraction platform could alias them,
 under bounded memory and disk consumption.
 
 ```text
-Proposed default:
-A small bounded limit sufficient for the three synthetic evidence files.
+Exact numeric limits, founder-ratified 2026-07-27:
 
-Exact numeric compressed and extracted byte limits:
-PENDING FOUNDER DECISION
+Maximum compressed size per matrix-cell artifact:
+1048576 bytes (1 MiB)
+
+Maximum total extracted size per matrix-cell artifact:
+4194304 bytes (4 MiB)
+
+Derived maximum compressed across exactly six artifacts:
+6291456 bytes (6 MiB)
+
+Derived maximum extracted across exactly six artifacts:
+25165824 bytes (24 MiB)
 ```
 
+Limits must be enforced before or during bounded extraction, never only after an
+artifact has been fully written to disk. A violation at artifact, file, or
+aggregate level fails closed with `artifact_size_limit_exceeded`. No artifact,
+file, or aggregate may silently exceed these limits. Changing any of these limits
+requires a new founder decision.
+
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-6
 ```
 
 ## PD-PV-7 — Evidence-envelope separation
@@ -186,7 +206,7 @@ four required split artifact roles, and never implies B2A acceptance by its
 existence alone.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-7
 ```
 
 ## PD-PV-8 — Controlled triggers and retention
@@ -215,7 +235,7 @@ non-promoted evidence envelope only; it never enters the compared golden-vector
 bytes and never enters `split_fingerprint`.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-8
 ```
 
 ## PD-PV-9 — Implementation and merge sequencing
@@ -228,7 +248,7 @@ that already contains the B2A implementation. B2A implementation and
 infrastructure implementation must never be combined into one pull request.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-9
 ```
 
 ## PD-PV-10 — Acceptance remains a separate authority act
@@ -240,14 +260,15 @@ acceptance decision. Only after B2A acceptance may B2B authorization be
 considered.
 
 ```text
-PENDING FOUNDER DECISION
+FOUNDER-RATIFIED 2026-07-27 AS FD-PV-10
 ```
 
 ---
 
-## Requested founder action
+## Founder action taken
 
-The founder is asked to decide PD-PV-1 through PD-PV-10. A decision on these
-contracts does not by itself authorize infrastructure implementation, B2A
+The founder decided PD-PV-1 through PD-PV-10 on 2026-07-27, adopting them as
+`FD-PV-1` through `FD-PV-10`, and selected the exact `FD-PV-6` numeric limits.
+That decision does not by itself authorize infrastructure implementation, B2A
 implementation, execution, evidence production, or B2A acceptance; each remains
 a separate act.

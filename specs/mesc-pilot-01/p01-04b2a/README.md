@@ -133,8 +133,9 @@ infrastructure that binding N-12 requires:
 
 Current state of that gate:
 
-- portability infrastructure gate **proposed**;
-- founder decision **pending**;
+- portability infrastructure gate **designed and ratified**;
+- founder decision **recorded 2026-07-27** as FD-PV-1 through FD-PV-10, with the
+  FD-PV-6 numeric limits selected;
 - infrastructure implementation **not authorized**;
 - existing CI remains **Linux-only** (`ubuntu-latest`, Python 3.11 and 3.12);
 - Windows and macOS portability evidence remains **open**;

@@ -2,7 +2,7 @@
 
 ```text
 Status:
-PROPOSED AUTHORIZATION GATE — FOUNDER DECISION PENDING
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
 
 Infrastructure implementation:
 NOT AUTHORIZED
@@ -22,6 +22,10 @@ NOT ACHIEVED
 
 Canonical planning baseline:
 `0884971f68619be8f25c3b905a3dcad7c5212101`
+
+Founder ratification:
+`FD-PV-1` through `FD-PV-10` ratified on 2026-07-27; see
+`founder-ratification.md`.
 
 ---
 
@@ -310,8 +314,8 @@ Artifact download and extraction is transport handling only. The aggregate
 verifier must, fail-closed:
 
 - expect exactly six artifacts;
-- impose a documented maximum compressed size per artifact;
-- impose a documented maximum total extraction size;
+- impose the ratified maximum compressed size per artifact;
+- impose the ratified maximum total extraction size;
 - permit exactly three regular files per artifact;
 - reject absolute paths;
 - reject `..` parent traversal;
@@ -328,8 +332,27 @@ verifier must, fail-closed:
 - use bounded memory and disk consumption;
 - compare extracted regular-file bytes only.
 
-Numeric limits are not chosen here. See PD-PV-6, where the exact compressed and
-extracted byte limits remain pending a founder decision.
+### Founder-ratified size limits
+
+`FD-PV-6` fixes the exact limits:
+
+| Limit | Bytes | Equivalent |
+|---|---|---|
+| Maximum compressed size per matrix-cell artifact | `1048576` | 1 MiB |
+| Maximum total extracted size per matrix-cell artifact | `4194304` | 4 MiB |
+| Derived maximum compressed across exactly six artifacts | `6291456` | 6 MiB |
+| Derived maximum extracted across exactly six artifacts | `25165824` | 24 MiB |
+
+The derived aggregate values are exactly six times the corresponding per-artifact
+limits, so an aggregate total can never silently exceed the per-artifact
+contract.
+
+Limits must be enforced **before or during** bounded extraction, never only after
+an artifact has been fully written to disk; enforcing only after the fact would
+defeat the resource bound the limit exists to impose. A violation at artifact,
+file, or aggregate level fails closed with `artifact_size_limit_exceeded`. No
+artifact, file, or aggregate may silently exceed these limits. Changing any of
+these limits requires a new founder decision.
 
 ## 10. Validation-evidence envelope
 
