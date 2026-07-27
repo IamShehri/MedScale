@@ -82,6 +82,22 @@ Matrix rules:
 - if an authorized cell cannot run, the workflow **fails**; it must never
   silently downgrade to a smaller matrix or report success on partial coverage.
 
+### Reconciliation with "where supported"
+
+FD-B2A-8 requires Python 3.12 identity "where supported by the authorized
+validation infrastructure". That phrase does **not** authorize dropping a matrix
+cell. This proposed infrastructure defines all six cells as supported
+requirements.
+
+At the time of this gate's review, the proposed hosted-runner matrix is
+available: GitHub-hosted `ubuntu-latest`, `windows-latest` and `macos-latest`
+provide Python 3.11 and 3.12. Availability must be reverified at implementation
+time and is not asserted here as permanent fact.
+
+Once ratified, inability to execute one cell is a **workflow failure**, not
+permission to exclude that cell. Any future removal, exclusion, or downgrade of
+a cell requires a new founder decision.
+
 ## 4. Proposed triggers
 
 Proposed:
@@ -94,9 +110,39 @@ Proposed:
 Explicitly **not** proposed: schedules, external webhooks, automatic model or
 dataset execution, secrets, or write permissions.
 
-Path filtering should limit runs to the future B2A implementation and test paths
-and the portability paths, so unrelated documentation changes do not consume
-runners.
+Path filtering should limit runs so unrelated documentation changes do not
+consume runners. The `pull_request` filter must include at least all seven
+executable or measured paths:
+
+```text
+.github/workflows/mesc-b2a-portability.yml
+tests/_mesc_b2a_portability.py
+tests/test_mesc_b2a_portability.py
+src/medscale/mesc/_canonical_json_v1.py
+src/medscale/mesc/_split_artifacts_v1.py
+tests/test_mesc_canonical_json_v1.py
+tests/test_mesc_split_artifacts_v1.py
+```
+
+The filter may additionally include the portability documentation paths, but it
+must omit none of the paths above. Omitting the workflow file itself, or any B2A
+implementation path, would let a change to the measured code or to the measuring
+harness escape validation.
+
+### Canonical-main dispatch binding
+
+A `workflow_dispatch` run used for acceptance evidence must:
+
+- execute against an exact canonical-main commit SHA;
+- record that SHA in the workflow-run metadata and in the validation-evidence
+  envelope;
+- be rejected for acceptance if it was initiated from a noncanonical ref;
+- not rely only on a mutable branch name;
+- not imply acceptance merely because the run succeeded.
+
+The exact canonical SHA belongs in the non-promoted evidence envelope only. It
+must never enter the compared golden-vector bytes and must never enter
+`split_fingerprint`.
 
 ## 5. Permissions and supply-chain controls
 
@@ -107,18 +153,46 @@ runners.
 - No package publication.
 - No release creation.
 - No cache that could carry generated evidence between runs.
-- Third-party GitHub Actions pinned to immutable full commit SHAs, never to
-  mutable tags or branches.
+- **All GitHub Actions, including GitHub-owned actions such as checkout,
+  upload-artifact, and download-artifact, must be pinned to immutable full
+  commit SHAs.** No tag-only reference such as `@v4` is permitted. This rule
+  applies to every `uses:` entry in the workflow, without exception.
 - Dependency installation only through the repository's locked `uv` environment.
+
+### Network boundary
+
+Total network isolation is not achievable on a hosted runner and is not claimed
+here. The boundary is defined on two planes.
+
+**Permitted infrastructure-plane network activity.** Only the network activity
+required for:
+
+- GitHub Actions orchestration;
+- repository checkout;
+- immutable GitHub Action retrieval;
+- Python installation where performed by the authorized runner setup;
+- locked dependency resolution from the repository-configured package index.
+
+This activity is bounded to infrastructure setup and must not supply evidence
+inputs of any kind.
+
+**Prohibited data-plane network activity.** The workflow must not access
+P01-03G, any dataset, model weights, model APIs, medical or biomedical corpora,
+inference endpoints, retrieval endpoints, training services, benchmark services,
+external evidence sources, arbitrary URLs, or user-supplied network locations.
+
+No secrets, credentials, OIDC tokens, or write-capable repository tokens may be
+used.
+
+No downloaded network content may enter `canonical.json`, `canonical.jsonl`,
+`manifest.json`, `portability-evidence.json`, or any hash or comparison input.
 
 ## 6. Synthetic-only inputs
 
 All inputs are fixed synthetic fixtures authored inside the repository.
 
-The workflow must not access P01-03G, load datasets, access models, perform
-inference, perform retrieval, perform training, calculate clinical or benchmark
-metrics, access external medical corpora, perform formal split generation, or
-use secrets.
+The workflow must not perform inference, perform retrieval, perform training,
+calculate clinical or benchmark metrics, or perform formal split generation.
 
 ## 7. Per-cell deterministic evidence
 
@@ -156,6 +230,39 @@ the GitHub matrix cell, the uploaded artifact name, and the later
 validation-evidence envelope. It must never be written into the compared
 golden-vector files — doing so would make the bytes differ by construction and
 destroy the very property under test.
+
+### Binary byte-write discipline
+
+This rule is controlling for both evidence generation and comparison.
+
+- Evidence files must be written as raw bytes using **binary mode**.
+- The validation harness must not use platform text-mode newline translation.
+- LF (`0x0A`) is the only permitted line terminator in the emitted canonical
+  JSON and JSONL bytes.
+- The harness must not transform LF into CRLF on Windows.
+- The aggregate verifier compares the extracted evidence-file bytes only.
+- It must never compare ZIP archives, artifact-container bytes, archive
+  metadata, file permissions, executable bits, timestamps, or platform-specific
+  extraction metadata.
+- The verifier must not normalize line endings, whitespace, encoding, Unicode,
+  JSON key ordering, or any other byte representation before comparison.
+- Any byte difference must fail closed. Normalization during comparison is
+  prohibited because it could conceal a genuine B2A determinism defect.
+
+Division of responsibility:
+
+- the B2A canonical serializers produce the **authoritative bytes**;
+- the portability harness must **preserve those exact bytes** when writing them
+  to disk;
+- comparison measures **B2A output bytes**, not GitHub artifact packaging
+  behavior;
+- archive extraction is only transport handling and is never part of the
+  deterministic value being compared.
+
+Without this rule, a default text-mode write would translate LF to CRLF on
+Windows, producing a false failure that looks like a B2A determinism defect; and
+repairing that by normalizing during comparison would produce a false success
+that conceals real defects.
 
 ## 8. Artifact names and retention
 
@@ -197,6 +304,33 @@ A separate aggregate job must:
 15. produce the validation-evidence envelope **only after** every comparison
     passes.
 
+### Safe extraction and resource bounds
+
+Artifact download and extraction is transport handling only. The aggregate
+verifier must, fail-closed:
+
+- expect exactly six artifacts;
+- impose a documented maximum compressed size per artifact;
+- impose a documented maximum total extraction size;
+- permit exactly three regular files per artifact;
+- reject absolute paths;
+- reject `..` parent traversal;
+- reject paths escaping the intended extraction root;
+- reject symbolic links;
+- reject hard links;
+- reject device files;
+- reject FIFOs;
+- reject sockets;
+- reject nested archives;
+- reject unexpected directories or files;
+- reject duplicate output paths;
+- reject case-colliding names where the extraction platform could alias them;
+- use bounded memory and disk consumption;
+- compare extracted regular-file bytes only.
+
+Numeric limits are not chosen here. See PD-PV-6, where the exact compressed and
+extracted byte limits remain pending a founder decision.
+
 ## 10. Validation-evidence envelope
 
 Proposed non-promoted file:
@@ -235,10 +369,31 @@ cross_platform_byte_mismatch
 forbidden_runtime_metadata
 noncanonical_manifest
 evidence_generation_failure
+bom_present
+malformed_utf8
+invalid_json
+invalid_jsonl
+duplicate_json_object_key
+aggregate_verifier_internal_error
+unsafe_archive_entry
+artifact_size_limit_exceeded
 ```
 
-These categories are **proposed**. None of them exists in repository code today,
-and this document does not claim otherwise.
+These are **proposed names only**. No implementation exists in repository code
+today, and this document does not claim otherwise.
+
+Every category fails closed. In particular:
+
+- `duplicate_json_object_key` — duplicate keys must be **rejected**, never
+  silently resolved by a parser's last-wins behavior, because silent resolution
+  would hide a nondeterministic serializer;
+- `aggregate_verifier_internal_error` — an internal verifier error can **never**
+  produce a passing result; it always fails the run;
+- `bom_present`, `malformed_utf8`, `invalid_json`, `invalid_jsonl` — encoding
+  and parse defects are reported under their own categories rather than folded
+  into a generic failure, so a real defect stays diagnosable;
+- `unsafe_archive_entry`, `artifact_size_limit_exceeded` — extraction-safety and
+  resource-bound violations abort the run before any comparison occurs.
 
 ## 12. Relationship to B2A implementation
 

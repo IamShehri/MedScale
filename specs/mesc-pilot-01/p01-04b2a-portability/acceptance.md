@@ -73,9 +73,35 @@ Applies only to a later, separately authorized infrastructure pull request.
 | Hashes and sizes | All recomputed SHA-256 values and byte sizes identical |
 | Negative tests | Fail-closed tests exist for every proposed failure category |
 | Permissions | `contents: read` only; no secrets, no write, no OIDC |
-| Isolation | No dataset, model, network, or secret access |
+| Action pinning | Every `uses:` entry pinned to an immutable full commit SHA, including GitHub-owned actions; no tag-only reference such as `@v4` |
+| Network boundary | Infrastructure-plane activity only (see below); no data-plane access |
+| Binary writes | Evidence files written as raw bytes in binary mode |
+| LF-only output | LF (`0x0A`) is the only line terminator in the emitted bytes |
+| No CRLF translation | No platform text-mode newline translation on any runner |
+| No comparison normalization | The verifier normalizes nothing — not line endings, whitespace, encoding, Unicode, or key ordering — before comparison |
+| Extracted bytes only | Comparison targets extracted regular-file bytes; never archives, container bytes, archive metadata, permissions, executable bits, or extraction metadata |
+| Safe extraction | Fail-closed rejection of absolute paths, `..` traversal, escapes from the extraction root, symlinks, hard links, device files, FIFOs, sockets, nested archives, unexpected entries, duplicate output paths, and case-colliding names; bounded memory and disk |
 | Gates | CI and CodeQL green |
 | Review | Independent Opus exact-head review |
+
+### Network boundary detail
+
+Total network isolation is not achievable on a hosted runner and is not claimed.
+
+**Permitted — infrastructure plane.** Only the network activity required for
+GitHub Actions orchestration, repository checkout, immutable GitHub Action
+retrieval, Python installation where performed by the authorized runner setup,
+and locked dependency resolution from the repository-configured package index.
+This activity is bounded to infrastructure setup and must not supply evidence
+inputs.
+
+**Prohibited — data plane.** No access to P01-03G, any dataset, model weights,
+model APIs, medical or biomedical corpora, inference endpoints, retrieval
+endpoints, training services, benchmark services, external evidence sources,
+arbitrary URLs, or user-supplied network locations. No secrets, credentials,
+OIDC tokens, or write-capable repository tokens. No downloaded network content
+may enter `canonical.json`, `canonical.jsonl`, `manifest.json`,
+`portability-evidence.json`, or any hash or comparison input.
 
 ---
 
