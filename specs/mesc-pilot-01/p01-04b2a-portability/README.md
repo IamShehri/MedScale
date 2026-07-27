@@ -21,6 +21,9 @@ B2A acceptance:
 NOT ACHIEVED
 ```
 
+Canonical planning baseline:
+`0884971f68619be8f25c3b905a3dcad7c5212101`
+
 Canonical adoption:
 `30f79b183a4fff6a08e30e1e43f5da549ce20c1a`
 

@@ -147,7 +147,13 @@ six-cell golden-vector portability evidence required for B2A acceptance.
 
 Current state:
 
-- infrastructure implementation **not authorized**;
+- portability infrastructure gate designed, founder-ratified, and adopted on
+  canonical main through PR #57, with FD-PV-1 through FD-PV-10 recorded on
+  2026-07-27 and FD-PV-6 numeric limits selected;
+- canonical adoption is `30f79b183a4fff6a08e30e1e43f5da549ce20c1a`;
+- infrastructure implementation remains **not authorized**;
+- portability evidence was **not produced**;
+- the standard Linux workflows are quality/security gates only;
 - Windows and macOS portability evidence remains **open**;
 - B2A remains **not accepted**;
 - B2B remains **not authorized**.
