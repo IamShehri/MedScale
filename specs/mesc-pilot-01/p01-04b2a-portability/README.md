@@ -2,7 +2,8 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+FOUNDER-RATIFIED CONTRACTS — ADOPTED ON CANONICAL MAIN;
+IMPLEMENTATION NOT AUTHORIZED
 
 Infrastructure implementation:
 NOT AUTHORIZED
@@ -20,15 +21,50 @@ B2A acceptance:
 NOT ACHIEVED
 ```
 
-Canonical planning baseline:
-`0884971f68619be8f25c3b905a3dcad7c5212101`
+Canonical adoption:
+`30f79b183a4fff6a08e30e1e43f5da549ce20c1a`
+
+Adoption PR:
+`#57 — MERGED`
+
+Final merged PR head:
+`b76420913c80bd54fd31e63ccffd5ed43a36a854`
+
+Founder-ratified reviewed head:
+`c555144b480b2334aeaaab0864cad59efe0a1e46`
+
+Merged at:
+`2026-07-27T02:53:00Z`
+
+Source branch:
+`docs/mesc-p01-04b2a-portability-gate` — deleted after verified post-merge cleanup.
+
+Post-merge verification:
+- CI `30233225446` — success
+- CodeQL `30233225421` — success
+- Optional Extras / Backends `30233225422` — success
 
 Founder ratification:
 `FD-PV-1` through `FD-PV-10` ratified on 2026-07-27; see
 `founder-ratification.md`.
 
----
+Adoption freezes and records `FD-PV-1` through `FD-PV-10`.
 
+Adoption does not authorize infrastructure implementation.
+
+No portability workflow was created.
+
+No six-cell matrix was executed.
+
+No portability evidence was produced.
+
+B2A remains not accepted.
+
+B2B remains not authorized.
+
+P01-04B remains incomplete and not accepted.
+
+---
 ## Purpose
 
 This package designs a future, separately authorized cross-platform
