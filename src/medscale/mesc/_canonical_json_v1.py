@@ -117,20 +117,25 @@ def _normalize(value: object) -> object:
 
     1. the current node's type, classified in the order
        null, boolean, integer, string, float, mapping, array, otherwise;
-    2. inside a mapping, every key is checked for ``str`` before any value is
-       visited, and the reported offender is the lowest by ``repr`` so the
-       outcome does not depend on insertion order;
+    2. inside a mapping, every key of the single snapshot is checked for exact
+       ``str`` before any value is visited, and the reported offender is the
+       lowest by ``repr`` so the outcome does not depend on insertion order;
     3. mapping entries are then visited in ascending canonical key order,
        never insertion order;
     4. array elements are visited in index order.
+
+    Primitive classification uses **exact** types.  ``isinstance`` would admit
+    ``IntEnum``, ``StrEnum`` and arbitrary ``int``/``str`` subclasses, which the
+    closed canonical domain prohibits; an enum member must have its primitive
+    value extracted explicitly by the caller rather than silently unwrapped
+    here.  ``bool`` is still classified before ``int`` because Python makes
+    ``bool`` a subclass of ``int`` and FD-B2A-2 forbids relying on that.
     """
-    # ``bool`` is checked before ``int`` on purpose: Python makes bool a subclass
-    # of int, and FD-B2A-2 forbids relying on that subtyping.
-    if value is None or isinstance(value, bool):
+    if value is None or type(value) is bool:
         return value
-    if isinstance(value, int):
+    if type(value) is int:
         return value
-    if isinstance(value, str):
+    if type(value) is str:
         _encode_utf8(value)
         return value
     if isinstance(value, float):
@@ -145,13 +150,30 @@ def _normalize(value: object) -> object:
 
 
 def _normalize_mapping(mapping: Mapping[object, object]) -> dict[str, object]:
-    non_string = sorted((repr(key) for key in mapping if not isinstance(key, str)), key=str)
-    if non_string:
-        raise NonStringObjectKeyError(f"object keys must be strings, got {non_string[0]}")
-    keys = sorted(str(key) for key in mapping)
-    for key in keys:
+    """Normalize a mapping from one snapshot taken exactly once.
+
+    The caller mapping is iterated a single time.  Every key of that snapshot is
+    validated before any value is visited, so a mapping that mutates between
+    iterations can never inject a key that was not validated, and no key is ever
+    stringified into existence.
+    """
+    snapshot: list[tuple[object, object]] = list(mapping.items())
+    invalid = sorted(repr(key) for key, _ in snapshot if type(key) is not str)
+    if invalid:
+        raise NonStringObjectKeyError(f"object keys must be strings, got {invalid[0]}")
+    validated = [(_exact_string_key(key), value) for key, value in snapshot]
+    for key, _ in validated:
         _encode_utf8(key)
-    return {key: _normalize(mapping[key]) for key in keys}
+    validated.sort(key=lambda item: item[0])
+    return {key: _normalize(value) for key, value in validated}
+
+
+def _exact_string_key(key: object) -> str:
+    # ``isinstance`` narrows the type for the checker; ``type(...) is str``
+    # enforces the contract by rejecting ``str`` subclasses and ``StrEnum``.
+    if not isinstance(key, str) or type(key) is not str:  # pragma: no cover - snapshot pre-checked
+        raise NonStringObjectKeyError(f"object keys must be strings, got {key!r}")
+    return key
 
 
 def _encode_utf8(text: str) -> bytes:

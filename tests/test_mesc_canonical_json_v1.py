@@ -15,8 +15,9 @@ import os
 import pathlib
 import socket
 from collections import OrderedDict
+from collections.abc import Iterator, Mapping
 from decimal import Decimal
-from enum import Enum
+from enum import Enum, IntEnum, StrEnum
 from fractions import Fraction
 from pathlib import Path
 from typing import Any
@@ -67,6 +68,57 @@ GOLDEN_JSONL_SHA256 = "d18b1feb10ffa58a50228907fd2f15e09466550d80660f90b560a0b6d
 
 class _Colour(Enum):
     RED = "red"
+
+
+class _IntColour(IntEnum):
+    RED = 1
+
+
+class _StrColour(StrEnum):
+    RED = "red"
+
+
+class _MyInt(int):
+    pass
+
+
+class _MyStr(str):
+    pass
+
+
+class _PlainMapping(Mapping[str, object]):
+    """A well-behaved custom Mapping that is not a dict."""
+
+    def __init__(self, data: dict[str, object]) -> None:
+        self._data = dict(data)
+
+    def __getitem__(self, key: str) -> object:
+        return self._data[key]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._data)
+
+    def __len__(self) -> int:
+        return len(self._data)
+
+
+class _InjectingMapping(Mapping[object, object]):
+    """A hostile Mapping that injects a non-string key on every iteration."""
+
+    def __init__(self, data: dict[object, object]) -> None:
+        self._data: dict[object, object] = dict(data)
+        self.iterations = 0
+
+    def __getitem__(self, key: object) -> object:
+        return self._data[key]
+
+    def __iter__(self) -> Iterator[object]:
+        self.iterations += 1
+        self._data[self.iterations] = "injected"
+        return iter(list(self._data))
+
+    def __len__(self) -> int:
+        return len(self._data)
 
 
 # --------------------------------------------------------------------------
@@ -293,10 +345,39 @@ def test_timezone_environment_does_not_change_bytes(monkeypatch: pytest.MonkeyPa
 
 
 def test_output_carries_no_runtime_or_environment_metadata() -> None:
-    data = canonical_json_bytes(GOLDEN_DOCUMENT) + canonical_jsonl_bytes(GOLDEN_RECORDS)
+    # The serializer must never inject provenance of its own. A legitimate
+    # value may contain a slash — schema identifiers do — so assert on the
+    # absence of metadata *keys*, not on incidental characters.
+    document = dict(GOLDEN_DOCUMENT)
+    document["schema"] = "mesc-pilot-01-example-registry/1"
+    data = canonical_json_bytes(document) + canonical_jsonl_bytes(GOLDEN_RECORDS)
     lowered = data.lower()
-    for needle in (b"python", b"platform", b"hostname", b"username", b"win", b"linux", b"/", b"\\"):
-        assert needle not in lowered
+    for key in (
+        b"python_version",
+        b"runtime",
+        b"platform",
+        b"hostname",
+        b"host",
+        b"username",
+        b"user",
+        b"cwd",
+        b"path",
+        b"date",
+        b"timestamp",
+        b"created_at",
+        b"locale",
+        b"timezone",
+        b"environment",
+        b"command",
+        b"machine",
+    ):
+        assert key not in lowered
+    # The legitimate slash-bearing value survives untouched.
+    assert b"mesc-pilot-01-example-registry/1" in data
+    # Output is exactly what the caller supplied, plus canonical structure.
+    assert len(data) == len(canonical_json_bytes(document)) + len(
+        canonical_jsonl_bytes(GOLDEN_RECORDS)
+    )
 
 
 # --------------------------------------------------------------------------
@@ -362,6 +443,107 @@ def test_enum_is_rejected_but_its_extracted_primitive_is_accepted() -> None:
     with pytest.raises(UnsupportedValueTypeError):
         canonical_json_bytes({"k": _Colour.RED})
     assert canonical_json_bytes({"k": _Colour.RED.value}) == b'{"k":"red"}\n'
+
+
+# --------------------------------------------------------------------------
+# Exact primitive types: enums and subclasses are outside the closed domain
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("value", [_Colour.RED, _IntColour.RED, _StrColour.RED])
+def test_every_enum_flavour_is_rejected_as_a_value(value: object) -> None:
+    # IntEnum and StrEnum pass isinstance(int) / isinstance(str); only an exact
+    # type check keeps them out of the closed canonical domain.
+    with pytest.raises(UnsupportedValueTypeError) as excinfo:
+        canonical_json_bytes({"k": value})
+    assert excinfo.value.code == "unsupported_value_type"
+
+
+@pytest.mark.parametrize("key", [_StrColour.RED, _MyStr("k"), _IntColour.RED])
+def test_enum_and_str_subclass_keys_are_rejected(key: object) -> None:
+    with pytest.raises(NonStringObjectKeyError) as excinfo:
+        canonical_json_bytes({key: 1})
+    assert excinfo.value.code == "non_string_object_key"
+
+
+@pytest.mark.parametrize("value", [_MyInt(5), _MyStr("v")])
+def test_primitive_subclasses_are_rejected_as_values(value: object) -> None:
+    with pytest.raises(UnsupportedValueTypeError):
+        canonical_json_bytes({"k": value})
+
+
+def test_enums_are_never_silently_unwrapped() -> None:
+    # A silent .value extraction would have produced these bytes; it must not.
+    with pytest.raises(UnsupportedValueTypeError):
+        canonical_json_bytes({"k": _IntColour.RED})
+    with pytest.raises(UnsupportedValueTypeError):
+        canonical_json_bytes({"k": _StrColour.RED})
+
+
+def test_explicitly_extracted_exact_primitives_are_accepted() -> None:
+    assert canonical_json_bytes({"k": int(_IntColour.RED)}) == b'{"k":1}\n'
+    assert canonical_json_bytes({"k": str(_StrColour.RED)}) == b'{"k":"red"}\n'
+    assert canonical_json_bytes({"k": _Colour.RED.value}) == b'{"k":"red"}\n'
+    assert canonical_json_bytes({str(_StrColour.RED): 1}) == b'{"red":1}\n'
+    assert canonical_json_bytes({"k": int(_MyInt(5))}) == b'{"k":5}\n'
+
+
+def test_exact_bool_and_int_classification_is_preserved() -> None:
+    assert canonical_json_bytes({"k": True}) == b'{"k":true}\n'
+    assert canonical_json_bytes({"k": 1}) == b'{"k":1}\n'
+    with pytest.raises(UnsupportedValueTypeError):
+        canonical_json_bytes({"k": _MyInt(1)})
+
+
+# --------------------------------------------------------------------------
+# Single validated mapping snapshot
+# --------------------------------------------------------------------------
+
+
+def test_well_behaved_custom_mapping_is_supported() -> None:
+    mapping = _PlainMapping({"b": 1, "a": {"d": 2, "c": 3}})
+    assert canonical_json_bytes(mapping) == b'{"a":{"c":3,"d":2},"b":1}\n'
+
+
+def test_custom_mapping_matches_the_equivalent_dict() -> None:
+    data: dict[str, object] = {"z": 1, "a": [1, 2], "m": {"k": "v"}}
+    assert canonical_json_bytes(_PlainMapping(data)) == canonical_json_bytes(data)
+
+
+def test_mutating_mapping_cannot_inject_an_unvalidated_key() -> None:
+    hostile = _InjectingMapping({"a": 1})
+    with pytest.raises(NonStringObjectKeyError):
+        canonical_json_bytes(hostile)
+    # Exactly one iteration: the snapshot is taken once and validated once.
+    assert hostile.iterations == 1
+
+
+def test_injected_key_is_never_stringified() -> None:
+    hostile = _InjectingMapping({"a": 1})
+    try:
+        data = canonical_json_bytes(hostile)
+    except NonStringObjectKeyError:
+        return
+    raise AssertionError(f"non-string key was admitted: {data!r}")
+
+
+def test_non_string_key_is_never_coerced_to_its_string_form() -> None:
+    for key in (1, 2.5, None, True):
+        with pytest.raises(NonStringObjectKeyError):
+            canonical_json_bytes({key: "v"})
+    # The coerced form would have been valid output; it must never appear.
+    assert canonical_json_bytes({"1": "v"}) == b'{"1":"v"}\n'
+
+
+def test_invalid_key_precedence_is_independent_of_insertion_order() -> None:
+    forward: dict[object, object] = {"a": 1, 2: "x", 3: "y"}
+    reverse: dict[object, object] = {3: "y", 2: "x", "a": 1}
+    messages = set()
+    for document in (forward, reverse):
+        with pytest.raises(NonStringObjectKeyError) as excinfo:
+            canonical_json_bytes(document)
+        messages.add(str(excinfo.value))
+    assert len(messages) == 1
 
 
 def test_lone_surrogate_string_fails_closed() -> None:
@@ -604,7 +786,7 @@ def test_module_imports_only_the_standard_library_allowlist() -> None:
             imported.update(alias.name.split(".")[0] for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
             imported.add(node.module.split(".")[0])
-    assert imported <= {"__future__", "hashlib", "json", "collections", "typing"}
+    assert imported <= {"__future__", "hashlib", "json", "collections", "typing", "types"}
     # No dataset, model, inference, retrieval, training, metrics or benchmark
     # dependency, and no B1 import at all.
     assert "medscale" not in imported

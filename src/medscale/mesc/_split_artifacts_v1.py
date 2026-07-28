@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import ClassVar, Final
 
 from medscale.mesc._canonical_json_v1 import (
@@ -170,6 +171,15 @@ class SplitSummaryIdentityCore:
     schema_version: str = ARTIFACT_SCHEMA_VERSIONS["split_summary"]
 
     def __post_init__(self) -> None:
+        # Freeze before validating, so the values that were validated are
+        # exactly the values that are stored.  A caller-owned dict must never
+        # remain reachable: mutating it later would silently change this core's
+        # canonical bytes, its digest, and every fingerprint derived from it.
+        for name in ("partition_totals", "label_totals", "group_counts_by_partition"):
+            object.__setattr__(self, name, _frozen_mapping(getattr(self, name)))
+        object.__setattr__(
+            self, "partition_label_matrix", _frozen_matrix(self.partition_label_matrix)
+        )
         for name in ("total_example_count", "total_group_count", "excluded_record_count"):
             _validate_count(getattr(self, name), name)
         for name in ("partition_totals", "label_totals", "group_counts_by_partition"):
@@ -231,6 +241,11 @@ class SplitFingerprintIdentity:
         object.__setattr__(
             self, "artifact_descriptors", validate_descriptor_set(self.artifact_descriptors)
         )
+        # The split_summary descriptor is the one descriptor whose bytes this
+        # object carries, so it is the one binding that can be proved here.
+        # Proving it closes the path where a syntactically valid descriptor
+        # describes bytes that are not the core actually being fingerprinted.
+        verify_split_summary_binding(self)
 
     def to_canonical_document(self) -> dict[str, object]:
         return {
@@ -360,8 +375,40 @@ def build_split_fingerprint_record(
     )
 
 
+def verify_split_summary_binding(identity: SplitFingerprintIdentity) -> None:
+    """Recompute the carried core's bytes and reject a descriptor that misdescribes them.
+
+    Digest is checked before byte size, so an input that is wrong in both ways
+    always fails the same way.
+    """
+    core_bytes = identity.split_summary_identity_core.canonical_bytes()
+    expected_digest = sha256_of_bytes(core_bytes)
+    summary = next(
+        descriptor
+        for descriptor in identity.artifact_descriptors
+        if descriptor.role == "split_summary"
+    )
+    if summary.sha256 != expected_digest:
+        raise InvalidSha256Error(
+            f"split_summary descriptor digest {summary.sha256!r} does not match "
+            f"the carried identity core {expected_digest!r}"
+        )
+    if summary.byte_size != len(core_bytes):
+        raise InvalidByteSizeError(
+            f"split_summary descriptor byte size {summary.byte_size} does not match "
+            f"the carried identity core {len(core_bytes)}"
+        )
+
+
 def verify_split_fingerprint_record(record: SplitFingerprintRecord) -> None:
-    """Recompute the fingerprint from the bound identity and reject any mismatch."""
+    """Revalidate the self-verifiable binding, then recompute the fingerprint.
+
+    The binding is checked first so a correct final fingerprint can never mask a
+    split_summary descriptor that misdescribes the core it is bound to.  The
+    other three descriptors reference payloads this object does not carry, so
+    they are not — and must not be claimed to be — verified here.
+    """
+    verify_split_summary_binding(record.identity)
     recomputed = compute_split_fingerprint(record.identity)
     if recomputed != record.split_fingerprint:
         raise FingerprintMismatchError(
@@ -403,6 +450,21 @@ def _validate_byte_size(value: object) -> None:
         raise InvalidByteSizeError(f"byte_size must be a non-negative integer, got {value!r}")
     if value < 0:
         raise InvalidByteSizeError(f"byte_size must be a non-negative integer, got {value!r}")
+
+
+def _frozen_mapping(value: object) -> object:
+    """Return a caller-independent read-only copy of one mapping level."""
+    if not isinstance(value, Mapping):
+        return value
+    return MappingProxyType(dict(value))
+
+
+def _frozen_matrix(value: object) -> object:
+    """Return a caller-independent read-only copy of a mapping of mappings."""
+    if not isinstance(value, Mapping):
+        return value
+    rows: dict[object, object] = {key: _frozen_mapping(row) for key, row in value.items()}
+    return MappingProxyType(rows)
 
 
 def _validate_count(value: object, name: str) -> None:

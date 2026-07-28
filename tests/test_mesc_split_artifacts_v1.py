@@ -49,6 +49,7 @@ from medscale.mesc._split_artifacts_v1 import (
     validate_descriptor_set,
     verify_descriptor_against_bytes,
     verify_split_fingerprint_record,
+    verify_split_summary_binding,
 )
 
 # --------------------------------------------------------------------------
@@ -498,6 +499,85 @@ def test_core_rejects_empty_algorithm_version() -> None:
         make_core(algorithm_version="")
 
 
+# --------------------------------------------------------------------------
+# Caller-independent immutable core state
+# --------------------------------------------------------------------------
+
+
+def test_caller_mutation_of_every_top_level_mapping_cannot_change_the_core() -> None:
+    totals = {"test": 1, "train": 4, "validation": 1}
+    labels = {"maybe": 1, "no": 2, "yes": 3}
+    groups = {"test": 1, "train": 4, "validation": 1}
+    core = make_core(partition_totals=totals, label_totals=labels, group_counts_by_partition=groups)
+    document_before = core.to_canonical_document()
+    bytes_before = core.canonical_bytes()
+    digest_before = sha256_of_bytes(bytes_before)
+
+    totals["train"] = 999
+    totals["injected"] = 1
+    labels["yes"] = 999
+    del labels["no"]
+    groups.clear()
+
+    assert core.to_canonical_document() == document_before
+    assert core.canonical_bytes() == bytes_before
+    assert sha256_of_bytes(core.canonical_bytes()) == digest_before
+    assert core.canonical_bytes() == GOLDEN_CORE_BYTES
+
+
+def test_caller_mutation_of_nested_matrix_rows_cannot_change_the_core() -> None:
+    inner = {"maybe": 1, "no": 2, "yes": 1}
+    matrix = {
+        "test": {"maybe": 0, "no": 0, "yes": 1},
+        "train": inner,
+        "validation": {"maybe": 0, "no": 0, "yes": 1},
+    }
+    core = make_core(partition_label_matrix=matrix)
+    bytes_before = core.canonical_bytes()
+
+    inner["yes"] = 999
+    inner["injected"] = 7
+    matrix["extra"] = {"yes": 1}
+
+    assert core.canonical_bytes() == bytes_before
+    assert core.canonical_bytes() == GOLDEN_CORE_BYTES
+
+
+def test_caller_mutation_cannot_change_the_split_fingerprint() -> None:
+    totals = {"test": 1, "train": 4, "validation": 1}
+    identity = make_identity(split_summary_identity_core=make_core(partition_totals=totals))
+    before = compute_split_fingerprint(identity)
+    totals["train"] = 999
+    assert compute_split_fingerprint(identity) == before == GOLDEN_SPLIT_FINGERPRINT
+    verify_split_fingerprint_record(build_split_fingerprint_record(identity))
+
+
+def test_returned_document_does_not_expose_mutable_internal_references() -> None:
+    core = make_core()
+    document = core.to_canonical_document()
+    partition_totals = document["partition_totals"]
+    assert isinstance(partition_totals, dict)
+    partition_totals["train"] = 999
+    matrix = document["partition_label_matrix"]
+    assert isinstance(matrix, dict)
+    matrix["train"]["yes"] = 999
+    # Mutating the returned document must not reach the core.
+    assert core.canonical_bytes() == GOLDEN_CORE_BYTES
+    assert core.to_canonical_document()["partition_totals"] == {
+        "test": 1,
+        "train": 4,
+        "validation": 1,
+    }
+
+
+def test_stored_mappings_are_read_only() -> None:
+    core = make_core()
+    with pytest.raises(TypeError):
+        core.partition_totals["train"] = 999  # type: ignore[index]
+    with pytest.raises(TypeError):
+        core.partition_label_matrix["train"]["yes"] = 999  # type: ignore[index]
+
+
 def test_core_insertion_order_does_not_change_bytes() -> None:
     forward = make_core(partition_totals={"test": 1, "train": 4, "validation": 1})
     reverse = make_core(partition_totals={"validation": 1, "train": 4, "test": 1})
@@ -556,8 +636,10 @@ def test_fingerprint_is_full_lowercase_64_hex() -> None:
     assert len(fingerprint) == 64
     assert fingerprint == fingerprint.lower()
     assert all(character in "0123456789abcdef" for character in fingerprint)
-    # Never a 16-hex truncation.
-    assert len(fingerprint) != 16
+    # The authoritative value is the full digest, never B1's 16-hex truncation:
+    # a truncated form must not be accepted as the fingerprint.
+    with pytest.raises(InvalidSha256Error):
+        SplitFingerprintRecord(identity=make_identity(), split_fingerprint=fingerprint[:16])
 
 
 def test_identity_bytes_end_in_exactly_one_line_feed() -> None:
@@ -613,6 +695,116 @@ def test_split_summary_descriptor_digests_only_the_core() -> None:
     summary = next(d for d in identity.artifact_descriptors if d.role == "split_summary")
     assert summary.sha256 == GOLDEN_CORE_SHA256
     assert summary.sha256 == sha256_of_bytes(make_core().canonical_bytes())
+
+
+# --------------------------------------------------------------------------
+# split_summary descriptor binding
+# --------------------------------------------------------------------------
+
+
+def _identity_fields(
+    summary: SplitArtifactDescriptor, core: SplitSummaryIdentityCore
+) -> dict[str, Any]:
+    others = [d for d in make_identity().artifact_descriptors if d.role != "split_summary"]
+    return {
+        "bundle_schema_version": BUNDLE_SCHEMA_VERSION,
+        "policy_id": "mesc-pilot-01-split-policy/1",
+        "algorithm_version": "mesc-pilot-01-split-algorithm/1",
+        "split_seed": "mesc-pilot-01-split-v1",
+        "artifact_descriptors": (summary, *others),
+        "split_summary_identity_core": core,
+    }
+
+
+def _summary_descriptor(sha256: str, byte_size: int) -> SplitArtifactDescriptor:
+    return SplitArtifactDescriptor(
+        role="split_summary",
+        schema_version=ARTIFACT_SCHEMA_VERSIONS["split_summary"],
+        sha256=sha256,
+        byte_size=byte_size,
+    )
+
+
+def test_directly_constructed_identity_with_valid_binding_passes() -> None:
+    core = make_core()
+    summary = _summary_descriptor(GOLDEN_CORE_SHA256, len(core.canonical_bytes()))
+    identity = SplitFingerprintIdentity(**_identity_fields(summary, core))
+    assert compute_split_fingerprint(identity) == GOLDEN_SPLIT_FINGERPRINT
+
+
+def test_direct_identity_rejects_wrong_summary_digest() -> None:
+    core = make_core()
+    summary = _summary_descriptor("a" * 64, len(core.canonical_bytes()))
+    with pytest.raises(InvalidSha256Error) as excinfo:
+        SplitFingerprintIdentity(**_identity_fields(summary, core))
+    assert excinfo.value.code == "invalid_sha256"
+
+
+def test_direct_identity_rejects_wrong_summary_byte_size() -> None:
+    core = make_core()
+    summary = _summary_descriptor(GOLDEN_CORE_SHA256, len(core.canonical_bytes()) + 1)
+    with pytest.raises(InvalidByteSizeError) as excinfo:
+        SplitFingerprintIdentity(**_identity_fields(summary, core))
+    assert excinfo.value.code == "invalid_byte_size"
+
+
+def test_direct_identity_reports_digest_before_size_when_both_are_wrong() -> None:
+    core = make_core()
+    summary = _summary_descriptor("b" * 64, len(core.canonical_bytes()) + 5)
+    with pytest.raises(InvalidSha256Error):
+        SplitFingerprintIdentity(**_identity_fields(summary, core))
+
+
+def test_builder_cannot_accept_an_unbound_summary_descriptor() -> None:
+    core = make_core()
+    summary = _summary_descriptor("c" * 64, 1)
+    with pytest.raises(InvalidSha256Error):
+        build_split_fingerprint_record(SplitFingerprintIdentity(**_identity_fields(summary, core)))
+
+
+def _low_level_identity(
+    summary: SplitArtifactDescriptor, core: SplitSummaryIdentityCore
+) -> SplitFingerprintIdentity:
+    """Bypass __init__/__post_init__ entirely, as a direct low-level path would."""
+    identity = object.__new__(SplitFingerprintIdentity)
+    fields = _identity_fields(summary, core)
+    fields["artifact_descriptors"] = tuple(
+        sorted(fields["artifact_descriptors"], key=lambda item: item.role)
+    )
+    for name, value in fields.items():
+        object.__setattr__(identity, name, value)
+    return identity
+
+
+def test_verification_rechecks_binding_built_through_a_low_level_path() -> None:
+    core = make_core()
+    identity = _low_level_identity(_summary_descriptor("d" * 64, 1), core)
+    with pytest.raises(InvalidSha256Error):
+        verify_split_summary_binding(identity)
+
+
+def test_correct_fingerprint_cannot_mask_an_invalid_summary_descriptor() -> None:
+    core = make_core()
+    identity = _low_level_identity(_summary_descriptor("e" * 64, 1), core)
+    # The record's fingerprint is genuinely correct for this identity...
+    record = SplitFingerprintRecord(
+        identity=identity, split_fingerprint=compute_split_fingerprint(identity)
+    )
+    # ...and verification must still fail, because the binding is wrong.
+    with pytest.raises(InvalidSha256Error):
+        verify_split_fingerprint_record(record)
+
+
+def test_low_level_size_only_mismatch_is_rejected_at_verification() -> None:
+    core = make_core()
+    identity = _low_level_identity(
+        _summary_descriptor(GOLDEN_CORE_SHA256, len(core.canonical_bytes()) + 3), core
+    )
+    record = SplitFingerprintRecord(
+        identity=identity, split_fingerprint=compute_split_fingerprint(identity)
+    )
+    with pytest.raises(InvalidByteSizeError):
+        verify_split_fingerprint_record(record)
 
 
 def test_verification_accepts_a_matching_record() -> None:
@@ -890,6 +1082,13 @@ def test_artifact_module_imports_no_data_or_model_dependency() -> None:
             imported.update(alias.name.split(".")[0] for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
             imported.add(node.module.split(".")[0])
-    assert imported <= {"__future__", "collections", "dataclasses", "typing", "medscale"}
+    assert imported <= {
+        "__future__",
+        "collections",
+        "dataclasses",
+        "types",
+        "typing",
+        "medscale",
+    }
     for forbidden in ("torch", "transformers", "datasets", "pandas", "numpy", "requests", "httpx"):
         assert forbidden not in imported
