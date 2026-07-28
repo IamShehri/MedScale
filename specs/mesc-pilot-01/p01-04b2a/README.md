@@ -31,7 +31,6 @@ Canonical founder record:
 `founder-ratification.md`
 
 ---
-
 ## Purpose
 
 This package defines the exact implementation boundary for P01-04B2A —
@@ -126,25 +125,42 @@ promoted on the claim of completed cross-platform determinism.
 
 ## Cross-platform portability validation gate
 
-A separate documentation package proposes the design of the validation
-infrastructure that binding N-12 requires:
+The validation-gate design for the cross-platform portability evidence
+infrastructure required by N-12 was merged through PR #57.
 
-`../p01-04b2a-portability/`
+Canonical adoption:
+`30f79b183a4fff6a08e30e1e43f5da549ce20c1a`
 
-Current state of that gate:
+Final merged PR head:
+`b76420913c80bd54fd31e63ccffd5ed43a36a854`
 
-- portability infrastructure gate **designed and ratified**;
-- founder decision **recorded 2026-07-27** as FD-PV-1 through FD-PV-10, with the
-  FD-PV-6 numeric limits selected;
-- infrastructure implementation **not authorized**;
-- existing CI remains **Linux-only** (`ubuntu-latest`, Python 3.11 and 3.12);
+Source branch:
+`docs/mesc-p01-04b2a-portability-gate` — deleted after verified post-merge cleanup.
+
+Post-merge verification on canonical main:
+- CI `30233225446` — success
+- CodeQL `30233225421` — success
+- Optional Extras / Backends `30233225422` — success
+
+Those runs are standard Linux quality and security gates; they are not the
+six-cell golden-vector portability evidence required for B2A acceptance.
+
+Current state:
+
+- portability infrastructure gate designed, founder-ratified, and adopted on
+  canonical main through PR #57, with FD-PV-1 through FD-PV-10 recorded on
+  2026-07-27 and FD-PV-6 numeric limits selected;
+- canonical adoption is `30f79b183a4fff6a08e30e1e43f5da549ce20c1a`;
+- infrastructure implementation remains **not authorized**;
+- portability evidence was **not produced**;
+- the standard Linux workflows are quality/security gates only;
 - Windows and macOS portability evidence remains **open**;
 - B2A remains **not accepted**;
 - B2B remains **not authorized**.
 
-That package designs infrastructure only. It does not alter FD-B2A-1 through
-FD-B2A-8, does not authorize implementation or execution, and does not produce
-or claim any portability evidence.
+The gate design is at `../p01-04b2a-portability/`. It does not alter FD-B2A-1
+through FD-B2A-8, does not authorize implementation or execution, and does not
+produce or claim any portability evidence.
 
 ## Document index
 
