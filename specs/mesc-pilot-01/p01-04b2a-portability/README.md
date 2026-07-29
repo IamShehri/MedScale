@@ -9,7 +9,7 @@ Infrastructure implementation:
 NOT AUTHORIZED
 
 B2A implementation:
-NOT AUTHORIZED
+ADOPTED THROUGH PR #59; NOT AUTHORIZED HERE
 
 Execution:
 NOT AUTHORIZED
@@ -79,6 +79,14 @@ file, or B2A implementation file is written. Those contracts were ratified on
 This package designs infrastructure. It does not build it, run it, or produce
 evidence with it.
 
+The canonical B2A artifact implementation was adopted through PR #59.
+
+Portability-infrastructure implementation remains unauthorized.
+
+Portability evidence remains unauthorized and unproduced.
+
+Windows and macOS evidence remain open.
+
 ## Binding relationship to FD-B2A-8 and N-12
 
 FD-B2A-8 was founder-ratified on 2026-07-26 (adoption PR #55, canonical merge
@@ -94,7 +102,7 @@ Binding N-12 makes the consequence explicit:
 - validation-infrastructure or workflow changes require **separate founder
   authorization**;
 - B2B remains blocked until B2A acceptance;
-- no artifact may be promoted on a claim of completed cross-platform
+- no artifact may be promoted on the claim of completed cross-platform
   determinism.
 
 This package is the design gate for the infrastructure N-12 requires. It does
@@ -116,7 +124,7 @@ remains open.
 
 | Activity | Meaning | Status |
 |---|---|---|
-| **B2A implementation** | Writing the private canonical-serialization and artifact-identity modules and their tests, in the four already-ratified paths | **NOT AUTHORIZED** |
+| **B2A implementation** | Writing the private canonical-serialization and artifact-identity modules and their tests, in the four already-ratified paths | **NOT AUTHORIZED HERE** |
 | **Validation-infrastructure implementation** | Writing the portability workflow and its helper/test modules in the three paths proposed here | **NOT AUTHORIZED** |
 | **Portability evidence production** | Actually running the six-cell matrix and generating comparison evidence | **NOT AUTHORIZED** |
 | **B2A acceptance** | Declaring B2A accepted, which unblocks B2B consideration | **NOT ACHIEVED** |
