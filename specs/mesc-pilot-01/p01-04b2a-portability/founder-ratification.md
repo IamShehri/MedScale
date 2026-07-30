@@ -1,22 +1,34 @@
 # MESC Pilot-01 — P01-04B2A Portability Validation Gate Founder Ratification
 
 Status:
-**FOUNDER RATIFIED — IMPLEMENTATION NOT AUTHORIZED**
+**CONTRACTS FOUNDER RATIFIED; REMEDIATION PROSPECTIVELY AUTHORIZED**
 
-Infrastructure implementation:
-**NOT AUTHORIZED**
+Contracts:
+**FOUNDER RATIFIED**
 
-B2A implementation:
-**NOT AUTHORIZED**
+Historical initial implementation:
+**OCCURRED BEFORE CANONICAL AUTHORIZATION**
+
+Current remediation implementation:
+**PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED**
+
+Infrastructure adoption:
+**NOT ACHIEVED**
 
 Execution:
 **NOT AUTHORIZED**
 
-Evidence production:
+Admissible evidence production:
 **NOT AUTHORIZED**
 
 B2A acceptance:
 **NOT ACHIEVED**
+
+B2B:
+**NOT AUTHORIZED**
+
+P01-04B:
+**INCOMPLETE / NOT ACCEPTED**
 
 Founder:
 Abdulaziz Alshehri
@@ -161,3 +173,240 @@ The only next steps authorized by this ratification record are:
 
 No implementation may begin merely because this founder decision was issued,
 recorded, reviewed, or merged.
+
+---
+
+# Addendum — FD-PV-11 through FD-PV-15
+
+Founder:
+Abdulaziz Alshehri
+
+Founder decision date:
+2026-07-30
+
+Required canonical baseline for this record:
+`f71c6abf2b2f905f605951605efd6c8ab016523e`
+
+Affected Draft pull request:
+`PR #61`
+
+Exact reviewed head:
+`8e484739ba72f4a3be357bd5934b305fd9e7cf41`
+
+Exact reviewed tree:
+`a6bfb21cb2bfa34964ce68190e53f5f809661002`
+
+Reviewed commit series:
+`023d0eeff535071cff96cf366b4c52d973347207` (tree
+`8e222bf7cdc6ffc34e50b2059e40b47174157b84`), then
+`8e484739ba72f4a3be357bd5934b305fd9e7cf41`.
+
+## Accepted determination
+
+The founder accepts the following verdict on the exact reviewed head:
+
+```text
+AUTHORITY GAP — PR #61 MUST REMAIN DRAFT UNTIL MISSING DECISIONS ARE CANONICALIZED
+```
+
+The determination is that binding implementation constraints were being applied
+to PR #61 that could not be re-derived from any record committed to this
+repository. This addendum canonicalizes the missing decisions so that a reviewer
+working only from the repository can reconstruct the full constraint set.
+
+**Independence disclosure.** The reviews of PR #61 produced to date were not
+produced by an independent reviewer: they were produced by the same party that
+authored the two commits. This record does not claim that a qualified
+independent exact-head review has occurred. `FD-PV-11` requires one before any
+Ready-transition decision, and that requirement is outstanding.
+
+## FD-PV-11 — Historical truth and prospective remediation authorization
+
+1. The PR #61 implementation work was created **before** a canonical
+   infrastructure-implementation authorization was adopted.
+2. This record does **not** retroactively claim that
+   `023d0eeff535071cff96cf366b4c52d973347207` or
+   `8e484739ba72f4a3be357bd5934b305fd9e7cf41` were authorized when authored.
+   They were not.
+3. Both commits remain Draft, unmerged, unadopted implementation work.
+4. The founder now **prospectively** authorizes remediation of, and further
+   review of, PR #61 — but only after this governance package is adopted on
+   canonical main.
+5. No current implementation is accepted merely because remediation is
+   authorized. Authorizing repair is not accepting the thing repaired.
+6. PR #61 must remain Draft until **all** of the following have occurred:
+   - this governance package is adopted on canonical main;
+   - the branch is synchronized with the new canonical main **without history
+     rewriting**;
+   - the required implementation corrections are completed;
+   - exact-head workflows pass;
+   - a **genuinely independent** exact-head review approves it;
+   - a **separate** founder Ready-transition decision is issued.
+
+## FD-PV-12 — Preserve FD-PV-6 through bounded artifact handling
+
+The founder selects the security-preserving bounded-artifact-handling
+architecture. The corrected infrastructure must enforce exactly:
+
+| Limit | Bytes | Axis | Scope |
+|---|---|---|---|
+| Maximum compressed size per artifact | `1048576` | Compressed archive bytes | Per artifact |
+| Maximum extracted size per artifact | `4194304` | Extracted regular-file bytes | Per artifact |
+| Maximum compressed across six artifacts | `6291456` | Compressed archive bytes | Aggregate |
+| Maximum extracted across six artifacts | `25165824` | Extracted regular-file bytes | Aggregate |
+
+Requirements:
+
+- compressed limits are measured against **artifact archive bytes**;
+- extracted limits are measured against **actual extracted regular-file bytes**;
+- compressed limits are enforced **before or during download**;
+- archive structure is inspected **before** extraction;
+- extracted limits are enforced **during** bounded extraction;
+- post-extraction-only enforcement is **prohibited**;
+- an oversized download or ZIP bomb must be stopped before it can exhaust runner
+  disk;
+- exactly six named artifacts are accepted;
+- exactly three regular files per artifact are accepted;
+- unsafe entries fail closed;
+- no normalization of compared file bytes is permitted;
+- all violations use the existing ratified failure taxonomy;
+- the four limits themselves remain **unchanged**.
+
+The value `1048576` **must not** be reinterpreted as an extracted per-file
+limit. `FD-PV-6` does not ratify a general per-file 1 MiB extracted limit. Any
+such limit is an invented constraint and must be **removed** during remediation.
+
+## FD-PV-13 — Narrow read-only Actions permission
+
+The earlier `contents: read` only rule is amended **solely** as follows:
+
+```yaml
+permissions:
+  contents: read
+  actions: read
+```
+
+`actions: read` is authorized solely for:
+
+- enumerating the artifacts belonging to the **current exact workflow run**;
+- reading artifact metadata, including archive byte size;
+- downloading the exact expected artifacts through the documented GitHub Actions
+  API.
+
+It does **not** authorize workflow mutation, reruns, cancellation, dispatch,
+artifact deletion, write permissions, secrets, OIDC, package or release
+publication, cache use, or access to artifacts from another repository or an
+unrelated run.
+
+**No other permission expansion is authorized.**
+
+Division of responsibility: the **workflow** performs artifact metadata lookup
+and capped transport. The **Python helper remains network-free** and operates
+only on bounded local ZIP files supplied to it by the workflow.
+
+## FD-PV-14 — Canonical SHA binding in the evidence envelope
+
+The canonical-main dispatch evidence envelope must support:
+
+```json
+"canonical_sha": "<40 lowercase hexadecimal commit SHA>"
+```
+
+Requirements:
+
+- present **only** for a canonical-main `workflow_dispatch` evidence envelope;
+- **absent** from pull-request validation envelopes;
+- must equal the exact guarded checked-out canonical-main HEAD;
+- passed **explicitly** from the already validated dispatch input;
+- the helper must **not** infer it from `GITHUB_SHA`, a branch name, a tag, or
+  any other uncontrolled environment value;
+- validation requires exactly 40 lowercase hexadecimal characters;
+- uppercase, empty, short, long, non-hex, ref-name, branch-name, and tag values
+  fail closed;
+- failure uses the existing `evidence_generation_failure` category — the
+  twenty-one-category taxonomy is not extended;
+- it never enters the three compared files;
+- it never enters `split_fingerprint`;
+- it remains in the non-promoted validation envelope only.
+
+Because the evidence schema has **not** yet been adopted, and has never been
+used by an authorized canonical-main dispatch, correct
+`mesc-pilot-01-b2a-portability-evidence/1` **in place**. Do not create an
+abandoned version 2.
+
+## FD-PV-15 — Remediation and sequencing authority
+
+After this governance package is merged and independently verified, and not
+before, the following future sequence — and only this sequence — is authorized:
+
+1. Synchronize the new canonical main into
+   `feat/mesc-b2a-portability-infrastructure` using a normal **non-force merge
+   commit**.
+2. Preserve both existing commits and their exact object identities.
+3. Do **not** rebase, amend, squash, reset, cherry-pick, or force-push them.
+4. Add exactly two correction commits.
+
+### Correction A
+
+Recommended subject:
+
+```text
+fix(mesc): bind canonical SHA into portability evidence
+```
+
+Scope — exactly these three paths:
+
+```text
+.github/workflows/mesc-b2a-portability.yml
+tests/_mesc_b2a_portability.py
+tests/test_mesc_b2a_portability.py
+```
+
+Purpose: implement `FD-PV-14`; add strict SHA validation; ensure pull-request
+envelopes omit `canonical_sha`; ensure dispatch envelopes contain the exact
+guarded SHA; preserve deterministic serialization and the existing failure
+taxonomy.
+
+### Correction B
+
+Recommended subject:
+
+```text
+fix(mesc): enforce bounded portability artifact extraction
+```
+
+Same three implementation paths only.
+
+Purpose: implement `FD-PV-12` and `FD-PV-13`; replace automatic full extraction
+with bounded artifact handling; enforce compressed limits before or during
+transport; inspect ZIP entries before extraction; extract through bounded
+chunked reads; enforce the exact extracted limits during extraction; remove the
+invented per-file 1 MiB extracted limit; add real negative tests for every
+safe-extraction guard; replace any tautological or non-executing safety test;
+tighten tests that accept multiple unrelated error categories; preserve the
+twenty-one-category ratified taxonomy; and introduce no dependency, lockfile,
+`src/**`, dataset, model, or public-API change.
+
+## Authorization boundary of this addendum
+
+This addendum authorizes only its own governance record and the Draft pull
+request that carries it. It does **not** authorize:
+
+- any change to PR #61;
+- workflow or helper implementation;
+- the future synchronization merge commit;
+- either correction commit;
+- workflow rerun or `workflow_dispatch`;
+- Ready transition, merge, or auto-merge;
+- admissible evidence production;
+- B2A acceptance or B2A execution;
+- closure of the Windows or macOS obligations;
+- B2B;
+- branch deletion.
+
+Each remains a separate founder act. `FD-PV-1` through `FD-PV-10`, `FD-B2A-1`
+through `FD-B2A-8`, binding `N-12`, `D1`–`D10`, and `FD-B2-1` through `FD-B2-8`
+are unamended except where `FD-PV-13` narrowly amends the permission rule.
+
+B2A remains not accepted. B2B remains not authorized. P01-04B remains incomplete
+and not accepted.

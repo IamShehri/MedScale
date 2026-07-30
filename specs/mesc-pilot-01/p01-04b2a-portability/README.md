@@ -2,23 +2,35 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — ADOPTED ON CANONICAL MAIN;
-IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-ADOPTED THROUGH PR #59; NOT AUTHORIZED HERE
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation implementation:
+PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -173,8 +185,71 @@ B2A and does not unblock B2B.
 |---|---|
 | `README.md` | This document: purpose, authority relationship, boundaries |
 | `spec.md` | Proposed infrastructure contract: paths, matrix, evidence, aggregation, security |
-| `decision-record.md` | PD-PV-1 through PD-PV-10, adopted as FD-PV-1 through FD-PV-10 |
-| `founder-ratification.md` | Canonical founder record of FD-PV-1 through FD-PV-10 and the FD-PV-6 numeric limits |
+| `decision-record.md` | PD-PV-1 through PD-PV-10, adopted as FD-PV-1 through FD-PV-10; continuity entries for FD-PV-11 through FD-PV-15 |
+| `founder-ratification.md` | Canonical founder record of FD-PV-1 through FD-PV-10, the FD-PV-6 numeric limits, and FD-PV-11 through FD-PV-15 |
 | `plan.md` | The full controlled sequence and its prohibitions |
 | `acceptance.md` | Documentation-gate, future-infrastructure, and future-B2A-acceptance criteria |
 | `implementation-task.md` | Future builder brief; not executable without separate authorization |
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — ADOPTED ON CANONICAL MAIN;
+IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+ADOPTED THROUGH PR #59; NOT AUTHORIZED HERE
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Remediation authorization recorded 2026-07-30
+
+Founder decisions `FD-PV-11` through `FD-PV-15` are recorded in
+`founder-ratification.md` and are canonical there.
+
+- `FD-PV-11` — historical truth and prospective remediation authorization.
+- `FD-PV-12` — preserve `FD-PV-6` through bounded artifact handling.
+- `FD-PV-13` — narrow read-only `actions: read` permission.
+- `FD-PV-14` — canonical SHA binding in the evidence envelope.
+- `FD-PV-15` — remediation and sequencing authority.
+
+The implementation work in Draft `PR #61` (head
+`8e484739ba72f4a3be357bd5934b305fd9e7cf41`, tree
+`a6bfb21cb2bfa34964ce68190e53f5f809661002`) was created before any canonical
+infrastructure-implementation authorization existed. That work is **not**
+retroactively authorized. It remains Draft, unmerged, and unadopted.
+
+Remediation of that work is now authorized **prospectively**, effective only
+after this package is adopted on canonical main. Authorizing repair is not
+accepting the thing repaired.
+
+`PR #61` is not corrected, not accepted, not adopted, not Ready, and not
+mergeable by authority. Infrastructure adoption is not achieved. Execution and
+admissible evidence production remain unauthorized. Windows and macOS evidence
+remains open and binding `N-12` is not discharged. B2A remains not accepted.
+B2B remains not authorized. P01-04B remains incomplete and not accepted.

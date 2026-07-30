@@ -2,22 +2,35 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation implementation:
+PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -138,3 +151,68 @@ publication, or clinical use.
 Until a separate founder acceptance decision is recorded, B2A remains **not
 accepted**, P01-04B remains **incomplete and not accepted**, and B2B remains
 **not authorized**.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Remediation acceptance criteria (FD-PV-11 through FD-PV-15)
+
+These criteria are additional. They do not replace or relax any earlier layer,
+and satisfying them does not satisfy infrastructure adoption or B2A acceptance.
+
+| Criterion | Requirement |
+|---|---|
+| Governance adoption | This package adopted on canonical main before any correction commit |
+| History preservation | Both PR #61 commits retain their exact object identities; no rebase, amend, squash, reset, cherry-pick, or force-push |
+| Synchronization | Canonical main merged into the branch by a normal non-force merge commit |
+| Correction scope | Exactly the three implementation paths; no dependency, lockfile, `src/**`, dataset, model, or public-API change |
+| Compressed limits | Measured against artifact archive bytes and enforced before or during download |
+| Extracted limits | Measured against extracted regular-file bytes and enforced during bounded extraction |
+| Pre-extraction inspection | Archive structure inspected before any entry is written |
+| Invented limit removed | No general per-file 1 MiB extracted limit remains |
+| Resource safety | An oversized download or ZIP bomb is stopped before runner-disk exhaustion |
+| Permission scope | Exactly `contents: read` and `actions: read`; no further expansion |
+| Helper network boundary | The helper performs no network access |
+| Envelope binding | `canonical_sha` present on canonical-main dispatch envelopes only, absent on pull-request envelopes, validated as 40 lowercase hex, failing closed via `evidence_generation_failure` |
+| Schema | `mesc-pilot-01-b2a-portability-evidence/1` corrected in place; no version 2 |
+| Taxonomy | The twenty-one ratified categories are preserved exactly, unrenamed and unextended |
+| Test effectiveness | Every safe-extraction guard has a negative test that invokes the helper, reaches the guard, and asserts the exact category; no tautological or non-executing safety test remains; tests do not accept unrelated error categories |
+| Exact-head verification | Exact-head workflows pass after correction |
+| Independent review | A genuinely independent exact-head review, by a reviewer that did not author the work, approves the corrected head |
+| Ready transition | A separate founder decision, issued after all of the above |
+
+Meeting every row above still does **not** accept B2A, does not produce
+admissible evidence, does not discharge binding `N-12`, does not close the
+Windows or macOS obligations, and does not authorize B2B.

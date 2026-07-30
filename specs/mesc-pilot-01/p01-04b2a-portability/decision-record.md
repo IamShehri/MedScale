@@ -2,22 +2,35 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation implementation:
+PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -272,3 +285,107 @@ The founder decided PD-PV-1 through PD-PV-10 on 2026-07-27, adopting them as
 That decision does not by itself authorize infrastructure implementation, B2A
 implementation, execution, evidence production, or B2A acceptance; each remains
 a separate act.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## FD-PV-11 — Historical truth and prospective remediation authorization
+
+Recorded 2026-07-30. The PR #61 implementation work predates any canonical
+infrastructure-implementation authorization. This record does not retroactively
+authorize it. Remediation and further review are authorized prospectively, only
+after this package is adopted. PR #61 remains Draft until adoption,
+non-rewriting synchronization, correction, passing exact-head workflows, a
+genuinely independent exact-head review, and a separate Ready-transition
+decision have all occurred.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-11
+```
+
+## FD-PV-12 — Preserve FD-PV-6 through bounded artifact handling
+
+The four `FD-PV-6` limits are unchanged. Compressed limits are measured against
+artifact archive bytes and enforced before or during download; extracted limits
+are measured against extracted regular-file bytes and enforced during bounded
+extraction. Archive structure is inspected before extraction.
+Post-extraction-only enforcement is prohibited. `1048576` is a compressed
+per-artifact limit and must not be reinterpreted as an extracted per-file limit;
+no general per-file 1 MiB extracted limit is ratified, and any such invented
+limit is removed during remediation.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-12
+```
+
+## FD-PV-13 — Narrow read-only Actions permission
+
+`permissions: contents: read` is amended to `contents: read` plus
+`actions: read`, solely for enumerating the current run's artifacts, reading
+artifact metadata including archive byte size, and downloading the exact
+expected artifacts through the documented GitHub Actions API. No other expansion
+is authorized. The helper remains network-free.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-13
+```
+
+## FD-PV-14 — Canonical SHA binding in the evidence envelope
+
+`canonical_sha` is added to the evidence envelope for canonical-main
+`workflow_dispatch` runs only, absent from pull-request envelopes, validated as
+exactly 40 lowercase hexadecimal characters, passed explicitly from the guarded
+dispatch input, never inferred from the environment, failing closed through
+`evidence_generation_failure`. `mesc-pilot-01-b2a-portability-evidence/1` is
+corrected in place; no version 2 is created.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-14
+```
+
+## FD-PV-15 — Remediation and sequencing authority
+
+A non-force merge commit synchronizes canonical main into the PR #61 branch,
+preserving both existing commit identities, followed by exactly two additive
+correction commits — Correction A for `FD-PV-14`, Correction B for `FD-PV-12`
+and `FD-PV-13` — each confined to the three implementation paths.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-15
+```
+
+The full text of `FD-PV-11` through `FD-PV-15` is canonical in
+`founder-ratification.md`. This file records them for continuity only; on any
+conflict the founder-ratification record controls.

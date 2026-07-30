@@ -2,22 +2,35 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation implementation:
+PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -104,3 +117,77 @@ Stop without mutation if:
 - secrets, write permissions, OIDC, dataset access, model access, or network
   fetches beyond the locked dependency environment would be introduced;
 - any document would claim authority the founder has not recorded.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Remediation sequence (FD-PV-15)
+
+Each step is a hard boundary. No step may begin before the previous step has
+completed and been verified. This sequence is authorized prospectively and is
+not executed by the record that authorizes it.
+
+1. Adopt this governance package on canonical main, after independent review and
+   a separate founder merge decision.
+2. Synchronize the new canonical main into
+   `feat/mesc-b2a-portability-infrastructure` with a normal non-force merge
+   commit. Preserve both existing commit identities. No rebase, amend, squash,
+   reset, cherry-pick, or force-push.
+3. Correction A — bind the canonical SHA into the evidence envelope
+   (`FD-PV-14`).
+4. Correction B — bounded artifact handling, corrected limit axes and timing,
+   removal of the invented per-file limit, and real safe-extraction regression
+   tests (`FD-PV-12`, `FD-PV-13`).
+5. Verify exact-head workflows pass.
+6. Obtain a genuinely independent exact-head review from a reviewer that did not
+   author the work.
+7. Obtain a separate founder Ready-transition decision.
+
+Steps 3 through 7 are each separate acts. None is authorized by the completion
+of an earlier one, and none is authorized by this document alone.
+
+## Additional stop conditions for remediation
+
+Stop without mutation if:
+
+- this governance package is not yet adopted on canonical main;
+- either existing PR #61 commit identity would change;
+- a fourth or later correction commit would be required;
+- any path outside the three implementation paths would be modified;
+- a permission beyond `contents: read` and `actions: read` would be required;
+- any of the four `FD-PV-6` byte values would change;
+- the twenty-one-category failure taxonomy would be renamed, merged, or
+  extended;
+- a new evidence schema version would be created.

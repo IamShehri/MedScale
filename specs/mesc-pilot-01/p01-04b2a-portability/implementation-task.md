@@ -2,26 +2,41 @@
 
 ```text
 THIS TASK IS NOT EXECUTABLE WITHOUT A SEPARATE FOUNDER IMPLEMENTATION AUTHORIZATION.
+THE REMEDIATION BRIEF ADDED 2026-07-30 BECOMES EXECUTABLE ONLY AFTER THE
+FD-PV-11 THROUGH FD-PV-15 GOVERNANCE PACKAGE IS ADOPTED ON CANONICAL MAIN.
 ```
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation implementation:
+PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -213,3 +228,88 @@ success is not B2A acceptance.
 Exactly one atomic commit and exactly one Draft pull request. No force-push. No
 Ready transition, no merge, no auto-merge. B2A implementation must never be
 combined with this infrastructure work.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Remediation brief (FD-PV-15)
+
+This brief becomes executable only after this governance package is adopted on
+canonical main, and only for the sequence recorded in `FD-PV-15`. It is not
+executable at the time of writing.
+
+Prerequisite: synchronize canonical main into
+`feat/mesc-b2a-portability-infrastructure` with a normal non-force merge commit,
+preserving both existing commit identities.
+
+### Correction A — `fix(mesc): bind canonical SHA into portability evidence`
+
+Implement `FD-PV-14`. Thread the already validated dispatch input explicitly
+through the workflow into the aggregate invocation and into the envelope
+builder. Validate exactly 40 lowercase hexadecimal characters. Fail closed via
+`evidence_generation_failure` for uppercase, empty, short, long, non-hex, ref,
+branch, and tag values. Omit the field entirely on pull-request runs. Never read
+it from `GITHUB_SHA` or any other uncontrolled environment value. Preserve
+deterministic canonical serialization and the twenty-one-category taxonomy.
+
+### Correction B — `fix(mesc): enforce bounded portability artifact extraction`
+
+Implement `FD-PV-12` and `FD-PV-13`. Replace automatic full extraction with
+bounded artifact handling: enumerate the current run's artifacts and read their
+archive byte sizes before download; enforce the `1048576` per-artifact and
+`6291456` aggregate compressed limits before or during transport; cap download
+bytes; inspect archive entries before extraction; extract through bounded
+chunked reads; enforce the `4194304` per-artifact and `25165824` aggregate
+extracted limits during extraction; and remove the invented per-file 1 MiB
+extracted limit. Add real negative tests for every safe-extraction guard,
+replace any tautological or non-executing safety test, and tighten tests that
+accept multiple unrelated error categories.
+
+Both corrections are confined to:
+
+```text
+.github/workflows/mesc-b2a-portability.yml
+tests/_mesc_b2a_portability.py
+tests/test_mesc_b2a_portability.py
+```
+
+No dependency, lockfile, `src/**`, dataset, model, or public-API change is
+authorized. Neither existing commit may be amended or rewritten.
+
+The size-limit sentence earlier in this document describing `1048576` bytes
+compressed and `4194304` bytes extracted per artifact remains correct. The axes
+are made explicit by `FD-PV-12`: compressed limits bind archive bytes, extracted
+limits bind extracted regular-file bytes, and neither may be enforced only after
+extraction has completed.
