@@ -1,16 +1,14 @@
-# MESC Pilot-01 — P01-04B2A Authorization Gate
+# MESC Pilot-01 — P01-04B2A Deterministic Artifact Types and Canonical Serialization
 
-Status:
-**FOUNDER-RATIFIED CONTRACT GATE — ADOPTED ON CANONICAL MAIN**
+## Status
 
-Implementation:
-**NOT AUTHORIZED**
+**B2A IMPLEMENTED AND ADOPTED — NOT ACCEPTED**
 
-Execution:
-**NOT AUTHORIZED**
+P01-04B2A implementation is present on canonical main through PR #59.
 
-Acceptance:
-**B2A NOT ACCEPTED**
+This records implementation adoption only.
+
+It does not constitute B2A acceptance and does not authorize execution.
 
 Canonical planning baseline:
 `1a9169f7229bb72eba6772448724c54ec71937c5`
@@ -29,6 +27,12 @@ Founder decision date:
 
 Canonical founder record:
 `founder-ratification.md`
+
+Implementation adoption:
+`5736b1171f1aa467105d931713f5749fb81acd5b`
+
+Implementation adoption PR:
+`#59`
 
 ---
 ## Purpose
@@ -53,12 +57,18 @@ Under it:
   2026-07-26;
 - FD-B2A-5 incorporates the clarification and validation sequence recorded
   under the historical proposal label PD-B2A-5.1;
-- ratification freezes the contract decisions only;
-- implementation remains separately unauthorized.
+- ratification froze the contract decisions only;
+- at the time it was adopted, it did not itself authorize implementation.
+
+That record is historical and is not the current implementation-status ledger.
+It does not record PR #59. Implementation was later separately authorized,
+implemented, and adopted on canonical main through PR #59; that later adoption
+did not accept B2A and did not authorize execution.
 
 PR #54 ratified the P01-04B2 *design* package; PR #55 adopted this B2A contract
-gate. Neither authorizes B2A implementation or execution. Merging or recording
-this documentation does not authorize implementation.
+gate; PR #59 adopted the B2A implementation on canonical main. None authorizes
+B2A acceptance or execution. Merging or recording this documentation does not
+authorize implementation.
 
 ## Authority hierarchy
 
@@ -67,8 +77,8 @@ this documentation does not authorize implementation.
 | Founder authorization | Ratification of split policy, ratios, grouping invariant, leakage taxonomy | **Ratified** (P01-04A) |
 | P01-04A specification | `specs/mesc-pilot-01/p01-04/*` | **Ratified** |
 | P01-04B1 implementation | Fixture-only deterministic split core | **Adopted**; private, in-memory, fixture-only; execution authority: none |
-| P01-04B2 design | Founder-ratified entry gate (FD-B2-1 through FD-B2-8) | **Design ratified**; implementation not authorized; execution not authorized |
-| P01-04B2A contracts | Deterministic artifact types and canonical serialization (FD-B2A-1 through FD-B2A-8) | **Founder-ratified 2026-07-26**; adopted on canonical main (`5c083a0c5f23d0f9837e7543c444633a68524e67`); implementation not authorized; execution not authorized; **B2A not accepted** |
+| P01-04B2 design | Founder-ratified entry gate (FD-B2-1 through FD-B2-8) | **Design ratified**; implementation not authorized except the separately authorized P01-04B2A increment; execution not authorized |
+| P01-04B2A contracts | Deterministic artifact types and canonical serialization (FD-B2A-1 through FD-B2A-8) | **Founder-ratified 2026-07-26**; implementation adopted on canonical main (`5736b1171f1aa467105d931713f5749fb81acd5b`) through PR #59; execution not authorized; **B2A not accepted** |
 | P01-04B overall | Tooling complete and accepted | **Not met** |
 | P01-04B2B–B2D | Separately proposed increments | **Not authorized** |
 | P01-04C–G stages | Separate authorizations each | **Not authorized** |
@@ -76,7 +86,7 @@ this documentation does not authorize implementation.
 
 ## B2A boundary
 
-P01-04B2A may later implement only:
+P01-04B2A implementation adopted through PR #59 includes only:
 
 1. private immutable artifact-contract types;
 2. canonical in-memory JSON serialization;
@@ -85,6 +95,8 @@ P01-04B2A may later implement only:
 5. non-circular authoritative split-fingerprint construction;
 6. validation and typed fail-closed errors;
 7. synthetic unit and golden-vector tests.
+
+General P01-04B2 implementation remains unauthorized except for the separately authorized P01-04B2A increment.
 
 P01-04B2A must not implement:
 
@@ -102,6 +114,7 @@ increments.
 ## Relationship to B1 and B2B–D
 
 B2A may reference B1 identities without changing B1 serialization or behavior.
+
 B2B requires separate authorization after B2A acceptance. B2C requires
 separate authorization after B2A and B2B acceptance. B2D requires separate
 authorization after B2A, B2B, and B2C acceptance.
@@ -161,6 +174,41 @@ Current state:
 The gate design is at `../p01-04b2a-portability/`. It does not alter FD-B2A-1
 through FD-B2A-8, does not authorize implementation or execution, and does not
 produce or claim any portability evidence.
+
+## Truth recorded
+
+- B2A contracts remain founder-ratified and adopted.
+- B2A implementation is implemented and adopted on canonical main through PR #59.
+- B2A remains not accepted.
+- Execution remains unauthorized.
+- General P01-04B2 implementation remains unauthorized except for the separately authorized and adopted P01-04B2A increment.
+- Portability-infrastructure implementation remains unauthorized.
+- Portability evidence remains unauthorized and unproduced.
+- Windows and macOS evidence remains open.
+- B2B remains unauthorized.
+- P01-04B remains incomplete and not accepted.
+
+## Reconstruction disclosure
+
+This documentation update is a replacement reconstruction from canonical main
+after the original local post-merge documentation commit objects became
+unavailable before publication. It does not claim Git-object identity with the
+superseded local series.
+
+Any review outcome recorded for that superseded series applied only to those
+commit objects and is not inherited by this reconstruction. This reconstruction
+requires its own independent review; no approval is claimed for it here.
+
+## Authority boundary
+
+- Recording this documentation does not accept B2A.
+- It does not authorize execution.
+- It does not authorize portability-infrastructure implementation.
+- It does not authorize portability evidence production.
+- It does not close Windows or macOS evidence.
+- It does not authorize B2B.
+- It does not complete or accept P01-04B.
+- It does not authorize branch deletion, Ready transition, or merge.
 
 ## Document index
 

@@ -179,7 +179,8 @@ Stop conditions: executable without authorization; scientific identity mutated
 | P01-04B1 | Split-tooling subphase | Adopted |
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
-| P01-04B2 | Remaining tooling design gate | Design ratified; implementation and execution not authorized |
+| P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); execution not authorized; B2A not accepted |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -287,7 +288,18 @@ Reviewed PR head:
 edc09743a1aa9478c2accbe9debb8fcc5bcbe268
 
 Implementation status:
-NOT AUTHORIZED
+IMPLEMENTED BUT NOT ACCEPTED
+(implementation completed and adopted on canonical main;
+this gate did not itself authorize implementation)
+
+Implementation adoption PR:
+#59
+
+Canonical implementation merge:
+5736b1171f1aa467105d931713f5749fb81acd5b
+
+Final merged PR head:
+7307fcf9085d3d15114984731b49d484523f09eb
 
 Execution status:
 NOT AUTHORIZED
@@ -347,7 +359,9 @@ Infrastructure implementation:
 NOT AUTHORIZED
 
 B2A implementation:
-NOT AUTHORIZED
+ADOPTED THROUGH PR #59
+(canonical implementation merge 5736b1171f1aa467105d931713f5749fb81acd5b;
+not authorized by this portability gate)
 
 Execution:
 NOT AUTHORIZED
