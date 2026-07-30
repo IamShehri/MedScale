@@ -159,8 +159,17 @@ Each step is a hard boundary. No step may begin before the previous step has
 completed and been verified. This sequence is authorized prospectively and is
 not executed by the record that authorizes it.
 
-1. Adopt this governance package on canonical main, after independent review and
-   a separate founder merge decision.
+1. Complete the full activation gate for this governance package. All five
+   conditions are required, in order, and none may be inferred from another:
+   1. a genuinely independent exact-head approval of PR #62;
+   2. a separate founder Ready-transition decision for PR #62;
+   3. a separate founder merge decision for PR #62;
+   4. merge of PR #62 into canonical main;
+   5. mechanical verification of the canonical merge SHA and the resulting main
+      tree.
+
+   Only after all five have occurred may step 2 begin. Merge alone, without the
+   other four, activates nothing.
 2. Synchronize the new canonical main into
    `feat/mesc-b2a-portability-infrastructure` with a normal non-force merge
    commit. Preserve both existing commit identities. No rebase, amend, squash,
@@ -177,11 +186,12 @@ not executed by the record that authorizes it.
 
 ### What activation authorizes
 
-Step 1 is the adoption gate. Step 2 and steps 3 through 5 — the non-force
-synchronization merge commit, Correction A, Correction B, the normal push, and
-the automatically triggered validation those pushes cause — become authorized
-**together** by `FD-PV-15` once it activates, and need no further founder
-decision.
+Step 1 is the complete five-condition activation gate; every one of its five
+conditions must be satisfied before anything below it is authorized. Step 2 and
+steps 3 through 5 — the non-force synchronization merge commit, Correction A,
+Correction B, the normal push, and the automatically triggered validation those
+pushes cause — become authorized **together** by `FD-PV-15` once it activates,
+and need no further founder decision.
 
 Their strict ordering above remains binding: no step may begin before the
 previous step has completed and been verified.

@@ -139,7 +139,7 @@ There is therefore **no Windows or macOS byte-identity evidence in this
 repository today**, and none is produced by this package. That obligation
 remains open.
 
-## Four distinct things, and their current authority
+## Five distinct things, and their current authority
 
 | Activity | Meaning | Status |
 |---|---|---|

@@ -60,7 +60,7 @@ Applies to this documentation pull request only.
 | No evidence claims | No document claims portability evidence exists or has passed |
 | No acceptance claims | No document claims B2A is accepted |
 | Internal links | All cross-references resolve |
-| Canonical identities | Exact current base, PR #55 and PR #56 identities recorded |
+| Canonical identities | Canonical base `f71c6abf2b2f905f605951605efd6c8ab016523e` recorded; PR #61 exact pre-remediation head and Draft state recorded; PR #62 exact head, full commit chain, Draft state, and cumulative scope recorded |
 | Local gates | Locked sync, Ruff lint, Ruff format, Mypy and Pytest pass |
 | Exact-head verification | CI and CodeQL succeed on the exact head |
 | Independent review | Independent Opus exact-head review |
@@ -68,10 +68,37 @@ Applies to this documentation pull request only.
 
 ### Documentation-gate stop conditions
 
-Do not treat this gate as satisfied if any document authorizes implementation or
-execution, claims Windows or macOS evidence exists, claims B2A is accepted,
-claims P01-04B is complete, modifies a B2A contract or the founder-ratification
-record, or modifies a path outside the nine authorized paths.
+These stop conditions are current and operative. They replace the pre-`FD-PV-11`
+wording, which prohibited **any** implementation authorization, prohibited
+modifying the founder-ratification record, and referred to nine authorized
+paths. That earlier wording is superseded and must not be applied as the current
+rule.
+
+Do not treat the documentation gate as satisfied if:
+
+- any document authorizes remediation implementation **before** `FD-PV-15`
+  activation;
+- any document authorizes execution or admissible evidence production;
+- any document claims Windows or macOS evidence exists;
+- any document claims B2A is accepted;
+- any document claims P01-04B is complete or accepted;
+- any B2A contract path under `../p01-04b2a/**` is modified;
+- any path outside the exact **eight** authorized documentation paths is
+  modified;
+- the package claims infrastructure adoption, Ready, merge, B2A acceptance, or
+  B2B authorization.
+
+Explicitly **not** stop conditions:
+
+- **Modifying this portability package's own `founder-ratification.md`.** That is
+  expected within this governance pull request, which is how `FD-PV-11` through
+  `FD-PV-15` are canonicalized. The prohibition on modifying the separate B2A
+  contracts under `specs/mesc-pilot-01/p01-04b2a/**` is unchanged and remains
+  fully in force.
+- **Recording prospective post-adoption remediation authority.** The package may
+  record that authority. Recording it does **not** activate it: while PR #62
+  remains Draft, unmerged, or otherwise unadopted, no PR #61 mutation, no
+  synchronization, and neither correction commit is authorized.
 
 ---
 

@@ -426,8 +426,14 @@ PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
 Independent clean-room review of pre-remediation exact head:
 COMPLETED — AUTHORITY GAP VERDICT ACCEPTED
 
-Post-remediation independent exact-head review:
-OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+Independent clean-room review of b9c523138917e22c31d31ded857aeecb8aef55e4:
+COMPLETED — CHANGES REQUIRED
+
+Post-correction independent exact-head review:
+OUTSTANDING — REQUIRED BEFORE PR #62 READY OR MERGE
+
+Post-remediation independent exact-head review of PR #61:
+OUTSTANDING — REQUIRED BEFORE PR #61 READY OR MERGE
 
 Infrastructure adoption:
 NOT ACHIEVED
@@ -450,5 +456,9 @@ P01-T03B5 COMPLETED AND ADOPTED
 Scope:
 Canonicalize the missing portability implementation decisions, preserve the
 historical record that PR #61 predates authorization, and authorize a bounded
-two-commit remediation sequence prospectively.
+remediation sequence prospectively: one non-force synchronization merge commit
+plus exactly two additive correction commits — three commits in the activated
+remediation sequence. The synchronization merge commit is synchronization only
+and is not a correction commit; exactly two correction commits, Correction A
+then Correction B, are authorized, and no third correction commit is authorized.
 ```

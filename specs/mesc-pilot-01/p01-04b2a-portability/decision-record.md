@@ -51,9 +51,51 @@ N-12 remains in force exactly as ratified.
 
 Every decision below was ratified by the founder on 2026-07-27 and adopted as
 `FD-PV-1` through `FD-PV-10`; the canonical record is `founder-ratification.md`.
-Ratification freezes these design decisions only. It grants no
-infrastructure-implementation, B2A-implementation, execution, or
-evidence-production authority, and merging this package grants no authority.
+
+### What each state does and does not grant
+
+Three states are distinct. Do not read any one of them as the others.
+
+**Historical — `FD-PV-1` through `FD-PV-10`.** Ratification on 2026-07-27 froze
+the original design decisions only. That ratification, and the adoption of the
+package that recorded it, granted **no** infrastructure-implementation, **no**
+B2A-implementation, **no** execution, **no** evidence-production, **no**
+B2A-acceptance, and **no** B2B authority. Nothing in that state authorized any
+implementation work, and the work now in Draft PR #61 was not authorized by it.
+
+**Current — while PR #62 is Draft.** While this package's `FD-PV-11` through
+`FD-PV-15` record remains Draft, unmerged, or otherwise unadopted:
+
+- no PR #61 branch mutation is authorized;
+- no synchronization is authorized;
+- neither Correction A nor Correction B is authorized.
+
+Recording a decision is not executing it.
+
+**After `FD-PV-15` activation.** Remediation authority becomes operative only
+after **all five** of the following:
+
+1. a genuinely independent exact-head approval of PR #62;
+2. a separate founder Ready-transition decision for PR #62;
+3. a separate founder merge decision for PR #62;
+4. merge into canonical main;
+5. mechanical verification of the canonical merge SHA and the resulting main
+   tree.
+
+Once all five are satisfied, `FD-PV-15` authorizes the exact sequence — one
+non-force synchronization merge commit, preservation of both existing PR #61
+commit identities, Correction A, Correction B, the normal push, and the
+automatically triggered workflows — without any further founder authorization.
+
+**Merge alone does not activate `FD-PV-15`.** A merge that occurs without the
+independent exact-head approval, the separate Ready decision, the separate merge
+decision, and the mechanical verification of the merge SHA and resulting main
+tree activates nothing.
+
+Nothing in any of the three states authorizes execution, admissible evidence
+production, evidence acceptance, B2A acceptance, discharge of binding `N-12`,
+closure of the Windows or macOS obligations, B2B, PR #61 Ready, or PR #61 merge.
+Each of those remains a separate founder act.
 
 ---
 
