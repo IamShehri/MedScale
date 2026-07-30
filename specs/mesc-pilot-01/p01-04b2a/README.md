@@ -57,9 +57,13 @@ Under it:
   2026-07-26;
 - FD-B2A-5 incorporates the clarification and validation sequence recorded
   under the historical proposal label PD-B2A-5.1;
-- ratification freezes the contract decisions only;
-- implementation remains separately unauthorized.
-- canonical-main implementation adoption was recorded through PR #59.
+- ratification froze the contract decisions only;
+- at the time it was adopted, it did not itself authorize implementation.
+
+That record is historical and is not the current implementation-status ledger.
+It does not record PR #59. Implementation was later separately authorized,
+implemented, and adopted on canonical main through PR #59; that later adoption
+did not accept B2A and did not authorize execution.
 
 PR #54 ratified the P01-04B2 *design* package; PR #55 adopted this B2A contract
 gate; PR #59 adopted the B2A implementation on canonical main. None authorizes
@@ -184,17 +188,16 @@ produce or claim any portability evidence.
 - B2B remains unauthorized.
 - P01-04B remains incomplete and not accepted.
 
-## Independent review
-
-The original documentation commit received independent adversarial review and required one additive correction.
-
-The corrective delta then received independent approval:
-
-`PASS — P01-04B2 ADDITIVE CORRECTIVE DELTA APPROVED FOR SEPARATE PUBLICATION AUTHORIZATION`
-
 ## Reconstruction disclosure
 
-This documentation update is a replacement reconstruction from canonical main after the original local post-merge documentation commit objects became unavailable before publication. The replacement is independently reviewable and does not claim Git-object identity with the lost local series.
+This documentation update is a replacement reconstruction from canonical main
+after the original local post-merge documentation commit objects became
+unavailable before publication. It does not claim Git-object identity with the
+superseded local series.
+
+Any review outcome recorded for that superseded series applied only to those
+commit objects and is not inherited by this reconstruction. This reconstruction
+requires its own independent review; no approval is claimed for it here.
 
 ## Authority boundary
 
