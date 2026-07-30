@@ -96,8 +96,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          uv --version
-          uv --version | grep -qx 'uv 0.11.14'
+          # uv prints "uv <version> (<target>)"; the target suffix is expected
+          # and platform-specific. Compare the semantic version exactly, and
+          # require the action output to match exactly as well. Both checks run
+          # before any dependency synchronization and fail closed.
+          actual="$(uv --version)"
+          printf '%s\n' "${actual}"
+          actual_version="$(printf '%s\n' "${actual}" | awk '{print $2}')"
+          if [ "${actual_version}" != "0.11.14" ]; then
+            echo "unexpected uv runtime version: ${actual}" >&2
+            exit 1
+          fi
+          if [ "${UV_VERSION_OUTPUT}" != "0.11.14" ]; then
+            echo "setup-uv reported unexpected version: ${UV_VERSION_OUTPUT}" >&2
+            exit 1
+          fi
           echo "action-reported uv-version: ${UV_VERSION_OUTPUT}"
         env:
           UV_VERSION_OUTPUT: ${{ steps.setup-uv.outputs.uv-version }}
@@ -167,8 +180,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          uv --version
-          uv --version | grep -qx 'uv 0.11.14'
+          # uv prints "uv <version> (<target>)"; the target suffix is expected
+          # and platform-specific. Compare the semantic version exactly, and
+          # require the action output to match exactly as well. Both checks run
+          # before any dependency synchronization and fail closed.
+          actual="$(uv --version)"
+          printf '%s\n' "${actual}"
+          actual_version="$(printf '%s\n' "${actual}" | awk '{print $2}')"
+          if [ "${actual_version}" != "0.11.14" ]; then
+            echo "unexpected uv runtime version: ${actual}" >&2
+            exit 1
+          fi
+          if [ "${UV_VERSION_OUTPUT}" != "0.11.14" ]; then
+            echo "setup-uv reported unexpected version: ${UV_VERSION_OUTPUT}" >&2
+            exit 1
+          fi
           echo "action-reported uv-version: ${UV_VERSION_OUTPUT}"
         env:
           UV_VERSION_OUTPUT: ${{ steps.setup-uv.outputs.uv-version }}

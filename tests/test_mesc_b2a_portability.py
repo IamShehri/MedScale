@@ -196,9 +196,23 @@ def test_evidence_envelope_records_the_six_ratified_cell_identifiers(tmp_path: P
 
 def test_evidence_envelope_excludes_runtime_derived_metadata(tmp_path: Path) -> None:
     # The prohibition targets environment-derived provenance, not the ratified
-    # cell identifiers above.
-    evidence = h.aggregate(_six_cells(tmp_path))
-    lowered = evidence.lower()
+    # cell identifiers, which legitimately encode OS family and Python minor
+    # version as frozen constants.
+    #
+    # Regression guard: on Linux ``sys.platform == "linux"``, which is a
+    # substring of the ratified identifiers ``linux-py3.11`` and
+    # ``linux-py3.12``. Scanning the whole envelope would therefore fail purely
+    # because those required identifiers are present. Excluding the ratified
+    # ``cells`` field first keeps the runtime-provenance prohibition strict
+    # everywhere else, on every platform, with no OS-specific special case.
+    document = json.loads(h.aggregate(_six_cells(tmp_path)))
+    assert document["cells"] == list(h.CELL_IDS)
+    provenance_free_document = {key: value for key, value in document.items() if key != "cells"}
+    lowered = (
+        json.dumps(provenance_free_document, sort_keys=True, separators=(",", ":"))
+        .encode("utf-8")
+        .lower()
+    )
     for forbidden in (
         b"timestamp",
         b"created",
