@@ -214,11 +214,43 @@ to PR #61 that could not be re-derived from any record committed to this
 repository. This addendum canonicalizes the missing decisions so that a reviewer
 working only from the repository can reconstruct the full constraint set.
 
-**Independence disclosure.** The reviews of PR #61 produced to date were not
-produced by an independent reviewer: they were produced by the same party that
-authored the two commits. This record does not claim that a qualified
-independent exact-head review has occurred. `FD-PV-11` requires one before any
-Ready-transition decision, and that requirement is outstanding.
+**Review-provenance disclosure.** The early reviews of PR #61 were produced by
+the same party that authored its two implementation commits and therefore were
+not independent. A later clean-room reviewer, who attested that they had not
+authored, implemented, corrected, previously reviewed, or received prior
+findings about PR #61, independently reviewed the pre-remediation exact head
+`8e484739ba72f4a3be357bd5934b305fd9e7cf41` and returned:
+
+`AUTHORITY GAP — PR #61 MUST REMAIN DRAFT UNTIL MISSING DECISIONS ARE
+CANONICALIZED`.
+
+The founder accepts that independent authority-gap determination. It establishes
+the need for this governance package; it does not approve the implementation,
+does not approve work that has not yet been remediated, and does not authorize a
+Ready transition or merge. `FD-PV-11` continues to require a new genuinely
+independent exact-head review of the future post-remediation PR #61 head before
+any Ready-transition decision.
+
+**Correction note.** Commit `0be9e69a6fd25f6ac9ccb95b2c3c061350cdeca0` — the
+commit that first recorded this addendum — contained an inaccurate
+review-provenance statement in both its commit message and its initial
+documentation text: it asserted that every review of PR #61 produced to date was
+non-independent and that no qualified independent exact-head review had
+occurred. That assertion was wrong; it omitted the later clean-room review
+described above.
+
+That commit is **not** amended, rebased, squashed, or rewritten, and it remains
+the canonical record of `FD-PV-11` through `FD-PV-15`. This additive commit
+supersedes **only** the review-provenance statement. Every other element of the
+governance package — `FD-PV-11` through `FD-PV-15`, the four `FD-PV-6` byte
+limits and their axes, the `actions: read` permission boundary, the
+`canonical_sha` envelope binding, the remediation sequencing, the historical
+chronologies, and every prohibition — is unchanged.
+
+No independent-review requirement is weakened by this correction. The
+post-remediation independent exact-head review of PR #61 remains mandatory and
+outstanding, and this governance package itself requires an independent
+exact-head review before any Ready-transition or merge decision.
 
 ## FD-PV-11 — Historical truth and prospective remediation authorization
 

@@ -423,8 +423,11 @@ OCCURRED BEFORE CANONICAL AUTHORIZATION; NOT RETROACTIVELY AUTHORIZED
 Current remediation implementation:
 PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
 
-Independent exact-head review:
-OUTSTANDING — PRIOR REVIEWS WERE NOT INDEPENDENT
+Independent clean-room review of pre-remediation exact head:
+COMPLETED — AUTHORITY GAP VERDICT ACCEPTED
+
+Post-remediation independent exact-head review:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
 
 Infrastructure adoption:
 NOT ACHIEVED
