@@ -93,6 +93,33 @@ FOUNDER-RATIFIED 2026-07-27 AS FD-PV-2
 
 ## PD-PV-3 — Least privilege and immutable dependencies
 
+> ### Current controlling amendment — FD-PV-13
+>
+> The `contents: read` only rule stated below records the policy ratified
+> **before** the remediation authority gap was resolved. It is retained as the
+> historical ratified decision text and is **not** the current rule for the
+> portability-remediation workflow.
+>
+> `FD-PV-13` narrowly supersedes it for that workflow only. The current
+> permitted workflow permissions are exactly:
+>
+> ```yaml
+> permissions:
+>   contents: read
+>   actions: read
+> ```
+>
+> `actions: read` is limited to enumerating artifacts belonging to the current
+> exact workflow run, reading artifact metadata including archive size, and
+> downloading the exact expected artifacts through the documented GitHub Actions
+> API.
+>
+> No workflow mutation, rerun, cancellation, dispatch, artifact deletion, write
+> permission, secrets, OIDC, cache, package publication, release creation, or
+> unrelated-run artifact access is authorized. Every other prohibition in
+> `PD-PV-3` remains controlling, and its ratification status as `FD-PV-3` is
+> unchanged.
+
 The workflow runs with `contents: read` only, no secrets, no write permissions,
 no OIDC, no publication and no release creation. **All GitHub Actions, including
 GitHub-owned actions such as checkout, upload-artifact, and download-artifact,

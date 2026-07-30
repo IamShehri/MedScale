@@ -175,8 +175,27 @@ not executed by the record that authorizes it.
    author the work.
 7. Obtain a separate founder Ready-transition decision.
 
-Steps 3 through 7 are each separate acts. None is authorized by the completion
-of an earlier one, and none is authorized by this document alone.
+### What activation authorizes
+
+Step 1 is the adoption gate. Step 2 and steps 3 through 5 — the non-force
+synchronization merge commit, Correction A, Correction B, the normal push, and
+the automatically triggered validation those pushes cause — become authorized
+**together** by `FD-PV-15` once it activates, and need no further founder
+decision.
+
+Their strict ordering above remains binding: no step may begin before the
+previous step has completed and been verified.
+
+Step 6, independent exact-head review, remains a **mandatory gate** and is not
+satisfied by any earlier step.
+
+Step 7, the PR #61 Ready transition, remains a **separate founder decision**.
+
+Outside `FD-PV-15` entirely, and requiring separate founder decisions where
+applicable: PR #61 merge, manual workflow rerun, manual workflow dispatch,
+admissible evidence production, evidence acceptance, B2A acceptance, discharge
+of binding `N-12`, closure of the Windows or macOS obligations, B2B, and branch
+deletion.
 
 ## Additional stop conditions for remediation
 

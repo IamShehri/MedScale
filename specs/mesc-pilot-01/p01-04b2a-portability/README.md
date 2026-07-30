@@ -8,11 +8,14 @@ REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
 Contracts:
 FOUNDER RATIFIED
 
-Historical initial implementation:
-OCCURRED BEFORE CANONICAL AUTHORIZATION
+Original infrastructure work:
+CREATED BEFORE CANONICAL AUTHORIZATION
 
-Current remediation implementation:
-PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+Current Draft PR #62 state:
+REMEDIATION AUTHORITY RECORDED BUT NOT ACTIVE
+
+After PR #62 canonical adoption and mechanical verification:
+FD-PV-15 REMEDIATION AUTHORITY ACTIVE
 
 Infrastructure adoption:
 NOT ACHIEVED
@@ -86,14 +89,18 @@ This package designs a future, separately authorized cross-platform
 portability-validation infrastructure for P01-04B2A. It exists so the founder
 could decide the infrastructure contracts **before** any workflow file, test
 file, or B2A implementation file is written. Those contracts were ratified on
-2026-07-27 as `FD-PV-1` through `FD-PV-10`; implementation remains unauthorized.
+2026-07-27 as `FD-PV-1` through `FD-PV-10`. Remediation of the existing Draft
+work is authorized prospectively by `FD-PV-15`, which activates only after
+PR #62 is adopted on canonical main and mechanically verified.
 
 This package designs infrastructure. It does not build it, run it, or produce
 evidence with it.
 
 The canonical B2A artifact implementation was adopted through PR #59.
 
-Portability-infrastructure implementation remains unauthorized.
+Portability-infrastructure remediation authority is **recorded but not active**
+until PR #62 is adopted and mechanically verified. Infrastructure adoption is
+not achieved.
 
 Portability evidence remains unauthorized and unproduced.
 
@@ -132,17 +139,23 @@ There is therefore **no Windows or macOS byte-identity evidence in this
 repository today**, and none is produced by this package. That obligation
 remains open.
 
-## Four distinct things, none authorized here
+## Four distinct things, and their current authority
 
 | Activity | Meaning | Status |
 |---|---|---|
 | **B2A implementation** | Writing the private canonical-serialization and artifact-identity modules and their tests, in the four already-ratified paths | **ADOPTED THROUGH PR #59; NOT AUTHORIZED BY THIS PORTABILITY PACKAGE** |
-| **Validation-infrastructure implementation** | Writing the portability workflow and its helper/test modules in the three paths proposed here | **NOT AUTHORIZED** |
+| **Historical initial implementation** | The workflow and helper/test modules created in Draft PR #61 before any canonical authorization existed | **CREATED BEFORE CANONICAL AUTHORIZATION; NOT RETROACTIVELY AUTHORIZED; NOT ADOPTED** |
+| **Prospective remediation** | The synchronization merge commit and exactly two correction commits, in the three ratified paths | **AUTHORITY RECORDED BY FD-PV-15; NOT ACTIVE UNTIL PR #62 IS ADOPTED AND MECHANICALLY VERIFIED** |
 | **Portability evidence production** | Actually running the six-cell matrix and generating comparison evidence | **NOT AUTHORIZED** |
 | **B2A acceptance** | Declaring B2A accepted, which unblocks B2B consideration | **NOT ACHIEVED** |
 
-Each is a separate founder act. None is granted by this documentation package,
-and none is granted by merging it.
+Historical initial implementation is not retroactively authorized by anything in
+this package. Prospective remediation is authorized by `FD-PV-15` and activates
+on adoption and mechanical verification of PR #62, after which the
+synchronization merge commit and the two correction commits need no further
+founder decision. Portability evidence production and B2A acceptance remain
+separate founder acts, and neither is granted by this package or by merging
+it.
 
 ## This package does not alter the B2A contracts
 

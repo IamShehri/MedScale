@@ -51,10 +51,10 @@ Applies to this documentation pull request only.
 
 | Criterion | Requirement |
 |---|---|
-| Path scope | Exactly nine authorized documentation paths |
+| Path scope | Exactly eight authorized documentation paths |
 | Decisions visible | PD-PV-1 through PD-PV-10 all present, adopted as FD-PV-1 through FD-PV-10 |
 | Numeric limits | The FD-PV-6 compressed and extracted byte limits recorded exactly |
-| No implementation authority | No document authorizes infrastructure or B2A implementation |
+| No pre-adoption implementation authority | No pre-adoption remediation implementation authority. `FD-PV-15` activates only after canonical adoption and mechanical verification |
 | No workflow change | No `.github/**` path changed |
 | No source or test change | No `src/**` or `tests/**` path changed |
 | No evidence claims | No document claims portability evidence exists or has passed |
@@ -90,7 +90,7 @@ Applies only to a later, separately authorized infrastructure pull request.
 | Bytes | All compared bytes identical across all six cells |
 | Hashes and sizes | All recomputed SHA-256 values and byte sizes identical |
 | Negative tests | Fail-closed tests exist for every proposed failure category |
-| Permissions | `contents: read` only; no secrets, no write, no OIDC |
+| Permissions | Exactly `contents: read` and `actions: read`; no secrets, no write, no OIDC. `FD-PV-13` narrowly supersedes the original `contents: read` only criterion |
 | Action pinning | Every `uses:` entry pinned to an immutable full commit SHA, including GitHub-owned actions; no tag-only reference such as `@v4` |
 | Network boundary | Infrastructure-plane activity only (see below); no data-plane access |
 | Binary writes | Evidence files written as raw bytes in binary mode |
@@ -189,8 +189,15 @@ into retroactive authorization.
 
 ## Remediation acceptance criteria (FD-PV-11 through FD-PV-15)
 
-These criteria are additional. They do not replace or relax any earlier layer,
-and satisfying them does not satisfy infrastructure adoption or B2A acceptance.
+Earlier criteria remain controlling except where `FD-PV-11` through `FD-PV-15`
+expressly supersede them. The express supersessions are limited to the PR #62
+documentation path count, pre-adoption versus post-adoption remediation
+authority, the narrow addition of `actions: read`, and the remediation commit
+sequence.
+
+Nothing here weakens any evidence, data, model, execution, review, Ready, merge,
+B2A, or B2B gate. Satisfying these criteria does not satisfy infrastructure
+adoption and does not accept B2A.
 
 | Criterion | Requirement |
 |---|---|

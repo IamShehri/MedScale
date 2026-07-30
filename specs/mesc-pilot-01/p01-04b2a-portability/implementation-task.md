@@ -170,6 +170,12 @@ multi-platform run.
 
 ## Security controls
 
+> **Current controlling amendment — FD-PV-13.** The `contents: read` only rule
+> below is the original ratified policy. For the portability-remediation
+> workflow, `FD-PV-13` narrowly supersedes it: the current permitted permissions
+> are exactly `contents: read` and `actions: read`. Every other prohibition in
+> this section remains controlling.
+
 `contents: read` only. No secrets, no write permissions, no OIDC, no
 publication, no releases, no evidence-bearing cache. **Every `uses:` entry,
 including GitHub-owned actions such as checkout, upload-artifact and
@@ -225,9 +231,30 @@ success is not B2A acceptance.
 
 ## One-commit and one-PR rule
 
+> **Scope of this rule.** It governs the **original infrastructure
+> implementation brief** in this document. It is **superseded for the authorized
+> remediation sequence only**, by `FD-PV-15`. It is not superseded for any other
+> purpose.
+
 Exactly one atomic commit and exactly one Draft pull request. No force-push. No
 Ready transition, no merge, no auto-merge. B2A implementation must never be
 combined with this infrastructure work.
+
+### Remediation commit rule (FD-PV-15)
+
+Activated remediation consists of exactly three commits:
+
+1. one non-force synchronization merge commit;
+2. exactly two additive correction commits, Correction A then Correction B.
+
+No amendment, rebase, squash, reset, cherry-pick, force-push, or history
+rewriting is permitted, and **no fourth correction commit** is authorized.
+
+After `FD-PV-15` activation, **no additional founder authorization is required**
+for those three commits, for the normal push, or for automatically triggered
+checks. The exact three implementation paths, the purposes of Correction A and
+Correction B, and the prohibitions on dependency, lockfile, `src/**`, dataset,
+model, and public-API change are unchanged.
 
 ## Historical chronology — status before FD-PV-11
 

@@ -88,7 +88,10 @@ The founder adopts:
   silent cell removal;
 - least-privilege execution with `contents: read` only, no secrets, no write
   permissions, no OIDC, no publication, no releases, and no evidence-bearing
-  cache;
+  cache — **narrowly superseded by `FD-PV-13`** for the portability-remediation
+  workflow, where the current permitted permissions are exactly
+  `contents: read` and `actions: read`; every other prohibition in this item
+  remains controlling;
 - immutable full-commit-SHA pinning for **every** `uses:` entry, including
   GitHub-owned actions, with tag-only references such as `@v4` prohibited;
 - the two-plane network boundary: bounded infrastructure-plane setup activity
@@ -421,24 +424,99 @@ twenty-one-category ratified taxonomy; and introduce no dependency, lockfile,
 
 ## Authorization boundary of this addendum
 
-This addendum authorizes only its own governance record and the Draft pull
-request that carries it. It does **not** authorize:
+### Independent review and accepted verdict
 
-- any change to PR #61;
-- workflow or helper implementation;
-- the future synchronization merge commit;
-- either correction commit;
-- workflow rerun or `workflow_dispatch`;
-- Ready transition, merge, or auto-merge;
-- admissible evidence production;
-- B2A acceptance or B2A execution;
-- closure of the Windows or macOS obligations;
-- B2B;
-- branch deletion.
+A genuinely independent clean-room review of PR #62 was conducted in a separate
+cold session, by a reviewer who attested that they had not authored or edited
+either PR #62 commit, had not written any changed documentation file, had not
+previously reviewed PR #62, and had not received prior conclusions or findings
+about it. That review returned:
 
-Each remains a separate founder act. `FD-PV-1` through `FD-PV-10`, `FD-B2A-1`
-through `FD-B2A-8`, binding `N-12`, `D1`–`D10`, and `FD-B2-1` through `FD-B2-8`
-are unamended except where `FD-PV-13` narrowly amends the permission rule.
+`AUTHORITY GAP — PR #62 MUST REMAIN DRAFT UNTIL THE SPECIFIED AUTHORITY ISSUE IS
+RESOLVED`
+
+The founder accepts that determination. The blocking issue was internal
+ambiguity over whether canonical adoption activates the `FD-PV-15` remediation
+sequence, or whether every synchronization and correction step needs a further
+founder authorization. This section resolves that ambiguity.
+
+### Before canonical adoption — nothing is activated
+
+While PR #62 remains Draft, unmerged, or otherwise unadopted:
+
+- no PR #61 branch mutation is authorized;
+- synchronization is not authorized;
+- Correction A is not authorized;
+- Correction B is not authorized;
+- no implementation work is authorized merely because `FD-PV-11` through
+  `FD-PV-15` appear in a Draft pull request.
+
+The Draft record does **not** activate remediation. Recording a decision is not
+executing it.
+
+### Activation condition
+
+`FD-PV-15` becomes operative only after **all** of the following:
+
+1. PR #62 receives a genuinely independent exact-head approval;
+2. a separate founder Ready-transition decision is issued for PR #62;
+3. a separate founder merge decision is issued for PR #62;
+4. PR #62 is merged into canonical main;
+5. the canonical merge SHA and the resulting main tree are mechanically
+   verified.
+
+### Authority activated by adoption
+
+Once every activation condition is satisfied, `FD-PV-15` itself supplies
+complete prospective authority for exactly:
+
+1. merging the new canonical main into
+   `feat/mesc-b2a-portability-infrastructure` through **one** normal non-force
+   merge commit;
+2. preserving the existing PR #61 commits
+   `023d0eeff535071cff96cf366b4c52d973347207` and
+   `8e484739ba72f4a3be357bd5934b305fd9e7cf41` with their exact object
+   identities;
+3. creating exactly Correction A,
+   `fix(mesc): bind canonical SHA into portability evidence`;
+4. creating exactly Correction B,
+   `fix(mesc): enforce bounded portability artifact extraction`;
+5. pushing those authorized commits normally to the existing PR #61 branch;
+6. allowing workflows automatically triggered by those authorized pushes to run.
+
+**No additional founder authorization is required** for the synchronization
+merge commit, Correction A, Correction B, the normal push, or the automatically
+triggered workflows, once `FD-PV-15` is activated.
+
+### Acts that remain separate — exact enumeration
+
+`FD-PV-15` does not authorize, before or after activation, exactly and only the
+following. Each remains a separate founder act:
+
+- amendment, rebase, squash, reset, cherry-pick, or force-push;
+- a fourth implementation correction commit;
+- any path outside the exact three implementation paths;
+- changing PR #61 from Draft;
+- marking PR #61 Ready;
+- merging PR #61;
+- enabling auto-merge;
+- manually rerunning any workflow;
+- manually dispatching any workflow;
+- producing admissible portability evidence;
+- accepting portability evidence;
+- accepting B2A;
+- discharging binding `N-12`;
+- closing the Windows or macOS obligations;
+- authorizing B2B;
+- deleting either branch.
+
+This enumeration is exhaustive. An act that is not listed here and that falls
+within the six activated items above does not require a further founder decision
+after activation.
+
+`FD-PV-1` through `FD-PV-10`, `FD-B2A-1` through `FD-B2A-8`, binding `N-12`,
+`D1`–`D10`, and `FD-B2-1` through `FD-B2-8` are unamended except where
+`FD-PV-13` narrowly amends the permission rule.
 
 B2A remains not accepted. B2B remains not authorized. P01-04B remains incomplete
 and not accepted.

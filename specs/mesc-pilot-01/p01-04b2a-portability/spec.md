@@ -163,6 +163,31 @@ must never enter the compared golden-vector bytes and must never enter
 
 ## 5. Permissions and supply-chain controls
 
+> ### Current controlling amendment — FD-PV-13
+>
+> `contents: read` only was the **original ratified rule** and is retained below
+> as such. It is **not** the current rule for the portability-remediation
+> workflow, and a reader must not mistake it for the current rule.
+>
+> `FD-PV-13` narrowly supersedes it. The current permissions are exactly:
+>
+> ```yaml
+> permissions:
+>   contents: read
+>   actions: read
+> ```
+>
+> `actions: read` has only these three purposes: enumerating artifacts belonging
+> to the current exact workflow run; reading artifact metadata, including archive
+> byte size; and downloading the exact expected artifacts through the documented
+> GitHub Actions API.
+>
+> Every other permission and network prohibition in this section remains
+> controlling, including no secrets, no write permissions, no OIDC, no package
+> publication, no release creation, and no evidence-bearing cache. The precedence
+> clause later in this document is preserved but is not the sole resolution of
+> this conflict.
+
 - `permissions: contents: read` only.
 - No secrets of any kind.
 - No write permissions.
