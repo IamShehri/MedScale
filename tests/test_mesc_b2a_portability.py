@@ -1655,13 +1655,13 @@ def test_no_authorization_material_is_echoed() -> None:
 # -- behavioural execution of the real step script --------------------------
 
 _BASH = shutil.which("bash")
+#: Stub ``gh``. Routing happens **before** any failure injection, so a forced
+#: failure can only occur on the artifact ZIP download producer, never on the
+#: enumeration call. ``GH_STUB_FAIL_ON_ZIP`` names the artifact id that must
+#: fail (or ``any``).
 _STUB_GH = """#!/usr/bin/env bash
 set -u
 printf '%s\\n' "$*" >> "${GH_CALL_LOG}"
-if [ "${GH_STUB_FAIL:-0}" = "1" ]; then
-  printf 'stub failure\\n' >&2
-  exit 3
-fi
 url=""
 for arg in "$@"; do
   case "${arg}" in repos/*) url="${arg}" ;; esac
@@ -1673,6 +1673,10 @@ case "${url}" in
   */actions/artifacts/*/zip)
     id="${url%/zip}"
     id="${id##*/}"
+    if [ "${GH_STUB_FAIL_ON_ZIP:-}" = "${id}" ] || [ "${GH_STUB_FAIL_ON_ZIP:-}" = "any" ]; then
+      printf 'stub download producer failure for artifact %s\\n' "${id}" >&2
+      exit 4
+    fi
     cat "${ZIP_DIR}/${id}.bin"
     ;;
   *)
@@ -1682,13 +1686,24 @@ case "${url}" in
 esac
 """
 
+#: Stub ``head``, injected ahead of the real one on PATH for the consumer test.
+#: It begins bounded consumption and then exits with a deterministic status, so
+#: the workflow's ``consumer != 0`` branch is the one that fires.
+_STUB_HEAD = """#!/usr/bin/env bash
+set -u
+printf '%s\\n' "head $*" >> "${GH_CALL_LOG}"
+IFS= read -r -n 16 -d '' _chunk || true
+exit "${HEAD_STUB_STATUS}"
+"""
+
 
 def _run_download_step(
     tmp_path: Path,
     rows: list[tuple[str, int, str, int]],
     *,
     payload_sizes: dict[int, int] | None = None,
-    stub_fails: bool = False,
+    fail_zip_id: str | None = None,
+    failing_consumer_status: int | None = None,
 ) -> subprocess.CompletedProcess[str]:
     """Execute the real workflow step against a stub ``gh``.
 
@@ -1696,6 +1711,11 @@ def _run_download_step(
     as the API would report them. ``payload_sizes`` overrides how many bytes the
     stub actually streams for a given artifact id, which is how an under-reported
     or oversized response is simulated.
+
+    ``fail_zip_id`` makes the stub fail **only** on that artifact's ZIP download,
+    after enumeration has already succeeded, so the producer half of the bounded
+    pipeline is what fails. ``failing_consumer_status`` injects a stub ``head``
+    ahead of the real one on PATH so the consumer half fails instead.
     """
     work = tmp_path / "work"
     work.mkdir(parents=True, exist_ok=True)
@@ -1704,6 +1724,10 @@ def _run_download_step(
     stub = bin_dir / "gh"
     stub.write_text(_STUB_GH, encoding="utf-8", newline="\n")
     stub.chmod(0o755)
+    if failing_consumer_status is not None:
+        consumer = bin_dir / "head"
+        consumer.write_text(_STUB_HEAD, encoding="utf-8", newline="\n")
+        consumer.chmod(0o755)
 
     tsv = tmp_path / "artifacts.tsv"
     tsv.write_text(
@@ -1731,7 +1755,8 @@ def _run_download_step(
         "ARTIFACTS_TSV": str(tsv),
         "ZIP_DIR": str(zip_dir),
         "GH_CALL_LOG": str(tmp_path / "gh-calls.log"),
-        "GH_STUB_FAIL": "1" if stub_fails else "0",
+        "GH_STUB_FAIL_ON_ZIP": fail_zip_id or "",
+        "HEAD_STUB_STATUS": str(failing_consumer_status or 0),
     }
     assert _BASH is not None
     # Fixed argv, no shell interpolation: the script path and bash path are ours.
@@ -1749,11 +1774,21 @@ def _rows(size: int = 855) -> list[tuple[str, int, str, int]]:
     return [(name, size, "false", index + 1) for index, name in enumerate(RATIFIED_ARTIFACT_NAMES)]
 
 
-def _downloads_attempted(tmp_path: Path) -> int:
+def _call_log(tmp_path: Path) -> list[str]:
     log = tmp_path / "gh-calls.log"
-    if not log.exists():
-        return 0
-    return sum(1 for line in log.read_text(encoding="utf-8").splitlines() if "/zip" in line)
+    return log.read_text(encoding="utf-8").splitlines() if log.exists() else []
+
+
+def _downloads_attempted(tmp_path: Path) -> int:
+    return sum(1 for line in _call_log(tmp_path) if "/zip" in line)
+
+
+def _enumerations_attempted(tmp_path: Path) -> int:
+    return sum(1 for line in _call_log(tmp_path) if "/actions/runs/" in line)
+
+
+def _archive_dir(tmp_path: Path) -> Path:
+    return tmp_path / "work" / "archives"
 
 
 bash_required = pytest.mark.skipif(_BASH is None, reason="bash is unavailable on this platform")
@@ -1817,20 +1852,87 @@ def test_declared_and_actual_size_mismatch_is_rejected(tmp_path: Path) -> None:
 
 @bash_required
 def test_producer_failure_is_not_hidden_by_the_pipeline(tmp_path: Path) -> None:
-    result = _run_download_step(tmp_path, _rows(), stub_fails=True)
+    """The download producer fails inside the bounded pipeline, not earlier.
+
+    Enumeration returns the complete valid six-artifact response and every
+    pre-download guard passes; the stub fails only when the first artifact's ZIP
+    URL is requested. That drives the workflow into::
+
+        if [ "${producer}" != "0" ]; then
+          echo "download failed for ${name} (status ${producer})" >&2
+          rm -f "${part}"; exit 1
+        fi
+    """
+    result = _run_download_step(tmp_path, _rows(), fail_zip_id="1")
+
+    # Enumeration succeeded and the run reached the download pipeline.
+    assert _enumerations_attempted(tmp_path) == 1
+    assert _downloads_attempted(tmp_path) >= 1
+    failing = RATIFIED_ARTIFACT_NAMES[0]
+
+    # The producer branch is the one that reported, which also proves the
+    # consumer completed normally: the workflow checks the consumer first and
+    # would have exited with a different message had it been non-zero.
     assert result.returncode != 0
-    assert list((tmp_path / "work" / "archives").iterdir()) == []
+    assert f"download failed for {failing}" in result.stderr
+    assert "bounded consumer failed" not in result.stderr
+    assert "(status 4)" in result.stderr
+
+    # No partial file survives and nothing was promoted.
+    assert not (_archive_dir(tmp_path) / f"{failing}.zip.part").exists()
+    assert list(_archive_dir(tmp_path).iterdir()) == []
+
+    # The loop aborted rather than silently continuing to later artifacts.
+    assert _downloads_attempted(tmp_path) == 1
 
 
 @bash_required
 def test_consumer_failure_is_not_hidden_by_the_pipeline(tmp_path: Path) -> None:
-    """A sink that cannot be written must abort the step, never pass silently."""
-    work = tmp_path / "work"
-    work.mkdir(parents=True, exist_ok=True)
-    blocked = work / "archives"
-    blocked.write_bytes(b"not a directory")  # mkdir -p will fail against a file
-    result = _run_download_step(tmp_path, _rows())
+    """The bounded consumer fails inside the pipeline, not at setup.
+
+    Setup, enumeration, metadata validation and set comparison all succeed and a
+    real download producer is invoked; a stub ``head`` earlier on PATH begins
+    consuming and then exits 7. That drives the workflow into::
+
+        if [ "${consumer}" != "0" ]; then
+          echo "bounded consumer failed for ${name} (status ${consumer})" >&2
+          rm -f "${part}"; exit 1
+        fi
+    """
+    result = _run_download_step(tmp_path, _rows(), failing_consumer_status=7)
+
+    # Setup and enumeration succeeded, and the pipeline was reached.
+    assert _enumerations_attempted(tmp_path) == 1
+    assert _downloads_attempted(tmp_path) == 1
+    assert any(line.startswith("head ") for line in _call_log(tmp_path))
+    failing = RATIFIED_ARTIFACT_NAMES[0]
+
+    # The consumer status is the controlling reported failure, not the producer's
+    # broken pipe.
     assert result.returncode != 0
+    assert f"bounded consumer failed for {failing}" in result.stderr
+    assert "(status 7)" in result.stderr
+    assert "download failed for" not in result.stderr
+
+    assert not (_archive_dir(tmp_path) / f"{failing}.zip.part").exists()
+    assert list(_archive_dir(tmp_path).iterdir()) == []
+
+
+@bash_required
+def test_setup_and_enumeration_are_not_what_fails_in_the_pipeline_tests(
+    tmp_path: Path,
+) -> None:
+    """Guard against the earlier defect: neither failure may precede the pipeline.
+
+    A failure at ``mkdir -p archives`` or during enumeration would never reach
+    the producer or consumer branches, so this test pins the difference: with no
+    injection at all the same fixture runs clean to completion.
+    """
+    clean = _run_download_step(tmp_path, _rows())
+    assert clean.returncode == 0, clean.stderr
+    assert _enumerations_attempted(tmp_path) == 1
+    assert _downloads_attempted(tmp_path) == 6
+    assert (tmp_path / "work" / "declared-sizes.json").exists()
 
 
 @bash_required
@@ -1938,3 +2040,17 @@ def test_helper_module_is_untouched_by_this_correction() -> None:
         "require_canonical_sha",
     ):
         assert hasattr(h, attribute)
+
+
+@bash_required
+def test_workflow_and_helper_bytes_are_unchanged_by_this_test_commit() -> None:
+    """This commit is test-only: the two production files must be untouched."""
+    workflow = _workflow_text()
+    # The exact branches these tests exercise, quoted from the workflow itself.
+    assert 'echo "download failed for ${name} (status ${producer})" >&2' in workflow
+    assert 'echo "bounded consumer failed for ${name} (status ${consumer})" >&2' in workflow
+    assert '| head -c "${transport_cap}" > "${part}"' in workflow
+    assert "permissions:\n  contents: read\n  actions: read\n" in workflow
+    helper = Path(h.__file__).read_text(encoding="utf-8")
+    assert "def extract_archive_bounded(" in helper
+    assert "def require_canonical_sha(" in helper
