@@ -68,6 +68,11 @@ EVIDENCE_NAME: Final = "portability-evidence.json"
 MANIFEST_SCHEMA: Final = "mesc-pilot-01-b2a-portability-manifest/1"
 EVIDENCE_SCHEMA: Final = "mesc-pilot-01-b2a-portability-evidence/1"
 
+#: FD-PV-14 envelope field name and its exact accepted form.
+CANONICAL_SHA_KEY: Final = "canonical_sha"
+CANONICAL_SHA_LENGTH: Final = 40
+_LOWER_HEX_DIGITS: Final = "0123456789abcdef"
+
 # FD-PV-6 byte limits. The aggregate values are the ratified derived maxima
 # (exactly six times the per-artifact limits), so they are upper bounds.
 MAX_FILE_BYTES: Final = 1_048_576
@@ -567,8 +572,41 @@ def _collect_cells(root: Path) -> dict[str, dict[str, bytes]]:
     return cells
 
 
-def build_evidence(cells: Mapping[str, Mapping[str, bytes]]) -> bytes:
-    """Return the deterministic evidence envelope for a fully passing comparison."""
+def require_canonical_sha(value: object) -> str:
+    """Return ``value`` if it is exactly forty lowercase hexadecimal characters.
+
+    FD-PV-14. The value must be supplied explicitly by the caller from the
+    already guarded canonical-main dispatch input. This function is the only
+    gate: uppercase, empty, short, long, non-hexadecimal, whitespace-padded,
+    newline-bearing, ref, branch and tag values all fail closed through the
+    existing ``evidence_generation_failure`` category. No twenty-second
+    category is introduced.
+    """
+    if not isinstance(value, str):
+        raise EvidenceGenerationFailureError("canonical_sha must be a string")
+    if len(value) != CANONICAL_SHA_LENGTH:
+        raise EvidenceGenerationFailureError(
+            f"canonical_sha must be exactly {CANONICAL_SHA_LENGTH} characters"
+        )
+    if any(character not in _LOWER_HEX_DIGITS for character in value):
+        raise EvidenceGenerationFailureError(
+            "canonical_sha must be lowercase hexadecimal characters only"
+        )
+    return value
+
+
+def build_evidence(
+    cells: Mapping[str, Mapping[str, bytes]],
+    *,
+    canonical_sha: str | None = None,
+) -> bytes:
+    """Return the deterministic evidence envelope for a fully passing comparison.
+
+    ``canonical_sha`` is present only when the caller supplies it, which happens
+    only for a guarded canonical-main ``workflow_dispatch`` run. On a
+    pull-request run the caller passes nothing and the key is omitted entirely —
+    never serialized as null, blank, placeholder or sentinel.
+    """
     reference = cells[CELL_IDS[0]]
     document: dict[str, object] = {
         "schema_version": EVIDENCE_SCHEMA,
@@ -583,17 +621,26 @@ def build_evidence(cells: Mapping[str, Mapping[str, bytes]]) -> bytes:
         ],
         "result": "pass",
     }
+    if canonical_sha is not None:
+        document[CANONICAL_SHA_KEY] = require_canonical_sha(canonical_sha)
     reject_forbidden_keys(document)
     return canonical_json_bytes(document)
 
 
-def aggregate(root: Path) -> bytes:
+def aggregate(root: Path, *, canonical_sha: str | None = None) -> bytes:
     """Verify six extracted per-cell directories and return the evidence bytes.
 
     Every structural, encoding, manifest, digest, size and cross-cell byte check
     must pass before an envelope exists.  Any internal failure is converted to a
     typed aggregate error so a verifier defect can never produce a pass.
+
+    ``canonical_sha`` is threaded explicitly from the guarded canonical-main
+    dispatch input. It is never read from ``GITHUB_SHA``, a ref, a branch name,
+    a tag, ``git`` output, or any other environment value: this module imports
+    neither ``os`` nor ``subprocess``, so no such fallback exists.
     """
+    if canonical_sha is not None:
+        require_canonical_sha(canonical_sha)
     try:
         cells = _collect_cells(root)
         for cell, payloads in cells.items():
@@ -606,7 +653,7 @@ def aggregate(root: Path) -> bytes:
                     raise CrossPlatformByteMismatchError(
                         f"{name} differs between {reference_cell} and {cell}"
                     )
-        evidence = build_evidence(cells)
+        evidence = build_evidence(cells, canonical_sha=canonical_sha)
     except PortabilityError:
         raise
     except Exception as error:  # a verifier defect must fail closed, never pass
@@ -628,7 +675,10 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
 
 def _cmd_aggregate(args: argparse.Namespace) -> int:
-    evidence = aggregate(Path(args.root))
+    # ``--canonical-sha`` is threaded straight through from the guarded dispatch
+    # input. When the flag is absent the value stays ``None`` and the envelope
+    # omits the key entirely; an explicitly empty value fails closed.
+    evidence = aggregate(Path(args.root), canonical_sha=args.canonical_sha)
     out = Path(args.evidence_out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(evidence)
@@ -646,6 +696,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     agg = sub.add_parser("aggregate", help="verify six cells and emit the envelope")
     agg.add_argument("--root", required=True)
     agg.add_argument("--evidence-out", required=True)
+    agg.add_argument(
+        "--canonical-sha",
+        default=None,
+        help=(
+            "exact guarded canonical-main commit SHA; canonical-main dispatch runs only. "
+            "Omit entirely on pull-request runs."
+        ),
+    )
     agg.set_defaults(func=_cmd_aggregate)
     args = parser.parse_args(list(argv) if argv is not None else None)
     try:

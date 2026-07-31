@@ -367,7 +367,11 @@ def test_evidence_generation_failure(tmp_path: Path, monkeypatch: pytest.MonkeyP
     from medscale.mesc._canonical_json_v1 import canonical_json_bytes
 
     root = _six_cells(tmp_path)
-    monkeypatch.setattr(h, "build_evidence", lambda cells: canonical_json_bytes({"result": "no"}))
+    monkeypatch.setattr(
+        h,
+        "build_evidence",
+        lambda cells, *, canonical_sha=None: canonical_json_bytes({"result": "no"}),
+    )
     with pytest.raises(h.EvidenceGenerationFailureError) as excinfo:
         h.aggregate(root)
     assert excinfo.value.code == "evidence_generation_failure"
@@ -431,7 +435,7 @@ def test_duplicate_json_object_key_is_not_last_wins() -> None:
 def test_aggregate_verifier_internal_error(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     root = _six_cells(tmp_path)
 
-    def boom(cells: object) -> bytes:
+    def boom(cells: object, *, canonical_sha: str | None = None) -> bytes:
         raise RuntimeError("verifier defect")
 
     monkeypatch.setattr(h, "build_evidence", boom)
@@ -509,9 +513,9 @@ def test_no_evidence_envelope_is_produced_on_failure(
     called: list[str] = []
     original = h.build_evidence
 
-    def spy(cells: object) -> bytes:
+    def spy(cells: object, *, canonical_sha: str | None = None) -> bytes:
         called.append("x")
-        return original(cells)  # type: ignore[arg-type]
+        return original(cells, canonical_sha=canonical_sha)  # type: ignore[arg-type]
 
     monkeypatch.setattr(h, "build_evidence", spy)
     with pytest.raises(h.PortabilityError):
@@ -622,6 +626,234 @@ def test_dispatch_guard_requires_main_ref_and_exact_sha() -> None:
     assert not admissible("refs/heads/other", sha, sha)
     assert not admissible("refs/heads/main", sha, "0" * 40)
     assert not admissible("refs/heads/main", sha, "")
+
+
+# --------------------------------------------------------------------------
+# FD-PV-14 — canonical SHA binding in the evidence envelope
+# --------------------------------------------------------------------------
+
+VALID_CANONICAL_SHA = "3a0fd67c8433bd25eab77c05b44aa84a3a86ddb9"
+
+MALFORMED_CANONICAL_SHAS = (
+    "3A0FD67C8433BD25EAB77C05B44AA84A3A86DDB9",  # uppercase
+    "3a0fd67c8433bd25eab77c05b44aa84a3a86DDB9",  # mixed case
+    "",  # empty
+    "3a0fd67c8433bd25eab77c05b44aa84a3a86ddb",  # 39 characters
+    "3a0fd67c8433bd25eab77c05b44aa84a3a86ddb99",  # 41 characters
+    "abc",  # far too short
+    "0" * 64,  # far too long
+    "3a0fd67c8433bd25eab77c05b44aa84a3a86ddbz",  # non-hexadecimal
+    "3a0fd67c-8433-bd25-eab7-7c05b44aa84a3a86",  # punctuation
+    "refs/heads/main",  # full ref
+    "main",  # branch name
+    "v0.2.0",  # tag name
+    "refs/tags/v0.2.0",  # full tag ref
+    " 3a0fd67c8433bd25eab77c05b44aa84a3a86ddb9",  # leading whitespace
+    "3a0fd67c8433bd25eab77c05b44aa84a3a86ddb9 ",  # trailing whitespace
+    "3a0fd67c8433bd25eab77c05b44aa84a3a86ddb\n",  # newline
+    "3a0fd67c8433bd25eab77c05b44aa84a3a86ddb9\n",  # 41 with newline
+)
+
+
+def test_canonical_sha_is_accepted_and_recorded_on_dispatch(tmp_path: Path) -> None:
+    document = json.loads(h.aggregate(_six_cells(tmp_path), canonical_sha=VALID_CANONICAL_SHA))
+    assert document[h.CANONICAL_SHA_KEY] == VALID_CANONICAL_SHA
+    assert document["schema_version"] == "mesc-pilot-01-b2a-portability-evidence/1"
+
+
+def test_pull_request_envelope_omits_the_canonical_sha_key_entirely(tmp_path: Path) -> None:
+    evidence = h.aggregate(_six_cells(tmp_path))
+    document = json.loads(evidence)
+    assert h.CANONICAL_SHA_KEY not in document
+    # Not null, not blank, not a placeholder: the key is absent from the bytes.
+    assert b"canonical_sha" not in evidence
+
+
+@pytest.mark.parametrize("value", MALFORMED_CANONICAL_SHAS)
+def test_malformed_canonical_sha_fails_closed(tmp_path: Path, value: str) -> None:
+    root = _six_cells(tmp_path / "root")
+    with pytest.raises(h.EvidenceGenerationFailureError) as excinfo:
+        h.aggregate(root, canonical_sha=value)
+    assert excinfo.value.code == "evidence_generation_failure"
+
+
+@pytest.mark.parametrize("value", MALFORMED_CANONICAL_SHAS)
+def test_malformed_canonical_sha_is_rejected_by_the_validator(value: str) -> None:
+    with pytest.raises(h.EvidenceGenerationFailureError):
+        h.require_canonical_sha(value)
+
+
+def test_non_string_canonical_sha_fails_closed() -> None:
+    values: tuple[object, ...] = (
+        None,
+        0,
+        3.5,
+        True,
+        [VALID_CANONICAL_SHA],
+        {"sha": VALID_CANONICAL_SHA},
+        VALID_CANONICAL_SHA.encode(),
+    )
+    for value in values:
+        with pytest.raises(h.EvidenceGenerationFailureError):
+            h.require_canonical_sha(value)
+
+
+def test_malformed_canonical_sha_produces_no_envelope(tmp_path: Path) -> None:
+    root = _six_cells(tmp_path)
+    out = tmp_path / "evidence" / h.EVIDENCE_NAME
+    assert (
+        h.main(
+            [
+                "aggregate",
+                "--root",
+                str(root),
+                "--evidence-out",
+                str(out),
+                "--canonical-sha",
+                "refs/heads/main",
+            ]
+        )
+        == 1
+    )
+    assert not out.exists()
+
+
+def test_canonical_sha_never_falls_back_to_an_environment_value(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """No uncontrolled environment value may supply the field.
+
+    Every plausible source is populated with a decoy that is itself a valid
+    forty-character lowercase SHA, so a fallback would silently succeed rather
+    than error. The envelope must still omit the key.
+    """
+    decoy = "b" * 40
+    for name in (
+        "GITHUB_SHA",
+        "GITHUB_REF",
+        "GITHUB_REF_NAME",
+        "GITHUB_HEAD_REF",
+        "GITHUB_BASE_REF",
+        "GITHUB_WORKFLOW_SHA",
+        "CANONICAL_SHA",
+        "EXPECTED_SHA",
+    ):
+        monkeypatch.setenv(name, decoy)
+    evidence = h.aggregate(_six_cells(tmp_path))
+    assert h.CANONICAL_SHA_KEY not in json.loads(evidence)
+    assert decoy.encode() not in evidence
+
+
+def test_harness_cannot_read_the_environment_or_shell_out() -> None:
+    """The helper has no mechanism to infer the SHA: no os, no subprocess."""
+    import ast
+
+    source = Path(h.__file__).read_text(encoding="utf-8")
+    imported: set[str] = set()
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Import):
+            imported.update(alias.name.split(".")[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
+            imported.add(node.module.split(".")[0])
+    assert "os" not in imported
+    assert "subprocess" not in imported
+    assert "platform" not in imported
+
+
+def test_canonical_sha_serialization_is_stable_and_order_independent(tmp_path: Path) -> None:
+    root = _six_cells(tmp_path)
+    first = h.aggregate(root, canonical_sha=VALID_CANONICAL_SHA)
+    second = h.aggregate(root, canonical_sha=VALID_CANONICAL_SHA)
+    assert first == second
+
+    payloads = _payloads()
+    forward: dict[str, dict[str, bytes]] = dict.fromkeys(h.CELL_IDS, payloads)
+    reverse: dict[str, dict[str, bytes]] = dict.fromkeys(reversed(h.CELL_IDS), payloads)
+    assert list(forward) != list(reverse)
+    assert h.build_evidence(forward, canonical_sha=VALID_CANONICAL_SHA) == h.build_evidence(
+        reverse, canonical_sha=VALID_CANONICAL_SHA
+    )
+
+
+def test_canonical_sha_does_not_alter_the_three_compared_files(tmp_path: Path) -> None:
+    root = _six_cells(tmp_path)
+    before = {name: (root / h.ARTIFACT_NAMES[0] / name).read_bytes() for name in h.REQUIRED_FILES}
+    h.aggregate(root, canonical_sha=VALID_CANONICAL_SHA)
+    after = {name: (root / h.ARTIFACT_NAMES[0] / name).read_bytes() for name in h.REQUIRED_FILES}
+    assert before == after == _payloads()
+    for payload in after.values():
+        assert b"canonical_sha" not in payload
+        assert VALID_CANONICAL_SHA.encode() not in payload
+
+
+def test_canonical_sha_is_absent_from_manifest_and_split_fingerprint_inputs() -> None:
+    payloads = _payloads()
+    assert b"canonical_sha" not in payloads[h.MANIFEST_NAME]
+    # The envelope is a validation record only: it is never a manifest entry and
+    # never enters the promoted split artifacts or their fingerprint inputs.
+    document = json.loads(payloads[h.MANIFEST_NAME])
+    assert set(document) == {"schema_version", "files"}
+
+
+def test_canonical_sha_only_differs_by_that_one_key(tmp_path: Path) -> None:
+    root = _six_cells(tmp_path)
+    without = json.loads(h.aggregate(root))
+    with_sha = json.loads(h.aggregate(root, canonical_sha=VALID_CANONICAL_SHA))
+    assert set(with_sha) - set(without) == {h.CANONICAL_SHA_KEY}
+    assert {key: value for key, value in with_sha.items() if key != h.CANONICAL_SHA_KEY} == without
+
+
+def test_evidence_schema_version_is_corrected_in_place(tmp_path: Path) -> None:
+    for evidence in (
+        h.aggregate(_six_cells(tmp_path / "pr")),
+        h.aggregate(_six_cells(tmp_path / "dispatch"), canonical_sha=VALID_CANONICAL_SHA),
+    ):
+        assert json.loads(evidence)["schema_version"] == h.EVIDENCE_SCHEMA
+        assert h.EVIDENCE_SCHEMA.endswith("/1")
+        assert b"/2" not in evidence
+
+
+def test_cli_threads_the_canonical_sha_into_the_envelope(tmp_path: Path) -> None:
+    root = _six_cells(tmp_path)
+    out = tmp_path / "evidence" / h.EVIDENCE_NAME
+    assert (
+        h.main(
+            [
+                "aggregate",
+                "--root",
+                str(root),
+                "--evidence-out",
+                str(out),
+                "--canonical-sha",
+                VALID_CANONICAL_SHA,
+            ]
+        )
+        == 0
+    )
+    assert json.loads(out.read_bytes())[h.CANONICAL_SHA_KEY] == VALID_CANONICAL_SHA
+
+
+def test_cli_without_the_flag_omits_the_key(tmp_path: Path) -> None:
+    root = _six_cells(tmp_path)
+    out = tmp_path / "evidence" / h.EVIDENCE_NAME
+    assert h.main(["aggregate", "--root", str(root), "--evidence-out", str(out)]) == 0
+    assert h.CANONICAL_SHA_KEY not in json.loads(out.read_bytes())
+
+
+def test_taxonomy_is_unchanged_by_the_canonical_sha_binding() -> None:
+    assert len(h.TAXONOMY) == 21
+    assert set(h.iter_taxonomy_codes()) == set(EXPECTED_TAXONOMY)
+
+
+def test_workflow_threads_the_guarded_input_and_validates_its_form() -> None:
+    """The workflow must pass the guarded input and never a ref or GITHUB_SHA."""
+    workflow = (
+        Path(h.__file__).resolve().parents[1] / ".github" / "workflows" / "mesc-b2a-portability.yml"
+    ).read_text(encoding="utf-8")
+    assert '--canonical-sha "${EXPECTED_SHA}"' in workflow
+    assert "EXPECTED_SHA: ${{ inputs.expected_sha }}" in workflow
+    assert '--canonical-sha "${GITHUB_SHA}"' not in workflow
+    assert 'if [ "${#EXPECTED_SHA}" -ne 40 ]' in workflow
 
 
 def test_cli_generate_and_aggregate_round_trip(tmp_path: Path) -> None:

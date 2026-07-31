@@ -77,6 +77,15 @@ jobs:
           if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
             echo "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"; exit 1
           fi
+          # FD-PV-14: validate the dispatch input's exact form here, before it is
+          # threaded anywhere. Exactly forty lowercase hexadecimal characters.
+          case "${EXPECTED_SHA}" in
+            *[!0-9a-f]* | "")
+              echo "dispatch rejected: expected_sha is not lowercase hexadecimal"; exit 1 ;;
+          esac
+          if [ "${#EXPECTED_SHA}" -ne 40 ]; then
+            echo "dispatch rejected: expected_sha is not exactly 40 characters"; exit 1
+          fi
           head="$(git rev-parse HEAD)"
           if [ "${head}" != "${EXPECTED_SHA}" ]; then
             echo "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"; exit 1
@@ -161,6 +170,15 @@ jobs:
           if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
             echo "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"; exit 1
           fi
+          # FD-PV-14: validate the dispatch input's exact form here, before it is
+          # threaded anywhere. Exactly forty lowercase hexadecimal characters.
+          case "${EXPECTED_SHA}" in
+            *[!0-9a-f]* | "")
+              echo "dispatch rejected: expected_sha is not lowercase hexadecimal"; exit 1 ;;
+          esac
+          if [ "${#EXPECTED_SHA}" -ne 40 ]; then
+            echo "dispatch rejected: expected_sha is not exactly 40 characters"; exit 1
+          fi
           head="$(git rev-parse HEAD)"
           if [ "${head}" != "${EXPECTED_SHA}" ]; then
             echo "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"; exit 1
@@ -216,13 +234,32 @@ jobs:
           count="$(ls -1 downloaded | wc -l | tr -d '[:space:]')"
           if [ "${count}" != "6" ]; then echo "expected 6 artifacts, found ${count}"; exit 1; fi
 
-      - name: Aggregate and compare all six cells
+      # Pull-request runs: no canonical SHA exists, so the flag is not passed and
+      # the envelope omits the key entirely (FD-PV-14).
+      - name: Aggregate and compare all six cells (pull request)
+        if: github.event_name != 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
           uv run python tests/_mesc_b2a_portability.py aggregate \
             --root downloaded \
             --evidence-out evidence/portability-evidence.json
+
+      # Canonical-main dispatch: the value threaded here is the already guarded
+      # dispatch input, verified above to be exactly forty lowercase hexadecimal
+      # characters and to equal the checked-out HEAD on refs/heads/main. It is
+      # never taken from GITHUB_SHA, a ref, a branch name or a tag.
+      - name: Aggregate and compare all six cells (canonical-main dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run python tests/_mesc_b2a_portability.py aggregate \
+            --root downloaded \
+            --evidence-out evidence/portability-evidence.json \
+            --canonical-sha "${EXPECTED_SHA}"
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
 
       - name: Publish non-admissible envelope to the job summary
         shell: bash
