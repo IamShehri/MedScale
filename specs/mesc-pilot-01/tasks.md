@@ -180,7 +180,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability remediation executed on Draft PR #61 and now under GOVERNANCE HOLD (four blocking findings, FD-PV-16 correction authority recorded but not active); infrastructure not adopted; execution not authorized; B2A not accepted |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability remediation and corrections executed on Draft PR #61, now under FINAL REVIEW HOLD (four blocking findings, FD-PV-17 correction authority recorded but not active); infrastructure not adopted; execution not authorized; B2A not accepted |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -608,4 +608,92 @@ Dispose of the historical authority-record gap for PR #61 commits 6 and 7,
 record the accidental canonical-main ref incident and its containment, adopt
 preventive controls, and prospectively authorize exactly one additive PR #61
 correction commit under a five-condition activation gate.
+```
+
+```text
+P01-T03B8 — P01-04B2A final independent-review hold gate
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-PV-17 NOT ACTIVE
+
+Founder disposition:
+FINAL REVIEW HOLD ACCEPTED (2026-07-31)
+
+Required canonical baseline:
+02d0aafb61fa62de414c0e8e5d61187c03b650bd
+
+Governed Draft pull request:
+PR #61 — OPEN / DRAFT / NOT MERGED — HELD
+
+PR #61 exact head:
+f68f8be8799c0ec67b26c319a4a06789f2ea1a7e
+
+PR #61 exact tree:
+1caa8f9ae4031ff17ddcd33ffc0a32a4e7cc855e
+
+PR #61 scope:
+8 COMMITS / 3 FILES / +3829 / -0
+
+Accepted independent exact-head verdict:
+GOVERNANCE HOLD — PR #61 MUST REMAIN DRAFT
+
+Blocking findings:
+F1 LARGE UNEXPECTED-ARTIFACT RESPONSES MAY BYPASS THE GUARD THROUGH A
+   PIPEFAIL/SIGPIPE PIPELINE RESULT
+F2 B2 TESTS BYPASS THE REAL PAGINATED-JSON AND JQ PROJECTION BOUNDARY
+F3 DISPATCH TESTS COVER ONE GUARD COPY AND DO NOT PROVE MALFORMED-SHA
+   REJECTION PRECEDES GIT REV-PARSE
+F4 ARCHIVE-CARDINALITY BEHAVIOUR LACKS REAL EXECUTION COVERAGE
+
+Accepted taxonomy mappings — settled, not to be changed:
+EXPIRED EXPECTED ARTIFACT -> missing_matrix_cell
+POST-VALIDATION ARCHIVE-COUNT INCONSISTENCY ->
+  aggregate_verifier_internal_error
+
+Prospective correction authority:
+FD-PV-17 RECORDED BUT NOT ACTIVE — ONE ADDITIVE NINTH PR #61 COMMIT, PARENT
+f68f8be8799c0ec67b26c319a4a06789f2ea1a7e
+
+Two primary authorized paths:
+.github/workflows/mesc-b2a-portability.yml
+tests/test_mesc_b2a_portability.py
+
+Conditional helper path:
+tests/_mesc_b2a_portability.py
+
+The helper may change only if the builder proves a blocking defect cannot be
+closed without it, with that proof recorded. No tenth commit is authorized.
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+Independent exact-head review of the corrected PR #61 head:
+OUTSTANDING — REQUIRED BEFORE PR #61 READY OR MERGE
+
+Infrastructure adoption:
+NOT ACHIEVED
+
+Execution:
+NOT AUTHORIZED
+
+Admissible evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+
+Binding N-12:
+UNDISCHARGED; WINDOWS AND MACOS OBLIGATIONS OPEN
+
+Downstream status:
+B2B NOT AUTHORIZED
+
+Prerequisite:
+P01-T03B7 ADOPTED (PR #63 merge 02d0aafb...)
+
+Scope:
+Record the final independent exact-head review verdict on PR #61 and
+prospectively authorize exactly one ninth correction commit under a
+five-condition activation gate. Prior governance history is adopted at
+specs/mesc-pilot-01/p01-04b2a-governance-hold/ and is not restated.
 ```
