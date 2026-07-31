@@ -3,7 +3,7 @@
 ```text
 Status:
 CONTRACTS FOUNDER RATIFIED;
-REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
 Contracts:
 FOUNDER RATIFIED
@@ -11,8 +11,11 @@ FOUNDER RATIFIED
 Historical initial implementation:
 OCCURRED BEFORE CANONICAL AUTHORIZATION
 
-Current remediation implementation:
-PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
 
 Infrastructure adoption:
 NOT ACHIEVED
@@ -63,8 +66,10 @@ B2A-implementation, **no** execution, **no** evidence-production, **no**
 B2A-acceptance, and **no** B2B authority. Nothing in that state authorized any
 implementation work, and the work now in Draft PR #61 was not authorized by it.
 
-**Current — while PR #62 is Draft.** While this package's `FD-PV-11` through
-`FD-PV-15` record remains Draft, unmerged, or otherwise unadopted:
+**Current — before the complete activation gate.** While this package's
+`FD-PV-11` through `FD-PV-15` record remains Draft, unmerged, or otherwise
+unadopted, and at any point before **every one** of the five activation
+conditions below has been satisfied:
 
 - no PR #61 branch mutation is authorized;
 - no synchronization is authorized;
@@ -87,10 +92,14 @@ non-force synchronization merge commit, preservation of both existing PR #61
 commit identities, Correction A, Correction B, the normal push, and the
 automatically triggered workflows — without any further founder authorization.
 
-**Merge alone does not activate `FD-PV-15`.** A merge that occurs without the
-independent exact-head approval, the separate Ready decision, the separate merge
-decision, and the mechanical verification of the merge SHA and resulting main
-tree activates nothing.
+**No subset activates `FD-PV-15`.** Adoption alone activates nothing. Merge
+alone activates nothing. Independent exact-head approval plus merge, without the
+separate Ready decision, the separate merge decision, or the mechanical
+verification, activates nothing. Adoption plus mechanical verification, without
+the independent exact-head approval and both separate founder decisions,
+activates nothing. Only the complete five-condition gate activates `FD-PV-15`,
+and no synchronization or implementation correction may begin before it is
+complete.
 
 Nothing in any of the three states authorizes execution, admissible evidence
 production, evidence acceptance, B2A acceptance, discharge of binding `N-12`,
@@ -394,11 +403,13 @@ into retroactive authorization.
 
 Recorded 2026-07-30. The PR #61 implementation work predates any canonical
 infrastructure-implementation authorization. This record does not retroactively
-authorize it. Remediation and further review are authorized prospectively, only
-after this package is adopted. PR #61 remains Draft until adoption,
-non-rewriting synchronization, correction, passing exact-head workflows, a
-genuinely independent exact-head review, and a separate Ready-transition
-decision have all occurred.
+authorize it. Remediation and further review are recorded prospectively and
+become operative only after **all five** `FD-PV-15` activation conditions have
+been satisfied; adoption alone, merge alone, and adoption plus mechanical
+verification alone are each insufficient. PR #61 remains Draft until that
+complete activation gate, non-rewriting synchronization, correction, passing
+exact-head workflows, a genuinely independent exact-head review, and a separate
+Ready-transition decision have all occurred.
 
 ```text
 FOUNDER-RATIFIED 2026-07-30 AS FD-PV-11
@@ -446,10 +457,15 @@ FOUNDER-RATIFIED 2026-07-30 AS FD-PV-14
 
 ## FD-PV-15 — Remediation and sequencing authority
 
-A non-force merge commit synchronizes canonical main into the PR #61 branch,
+Once, and only once, all five activation conditions have been satisfied —
+independent exact-head approval of PR #62, a separate founder Ready-transition
+decision, a separate founder merge decision, canonical merge, and mechanical
+verification of the canonical merge SHA and the resulting main tree — a
+non-force merge commit synchronizes canonical main into the PR #61 branch,
 preserving both existing commit identities, followed by exactly two additive
 correction commits — Correction A for `FD-PV-14`, Correction B for `FD-PV-12`
-and `FD-PV-13` — each confined to the three implementation paths.
+and `FD-PV-13` — each confined to the three implementation paths. Before that
+complete gate, none of those commits is authorized.
 
 ```text
 FOUNDER-RATIFIED 2026-07-30 AS FD-PV-15

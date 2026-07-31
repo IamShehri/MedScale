@@ -2,14 +2,19 @@
 
 ```text
 THIS TASK IS NOT EXECUTABLE WITHOUT A SEPARATE FOUNDER IMPLEMENTATION AUTHORIZATION.
-THE REMEDIATION BRIEF ADDED 2026-07-30 BECOMES EXECUTABLE ONLY AFTER THE
-FD-PV-11 THROUGH FD-PV-15 GOVERNANCE PACKAGE IS ADOPTED ON CANONICAL MAIN.
+THE REMEDIATION BRIEF ADDED 2026-07-30 BECOMES EXECUTABLE ONLY AFTER ALL FIVE
+FD-PV-15 ACTIVATION CONDITIONS HAVE BEEN SATISFIED AND MECHANICALLY VERIFIED:
+INDEPENDENT EXACT-HEAD APPROVAL OF PR #62; A SEPARATE FOUNDER READY-TRANSITION
+DECISION FOR PR #62; A SEPARATE FOUNDER MERGE DECISION FOR PR #62; MERGE INTO
+CANONICAL MAIN; AND MECHANICAL VERIFICATION OF THE CANONICAL MERGE SHA AND THE
+RESULTING MAIN TREE. CANONICAL ADOPTION ALONE IS NOT SUFFICIENT.
+AT THE CURRENT DRAFT HEAD THIS TASK IS NOT EXECUTABLE.
 ```
 
 ```text
 Status:
 CONTRACTS FOUNDER RATIFIED;
-REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
 Contracts:
 FOUNDER RATIFIED
@@ -17,8 +22,11 @@ FOUNDER RATIFIED
 Historical initial implementation:
 OCCURRED BEFORE CANONICAL AUTHORIZATION
 
-Current remediation implementation:
-PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
 
 Infrastructure adoption:
 NOT ACHIEVED
@@ -293,9 +301,16 @@ into retroactive authorization.
 
 ## Remediation brief (FD-PV-15)
 
-This brief becomes executable only after this governance package is adopted on
-canonical main, and only for the sequence recorded in `FD-PV-15`. It is not
-executable at the time of writing.
+This brief becomes executable only after **all five** `FD-PV-15` activation
+conditions have been satisfied — a genuinely independent exact-head approval of
+PR #62, a separate founder Ready-transition decision for PR #62, a separate
+founder merge decision for PR #62, merge into canonical main, and mechanical
+verification of the canonical merge SHA and the resulting main tree — and only
+for the sequence recorded in `FD-PV-15`.
+
+Canonical adoption is **not** sufficient on its own, and neither is any other
+subset of the five conditions. This brief is **not executable** at the current
+Draft head.
 
 Prerequisite: synchronize canonical main into
 `feat/mesc-b2a-portability-infrastructure` with a normal non-force merge commit,

@@ -3,7 +3,7 @@
 ```text
 Status:
 CONTRACTS FOUNDER RATIFIED;
-REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
 Contracts:
 FOUNDER RATIFIED
@@ -11,8 +11,11 @@ FOUNDER RATIFIED
 Historical initial implementation:
 OCCURRED BEFORE CANONICAL AUTHORIZATION
 
-Current remediation implementation:
-PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
 
 Infrastructure adoption:
 NOT ACHIEVED
@@ -211,7 +214,10 @@ deletion.
 
 Stop without mutation if:
 
-- this governance package is not yet adopted on canonical main;
+- any one of the five `FD-PV-15` activation conditions is not yet satisfied,
+  including this governance package not yet being adopted on canonical main and
+  the canonical merge SHA and resulting main tree not yet being mechanically
+  verified;
 - either existing PR #61 commit identity would change;
 - a fourth or later correction commit would be required;
 - any path outside the three implementation paths would be modified;

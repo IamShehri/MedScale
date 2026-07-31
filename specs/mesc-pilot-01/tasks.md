@@ -180,7 +180,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability infrastructure remediation prospectively authorized 2026-07-30 (FD-PV-11..15), not adopted; execution not authorized; B2A not accepted |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability infrastructure remediation authority recorded 2026-07-30 (FD-PV-11..15) but not active until all five FD-PV-15 activation conditions are satisfied, and not adopted; execution not authorized; B2A not accepted |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -357,7 +357,8 @@ FD-PV-6 numeric limits:
 
 Infrastructure implementation:
 HISTORICAL DRAFT WORK CREATED BEFORE CANONICAL AUTHORIZATION (PR #61);
-REMEDIATION PROSPECTIVELY AUTHORIZED 2026-07-30 BY FD-PV-11 THROUGH FD-PV-15;
+REMEDIATION AUTHORITY RECORDED 2026-07-30 BY FD-PV-11 THROUGH FD-PV-15 BUT NOT
+ACTIVE UNTIL ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED;
 NOT RETROACTIVELY AUTHORIZED; NOT ADOPTED
 
 Infrastructure adoption:
@@ -397,7 +398,7 @@ cross-platform golden-vector evidence infrastructure.
 P01-T03B6 — P01-04B2A portability remediation authorization gate
 
 Documentation status:
-RECORDED — NOT ADOPTED
+RECORDED — NOT ADOPTED; REMEDIATION AUTHORITY NOT ACTIVE
 
 Founder authorization:
 FD-PV-11 THROUGH FD-PV-15 RECORDED ON 2026-07-30
@@ -420,13 +421,19 @@ AUTHORITY GAP — PR #61 MUST REMAIN DRAFT UNTIL MISSING DECISIONS ARE CANONICAL
 Historical initial implementation:
 OCCURRED BEFORE CANONICAL AUTHORIZATION; NOT RETROACTIVELY AUTHORIZED
 
-Current remediation implementation:
-PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
 
 Independent clean-room review of pre-remediation exact head:
 COMPLETED — AUTHORITY GAP VERDICT ACCEPTED
 
 Independent clean-room review of b9c523138917e22c31d31ded857aeecb8aef55e4:
+COMPLETED — CHANGES REQUIRED
+
+Independent clean-room review of a78ccf4dff2c6dc1df8b76ea9cb9ff395b001e53:
 COMPLETED — CHANGES REQUIRED
 
 Post-correction independent exact-head review:

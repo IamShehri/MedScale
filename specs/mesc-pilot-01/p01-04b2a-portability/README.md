@@ -3,7 +3,7 @@
 ```text
 Status:
 CONTRACTS FOUNDER RATIFIED;
-REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
 Contracts:
 FOUNDER RATIFIED
@@ -11,11 +11,14 @@ FOUNDER RATIFIED
 Original infrastructure work:
 CREATED BEFORE CANONICAL AUTHORIZATION
 
-Current Draft PR #62 state:
-REMEDIATION AUTHORITY RECORDED BUT NOT ACTIVE
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
 
-After PR #62 canonical adoption and mechanical verification:
-FD-PV-15 REMEDIATION AUTHORITY ACTIVE
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
+(INDEPENDENT EXACT-HEAD APPROVAL OF PR #62; SEPARATE FOUNDER READY DECISION;
+SEPARATE FOUNDER MERGE DECISION; CANONICAL MERGE; MECHANICAL VERIFICATION OF
+THE MERGE SHA AND RESULTING MAIN TREE)
 
 Infrastructure adoption:
 NOT ACHIEVED
@@ -90,17 +93,23 @@ portability-validation infrastructure for P01-04B2A. It exists so the founder
 could decide the infrastructure contracts **before** any workflow file, test
 file, or B2A implementation file is written. Those contracts were ratified on
 2026-07-27 as `FD-PV-1` through `FD-PV-10`. Remediation of the existing Draft
-work is authorized prospectively by `FD-PV-15`, which activates only after
-PR #62 is adopted on canonical main and mechanically verified.
+work is recorded prospectively by `FD-PV-15`, which becomes operative only after
+**all five** of its activation conditions are satisfied: a genuinely independent
+exact-head approval of PR #62, a separate founder Ready-transition decision for
+PR #62, a separate founder merge decision for PR #62, merge into canonical main,
+and mechanical verification of the canonical merge SHA and the resulting main
+tree.
 
 This package designs infrastructure. It does not build it, run it, or produce
 evidence with it.
 
 The canonical B2A artifact implementation was adopted through PR #59.
 
-Portability-infrastructure remediation authority is **recorded but not active**
-until PR #62 is adopted and mechanically verified. Infrastructure adoption is
-not achieved.
+Portability-infrastructure remediation authority is **recorded but not active**.
+It stays inactive until every one of the five `FD-PV-15` activation conditions
+has been satisfied; no subset of them — adoption alone, merge alone, independent
+approval plus merge, or adoption plus mechanical verification — activates
+anything. Infrastructure adoption is not achieved.
 
 Portability evidence remains unauthorized and unproduced.
 
@@ -145,15 +154,18 @@ remains open.
 |---|---|---|
 | **B2A implementation** | Writing the private canonical-serialization and artifact-identity modules and their tests, in the four already-ratified paths | **ADOPTED THROUGH PR #59; NOT AUTHORIZED BY THIS PORTABILITY PACKAGE** |
 | **Historical initial implementation** | The workflow and helper/test modules created in Draft PR #61 before any canonical authorization existed | **CREATED BEFORE CANONICAL AUTHORIZATION; NOT RETROACTIVELY AUTHORIZED; NOT ADOPTED** |
-| **Prospective remediation** | The synchronization merge commit and exactly two correction commits, in the three ratified paths | **AUTHORITY RECORDED BY FD-PV-15; NOT ACTIVE UNTIL PR #62 IS ADOPTED AND MECHANICALLY VERIFIED** |
+| **Prospective remediation** | The synchronization merge commit and exactly two correction commits, in the three ratified paths | **AUTHORITY RECORDED BY FD-PV-15; NOT ACTIVE UNTIL ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED** |
 | **Portability evidence production** | Actually running the six-cell matrix and generating comparison evidence | **NOT AUTHORIZED** |
 | **B2A acceptance** | Declaring B2A accepted, which unblocks B2B consideration | **NOT ACHIEVED** |
 
 Historical initial implementation is not retroactively authorized by anything in
-this package. Prospective remediation is authorized by `FD-PV-15` and activates
-on adoption and mechanical verification of PR #62, after which the
-synchronization merge commit and the two correction commits need no further
-founder decision. Portability evidence production and B2A acceptance remain
+this package. Prospective remediation is recorded by `FD-PV-15` and becomes
+operative only after **all five** of its activation conditions have been
+satisfied — independent exact-head approval of PR #62, a separate founder
+Ready-transition decision, a separate founder merge decision, canonical merge,
+and mechanical verification of the merge SHA and resulting main tree — after
+which the synchronization merge commit and the two correction commits need no
+further founder decision. Portability evidence production and B2A acceptance remain
 separate founder acts, and neither is granted by this package or by merging
 it.
 
@@ -257,8 +269,9 @@ The implementation work in Draft `PR #61` (head
 infrastructure-implementation authorization existed. That work is **not**
 retroactively authorized. It remains Draft, unmerged, and unadopted.
 
-Remediation of that work is now authorized **prospectively**, effective only
-after this package is adopted on canonical main. Authorizing repair is not
+Remediation of that work is now recorded **prospectively**, effective only after
+every one of the five `FD-PV-15` activation conditions has been satisfied.
+Canonical adoption alone does not make it effective. Authorizing repair is not
 accepting the thing repaired.
 
 `PR #61` is not corrected, not accepted, not adopted, not Ready, and not

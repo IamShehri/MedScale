@@ -1,7 +1,7 @@
 # MESC Pilot-01 — P01-04B2A Portability Validation Gate Founder Ratification
 
 Status:
-**CONTRACTS FOUNDER RATIFIED; REMEDIATION PROSPECTIVELY AUTHORIZED**
+**CONTRACTS FOUNDER RATIFIED; REMEDIATION AUTHORITY RECORDED BUT NOT ACTIVE**
 
 Contracts:
 **FOUNDER RATIFIED**
@@ -9,8 +9,11 @@ Contracts:
 Historical initial implementation:
 **OCCURRED BEFORE CANONICAL AUTHORIZATION**
 
-Current remediation implementation:
-**PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED**
+Current remediation authority:
+**RECORDED BUT NOT ACTIVE**
+
+Activation:
+**OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED**
 
 Infrastructure adoption:
 **NOT ACHIEVED**
@@ -265,12 +268,18 @@ exact-head review before any Ready-transition or merge decision.
    They were not.
 3. Both commits remain Draft, unmerged, unadopted implementation work.
 4. The founder now **prospectively** authorizes remediation of, and further
-   review of, PR #61 — but only after this governance package is adopted on
-   canonical main.
+   review of, PR #61 — but that authority is **recorded, not active**. It
+   becomes operative only after **all five** `FD-PV-15` activation conditions
+   have been satisfied: a genuinely independent exact-head approval of PR #62, a
+   separate founder Ready-transition decision for PR #62, a separate founder
+   merge decision for PR #62, merge into canonical main, and mechanical
+   verification of the canonical merge SHA and the resulting main tree. Adoption
+   alone, merge alone, independent approval plus merge alone, and adoption plus
+   mechanical verification alone are each **insufficient**.
 5. No current implementation is accepted merely because remediation is
    authorized. Authorizing repair is not accepting the thing repaired.
 6. PR #61 must remain Draft until **all** of the following have occurred:
-   - this governance package is adopted on canonical main;
+   - every one of the five `FD-PV-15` activation conditions is satisfied;
    - the branch is synchronized with the new canonical main **without history
      rewriting**;
    - the required implementation corrections are completed;
@@ -371,8 +380,12 @@ abandoned version 2.
 
 ## FD-PV-15 — Remediation and sequencing authority
 
-After this governance package is merged and independently verified, and not
-before, the following future sequence — and only this sequence — is authorized:
+Only after all five `FD-PV-15` activation conditions stated below have been
+satisfied — independent exact-head approval of PR #62, a separate founder
+Ready-transition decision for PR #62, a separate founder merge decision for
+PR #62, canonical merge, and mechanical verification of the canonical merge SHA
+and the resulting main tree — and not before, the following future sequence, and
+only this sequence, is authorized:
 
 1. Synchronize the new canonical main into
    `feat/mesc-b2a-portability-infrastructure` using a normal **non-force merge
@@ -440,9 +453,10 @@ ambiguity over whether canonical adoption activates the `FD-PV-15` remediation
 sequence, or whether every synchronization and correction step needs a further
 founder authorization. This section resolves that ambiguity.
 
-### Before canonical adoption — nothing is activated
+### Before all five activation conditions — nothing is activated
 
-While PR #62 remains Draft, unmerged, or otherwise unadopted:
+While PR #62 remains Draft, unmerged, or otherwise unadopted, and at any time
+before **every one** of the five activation conditions below has been satisfied:
 
 - no PR #61 branch mutation is authorized;
 - synchronization is not authorized;
@@ -454,9 +468,9 @@ While PR #62 remains Draft, unmerged, or otherwise unadopted:
 The Draft record does **not** activate remediation. Recording a decision is not
 executing it.
 
-### Activation condition
+### Activation conditions — all five required
 
-`FD-PV-15` becomes operative only after **all** of the following:
+`FD-PV-15` becomes operative only after **all five** of the following:
 
 1. PR #62 receives a genuinely independent exact-head approval;
 2. a separate founder Ready-transition decision is issued for PR #62;
@@ -465,10 +479,18 @@ executing it.
 5. the canonical merge SHA and the resulting main tree are mechanically
    verified.
 
-### Authority activated by adoption
+No subset activates anything. In particular: adoption alone is insufficient;
+merge alone is insufficient; independent approval plus merge, without the
+separate Ready decision, the separate merge decision, or the mechanical
+verification, is insufficient; and adoption plus mechanical verification,
+without the independent exact-head approval and both separate founder
+decisions, is insufficient. Until all five are satisfied, no synchronization and
+no implementation correction may begin.
 
-Once every activation condition is satisfied, `FD-PV-15` itself supplies
-complete prospective authority for exactly:
+### Authority activated by the complete five-condition gate
+
+Once **every one** of the five activation conditions is satisfied, `FD-PV-15`
+itself supplies complete prospective authority for exactly:
 
 1. merging the new canonical main into
    `feat/mesc-b2a-portability-infrastructure` through **one** normal non-force

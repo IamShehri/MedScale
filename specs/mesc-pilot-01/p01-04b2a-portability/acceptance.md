@@ -3,7 +3,7 @@
 ```text
 Status:
 CONTRACTS FOUNDER RATIFIED;
-REMEDIATION PROSPECTIVELY AUTHORIZED BY FD-PV-11 THROUGH FD-PV-15
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
 Contracts:
 FOUNDER RATIFIED
@@ -11,8 +11,11 @@ FOUNDER RATIFIED
 Historical initial implementation:
 OCCURRED BEFORE CANONICAL AUTHORIZATION
 
-Current remediation implementation:
-PROSPECTIVELY AUTHORIZED AFTER THIS RECORD IS ADOPTED
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
 
 Infrastructure adoption:
 NOT ACHIEVED
@@ -54,7 +57,7 @@ Applies to this documentation pull request only.
 | Path scope | Exactly eight authorized documentation paths |
 | Decisions visible | PD-PV-1 through PD-PV-10 all present, adopted as FD-PV-1 through FD-PV-10 |
 | Numeric limits | The FD-PV-6 compressed and extracted byte limits recorded exactly |
-| No pre-adoption implementation authority | No pre-adoption remediation implementation authority. `FD-PV-15` activates only after canonical adoption and mechanical verification |
+| No pre-activation implementation authority | No remediation implementation authority before activation. `FD-PV-15` becomes operative only after all five of its activation conditions are satisfied; adoption, merge, or adoption plus mechanical verification alone is insufficient |
 | No workflow change | No `.github/**` path changed |
 | No source or test change | No `src/**` or `tests/**` path changed |
 | No evidence claims | No document claims portability evidence exists or has passed |
@@ -95,10 +98,12 @@ Explicitly **not** stop conditions:
   `FD-PV-15` are canonicalized. The prohibition on modifying the separate B2A
   contracts under `specs/mesc-pilot-01/p01-04b2a/**` is unchanged and remains
   fully in force.
-- **Recording prospective post-adoption remediation authority.** The package may
-  record that authority. Recording it does **not** activate it: while PR #62
-  remains Draft, unmerged, or otherwise unadopted, no PR #61 mutation, no
-  synchronization, and neither correction commit is authorized.
+- **Recording prospective post-activation remediation authority.** The package
+  may record that authority. Recording it does **not** activate it: until every
+  one of the five `FD-PV-15` activation conditions has been satisfied — and so
+  for as long as PR #62 remains Draft, unmerged, or otherwise unadopted — no
+  PR #61 mutation, no synchronization, and neither correction commit is
+  authorized.
 
 ---
 
@@ -218,7 +223,7 @@ into retroactive authorization.
 
 Earlier criteria remain controlling except where `FD-PV-11` through `FD-PV-15`
 expressly supersede them. The express supersessions are limited to the PR #62
-documentation path count, pre-adoption versus post-adoption remediation
+documentation path count, pre-activation versus post-activation remediation
 authority, the narrow addition of `actions: read`, and the remediation commit
 sequence.
 
@@ -228,7 +233,7 @@ adoption and does not accept B2A.
 
 | Criterion | Requirement |
 |---|---|
-| Governance adoption | This package adopted on canonical main before any correction commit |
+| Activation gate | All five `FD-PV-15` activation conditions satisfied — independent exact-head approval of PR #62, separate founder Ready decision, separate founder merge decision, canonical merge, and mechanical verification of the merge SHA and resulting main tree — before any synchronization or correction commit |
 | History preservation | Both PR #61 commits retain their exact object identities; no rebase, amend, squash, reset, cherry-pick, or force-push |
 | Synchronization | Canonical main merged into the branch by a normal non-force merge commit |
 | Correction scope | Exactly the three implementation paths; no dependency, lockfile, `src/**`, dataset, model, or public-API change |
