@@ -2045,23 +2045,6 @@ def test_an_expired_expected_artifact_fails_before_any_download(tmp_path: Path) 
     assert list(_archive_dir(tmp_path).iterdir()) == []
 
 
-@bash_required
-def test_an_expired_unexpected_artifact_fails_before_download(tmp_path: Path) -> None:
-    """B2: expiry is not a way to smuggle a seventh artifact past the set check.
-
-    The complete response is evaluated before any expiry filtering, so an
-    unexpected artifact is rejected whether or not it has expired.
-    """
-    rows = _rows()
-    rows.append(("unrelated-debug-bundle", 100, "true", 99))
-    result = _run_download_step(tmp_path, rows)
-    assert result.returncode != 0
-    assert _category(result) == "unexpected_matrix_cell"
-    assert "unrelated-debug-bundle" in result.stderr
-    assert _downloads_attempted(tmp_path) == 0
-    assert list(_archive_dir(tmp_path).iterdir()) == []
-
-
 # -- unchanged guarantees ---------------------------------------------------
 
 
@@ -2278,3 +2261,590 @@ def test_complete_response_is_validated_before_expiry_filtering() -> None:
     expiry_index = script.index("expired-names.txt")
     download_index = script.index("actions/artifacts/")
     assert all_names_index < expiry_index < download_index
+
+
+# ==========================================================================
+# FD-PV-17 — F1..F4 behavioural coverage
+#
+# These tests execute the real workflow step bodies extracted from
+# .github/workflows/mesc-b2a-portability.yml. The `gh` stub serves raw GitHub
+# artifact API JSON and validates the actual arguments the workflow passes,
+# including --paginate and the exact --jq projection; it never returns
+# pre-rendered TSV. The `git` stub is strict: it records every invocation and
+# rejects any command that is not explicitly expected.
+# ==========================================================================
+
+EXPECTED_JQ = (
+    ".artifacts[] | [.name, (.size_in_bytes|tostring), (.expired|tostring), (.id|tostring)] | @tsv"
+)
+
+CARDINALITY_STEP_NAME = "Verify archive cardinality"
+
+#: Raw-JSON gh stub. Implements only the documented contract the workflow uses:
+#: `gh api --paginate <artifacts-endpoint> --jq <exact projection>` and
+#: `gh api <artifact-zip-endpoint>`. Anything else fails closed.
+_STUB_GH_PY = """
+import json, os, pathlib, sys
+
+argv = sys.argv[1:]
+log = pathlib.Path(os.environ["GH_CALL_LOG"])
+with log.open("a", encoding="utf-8") as handle:
+    handle.write(" ".join(argv) + "\\n")
+
+def die(message: str, status: int = 90) -> None:
+    sys.stderr.write("gh stub: " + message + "\\n")
+    raise SystemExit(status)
+
+if not argv or argv[0] != "api":
+    die("only `gh api` is supported")
+
+url = next((a for a in argv if a.startswith("repos/")), "")
+if not url:
+    die("no repos/ endpoint in arguments")
+
+if "/actions/runs/" in url and url.endswith("artifacts?per_page=100"):
+    if "--paginate" not in argv:
+        die("--paginate is required for the artifacts endpoint")
+    if "--jq" not in argv:
+        die("--jq projection is required for the artifacts endpoint")
+    expression = argv[argv.index("--jq") + 1]
+    if expression != os.environ["EXPECTED_JQ"]:
+        die("unexpected --jq projection: " + expression)
+    if os.environ.get("GH_STUB_DROP_LAST_PAGE") == "1":
+        pages = sorted(pathlib.Path(os.environ["PAGES_DIR"]).glob("page-*.json"))[:-1]
+    else:
+        pages = sorted(pathlib.Path(os.environ["PAGES_DIR"]).glob("page-*.json"))
+    if not pages:
+        die("no raw API pages available")
+    rows = []
+    for page in pages:
+        document = json.loads(page.read_text(encoding="utf-8"))
+        # Faithful evaluation of the exact projection above over raw API JSON.
+        for artifact in document["artifacts"]:
+            if os.environ.get("GH_STUB_LEGACY_EXPIRY_FILTER") == "1" and artifact["expired"]:
+                continue
+            rows.append(
+                "\\t".join(
+                    [
+                        artifact["name"],
+                        str(artifact["size_in_bytes"]),
+                        "true" if artifact["expired"] else "false",
+                        str(artifact["id"]),
+                    ]
+                )
+            )
+    payload = "".join(row + "\\n" for row in rows).encode("utf-8")
+    sys.stdout.buffer.write(payload)
+    raise SystemExit(0)
+
+if "/actions/artifacts/" in url and url.endswith("/zip"):
+    identifier = url[: -len("/zip")].rsplit("/", 1)[1]
+    if os.environ.get("GH_STUB_FAIL_ON_ZIP") in {identifier, "any"}:
+        sys.stderr.write("stub download producer failure for artifact " + identifier + "\\n")
+        raise SystemExit(4)
+    payload = pathlib.Path(os.environ["ZIP_DIR"]) / (identifier + ".bin")
+    sys.stdout.buffer.write(payload.read_bytes())
+    raise SystemExit(0)
+
+die("unsupported endpoint: " + url)
+"""
+
+#: Strict git stub: records every invocation and permits only `rev-parse HEAD`.
+_STUB_GIT = """#!/usr/bin/env bash
+set -u
+printf '%s\\n' "$*" >> "${GIT_CALL_LOG}"
+if [ "${1:-}" = "rev-parse" ] && [ "${2:-}" = "HEAD" ] && [ "$#" -eq 2 ]; then
+  printf '%s\\n' "${GIT_STUB_HEAD}"
+  exit 0
+fi
+printf 'git stub: unexpected command: %s\\n' "$*" >&2
+exit 99
+"""
+
+
+def _all_step_scripts(step_name: str) -> list[str]:
+    """Return every ``run:`` body belonging to steps with this exact name."""
+    lines = _workflow_text().splitlines()
+    header = f"- name: {step_name}"
+    bodies: list[str] = []
+    for position, line in enumerate(lines):
+        if line.strip() != header:
+            continue
+        run_index = next(i for i in range(position, len(lines)) if lines[i].strip() == "run: |")
+        body_start = run_index + 1
+        indent = len(lines[body_start]) - len(lines[body_start].lstrip())
+        body: list[str] = []
+        for candidate in lines[body_start:]:
+            if candidate.strip() and (len(candidate) - len(candidate.lstrip())) < indent:
+                break
+            body.append(candidate[indent:] if candidate.strip() else "")
+        bodies.append("\n".join(body) + "\n")
+    return bodies
+
+
+def _write_stub_gh(bin_dir: Path, tmp_path: Path) -> None:
+    script = tmp_path / "gh_stub.py"
+    script.write_text(_STUB_GH_PY, encoding="utf-8", newline="\n")
+    launcher = bin_dir / "gh"
+    launcher.write_text(
+        f'#!/usr/bin/env bash\nexec "{sys.executable}" "{script}" "$@"\n',
+        encoding="utf-8",
+        newline="\n",
+    )
+    launcher.chmod(0o755)
+
+
+def _artifact(
+    name: str, size: int = 855, expired: bool = False, identifier: int = 1
+) -> dict[str, Any]:
+    """One raw GitHub artifact object, shaped as the REST API returns it."""
+    return {
+        "id": identifier,
+        "name": name,
+        "size_in_bytes": size,
+        "expired": expired,
+        "archive_download_url": f"https://api.github.com/artifacts/{identifier}/zip",
+    }
+
+
+def _pages(*page_artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        {"total_count": sum(len(p) for p in page_artifacts), "artifacts": list(page)}
+        for page in page_artifacts
+    ]
+
+
+def _six_across_two_pages() -> list[dict[str, Any]]:
+    first = [
+        _artifact(name, identifier=index + 1)
+        for index, name in enumerate(RATIFIED_ARTIFACT_NAMES[:3])
+    ]
+    second = [
+        _artifact(name, identifier=index + 4)
+        for index, name in enumerate(RATIFIED_ARTIFACT_NAMES[3:])
+    ]
+    return _pages(first, second)
+
+
+def _run_download_step_json(
+    tmp_path: Path,
+    pages: list[dict[str, Any]],
+    *,
+    payload_sizes: dict[int, int] | None = None,
+    fail_zip_id: str | None = None,
+    drop_last_page: bool = False,
+    legacy_expiry_filter: bool = False,
+) -> subprocess.CompletedProcess[str]:
+    """Execute the real download step against raw paginated API JSON."""
+    work = tmp_path / "work"
+    work.mkdir(parents=True, exist_ok=True)
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    _write_stub_gh(bin_dir, tmp_path)
+
+    pages_dir = tmp_path / "pages"
+    pages_dir.mkdir(parents=True, exist_ok=True)
+    zip_dir = tmp_path / "zips"
+    zip_dir.mkdir(parents=True, exist_ok=True)
+    for index, page in enumerate(pages):
+        (pages_dir / f"page-{index:03d}.json").write_text(
+            json.dumps(page), encoding="utf-8", newline="\n"
+        )
+        for artifact in page["artifacts"]:
+            streamed = (payload_sizes or {}).get(artifact["id"], artifact["size_in_bytes"])
+            (zip_dir / f"{artifact['id']}.bin").write_bytes(b"Z" * streamed)
+
+    script = work / "step.sh"
+    script.write_text(_step_script(DOWNLOAD_STEP_NAME), encoding="utf-8", newline="\n")
+    environment = {
+        **os.environ,
+        "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
+        "GITHUB_REPOSITORY": "IamShehri/MedScale",
+        "GITHUB_RUN_ID": "424242",
+        "GH_TOKEN": "stub-token-never-printed",
+        "MAX_COMPRESSED_ARTIFACT_BYTES": str(TRANSPORT_LIMIT_BYTES),
+        "MAX_AGGREGATE_COMPRESSED_BYTES": str(6_291_456),
+        "PAGES_DIR": str(pages_dir),
+        "ZIP_DIR": str(zip_dir),
+        "GH_CALL_LOG": str(tmp_path / "gh-calls.log"),
+        "EXPECTED_JQ": EXPECTED_JQ,
+        "GH_STUB_FAIL_ON_ZIP": fail_zip_id or "",
+        "GH_STUB_DROP_LAST_PAGE": "1" if drop_last_page else "0",
+        "GH_STUB_LEGACY_EXPIRY_FILTER": "1" if legacy_expiry_filter else "0",
+    }
+    assert _BASH is not None
+    return subprocess.run(
+        [_BASH, str(script)],
+        cwd=work,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+
+
+def _no_downstream_output(tmp_path: Path) -> None:
+    """No archive, declared-size map, aggregate output or evidence survived."""
+    work = tmp_path / "work"
+    archives = work / "archives"
+    if archives.exists():
+        assert list(archives.iterdir()) == []
+    assert not (work / "declared-sizes.json").exists()
+    assert not (work / "evidence").exists()
+    assert not (work / "extracted").exists()
+
+
+# -- F1: the large-response guard bypass -----------------------------------
+
+
+@bash_required
+def test_f1_ordinary_unexpected_artifact_is_rejected(tmp_path: Path) -> None:
+    pages = _six_across_two_pages()
+    pages[1]["artifacts"].append(_artifact("unrelated-debug-bundle", identifier=99))
+    result = _run_download_step_json(tmp_path, pages)
+    assert result.returncode != 0
+    assert _category(result) == "unexpected_matrix_cell"
+    assert _downloads_attempted(tmp_path) == 0
+    _no_downstream_output(tmp_path)
+
+
+@bash_required
+def test_f1_expired_unexpected_artifact_is_rejected(tmp_path: Path) -> None:
+    pages = _six_across_two_pages()
+    pages[1]["artifacts"].append(_artifact("unrelated-debug-bundle", expired=True, identifier=99))
+    result = _run_download_step_json(tmp_path, pages)
+    assert result.returncode != 0
+    assert _category(result) == "unexpected_matrix_cell"
+    assert _downloads_attempted(tmp_path) == 0
+    _no_downstream_output(tmp_path)
+
+
+@bash_required
+def test_f1_large_unexpected_response_cannot_bypass_the_guard(tmp_path: Path) -> None:
+    """The regression that fails against parent f68f8be879….
+
+    Many long unexpected names make the materialized comparison large enough
+    that an early-exit consumer would have taken the SIGPIPE path and skipped
+    the guard entirely, letting the run fall through to a later guard.
+    """
+    pages = _six_across_two_pages()
+    extras = [
+        _artifact("zz-unexpected-" + ("x" * 180) + f"-{index:04d}", identifier=1000 + index)
+        for index in range(800)
+    ]
+    pages.append({"total_count": len(extras), "artifacts": extras})
+    result = _run_download_step_json(tmp_path, pages)
+    assert result.returncode != 0
+    # The unexpected-artifact guard fired - not the count, missing or expiry guard.
+    assert _category(result) == "unexpected_matrix_cell"
+    assert "zz-unexpected-" in result.stderr
+    assert "missing an expected artifact" not in result.stderr
+    assert "inconsistent state" not in result.stderr
+    assert "has expired" not in result.stderr
+    assert _downloads_attempted(tmp_path) == 0
+    _no_downstream_output(tmp_path)
+
+
+# -- F2: real pagination and projection ------------------------------------
+
+
+@bash_required
+def test_f2_six_expected_artifacts_across_two_pages_pass(tmp_path: Path) -> None:
+    result = _run_download_step_json(tmp_path, _six_across_two_pages())
+    assert result.returncode == 0, result.stderr
+    assert CATEGORY_PREFIX not in result.stderr
+    assert _downloads_attempted(tmp_path) == 6
+    declared = json.loads((tmp_path / "work" / "declared-sizes.json").read_text(encoding="utf-8"))
+    assert declared == dict.fromkeys(RATIFIED_ARTIFACT_NAMES, 855)
+
+
+@bash_required
+def test_f2_stub_serves_raw_json_and_validates_the_real_arguments(tmp_path: Path) -> None:
+    """The stub is driven by the workflow's actual gh invocation."""
+    _run_download_step_json(tmp_path, _six_across_two_pages())
+    calls = _call_log(tmp_path)
+    enumeration = next(line for line in calls if "/actions/runs/" in line)
+    assert "--paginate" in enumeration
+    assert EXPECTED_JQ in enumeration
+
+
+@bash_required
+def test_f2_expired_unexpected_artifact_on_a_later_page_fails(tmp_path: Path) -> None:
+    pages = _six_across_two_pages()
+    pages.append(
+        {"total_count": 1, "artifacts": [_artifact("late-debug", expired=True, identifier=77)]}
+    )
+    result = _run_download_step_json(tmp_path, pages)
+    assert result.returncode != 0
+    assert _category(result) == "unexpected_matrix_cell"
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_f2_live_unexpected_artifact_on_a_later_page_fails(tmp_path: Path) -> None:
+    pages = _six_across_two_pages()
+    pages.append({"total_count": 1, "artifacts": [_artifact("late-debug", identifier=77)]})
+    result = _run_download_step_json(tmp_path, pages)
+    assert result.returncode != 0
+    assert _category(result) == "unexpected_matrix_cell"
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_f2_dropping_the_final_page_fails_as_missing(tmp_path: Path) -> None:
+    result = _run_download_step_json(tmp_path, _six_across_two_pages(), drop_last_page=True)
+    assert result.returncode != 0
+    assert _category(result) == "missing_matrix_cell"
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_f2_duplicate_names_across_pages_fail(tmp_path: Path) -> None:
+    pages = _six_across_two_pages()
+    pages.append(
+        {"total_count": 1, "artifacts": [_artifact(RATIFIED_ARTIFACT_NAMES[0], identifier=88)]}
+    )
+    result = _run_download_step_json(tmp_path, pages)
+    assert result.returncode != 0
+    assert _category(result) == "duplicate_matrix_cell"
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_f2_expired_expected_artifact_on_a_later_page_fails(tmp_path: Path) -> None:
+    pages = _six_across_two_pages()
+    pages[1]["artifacts"][-1]["expired"] = True
+    result = _run_download_step_json(tmp_path, pages)
+    assert result.returncode != 0
+    assert _category(result) == "missing_matrix_cell"
+    assert RATIFIED_ARTIFACT_NAMES[-1] in result.stderr
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_f2_legacy_expiry_filter_is_detected(tmp_path: Path) -> None:
+    """Mutation guard: the old select(.expired == false) projection must fail.
+
+    With the legacy filter the expired unexpected artifact disappears from the
+    response, so the run would proceed. The suite must notice.
+    """
+    pages = _six_across_two_pages()
+    pages.append(
+        {"total_count": 1, "artifacts": [_artifact("late-debug", expired=True, identifier=77)]}
+    )
+    corrected = _run_download_step_json(tmp_path / "corrected", pages)
+    assert corrected.returncode != 0
+    assert _category(corrected) == "unexpected_matrix_cell"
+
+    legacy = _run_download_step_json(tmp_path / "legacy", pages, legacy_expiry_filter=True)
+    assert legacy.returncode == 0, "legacy filter hides the unexpected artifact"
+
+
+# -- F3: dispatch guards ----------------------------------------------------
+
+
+def test_f3_both_dispatch_guard_bodies_are_byte_identical() -> None:
+    """Approach B: prove equivalence, then execute the shared body."""
+    bodies = _all_step_scripts(DISPATCH_STEP_NAME)
+    assert len(bodies) == 2, f"expected two dispatch-guard copies, found {len(bodies)}"
+    assert bodies[0] == bodies[1]
+    assert "fail_with evidence_generation_failure" in bodies[0]
+
+
+def _run_dispatch_guard_strict(
+    tmp_path: Path, *, ref: str, expected_sha: str, head_sha: str = CANONICAL_MAIN_SHA
+) -> tuple[subprocess.CompletedProcess[str], list[str]]:
+    """Execute the shared dispatch-guard body with a strict git stub."""
+    work = tmp_path / "work"
+    work.mkdir(parents=True, exist_ok=True)
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    stub_git = bin_dir / "git"
+    stub_git.write_text(_STUB_GIT, encoding="utf-8", newline="\n")
+    stub_git.chmod(0o755)
+    log = tmp_path / "git-calls.log"
+
+    bodies = _all_step_scripts(DISPATCH_STEP_NAME)
+    assert bodies[0] == bodies[1]
+    script = work / "guard.sh"
+    script.write_text(bodies[0], encoding="utf-8", newline="\n")
+
+    environment = {
+        **os.environ,
+        "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
+        "GITHUB_REF": ref,
+        "EXPECTED_SHA": expected_sha,
+        "GIT_STUB_HEAD": head_sha,
+        "GIT_CALL_LOG": str(log),
+    }
+    assert _BASH is not None
+    result = subprocess.run(
+        [_BASH, str(script)],
+        cwd=work,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    calls = log.read_text(encoding="utf-8").splitlines() if log.exists() else []
+    return result, calls
+
+
+MALFORMED_SHA_CORPUS = {
+    "empty": "",
+    "short": CANONICAL_MAIN_SHA[:-1],
+    "long": CANONICAL_MAIN_SHA + "0",
+    "uppercase": CANONICAL_MAIN_SHA.upper(),
+    "non_hex": CANONICAL_MAIN_SHA[:-1] + "z",
+    "leading_space": " " + CANONICAL_MAIN_SHA,
+    "trailing_space": CANONICAL_MAIN_SHA + " ",
+    "embedded_space": CANONICAL_MAIN_SHA[:20] + " " + CANONICAL_MAIN_SHA[21:],
+    "embedded_tab": CANONICAL_MAIN_SHA[:20] + "\t" + CANONICAL_MAIN_SHA[21:],
+    "embedded_newline": CANONICAL_MAIN_SHA[:20] + "\n" + CANONICAL_MAIN_SHA[21:],
+    "trailing_newline": CANONICAL_MAIN_SHA + "\n",
+    "crlf": CANONICAL_MAIN_SHA + "\r\n",
+}
+
+
+@bash_required
+@pytest.mark.parametrize("label", sorted(MALFORMED_SHA_CORPUS))
+def test_f3_malformed_sha_is_rejected_before_git(tmp_path: Path, label: str) -> None:
+    result, calls = _run_dispatch_guard_strict(
+        tmp_path, ref="refs/heads/main", expected_sha=MALFORMED_SHA_CORPUS[label]
+    )
+    assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
+    # The exact rejection diagnostic, not a later same-category failure.
+    assert (
+        "expected_sha is not lowercase hexadecimal" in result.stderr
+        or "expected_sha is not exactly 40 characters" in result.stderr
+    )
+    assert "HEAD" not in result.stderr, "must not reach the HEAD-mismatch branch"
+    assert calls == [], f"git was invoked before rejection: {calls}"
+
+
+@bash_required
+def test_f3_noncanonical_ref_is_rejected_before_git(tmp_path: Path) -> None:
+    result, calls = _run_dispatch_guard_strict(
+        tmp_path, ref="refs/heads/feature", expected_sha=CANONICAL_MAIN_SHA
+    )
+    assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
+    assert "not refs/heads/main" in result.stderr
+    assert calls == []
+
+
+@bash_required
+def test_f3_head_mismatch_invokes_git_exactly_once(tmp_path: Path) -> None:
+    result, calls = _run_dispatch_guard_strict(
+        tmp_path, ref="refs/heads/main", expected_sha=CANONICAL_MAIN_SHA, head_sha="0" * 40
+    )
+    assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
+    assert "!= expected_sha" in result.stderr
+    assert calls == ["rev-parse HEAD"]
+
+
+@bash_required
+def test_f3_clean_canonical_control_path(tmp_path: Path) -> None:
+    result, calls = _run_dispatch_guard_strict(
+        tmp_path, ref="refs/heads/main", expected_sha=CANONICAL_MAIN_SHA
+    )
+    assert result.returncode == 0, result.stderr
+    assert CATEGORY_PREFIX not in result.stderr
+    assert calls == ["rev-parse HEAD"]
+
+
+@bash_required
+def test_f3_strict_git_stub_rejects_unexpected_commands(tmp_path: Path) -> None:
+    """The stub itself must fail closed, or the pre-git proof is worthless."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    stub_git = bin_dir / "git"
+    stub_git.write_text(_STUB_GIT, encoding="utf-8", newline="\n")
+    stub_git.chmod(0o755)
+    log = tmp_path / "git-calls.log"
+    environment = {
+        **os.environ,
+        "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
+        "GIT_STUB_HEAD": CANONICAL_MAIN_SHA,
+        "GIT_CALL_LOG": str(log),
+    }
+    assert _BASH is not None
+    probe = subprocess.run(
+        [_BASH, "-c", "git status --porcelain"],
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert probe.returncode == 99
+    assert "unexpected command" in probe.stderr
+
+
+# -- F4: archive cardinality ------------------------------------------------
+
+
+def _run_cardinality_step(tmp_path: Path, archive_count: int) -> subprocess.CompletedProcess[str]:
+    """Execute the real archive-cardinality step against a prepared directory."""
+    work = tmp_path / "work"
+    archives = work / "archives"
+    archives.mkdir(parents=True, exist_ok=True)
+    for index in range(archive_count):
+        (archives / f"artifact-{index}.zip").write_bytes(b"PK\x05\x06" + b"\x00" * 18)
+    script = work / "cardinality.sh"
+    script.write_text(_step_script(CARDINALITY_STEP_NAME), encoding="utf-8", newline="\n")
+    assert _BASH is not None
+    return subprocess.run(
+        [_BASH, str(script)],
+        cwd=work,
+        env={**os.environ},
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+
+
+@bash_required
+def test_f4_six_archives_pass(tmp_path: Path) -> None:
+    result = _run_cardinality_step(tmp_path, 6)
+    assert result.returncode == 0, result.stderr
+    assert CATEGORY_PREFIX not in result.stderr
+
+
+@bash_required
+@pytest.mark.parametrize("count", [5, 7])
+def test_f4_invalid_archive_counts_fail_with_the_exact_category(tmp_path: Path, count: int) -> None:
+    result = _run_cardinality_step(tmp_path, count)
+    assert result.returncode != 0
+    assert _category(result) == "aggregate_verifier_internal_error"
+    assert f"found {count}" in result.stderr
+    # Nothing downstream may exist: the step creates no aggregate or evidence.
+    work = tmp_path / "work"
+    assert not (work / "evidence").exists()
+    assert not (work / "extracted").exists()
+    assert not (work / "declared-sizes.json").exists()
+
+
+@bash_required
+def test_f4_zero_and_many_archives_also_fail(tmp_path: Path) -> None:
+    for count in (0, 12):
+        result = _run_cardinality_step(tmp_path / f"n{count}", count)
+        assert result.returncode != 0
+        assert _category(result) == "aggregate_verifier_internal_error"
+
+
+# -- supplemental wiring ----------------------------------------------------
+
+
+def test_f1_no_early_exit_consumer_guard_remains() -> None:
+    """Supplemental: no guard depends on a SIGPIPE-prone pipeline."""
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    executable = "\n".join(
+        line for line in script.splitlines() if not line.lstrip().startswith("#")
+    )
+    assert "| grep -q" not in executable
+    assert "comm -23 unique-names.txt expected-names.txt > unexpected-names.txt" in executable
+    assert "comm -13 unique-names.txt expected-names.txt > missing-names.txt" in executable
+    assert "[ -s unexpected-names.txt ]" in executable
+    assert "[ -s missing-names.txt ]" in executable

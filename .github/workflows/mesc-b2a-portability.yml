@@ -318,18 +318,30 @@ jobs:
           fi
 
           # Unexpected artifacts, expired or non-expired alike.
-          if comm -23 unique-names.txt expected-names.txt | grep -q .; then
+          #
+          # The comparison output is materialized and tested with -s rather than
+          # piped into an early-exit consumer. Under `set -o pipefail` a consumer
+          # such as `grep -q` can exit on its first match, leave `comm` holding a
+          # closed pipe, and turn the whole pipeline into status 141 - which an
+          # `if` reads as false and silently skips the guard on a large response.
+          comm -23 unique-names.txt expected-names.txt > unexpected-names.txt
+          if [ -s unexpected-names.txt ]; then
             fail_with unexpected_matrix_cell \
               "current run exposes an artifact outside the six ratified names" \
-              "unexpected: $(comm -23 unique-names.txt expected-names.txt | tr '\n' ' ')"
+              "unexpected: $(tr '\n' ' ' < unexpected-names.txt)"
           fi
 
-          # Missing expected artifacts.
-          if comm -13 unique-names.txt expected-names.txt | grep -q .; then
+          # Missing expected artifacts, materialized for the same reason.
+          comm -13 unique-names.txt expected-names.txt > missing-names.txt
+          if [ -s missing-names.txt ]; then
             fail_with missing_matrix_cell \
               "current run is missing an expected artifact" \
-              "missing: $(comm -13 unique-names.txt expected-names.txt | tr '\n' ' ')"
+              "missing: $(tr '\n' ' ' < missing-names.txt)"
           fi
+
+          # Both comparisons passed; the bounded scratch files are no longer
+          # needed and are removed before any download begins.
+          rm -f unexpected-names.txt missing-names.txt
 
           # Exactly six total. Reached only when the set is already exactly the
           # six ratified names with no duplicate, so any other count is an
