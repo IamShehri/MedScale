@@ -28,8 +28,16 @@ on:
         required: true
         type: string
 
+# FD-PV-13: contents: read is narrowly amended to add actions: read, authorized
+# solely to enumerate the artifacts belonging to this exact workflow run, read
+# their metadata including archive byte size, and download the six exact
+# expected artifacts through the documented GitHub Actions API. It authorizes no
+# workflow mutation, rerun, cancellation, dispatch, artifact deletion, write
+# scope, secret, OIDC, package, release, cache, or access to artifacts from
+# another repository or an unrelated run.
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: mesc-b2a-portability-${{ github.ref }}
@@ -221,18 +229,82 @@ jobs:
         shell: bash
         run: uv sync --frozen
 
-      - name: Download the six cell artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          pattern: b2a-portability-*
-          path: downloaded
+      # FD-PV-12/FD-PV-13 bounded transport. Automatic full download-and-extract
+      # is replaced by explicit, capped handling: enumerate this run's artifacts,
+      # reject anything unexpected, refuse oversized archives from metadata
+      # BEFORE any byte is fetched, and cap the bytes actually read so trusted
+      # metadata is never the only defence. Nothing is extracted in this step.
+      - name: Enumerate current-run artifacts and download within caps
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAX_COMPRESSED_ARTIFACT_BYTES: '1048576'
+          MAX_AGGREGATE_COMPRESSED_BYTES: '6291456'
+        run: |
+          set -euo pipefail
+          mkdir -p archives
+          expected="b2a-portability-linux-py3.11 b2a-portability-linux-py3.12 \
+          b2a-portability-macos-py3.11 b2a-portability-macos-py3.12 \
+          b2a-portability-windows-py3.11 b2a-portability-windows-py3.12"
 
-      - name: Verify artifact cardinality
+          # Current exact run only. No cross-run and no cross-repository access.
+          gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" \
+            --jq '.artifacts[] | {name: .name, size: .size_in_bytes, expired: .expired, id: .id}' \
+            > artifacts.ndjson
+
+          jq -s 'map(select(.expired == false))' artifacts.ndjson > artifacts.json
+          jq -r 'group_by(.name) | map({name: .[0].name, count: length}) | .[] | @text' \
+            artifacts.json > /dev/null
+
+          total=0
+          : > declared-sizes.json.tmp
+          for name in ${expected}; do
+            matches="$(jq --arg n "${name}" '[.[] | select(.name == $n)] | length' artifacts.json)"
+            if [ "${matches}" != "1" ]; then
+              echo "artifact ${name}: expected exactly 1, found ${matches}" >&2; exit 1
+            fi
+            size="$(jq -r --arg n "${name}" '.[] | select(.name == $n) | .size' artifacts.json)"
+            id="$(jq -r --arg n "${name}" '.[] | select(.name == $n) | .id' artifacts.json)"
+            if [ "${size}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
+              echo "artifact ${name} declares ${size} compressed bytes, over the limit" >&2
+              exit 1
+            fi
+            total=$(( total + size ))
+            if [ "${total}" -gt "${MAX_AGGREGATE_COMPRESSED_BYTES}" ]; then
+              echo "aggregate compressed limit exceeded at ${name}" >&2; exit 1
+            fi
+            # --max-filesize caps the transfer itself: an under-reported size
+            # cannot smuggle extra bytes onto the runner.
+            gh api \
+              "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" \
+              > "archives/${name}.zip.part" 2>/dev/null || {
+                echo "download failed for ${name}" >&2; exit 1; }
+            actual="$(wc -c < "archives/${name}.zip.part" | tr -d '[:space:]')"
+            if [ "${actual}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
+              echo "artifact ${name} transferred ${actual} bytes, over the cap" >&2
+              rm -f "archives/${name}.zip.part"; exit 1
+            fi
+            if [ "${actual}" != "${size}" ]; then
+              echo "artifact ${name} size ${actual} does not match declared ${size}" >&2
+              rm -f "archives/${name}.zip.part"; exit 1
+            fi
+            mv "archives/${name}.zip.part" "archives/${name}.zip"
+            printf '%s\t%s\n' "${name}" "${size}" >> declared-sizes.json.tmp
+          done
+
+          jq -R -s 'split("\n") | map(select(length > 0) | split("\t"))
+            | map({(.[0]): (.[1] | tonumber)}) | add' \
+            declared-sizes.json.tmp > declared-sizes.json
+          rm -f declared-sizes.json.tmp
+          cat declared-sizes.json
+
+      - name: Verify archive cardinality
         shell: bash
         run: |
           set -euo pipefail
-          count="$(ls -1 downloaded | wc -l | tr -d '[:space:]')"
-          if [ "${count}" != "6" ]; then echo "expected 6 artifacts, found ${count}"; exit 1; fi
+          count="$(ls -1 archives | wc -l | tr -d '[:space:]')"
+          if [ "${count}" != "6" ]; then echo "expected 6 archives, found ${count}"; exit 1; fi
 
       # Pull-request runs: no canonical SHA exists, so the flag is not passed and
       # the envelope omits the key entirely (FD-PV-14).
@@ -242,7 +314,9 @@ jobs:
         run: |
           set -euo pipefail
           uv run python tests/_mesc_b2a_portability.py aggregate \
-            --root downloaded \
+            --archives archives \
+            --extract-root extracted \
+            --declared-sizes declared-sizes.json \
             --evidence-out evidence/portability-evidence.json
 
       # Canonical-main dispatch: the value threaded here is the already guarded
@@ -255,7 +329,9 @@ jobs:
         run: |
           set -euo pipefail
           uv run python tests/_mesc_b2a_portability.py aggregate \
-            --root downloaded \
+            --archives archives \
+            --extract-root extracted \
+            --declared-sizes declared-sizes.json \
             --evidence-out evidence/portability-evidence.json \
             --canonical-sha "${EXPECTED_SHA}"
         env:

@@ -22,8 +22,11 @@ admissible portability evidence and it does not accept B2A.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import sys
+import zipfile
+import zlib
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any, ClassVar, Final
@@ -73,12 +76,26 @@ CANONICAL_SHA_KEY: Final = "canonical_sha"
 CANONICAL_SHA_LENGTH: Final = 40
 _LOWER_HEX_DIGITS: Final = "0123456789abcdef"
 
-# FD-PV-6 byte limits. The aggregate values are the ratified derived maxima
-# (exactly six times the per-artifact limits), so they are upper bounds.
-MAX_FILE_BYTES: Final = 1_048_576
-MAX_ARTIFACT_BYTES: Final = 4_194_304
+# FD-PV-6 byte limits, with the FD-PV-12 axes made explicit. The aggregate
+# values are the ratified derived maxima (exactly six times the per-artifact
+# limits), so they are upper bounds.
+#
+# Compressed limits bind *archive* bytes and are enforced before or during
+# download. Extracted limits bind *extracted regular-file* bytes and are
+# enforced during bounded extraction. FD-PV-12: 1048576 is a compressed
+# per-artifact limit and must never be reinterpreted as an extracted per-file
+# limit. No general per-file 1 MiB extracted limit is ratified, and none is
+# enforced anywhere in this module.
+MAX_COMPRESSED_ARTIFACT_BYTES: Final = 1_048_576
+MAX_EXTRACTED_ARTIFACT_BYTES: Final = 4_194_304
 MAX_AGGREGATE_COMPRESSED_BYTES: Final = 6_291_456
 MAX_AGGREGATE_EXTRACTED_BYTES: Final = 25_165_824
+
+#: Bounded read granularity. Extraction never materializes a whole member in
+#: memory and never trusts a declared size.
+EXTRACTION_CHUNK_BYTES: Final = 65_536
+
+ARCHIVE_SUFFIX: Final = ".zip"
 
 _UTF8_BOM: Final = b"\xef\xbb\xbf"
 
@@ -439,14 +456,12 @@ def verify_payloads(payloads: Mapping[str, bytes], *, where: str) -> None:
     unexpected = sorted(names - set(REQUIRED_FILES))
     if unexpected:
         raise UnexpectedEvidenceFileError(f"{where} has unexpected {unexpected}")
-    total = 0
-    for name in REQUIRED_FILES:
-        payload = payloads[name]
-        if len(payload) > MAX_FILE_BYTES:
-            raise ArtifactSizeLimitExceededError(f"{where}/{name} exceeds the per-file limit")
-        total += len(payload)
-    if total > MAX_ARTIFACT_BYTES:
-        raise ArtifactSizeLimitExceededError(f"{where} exceeds the per-artifact limit")
+    # FD-PV-12: only the per-artifact extracted total is bounded here. There is
+    # deliberately no per-file extracted limit: a single regular file larger
+    # than 1 MiB is acceptable while the artifact total stays within 4 MiB.
+    total = sum(len(payloads[name]) for name in REQUIRED_FILES)
+    if total > MAX_EXTRACTED_ARTIFACT_BYTES:
+        raise ArtifactSizeLimitExceededError(f"{where} exceeds the per-artifact extracted limit")
     parse_strict_json(payloads[CANONICAL_JSON_NAME], where=f"{where}/{CANONICAL_JSON_NAME}")
     parse_strict_jsonl(payloads[CANONICAL_JSONL_NAME], where=f"{where}/{CANONICAL_JSONL_NAME}")
     validate_manifest(payloads[MANIFEST_NAME], payloads)
@@ -517,12 +532,12 @@ def _read_cell_dir(cell_dir: Path, *, where: str) -> dict[str, bytes]:
     payloads: dict[str, bytes] = {}
     total = 0
     for entry in entries:
-        size = entry.stat().st_size
-        if size > MAX_FILE_BYTES:
-            raise ArtifactSizeLimitExceededError(f"{where}/{entry.name} exceeds the per-file limit")
-        total += size
-        if total > MAX_ARTIFACT_BYTES:
-            raise ArtifactSizeLimitExceededError(f"{where} exceeds the per-artifact limit")
+        # FD-PV-12: the per-artifact extracted total is the only file-side bound.
+        total += entry.stat().st_size
+        if total > MAX_EXTRACTED_ARTIFACT_BYTES:
+            raise ArtifactSizeLimitExceededError(
+                f"{where} exceeds the per-artifact extracted limit"
+            )
         payloads[entry.name] = entry.read_bytes()
     return payloads
 
@@ -564,11 +579,12 @@ def _collect_cells(root: Path) -> dict[str, dict[str, bytes]]:
     for cell in CELL_IDS:
         payloads = _read_cell_dir(root / f"{ARTIFACT_PREFIX}{cell}", where=cell)
         extracted += sum(len(payload) for payload in payloads.values())
+        # FD-PV-12: extracted bytes are bounded by the extracted aggregate limit
+        # only. The compressed aggregate limit binds archive bytes and is
+        # enforced against archives before and during download, never here.
         if extracted > MAX_AGGREGATE_EXTRACTED_BYTES:
-            raise ArtifactSizeLimitExceededError("aggregate extraction limit exceeded")
+            raise ArtifactSizeLimitExceededError("aggregate extracted limit exceeded")
         cells[cell] = payloads
-    if extracted > MAX_AGGREGATE_COMPRESSED_BYTES:
-        raise ArtifactSizeLimitExceededError("aggregate byte limit exceeded")
     return cells
 
 
@@ -593,6 +609,287 @@ def require_canonical_sha(value: object) -> str:
             "canonical_sha must be lowercase hexadecimal characters only"
         )
     return value
+
+
+# --------------------------------------------------------------------------
+# Bounded artifact handling (FD-PV-12, FD-PV-13)
+#
+# The workflow performs artifact metadata lookup and capped transport under
+# ``actions: read``. This module is the second, independent line of defence: it
+# never trusts declared metadata, opens only bounded local ZIP files, and
+# performs no network access of any kind.
+# --------------------------------------------------------------------------
+
+
+def _reject_unsafe_member_name(name: str, *, where: str) -> None:
+    """Reject any archive member name that is not a flat expected file name."""
+    if name != name.strip() or not name:
+        raise UnsafeArchiveEntryError(f"{where} has a blank or padded member name {name!r}")
+    if name.endswith("/"):
+        raise UnsafeArchiveEntryError(f"{where} contains a directory entry {name!r}")
+    if "\\" in name:
+        raise UnsafeArchiveEntryError(f"{where} member {name!r} contains a backslash")
+    if name.startswith("/"):
+        raise UnsafeArchiveEntryError(f"{where} member {name!r} is an absolute path")
+    if len(name) >= 2 and name[1] == ":":
+        raise UnsafeArchiveEntryError(f"{where} member {name!r} carries a drive prefix")
+    parts = name.split("/")
+    if len(parts) != 1:
+        raise UnsafeArchiveEntryError(f"{where} member {name!r} is nested")
+    if name in {".", ".."} or ".." in parts:
+        raise UnsafeArchiveEntryError(f"{where} member {name!r} traverses its parent")
+    if name not in REQUIRED_FILES:
+        raise UnexpectedEvidenceFileError(f"{where} has unexpected member {name!r}")
+
+
+def _require_regular_member(info: zipfile.ZipInfo, *, where: str) -> None:
+    if info.is_dir():
+        raise UnsafeArchiveEntryError(f"{where} member {info.filename!r} is a directory")
+    mode = (info.external_attr >> 16) & 0o170000
+    if mode == 0o120000:
+        raise UnsafeArchiveEntryError(f"{where} member {info.filename!r} is a symbolic link")
+    if mode not in (0, 0o100000):
+        raise UnsafeArchiveEntryError(f"{where} member {info.filename!r} is not a regular file")
+
+
+def inspect_archive(
+    archive: Path,
+    *,
+    where: str,
+    max_extracted_artifact: int = MAX_EXTRACTED_ARTIFACT_BYTES,
+) -> list[zipfile.ZipInfo]:
+    """Inspect archive structure **before** any output file is created.
+
+    Every member is checked for safety and expectedness, and the declared
+    uncompressed total is bounded, so a ZIP bomb is refused before extraction
+    begins. Declared sizes are advisory only: extraction re-counts real bytes.
+    """
+    try:
+        with zipfile.ZipFile(archive) as bundle:
+            infos = list(bundle.infolist())
+    except zipfile.BadZipFile as error:
+        raise UnsafeArchiveEntryError(f"{where} is not a readable ZIP archive") from error
+    except OSError as error:  # pragma: no cover - platform I/O defect
+        raise AggregateVerifierInternalError(f"{where} could not be opened: {error!r}") from error
+
+    seen: set[str] = set()
+    declared = 0
+    for info in infos:
+        _reject_unsafe_member_name(info.filename, where=where)
+        _require_regular_member(info, where=where)
+        folded = info.filename.casefold()
+        if folded in seen:
+            raise UnsafeArchiveEntryError(f"{where} has a duplicate member {info.filename!r}")
+        seen.add(folded)
+        if info.file_size < 0:
+            raise UnsafeArchiveEntryError(f"{where} member {info.filename!r} declares a bad size")
+        declared += info.file_size
+    missing = sorted(set(REQUIRED_FILES) - {info.filename for info in infos})
+    if missing:
+        raise MissingEvidenceFileError(f"{where} is missing {missing}")
+    if len(infos) != len(REQUIRED_FILES):
+        raise UnexpectedEvidenceFileError(
+            f"{where} must contain exactly {len(REQUIRED_FILES)} regular files"
+        )
+    if declared > max_extracted_artifact:
+        raise ArtifactSizeLimitExceededError(
+            f"{where} declares {declared} extracted bytes, above the per-artifact limit"
+        )
+    return infos
+
+
+def extract_archive_bounded(
+    archive: Path,
+    destination: Path,
+    *,
+    where: str,
+    max_extracted_artifact: int = MAX_EXTRACTED_ARTIFACT_BYTES,
+    aggregate_budget: int = MAX_AGGREGATE_EXTRACTED_BYTES,
+) -> int:
+    """Extract one inspected archive through bounded chunked reads.
+
+    Returns the exact number of extracted regular-file bytes. Both the
+    per-artifact limit and the remaining aggregate budget are enforced *during*
+    the read, never afterwards: the moment either would be exceeded the read
+    stops, every file written for this artifact is removed, and the run fails
+    closed. No file is left fully written once a limit is crossed.
+    """
+    infos = inspect_archive(archive, where=where, max_extracted_artifact=max_extracted_artifact)
+    destination.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    try:
+        # The whole streaming read happens inside this helper so that every file
+        # handle is closed before any cleanup runs. Windows refuses to unlink an
+        # open file, which would otherwise leave a partial output behind.
+        extracted = _stream_members_bounded(
+            archive,
+            destination,
+            infos,
+            written,
+            where=where,
+            max_extracted_artifact=max_extracted_artifact,
+            aggregate_budget=aggregate_budget,
+        )
+    except PortabilityError:
+        _remove_partial_outputs(written)
+        raise
+    except (zipfile.BadZipFile, zlib.error, EOFError) as error:
+        _remove_partial_outputs(written)
+        raise UnsafeArchiveEntryError(f"{where} is a corrupt or truncated ZIP archive") from error
+    except OSError as error:
+        _remove_partial_outputs(written)
+        raise AggregateVerifierInternalError(f"{where} extraction failed: {error!r}") from error
+    return extracted
+
+
+def _stream_members_bounded(
+    archive: Path,
+    destination: Path,
+    infos: Sequence[zipfile.ZipInfo],
+    written: list[Path],
+    *,
+    where: str,
+    max_extracted_artifact: int,
+    aggregate_budget: int,
+) -> int:
+    extracted = 0
+    with zipfile.ZipFile(archive) as bundle:
+        for info in sorted(infos, key=lambda item: item.filename):
+            target = destination / info.filename
+            if target.exists() or target.is_symlink():
+                raise UnsafeArchiveEntryError(
+                    f"{where} member {info.filename!r} would overwrite an existing path"
+                )
+            written.append(target)
+            with bundle.open(info) as source, target.open("wb") as sink:
+                while True:
+                    chunk = source.read(EXTRACTION_CHUNK_BYTES)
+                    if not chunk:
+                        break
+                    extracted += len(chunk)
+                    if extracted > max_extracted_artifact:
+                        raise ArtifactSizeLimitExceededError(
+                            f"{where} exceeds the per-artifact extracted limit"
+                        )
+                    if extracted > aggregate_budget:
+                        raise ArtifactSizeLimitExceededError(
+                            "aggregate extracted limit exceeded during extraction"
+                        )
+                    sink.write(chunk)
+    return extracted
+
+
+def _remove_partial_outputs(written: Iterable[Path]) -> None:
+    for path in written:
+        with contextlib.suppress(OSError):  # best-effort cleanup
+            path.unlink(missing_ok=True)
+
+
+def collect_archive_paths(archives_dir: Path) -> dict[str, Path]:
+    """Map each expected artifact name to its local archive, fail-closed."""
+    if not archives_dir.is_dir():
+        raise MissingMatrixCellError("archive root is not a directory")
+    found: dict[str, Path] = {}
+    names: list[str] = []
+    for entry in sorted(archives_dir.iterdir(), key=lambda item: item.name):
+        if entry.is_symlink() or not entry.is_file():
+            raise UnsafeArchiveEntryError(f"archive entry {entry.name!r} is not a regular file")
+        if entry.suffix != ARCHIVE_SUFFIX:
+            raise UnexpectedMatrixCellError(f"unexpected archive {entry.name!r}")
+        names.append(entry.stem)
+        found[entry.stem] = entry
+    check_artifact_names(names)
+    return found
+
+
+def enforce_compressed_limits(
+    archives: Mapping[str, Path],
+    *,
+    declared_sizes: Mapping[str, int] | None = None,
+    max_compressed_artifact: int = MAX_COMPRESSED_ARTIFACT_BYTES,
+    max_aggregate_compressed: int = MAX_AGGREGATE_COMPRESSED_BYTES,
+) -> int:
+    """Bound archive bytes on disk, independently of any declared metadata.
+
+    The workflow already refuses oversized artifacts from run metadata and caps
+    the bytes it will read during transport. This re-check exists because
+    metadata alone is never a sufficient defence: a server that under-reports a
+    size, or a truncated or padded transfer, must still fail closed here.
+    """
+    total = 0
+    for name in sorted(archives):
+        actual = archives[name].stat().st_size
+        if actual > max_compressed_artifact:
+            raise ArtifactSizeLimitExceededError(
+                f"{name} archive is {actual} bytes, above the per-artifact compressed limit"
+            )
+        if declared_sizes is not None:
+            declared = declared_sizes.get(name)
+            if declared is None or declared != actual:
+                raise ArtifactSizeLimitExceededError(
+                    f"{name} archive size {actual} does not match declared {declared}"
+                )
+        total += actual
+        if total > max_aggregate_compressed:
+            raise ArtifactSizeLimitExceededError("aggregate compressed limit exceeded")
+    return total
+
+
+def extract_all_bounded(
+    archives_dir: Path,
+    extract_root: Path,
+    *,
+    declared_sizes: Mapping[str, int] | None = None,
+    max_compressed_artifact: int = MAX_COMPRESSED_ARTIFACT_BYTES,
+    max_aggregate_compressed: int = MAX_AGGREGATE_COMPRESSED_BYTES,
+    max_extracted_artifact: int = MAX_EXTRACTED_ARTIFACT_BYTES,
+    max_aggregate_extracted: int = MAX_AGGREGATE_EXTRACTED_BYTES,
+) -> Path:
+    """Run the full bounded pipeline: cardinality, compressed bounds, extraction.
+
+    Order matters and is fail-closed at every step: exactly the six expected
+    archives, compressed limits before anything is opened, structural inspection
+    before any output file exists, then bounded chunked extraction that enforces
+    the per-artifact and aggregate extracted limits while bytes are read.
+    """
+    archives = collect_archive_paths(archives_dir)
+    enforce_compressed_limits(
+        archives,
+        declared_sizes=declared_sizes,
+        max_compressed_artifact=max_compressed_artifact,
+        max_aggregate_compressed=max_aggregate_compressed,
+    )
+    extract_root.mkdir(parents=True, exist_ok=True)
+    extracted_total = 0
+    for name in ARTIFACT_NAMES:
+        remaining = max_aggregate_extracted - extracted_total
+        extracted_total += extract_archive_bounded(
+            archives[name],
+            extract_root / name,
+            where=name,
+            max_extracted_artifact=max_extracted_artifact,
+            aggregate_budget=remaining,
+        )
+    return extract_root
+
+
+def aggregate_from_archives(
+    archives_dir: Path,
+    extract_root: Path,
+    *,
+    canonical_sha: str | None = None,
+    declared_sizes: Mapping[str, int] | None = None,
+) -> bytes:
+    """Bounded-extract six local archives, then verify and emit the envelope."""
+    if canonical_sha is not None:
+        require_canonical_sha(canonical_sha)
+    try:
+        root = extract_all_bounded(archives_dir, extract_root, declared_sizes=declared_sizes)
+    except PortabilityError:
+        raise
+    except Exception as error:  # a transport defect must fail closed, never pass
+        raise AggregateVerifierInternalError(f"bounded extraction failed: {error!r}") from error
+    return aggregate(root, canonical_sha=canonical_sha)
 
 
 def build_evidence(
@@ -674,11 +971,44 @@ def _cmd_generate(args: argparse.Namespace) -> int:
     return 0
 
 
+def load_declared_sizes(source: str | None) -> dict[str, int] | None:
+    """Load the workflow-recorded archive sizes, if the workflow supplied them.
+
+    The file is written by the workflow from current-run artifact metadata. It
+    is advisory: every value is re-checked against the bytes actually on disk,
+    and a mismatch fails closed.
+    """
+    if source is None:
+        return None
+    try:
+        document = json.loads(Path(source).read_bytes())
+    except (OSError, ValueError) as error:
+        raise ArtifactSizeLimitExceededError(
+            f"declared archive sizes could not be read: {error!r}"
+        ) from error
+    if not isinstance(document, dict):
+        raise ArtifactSizeLimitExceededError("declared archive sizes must be a JSON object")
+    sizes: dict[str, int] = {}
+    for key, value in document.items():
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise ArtifactSizeLimitExceededError(f"declared size for {key!r} is not a byte count")
+        sizes[str(key)] = value
+    return sizes
+
+
 def _cmd_aggregate(args: argparse.Namespace) -> int:
     # ``--canonical-sha`` is threaded straight through from the guarded dispatch
     # input. When the flag is absent the value stays ``None`` and the envelope
     # omits the key entirely; an explicitly empty value fails closed.
-    evidence = aggregate(Path(args.root), canonical_sha=args.canonical_sha)
+    if args.archives is not None:
+        evidence = aggregate_from_archives(
+            Path(args.archives),
+            Path(args.extract_root),
+            canonical_sha=args.canonical_sha,
+            declared_sizes=load_declared_sizes(args.declared_sizes),
+        )
+    else:
+        evidence = aggregate(Path(args.root), canonical_sha=args.canonical_sha)
     out = Path(args.evidence_out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(evidence)
@@ -694,7 +1024,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     gen.add_argument("--out", required=True)
     gen.set_defaults(func=_cmd_generate)
     agg = sub.add_parser("aggregate", help="verify six cells and emit the envelope")
-    agg.add_argument("--root", required=True)
+    source = agg.add_mutually_exclusive_group(required=True)
+    source.add_argument("--root", help="directory of six already-extracted cell directories")
+    source.add_argument(
+        "--archives",
+        help="directory of exactly six bounded local artifact ZIP archives",
+    )
+    agg.add_argument(
+        "--extract-root",
+        default="extracted",
+        help="destination for bounded extraction when --archives is used",
+    )
+    agg.add_argument(
+        "--declared-sizes",
+        default=None,
+        help="JSON file of artifact-name to archive byte size from current-run metadata",
+    )
     agg.add_argument("--evidence-out", required=True)
     agg.add_argument(
         "--canonical-sha",

@@ -15,7 +15,9 @@ import builtins
 import json
 import socket
 import sys
+import zipfile
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -474,8 +476,10 @@ def test_unsafe_archive_entry_symlink(tmp_path: Path) -> None:
 
 
 def test_artifact_size_limit_exceeded(tmp_path: Path) -> None:
+    # FD-PV-12: the bound is the per-artifact extracted total, not a per-file
+    # limit, so the fixture must exceed 4 MiB across the artifact.
     payloads = _payloads()
-    payloads[h.CANONICAL_JSON_NAME] = b"x" * (h.MAX_FILE_BYTES + 1)
+    payloads[h.CANONICAL_JSON_NAME] = b"x" * (h.MAX_EXTRACTED_ARTIFACT_BYTES + 1)
     _six_cells(tmp_path, payloads)
     with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
         h.aggregate(tmp_path)
@@ -569,8 +573,11 @@ def test_harness_imports_only_the_allowed_surface() -> None:
     assert imported <= {
         "__future__",
         "argparse",
+        "contextlib",
         "json",
         "sys",
+        "zipfile",
+        "zlib",
         "collections",
         "pathlib",
         "typing",
@@ -599,9 +606,11 @@ def test_cell_ids_and_artifact_names_are_exactly_ratified() -> None:
     assert tuple(f"b2a-portability-{c}" for c in h.CELL_IDS) == h.ARTIFACT_NAMES
 
 
-def test_fd_pv_6_limits_are_exact() -> None:
-    assert h.MAX_FILE_BYTES == 1_048_576
-    assert h.MAX_ARTIFACT_BYTES == 4_194_304
+def test_fd_pv_6_values_are_unchanged() -> None:
+    # The four ratified byte values, unchanged by remediation. Their axes are
+    # asserted separately in test_fd_pv_6_limits_and_axes_are_exact.
+    assert h.MAX_COMPRESSED_ARTIFACT_BYTES == 1_048_576
+    assert h.MAX_EXTRACTED_ARTIFACT_BYTES == 4_194_304
     assert h.MAX_AGGREGATE_COMPRESSED_BYTES == 6_291_456
     assert h.MAX_AGGREGATE_EXTRACTED_BYTES == 25_165_824
 
@@ -876,3 +885,636 @@ def test_cli_returns_nonzero_on_failure(tmp_path: Path) -> None:
     out = tmp_path / "evidence.json"
     assert h.main(["aggregate", "--root", str(root), "--evidence-out", str(out)]) == 1
     assert not out.exists()
+
+
+# --------------------------------------------------------------------------
+# FD-PV-12 / FD-PV-13 — bounded artifact handling
+#
+# Every test below executes the real bounded-transport implementation against a
+# real ZIP file. None asserts source text in place of behaviour, repeats a
+# constant instead of exercising a guard, or re-implements the production path.
+# --------------------------------------------------------------------------
+
+
+def _write_archive(
+    path: Path,
+    members: dict[str, bytes] | None = None,
+    *,
+    compression: int = zipfile.ZIP_DEFLATED,
+) -> Path:
+    payloads = members if members is not None else _payloads()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(path, "w", compression=compression) as bundle:
+        for name, payload in payloads.items():
+            bundle.writestr(name, payload)
+    return path
+
+
+def _six_archives(root: Path, members: dict[str, bytes] | None = None) -> Path:
+    root.mkdir(parents=True, exist_ok=True)
+    for name in h.ARTIFACT_NAMES:
+        _write_archive(root / f"{name}{h.ARCHIVE_SUFFIX}", members)
+    return root
+
+
+def test_bounded_pipeline_accepts_six_valid_archives(tmp_path: Path) -> None:
+    evidence = h.aggregate_from_archives(
+        _six_archives(tmp_path / "archives"), tmp_path / "extracted"
+    )
+    document = json.loads(evidence)
+    assert document["result"] == "pass"
+    assert document["cells"] == list(h.CELL_IDS)
+    for name in h.ARTIFACT_NAMES:
+        extracted = tmp_path / "extracted" / name
+        assert sorted(p.name for p in extracted.iterdir()) == sorted(h.REQUIRED_FILES)
+
+
+def test_bounded_pipeline_preserves_raw_bytes_without_normalization(tmp_path: Path) -> None:
+    h.aggregate_from_archives(_six_archives(tmp_path / "archives"), tmp_path / "extracted")
+    payloads = _payloads()
+    for name in h.ARTIFACT_NAMES:
+        for file_name in h.REQUIRED_FILES:
+            assert (tmp_path / "extracted" / name / file_name).read_bytes() == payloads[file_name]
+
+
+def test_bounded_pipeline_threads_the_canonical_sha(tmp_path: Path) -> None:
+    evidence = h.aggregate_from_archives(
+        _six_archives(tmp_path / "archives"),
+        tmp_path / "extracted",
+        canonical_sha=VALID_CANONICAL_SHA,
+    )
+    assert json.loads(evidence)[h.CANONICAL_SHA_KEY] == VALID_CANONICAL_SHA
+
+
+# -- compressed limits ------------------------------------------------------
+
+
+def test_compressed_per_artifact_limit_exceeded_by_metadata(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    paths = h.collect_archive_paths(archives)
+    actual = paths[h.ARTIFACT_NAMES[0]].stat().st_size
+    with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
+        h.enforce_compressed_limits(paths, max_compressed_artifact=actual - 1)
+    assert excinfo.value.code == "artifact_size_limit_exceeded"
+
+
+def test_compressed_per_artifact_boundary_is_inclusive(tmp_path: Path) -> None:
+    paths = h.collect_archive_paths(_six_archives(tmp_path / "archives"))
+    largest = max(path.stat().st_size for path in paths.values())
+    assert h.enforce_compressed_limits(paths, max_compressed_artifact=largest) > 0
+
+
+def test_compressed_aggregate_limit_exceeded(tmp_path: Path) -> None:
+    paths = h.collect_archive_paths(_six_archives(tmp_path / "archives"))
+    total = sum(path.stat().st_size for path in paths.values())
+    assert h.enforce_compressed_limits(paths, max_aggregate_compressed=total) == total
+    with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
+        h.enforce_compressed_limits(paths, max_aggregate_compressed=total - 1)
+    assert excinfo.value.code == "artifact_size_limit_exceeded"
+
+
+def test_archive_size_discrepancy_against_declared_metadata(tmp_path: Path) -> None:
+    paths = h.collect_archive_paths(_six_archives(tmp_path / "archives"))
+    declared = {name: path.stat().st_size for name, path in paths.items()}
+    assert h.enforce_compressed_limits(paths, declared_sizes=declared) > 0
+    declared[h.ARTIFACT_NAMES[2]] -= 1
+    with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
+        h.enforce_compressed_limits(paths, declared_sizes=declared)
+    assert excinfo.value.code == "artifact_size_limit_exceeded"
+
+
+def test_streamed_bytes_exceeding_the_cap_fail_despite_acceptable_metadata(
+    tmp_path: Path,
+) -> None:
+    """Metadata is never the sole defence: on-disk bytes are re-checked."""
+    paths = h.collect_archive_paths(_six_archives(tmp_path / "archives"))
+    target = paths[h.ARTIFACT_NAMES[1]]
+    understated = {name: path.stat().st_size for name, path in paths.items()}
+    with target.open("ab") as handle:
+        handle.write(b"\x00" * 4096)
+    with pytest.raises(h.ArtifactSizeLimitExceededError):
+        h.enforce_compressed_limits(paths, declared_sizes=understated)
+    with pytest.raises(h.ArtifactSizeLimitExceededError):
+        h.enforce_compressed_limits(paths, max_compressed_artifact=understated[h.ARTIFACT_NAMES[1]])
+
+
+def test_declared_sizes_file_is_validated(tmp_path: Path) -> None:
+    bad = tmp_path / "sizes.json"
+    bad.write_bytes(b'{"b2a-portability-linux-py3.11": "1024"}')
+    with pytest.raises(h.ArtifactSizeLimitExceededError):
+        h.load_declared_sizes(str(bad))
+    bad.write_bytes(b"[]")
+    with pytest.raises(h.ArtifactSizeLimitExceededError):
+        h.load_declared_sizes(str(bad))
+    assert h.load_declared_sizes(None) is None
+
+
+# -- extracted limits -------------------------------------------------------
+
+
+def test_extracted_per_artifact_limit_exceeded_during_extraction(tmp_path: Path) -> None:
+    archive = _write_archive(tmp_path / "a.zip")
+    total = sum(len(payload) for payload in _payloads().values())
+    with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
+        h.extract_archive_bounded(
+            archive, tmp_path / "out", where="cell", max_extracted_artifact=total - 1
+        )
+    assert excinfo.value.code == "artifact_size_limit_exceeded"
+
+
+def test_extracted_per_artifact_boundary_is_inclusive(tmp_path: Path) -> None:
+    archive = _write_archive(tmp_path / "a.zip")
+    total = sum(len(payload) for payload in _payloads().values())
+    assert (
+        h.extract_archive_bounded(
+            archive, tmp_path / "out", where="cell", max_extracted_artifact=total
+        )
+        == total
+    )
+
+
+def test_extracted_aggregate_limit_exceeded_during_extraction(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    per_cell = sum(len(payload) for payload in _payloads().values())
+    with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
+        h.extract_all_bounded(
+            archives,
+            tmp_path / "extracted",
+            max_aggregate_extracted=per_cell * 6 - 1,
+        )
+    assert excinfo.value.code == "artifact_size_limit_exceeded"
+
+
+def test_extracted_aggregate_boundary_is_inclusive(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    per_cell = sum(len(payload) for payload in _payloads().values())
+    assert (
+        h.extract_all_bounded(
+            archives, tmp_path / "extracted", max_aggregate_extracted=per_cell * 6
+        )
+        == tmp_path / "extracted"
+    )
+
+
+def test_zip_bomb_is_refused(tmp_path: Path) -> None:
+    """A highly compressible member is stopped by the extracted bound."""
+    bomb = {
+        h.CANONICAL_JSON_NAME: b"\x00" * (h.MAX_EXTRACTED_ARTIFACT_BYTES + 1),
+        h.CANONICAL_JSONL_NAME: b"",
+        h.MANIFEST_NAME: b"{}",
+    }
+    archive = _write_archive(tmp_path / "bomb.zip", bomb)
+    assert archive.stat().st_size < h.MAX_COMPRESSED_ARTIFACT_BYTES
+    with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert excinfo.value.code == "artifact_size_limit_exceeded"
+    assert not (tmp_path / "out" / h.CANONICAL_JSON_NAME).exists()
+
+
+def test_extraction_is_bounded_by_real_bytes_not_declared_size(tmp_path: Path) -> None:
+    payload = b"x" * 200_000
+    archive = tmp_path / "liar.zip"
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+        for name in h.REQUIRED_FILES:
+            bundle.writestr(name, payload)
+    with pytest.raises(h.ArtifactSizeLimitExceededError):
+        h.extract_archive_bounded(
+            archive, tmp_path / "out", where="cell", max_extracted_artifact=len(payload)
+        )
+
+
+def test_declared_oversize_is_refused_before_any_output_exists(tmp_path: Path) -> None:
+    """Structural inspection precedes extraction: nothing is created at all."""
+    archive = _write_archive(tmp_path / "a.zip")
+    destination = tmp_path / "out"
+    total = sum(len(payload) for payload in _payloads().values())
+    with pytest.raises(h.ArtifactSizeLimitExceededError):
+        h.extract_archive_bounded(
+            archive, destination, where="cell", max_extracted_artifact=total - 1
+        )
+    assert not destination.exists()
+
+
+def test_no_file_remains_after_a_limit_is_crossed_mid_extraction(tmp_path: Path) -> None:
+    """The aggregate budget trips while bytes are streaming, after files opened.
+
+    Declared sizes are within the per-artifact limit, so inspection passes and
+    extraction genuinely begins; the remaining aggregate budget is what runs
+    out. Every partially written output must be removed.
+    """
+    archive = _write_archive(tmp_path / "a.zip")
+    destination = tmp_path / "out"
+    total = sum(len(payload) for payload in _payloads().values())
+    with pytest.raises(h.ArtifactSizeLimitExceededError) as excinfo:
+        h.extract_archive_bounded(
+            archive,
+            destination,
+            where="cell",
+            max_extracted_artifact=total,
+            aggregate_budget=total - 1,
+        )
+    assert excinfo.value.code == "artifact_size_limit_exceeded"
+    assert destination.exists()
+    assert list(destination.iterdir()) == []
+
+
+def test_a_regular_file_over_one_mib_is_accepted_within_the_artifact_total(
+    tmp_path: Path,
+) -> None:
+    """FD-PV-12: the invented per-file 1 MiB extracted limit is gone.
+
+    A single 1.5 MiB regular file is well over the removed constraint and well
+    within the ratified 4 MiB per-artifact extracted total, so it must extract.
+    """
+    big = b"y" * 1_572_864
+    assert len(big) > 1_048_576
+    members = {
+        h.CANONICAL_JSON_NAME: big,
+        h.CANONICAL_JSONL_NAME: b"",
+        h.MANIFEST_NAME: b"{}",
+    }
+    archive = _write_archive(tmp_path / "big.zip", members)
+    extracted = h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert extracted == len(big) + 2
+    assert (tmp_path / "out" / h.CANONICAL_JSON_NAME).stat().st_size == len(big)
+
+
+def test_verification_accepts_a_payload_over_one_mib() -> None:
+    """The comparison layer no longer enforces a per-file extracted limit."""
+    from medscale.mesc._canonical_json_v1 import canonical_json_bytes, canonical_jsonl_bytes
+
+    json_payload = canonical_json_bytes({"pad": "z" * 1_200_000})
+    assert len(json_payload) > h.MAX_COMPRESSED_ARTIFACT_BYTES
+    jsonl_payload = canonical_jsonl_bytes([{"k": 1}])
+    payloads = {
+        h.CANONICAL_JSON_NAME: json_payload,
+        h.CANONICAL_JSONL_NAME: jsonl_payload,
+        h.MANIFEST_NAME: h.build_manifest(json_payload, jsonl_payload),
+    }
+    h.verify_payloads(payloads, where="oversized-but-legal")
+
+
+def test_per_artifact_extracted_total_still_binds() -> None:
+    from medscale.mesc._canonical_json_v1 import canonical_json_bytes, canonical_jsonl_bytes
+
+    json_payload = canonical_json_bytes({"pad": "z" * (h.MAX_EXTRACTED_ARTIFACT_BYTES + 16)})
+    jsonl_payload = canonical_jsonl_bytes([{"k": 1}])
+    payloads = {
+        h.CANONICAL_JSON_NAME: json_payload,
+        h.CANONICAL_JSONL_NAME: jsonl_payload,
+        h.MANIFEST_NAME: h.build_manifest(json_payload, jsonl_payload),
+    }
+    with pytest.raises(h.ArtifactSizeLimitExceededError):
+        h.verify_payloads(payloads, where="oversized")
+
+
+# -- unsafe archive structure ----------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "member",
+    [
+        "../escape.json",
+        "../../escape.json",
+        "/absolute.json",
+        "C:/windows.json",
+        "C:\\windows.json",
+        "..\\escape.json",
+        "nested/canonical.json",
+        "sub/dir/canonical.json",
+        ".",
+        "..",
+    ],
+)
+def test_unsafe_member_names_are_rejected_before_extraction(tmp_path: Path, member: str) -> None:
+    archive = tmp_path / "unsafe.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in h.REQUIRED_FILES:
+            bundle.writestr(name, b"{}")
+        bundle.writestr(member, b"payload")
+    destination = tmp_path / "out"
+    with pytest.raises((h.UnsafeArchiveEntryError, h.UnexpectedEvidenceFileError)) as excinfo:
+        h.extract_archive_bounded(archive, destination, where="cell")
+    assert excinfo.value.code in {"unsafe_archive_entry", "unexpected_evidence_file"}
+    assert not destination.exists() or list(destination.iterdir()) == []
+
+
+def test_symlink_member_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "symlink.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in h.REQUIRED_FILES[1:]:
+            bundle.writestr(name, b"{}")
+        info = zipfile.ZipInfo(h.CANONICAL_JSON_NAME)
+        info.external_attr = 0o120777 << 16
+        bundle.writestr(info, "/etc/passwd")
+    with pytest.raises(h.UnsafeArchiveEntryError) as excinfo:
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert excinfo.value.code == "unsafe_archive_entry"
+
+
+def test_non_regular_member_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "fifo.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in h.REQUIRED_FILES[1:]:
+            bundle.writestr(name, b"{}")
+        info = zipfile.ZipInfo(h.CANONICAL_JSON_NAME)
+        info.external_attr = 0o010644 << 16
+        bundle.writestr(info, b"")
+    with pytest.raises(h.UnsafeArchiveEntryError):
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+
+
+def test_directory_member_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "dir.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in h.REQUIRED_FILES:
+            bundle.writestr(name, b"{}")
+        bundle.writestr("subdir/", b"")
+    with pytest.raises(h.UnsafeArchiveEntryError):
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+
+
+def test_duplicate_archive_member_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "dup.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in h.REQUIRED_FILES:
+            bundle.writestr(name, b"{}")
+        bundle.writestr(h.CANONICAL_JSON_NAME, b"{}")
+    with pytest.raises(h.UnsafeArchiveEntryError) as excinfo:
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert excinfo.value.code == "unsafe_archive_entry"
+
+
+def test_unexpected_archive_member_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "extra.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in h.REQUIRED_FILES:
+            bundle.writestr(name, b"{}")
+        bundle.writestr("extra.txt", b"x")
+    with pytest.raises(h.UnexpectedEvidenceFileError) as excinfo:
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert excinfo.value.code == "unexpected_evidence_file"
+
+
+def test_missing_expected_member_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "missing.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in h.REQUIRED_FILES[:-1]:
+            bundle.writestr(name, b"{}")
+    with pytest.raises(h.MissingEvidenceFileError) as excinfo:
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert excinfo.value.code == "missing_evidence_file"
+
+
+def test_more_than_three_regular_files_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "four.zip"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        for name in (*h.REQUIRED_FILES, "canonical.json.bak"):
+            bundle.writestr(name, b"{}")
+    with pytest.raises(h.UnexpectedEvidenceFileError):
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+
+
+def test_malformed_archive_is_rejected(tmp_path: Path) -> None:
+    archive = tmp_path / "malformed.zip"
+    archive.write_bytes(b"this is not a zip file at all")
+    with pytest.raises(h.UnsafeArchiveEntryError) as excinfo:
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert excinfo.value.code == "unsafe_archive_entry"
+
+
+def test_truncated_archive_is_rejected(tmp_path: Path) -> None:
+    archive = _write_archive(tmp_path / "good.zip")
+    raw = archive.read_bytes()
+    truncated = tmp_path / "truncated.zip"
+    truncated.write_bytes(raw[: len(raw) // 2])
+    with pytest.raises(h.UnsafeArchiveEntryError):
+        h.extract_archive_bounded(truncated, tmp_path / "out", where="cell")
+
+
+def test_corrupt_member_stream_fails_closed(tmp_path: Path) -> None:
+    """A CRC-invalid member fails closed during the chunked read."""
+    archive = _write_archive(tmp_path / "crc.zip")
+    raw = bytearray(archive.read_bytes())
+    raw[60] ^= 0xFF
+    corrupt = tmp_path / "corrupt.zip"
+    corrupt.write_bytes(bytes(raw))
+    with pytest.raises(h.PortabilityError) as excinfo:
+        h.extract_archive_bounded(corrupt, tmp_path / "out", where="cell")
+    assert excinfo.value.code in {"unsafe_archive_entry", "aggregate_verifier_internal_error"}
+
+
+def test_output_write_failure_fails_closed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    archive = _write_archive(tmp_path / "a.zip")
+    real_open: Any = Path.open
+
+    def failing_open(self: Path, mode: str = "r", *args: Any, **kwargs: Any) -> Any:
+        if self.name in h.REQUIRED_FILES and "w" in mode:
+            raise OSError("disk full")
+        return real_open(self, mode, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", failing_open)
+    with pytest.raises(h.AggregateVerifierInternalError) as excinfo:
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+    assert excinfo.value.code == "aggregate_verifier_internal_error"
+
+
+def test_chunked_reader_failure_fails_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    archive = _write_archive(tmp_path / "a.zip")
+
+    class FailingStream:
+        def __enter__(self) -> FailingStream:
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            return None
+
+        def read(self, size: int = -1) -> bytes:
+            raise OSError("reader defect")
+
+    def failing_open(self: object, name: object, *args: object, **kwargs: object) -> object:
+        return FailingStream()
+
+    monkeypatch.setattr(zipfile.ZipFile, "open", failing_open)
+    with pytest.raises(h.AggregateVerifierInternalError):
+        h.extract_archive_bounded(archive, tmp_path / "out", where="cell")
+
+
+# -- archive-set cardinality ------------------------------------------------
+
+
+def test_missing_archive_is_rejected(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    (archives / f"{h.ARTIFACT_NAMES[0]}{h.ARCHIVE_SUFFIX}").unlink()
+    with pytest.raises(h.MissingMatrixCellError) as excinfo:
+        h.collect_archive_paths(archives)
+    assert excinfo.value.code == "missing_matrix_cell"
+
+
+def test_unexpected_archive_is_rejected(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    _write_archive(archives / "b2a-portability-solaris-py3.11.zip")
+    with pytest.raises(h.UnexpectedMatrixCellError) as excinfo:
+        h.collect_archive_paths(archives)
+    assert excinfo.value.code == "unexpected_matrix_cell"
+
+
+def test_non_zip_entry_in_the_archive_directory_is_rejected(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    (archives / "notes.txt").write_bytes(b"x")
+    with pytest.raises(h.UnexpectedMatrixCellError):
+        h.collect_archive_paths(archives)
+
+
+def test_directory_in_the_archive_directory_is_rejected(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    (archives / "leftover").mkdir()
+    with pytest.raises(h.UnsafeArchiveEntryError):
+        h.collect_archive_paths(archives)
+
+
+def test_missing_archive_root_is_rejected(tmp_path: Path) -> None:
+    with pytest.raises(h.MissingMatrixCellError):
+        h.collect_archive_paths(tmp_path / "absent")
+
+
+# -- defaults, CLI, and preserved behaviour ---------------------------------
+
+
+def test_bounded_defaults_are_exactly_the_ratified_limits() -> None:
+    import inspect
+
+    extract = inspect.signature(h.extract_archive_bounded).parameters
+    assert extract["max_extracted_artifact"].default == 4_194_304
+    assert extract["aggregate_budget"].default == 25_165_824
+    compressed = inspect.signature(h.enforce_compressed_limits).parameters
+    assert compressed["max_compressed_artifact"].default == 1_048_576
+    assert compressed["max_aggregate_compressed"].default == 6_291_456
+    every = inspect.signature(h.extract_all_bounded).parameters
+    assert every["max_compressed_artifact"].default == 1_048_576
+    assert every["max_aggregate_compressed"].default == 6_291_456
+    assert every["max_extracted_artifact"].default == 4_194_304
+    assert every["max_aggregate_extracted"].default == 25_165_824
+
+
+def test_fd_pv_6_limits_and_axes_are_exact() -> None:
+    assert h.MAX_COMPRESSED_ARTIFACT_BYTES == 1_048_576
+    assert h.MAX_EXTRACTED_ARTIFACT_BYTES == 4_194_304
+    assert h.MAX_AGGREGATE_COMPRESSED_BYTES == 6_291_456
+    assert h.MAX_AGGREGATE_EXTRACTED_BYTES == 25_165_824
+    assert h.MAX_AGGREGATE_COMPRESSED_BYTES == 6 * h.MAX_COMPRESSED_ARTIFACT_BYTES
+    assert h.MAX_AGGREGATE_EXTRACTED_BYTES == 6 * h.MAX_EXTRACTED_ARTIFACT_BYTES
+
+
+def test_no_per_file_extracted_limit_constant_remains() -> None:
+    assert not hasattr(h, "MAX_FILE_BYTES")
+
+
+def test_cli_bounded_archive_mode_round_trip(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    sizes = tmp_path / "declared-sizes.json"
+    sizes.write_bytes(
+        json.dumps(
+            {name: path.stat().st_size for name, path in h.collect_archive_paths(archives).items()}
+        ).encode()
+    )
+    out = tmp_path / "evidence" / h.EVIDENCE_NAME
+    assert (
+        h.main(
+            [
+                "aggregate",
+                "--archives",
+                str(archives),
+                "--extract-root",
+                str(tmp_path / "extracted"),
+                "--declared-sizes",
+                str(sizes),
+                "--evidence-out",
+                str(out),
+            ]
+        )
+        == 0
+    )
+    assert json.loads(out.read_bytes())["result"] == "pass"
+
+
+def test_cli_bounded_archive_mode_fails_closed_on_unsafe_archive(tmp_path: Path) -> None:
+    archives = _six_archives(tmp_path / "archives")
+    target = archives / f"{h.ARTIFACT_NAMES[0]}{h.ARCHIVE_SUFFIX}"
+    target.unlink()
+    with zipfile.ZipFile(target, "w") as bundle:
+        for name in h.REQUIRED_FILES:
+            bundle.writestr(name, b"{}")
+        bundle.writestr("../escape.json", b"x")
+    out = tmp_path / "evidence" / h.EVIDENCE_NAME
+    assert (
+        h.main(
+            [
+                "aggregate",
+                "--archives",
+                str(archives),
+                "--extract-root",
+                str(tmp_path / "extracted"),
+                "--evidence-out",
+                str(out),
+            ]
+        )
+        == 1
+    )
+    assert not out.exists()
+
+
+def test_bounded_pipeline_makes_no_network_call(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def forbidden(*args: object, **kwargs: object) -> None:
+        raise AssertionError("the bounded pipeline must not touch the network")
+
+    monkeypatch.setattr(socket, "socket", forbidden)
+    monkeypatch.setattr(socket, "create_connection", forbidden)
+    h.aggregate_from_archives(_six_archives(tmp_path / "archives"), tmp_path / "extracted")
+
+
+def test_taxonomy_is_unchanged_by_bounded_handling() -> None:
+    assert len(h.TAXONOMY) == 21
+    assert set(h.iter_taxonomy_codes()) == set(EXPECTED_TAXONOMY)
+
+
+def _workflow_text() -> str:
+    return (
+        Path(h.__file__).resolve().parents[1] / ".github" / "workflows" / "mesc-b2a-portability.yml"
+    ).read_text(encoding="utf-8")
+
+
+def test_workflow_permission_and_transport_boundary() -> None:
+    """Wiring guard for the workflow half of the bounded pipeline."""
+    workflow = _workflow_text()
+    assert "permissions:\n  contents: read\n  actions: read\n" in workflow
+    assert "actions/download-artifact" not in workflow
+    assert "--archives archives" in workflow
+    assert "MAX_COMPRESSED_ARTIFACT_BYTES: '1048576'" in workflow
+    assert "MAX_AGGREGATE_COMPRESSED_BYTES: '6291456'" in workflow
+    assert "actions/runs/${GITHUB_RUN_ID}/artifacts" in workflow
+    for forbidden in ("packages:", "id-token:", "contents: write", "actions: write", "secrets."):
+        assert forbidden not in workflow
+
+
+def test_preserved_workflow_invariants() -> None:
+    workflow = _workflow_text()
+    assert "fail-fast: false" in workflow
+    assert workflow.count("os: ubuntu-latest") == 2
+    assert workflow.count("os: windows-latest") == 2
+    assert workflow.count("os: macos-latest") == 2
+    assert "exclude:" not in workflow
+    assert "timeout-minutes:" in workflow
+    assert "version: '0.11.14'" in workflow
+    assert "uv sync --frozen" in workflow
+    assert "retention-days: 14" in workflow
+    assert "enable-cache: false" in workflow
+    assert "@v4" not in workflow
+    assert (
+        "if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'"
+        in workflow
+    )
