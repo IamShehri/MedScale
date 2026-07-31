@@ -180,7 +180,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability infrastructure remediation authority recorded 2026-07-30 (FD-PV-11..15) but not active until all five FD-PV-15 activation conditions are satisfied, and not adopted; execution not authorized; B2A not accepted |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability remediation executed on Draft PR #61 and now under GOVERNANCE HOLD (four blocking findings, FD-PV-16 correction authority recorded but not active); infrastructure not adopted; execution not authorized; B2A not accepted |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -397,6 +397,11 @@ cross-platform golden-vector evidence infrastructure.
 ```text
 P01-T03B6 — P01-04B2A portability remediation authorization gate
 
+--- State at the time this entry was recorded (2026-07-30) ---
+The block below is a historical snapshot. It was accurate when written and is
+NOT the current state. The later chronological facts and the current
+controlling state follow it.
+
 Documentation status:
 RECORDED — NOT ADOPTED; REMEDIATION AUTHORITY NOT ACTIVE
 
@@ -468,4 +473,139 @@ plus exactly two additive correction commits — three commits in the activated
 remediation sequence. The synchronization merge commit is synchronization only
 and is not a correction commit; exactly two correction commits, Correction A
 then Correction B, are authorized, and no third correction commit is authorized.
+
+--- Later chronological facts (superseding the snapshot above) ---
+
+Governance authorization package:
+ADOPTED ON CANONICAL MAIN — PR #62 merged as
+3a0fd67c8433bd25eab77c05b44aa84a3a86ddb9 (main tree
+f8c80688c1a31ef06cedad4ce44cc13546a92919)
+
+FD-PV-15:
+ACTIVATED — all five activation conditions satisfied and mechanically verified
+
+PR #61 remediation:
+EXECUTED — one non-force synchronization merge commit plus Correction A and
+Correction B, followed by two separately authorized additional commits
+
+Independent clean-room exact-head review of PR #61:
+COMPLETED
+
+Accepted verdict:
+GOVERNANCE HOLD — PR #61 MUST REMAIN DRAFT
+
+Resolution pull request:
+PR #63 OPENED — see P01-T03B7
+
+--- Current controlling state ---
+
+P01-T03B6 documentation:
+ADOPTED ON CANONICAL MAIN
+
+FD-PV-11 through FD-PV-15:
+ADOPTED AND CONTROLLING
+
+PR #61:
+OPEN / DRAFT / NOT MERGED — HELD by the four blocking findings recorded in
+P01-T03B7. NOT accepted, NOT Ready, NOT merged, NOT adopted.
+
+PR #63:
+OPEN / DRAFT / NOT MERGED — not adopted
+
+--- Future gated authority ---
+
+FD-PV-16:
+RECORDED BUT NOT ACTIVE — see P01-T03B7
+```
+
+```text
+P01-T03B7 — P01-04B2A portability governance-hold resolution gate
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-PV-16 NOT ACTIVE
+
+Founder disposition:
+AUTHORITY-RECORD GAP ACKNOWLEDGED, NOT RETROACTIVELY CURED (2026-07-31)
+
+Required canonical baseline:
+3a0fd67c8433bd25eab77c05b44aa84a3a86ddb9
+
+Governed Draft pull request:
+PR #61 — OPEN / DRAFT / NOT MERGED — HELD
+
+PR #61 exact head:
+2260fa540c440ce3584535f30e74323381568b98
+
+PR #61 exact tree:
+eb5cd1757f89bca2b42e1e9c61d3fcd1270a5e94
+
+Accepted independent exact-head verdict:
+GOVERNANCE HOLD — PR #61 MUST REMAIN DRAFT
+
+Blocking findings:
+B1 MISSING RECOVERABLE AUTHORIZATION FOR COMMITS 6 AND 7
+B2 EXPIRED UNEXPECTED SEVENTH ARTIFACT IS ACCEPTED
+B3 WORKFLOW FAILURES BYPASS THE RATIFIED TAXONOMY
+B4 CORRECTION B TEST-QUALITY REQUIREMENTS REMAIN UNSATISFIED
+
+Non-blocking findings:
+N1 CONSUMER-FAILURE TEST DOES NOT EXERCISE BROKEN-PIPE BEHAVIOUR
+N2 ACCIDENTAL CANONICAL-MAIN INCIDENT REQUIRES A DURABLE GOVERNANCE RECORD
+
+Canonical-main incident d2c5ecc96b093613bc9b5863720715dba6395227:
+CONTAINED TECHNICALLY; NON-FAST-FORWARD REWIND RECORDED;
+NOT AN ANCESTOR OF MAIN OR PR #61; NOT A PR #61 IMPLEMENTATION BLOCKER
+
+Preventive controls:
+DIRECT MAIN MUTATION AND FORCE UPDATE PROHIBITED DURING GOVERNED WORK;
+PR BODIES VIA THE PULL-REQUEST METADATA ENDPOINT ONLY;
+BRANCH PROTECTION RECOMMENDED AS A SEPARATE OPERATIONAL ACTION
+
+Prospective correction authority:
+FD-PV-16 RECORDED BUT NOT ACTIVE — ONE ADDITIVE PR #61 COMMIT, PARENT
+2260fa540c440ce3584535f30e74323381568b98
+
+Two primary authorized paths:
+.github/workflows/mesc-b2a-portability.yml
+tests/test_mesc_b2a_portability.py
+
+Conditional helper path:
+tests/_mesc_b2a_portability.py
+
+The helper may change only upon strictly proven necessity under FD-PV-16, with
+that necessity explicitly recorded. This clarification does not broaden
+authority.
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+Independent exact-head review of the corrected PR #61 head:
+OUTSTANDING — REQUIRED BEFORE PR #61 READY OR MERGE
+
+Infrastructure adoption:
+NOT ACHIEVED
+
+Execution:
+NOT AUTHORIZED
+
+Admissible evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+
+Binding N-12:
+UNDISCHARGED; WINDOWS AND MACOS OBLIGATIONS OPEN
+
+Downstream status:
+B2B NOT AUTHORIZED
+
+Prerequisite:
+P01-T03B6 RECORDED AND ADOPTED (PR #62 merge 3a0fd67c...)
+
+Scope:
+Dispose of the historical authority-record gap for PR #61 commits 6 and 7,
+record the accidental canonical-main ref incident and its containment, adopt
+preventive controls, and prospectively authorize exactly one additive PR #61
+correction commit under a five-condition activation gate.
 ```
