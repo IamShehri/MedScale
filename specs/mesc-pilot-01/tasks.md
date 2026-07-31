@@ -499,6 +499,13 @@ PR #63 OPENED — see P01-T03B7
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B6 was adopted. It is retained as
+historical governance evidence and is not the repository's present controlling
+state. The later P01-T03B8 Current controlling state supersedes this block;
+P01-T03B9 governs the subsequent FD-PV-18 evidence-production gate.
+
 P01-T03B6 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -883,7 +890,14 @@ Authorized inspection:
 READ-ONLY INSPECTION OF THAT ONE RUN AND OFFLINE VERIFICATION OF ITS SEVEN
 ARTIFACTS — SIX CELL ARTIFACTS PLUS b2a-portability-evidence
 
-Independent exact-head review of this governance package:
+First independent exact-head review of 617c632f4c67628c9b3fa165aa6712f7b3698079:
+COMPLETED — REPORT RETURNED APPROVE WITH NON-BLOCKING NOTES
+
+Founder disposition of that report:
+CHANGES REQUIRED — THE CONTRADICTORY CURRENT-CONTROLLING-STATE HEADINGS WERE
+RECLASSIFIED AS BLOCKING
+
+Independent exact-head review of the corrected head:
 OUTSTANDING — REQUIRED BEFORE READY OR MERGE
 
 Independent evidence review of the future run:
