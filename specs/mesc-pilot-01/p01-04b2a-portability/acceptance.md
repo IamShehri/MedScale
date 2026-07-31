@@ -2,22 +2,38 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -38,16 +54,16 @@ Applies to this documentation pull request only.
 
 | Criterion | Requirement |
 |---|---|
-| Path scope | Exactly nine authorized documentation paths |
+| Path scope | Exactly eight authorized documentation paths |
 | Decisions visible | PD-PV-1 through PD-PV-10 all present, adopted as FD-PV-1 through FD-PV-10 |
 | Numeric limits | The FD-PV-6 compressed and extracted byte limits recorded exactly |
-| No implementation authority | No document authorizes infrastructure or B2A implementation |
+| No pre-activation implementation authority | No remediation implementation authority before activation. `FD-PV-15` becomes operative only after all five of its activation conditions are satisfied; adoption, merge, or adoption plus mechanical verification alone is insufficient |
 | No workflow change | No `.github/**` path changed |
 | No source or test change | No `src/**` or `tests/**` path changed |
 | No evidence claims | No document claims portability evidence exists or has passed |
 | No acceptance claims | No document claims B2A is accepted |
 | Internal links | All cross-references resolve |
-| Canonical identities | Exact current base, PR #55 and PR #56 identities recorded |
+| Canonical identities | Canonical base `f71c6abf2b2f905f605951605efd6c8ab016523e` recorded; PR #61 exact pre-remediation head and Draft state recorded; PR #62 exact head, full commit chain, Draft state, and cumulative scope recorded |
 | Local gates | Locked sync, Ruff lint, Ruff format, Mypy and Pytest pass |
 | Exact-head verification | CI and CodeQL succeed on the exact head |
 | Independent review | Independent Opus exact-head review |
@@ -55,10 +71,39 @@ Applies to this documentation pull request only.
 
 ### Documentation-gate stop conditions
 
-Do not treat this gate as satisfied if any document authorizes implementation or
-execution, claims Windows or macOS evidence exists, claims B2A is accepted,
-claims P01-04B is complete, modifies a B2A contract or the founder-ratification
-record, or modifies a path outside the nine authorized paths.
+These stop conditions are current and operative. They replace the pre-`FD-PV-11`
+wording, which prohibited **any** implementation authorization, prohibited
+modifying the founder-ratification record, and referred to nine authorized
+paths. That earlier wording is superseded and must not be applied as the current
+rule.
+
+Do not treat the documentation gate as satisfied if:
+
+- any document authorizes remediation implementation **before** `FD-PV-15`
+  activation;
+- any document authorizes execution or admissible evidence production;
+- any document claims Windows or macOS evidence exists;
+- any document claims B2A is accepted;
+- any document claims P01-04B is complete or accepted;
+- any B2A contract path under `../p01-04b2a/**` is modified;
+- any path outside the exact **eight** authorized documentation paths is
+  modified;
+- the package claims infrastructure adoption, Ready, merge, B2A acceptance, or
+  B2B authorization.
+
+Explicitly **not** stop conditions:
+
+- **Modifying this portability package's own `founder-ratification.md`.** That is
+  expected within this governance pull request, which is how `FD-PV-11` through
+  `FD-PV-15` are canonicalized. The prohibition on modifying the separate B2A
+  contracts under `specs/mesc-pilot-01/p01-04b2a/**` is unchanged and remains
+  fully in force.
+- **Recording prospective post-activation remediation authority.** The package
+  may record that authority. Recording it does **not** activate it: until every
+  one of the five `FD-PV-15` activation conditions has been satisfied — and so
+  for as long as PR #62 remains Draft, unmerged, or otherwise unadopted — no
+  PR #61 mutation, no synchronization, and neither correction commit is
+  authorized.
 
 ---
 
@@ -77,7 +122,7 @@ Applies only to a later, separately authorized infrastructure pull request.
 | Bytes | All compared bytes identical across all six cells |
 | Hashes and sizes | All recomputed SHA-256 values and byte sizes identical |
 | Negative tests | Fail-closed tests exist for every proposed failure category |
-| Permissions | `contents: read` only; no secrets, no write, no OIDC |
+| Permissions | Exactly `contents: read` and `actions: read`; no secrets, no write, no OIDC. `FD-PV-13` narrowly supersedes the original `contents: read` only criterion |
 | Action pinning | Every `uses:` entry pinned to an immutable full commit SHA, including GitHub-owned actions; no tag-only reference such as `@v4` |
 | Network boundary | Infrastructure-plane activity only (see below); no data-plane access |
 | Binary writes | Evidence files written as raw bytes in binary mode |
@@ -138,3 +183,75 @@ publication, or clinical use.
 Until a separate founder acceptance decision is recorded, B2A remains **not
 accepted**, P01-04B remains **incomplete and not accepted**, and B2B remains
 **not authorized**.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Remediation acceptance criteria (FD-PV-11 through FD-PV-15)
+
+Earlier criteria remain controlling except where `FD-PV-11` through `FD-PV-15`
+expressly supersede them. The express supersessions are limited to the PR #62
+documentation path count, pre-activation versus post-activation remediation
+authority, the narrow addition of `actions: read`, and the remediation commit
+sequence.
+
+Nothing here weakens any evidence, data, model, execution, review, Ready, merge,
+B2A, or B2B gate. Satisfying these criteria does not satisfy infrastructure
+adoption and does not accept B2A.
+
+| Criterion | Requirement |
+|---|---|
+| Activation gate | All five `FD-PV-15` activation conditions satisfied — independent exact-head approval of PR #62, separate founder Ready decision, separate founder merge decision, canonical merge, and mechanical verification of the merge SHA and resulting main tree — before any synchronization or correction commit |
+| History preservation | Both PR #61 commits retain their exact object identities; no rebase, amend, squash, reset, cherry-pick, or force-push |
+| Synchronization | Canonical main merged into the branch by a normal non-force merge commit |
+| Correction scope | Exactly the three implementation paths; no dependency, lockfile, `src/**`, dataset, model, or public-API change |
+| Compressed limits | Measured against artifact archive bytes and enforced before or during download |
+| Extracted limits | Measured against extracted regular-file bytes and enforced during bounded extraction |
+| Pre-extraction inspection | Archive structure inspected before any entry is written |
+| Invented limit removed | No general per-file 1 MiB extracted limit remains |
+| Resource safety | An oversized download or ZIP bomb is stopped before runner-disk exhaustion |
+| Permission scope | Exactly `contents: read` and `actions: read`; no further expansion |
+| Helper network boundary | The helper performs no network access |
+| Envelope binding | `canonical_sha` present on canonical-main dispatch envelopes only, absent on pull-request envelopes, validated as 40 lowercase hex, failing closed via `evidence_generation_failure` |
+| Schema | `mesc-pilot-01-b2a-portability-evidence/1` corrected in place; no version 2 |
+| Taxonomy | The twenty-one ratified categories are preserved exactly, unrenamed and unextended |
+| Test effectiveness | Every safe-extraction guard has a negative test that invokes the helper, reaches the guard, and asserts the exact category; no tautological or non-executing safety test remains; tests do not accept unrelated error categories |
+| Exact-head verification | Exact-head workflows pass after correction |
+| Independent review | A genuinely independent exact-head review, by a reviewer that did not author the work, approves the corrected head |
+| Ready transition | A separate founder decision, issued after all of the above |
+
+Meeting every row above still does **not** accept B2A, does not produce
+admissible evidence, does not discharge binding `N-12`, does not close the
+Windows or macOS obligations, and does not authorize B2B.

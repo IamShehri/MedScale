@@ -2,22 +2,38 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -149,6 +165,31 @@ must never enter the compared golden-vector bytes and must never enter
 `split_fingerprint`.
 
 ## 5. Permissions and supply-chain controls
+
+> ### Current controlling amendment — FD-PV-13
+>
+> `contents: read` only was the **original ratified rule** and is retained below
+> as such. It is **not** the current rule for the portability-remediation
+> workflow, and a reader must not mistake it for the current rule.
+>
+> `FD-PV-13` narrowly supersedes it. The current permissions are exactly:
+>
+> ```yaml
+> permissions:
+>   contents: read
+>   actions: read
+> ```
+>
+> `actions: read` has only these three purposes: enumerating artifacts belonging
+> to the current exact workflow run; reading artifact metadata, including archive
+> byte size; and downloading the exact expected artifacts through the documented
+> GitHub Actions API.
+>
+> Every other permission and network prohibition in this section remains
+> controlling, including no secrets, no write permissions, no OIDC, no package
+> publication, no release creation, and no evidence-bearing cache. The precedence
+> clause later in this document is preserved but is not the sole resolution of
+> this conflict.
 
 - `permissions: contents: read` only.
 - No secrets of any kind.
@@ -424,3 +465,98 @@ This infrastructure exercises the private B2A implementation; it does not
 contain it. The two are separate pull requests under separate authorizations,
 and must never be combined. The infrastructure is implemented only on a
 canonical main that already contains the B2A implementation it must exercise.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Amendments recorded 2026-07-30 (FD-PV-12, FD-PV-13, FD-PV-14)
+
+These amendments control on conflict with any earlier section of this
+specification. Earlier text is retained above as the ratified contract as it
+stood before 2026-07-30.
+
+### Size limits — measurement axis and enforcement timing (FD-PV-12)
+
+The four `FD-PV-6` byte values are unchanged. Their axes are now explicit:
+
+| Limit | Bytes | Axis | Scope | Enforced |
+|---|---|---|---|---|
+| Max compressed per artifact | `1048576` | Compressed archive bytes | Per artifact | Before or during download |
+| Max extracted per artifact | `4194304` | Extracted regular-file bytes | Per artifact | During bounded extraction |
+| Max compressed across six | `6291456` | Compressed archive bytes | Aggregate | Before or during download |
+| Max extracted across six | `25165824` | Extracted regular-file bytes | Aggregate | During bounded extraction |
+
+`1048576` is a **compressed per-artifact** limit. It must not be applied as an
+extracted per-file limit, and no general per-file extracted limit is ratified.
+Archive structure must be inspected before extraction. Post-extraction-only
+enforcement is prohibited. An oversized download or ZIP bomb must be stopped
+before it can exhaust runner disk.
+
+### Permissions (FD-PV-13)
+
+Section 5's `permissions: contents: read` only rule is amended to:
+
+```yaml
+permissions:
+  contents: read
+  actions: read
+```
+
+`actions: read` is confined to enumerating the current run's artifacts, reading
+artifact metadata including archive byte size, and downloading the exact
+expected artifacts through the documented GitHub Actions API. It authorizes no
+mutation, rerun, cancellation, dispatch, deletion, write scope, secret, OIDC,
+publication, cache, or cross-run or cross-repository access. The workflow
+performs metadata lookup and capped transport; the helper remains network-free
+and reads only bounded local ZIP files.
+
+### Evidence envelope (FD-PV-14)
+
+The canonical-main dispatch binding in section 4 is satisfied by an explicit
+envelope field:
+
+```json
+"canonical_sha": "<40 lowercase hexadecimal commit SHA>"
+```
+
+Present only for canonical-main `workflow_dispatch` envelopes; absent from
+pull-request envelopes; equal to the guarded checked-out HEAD; passed explicitly
+from the validated dispatch input and never inferred from the environment;
+validated as exactly 40 lowercase hexadecimal characters, with uppercase, empty,
+short, long, non-hex, ref, branch, and tag values failing closed through
+`evidence_generation_failure`. It never enters the three compared files and
+never enters `split_fingerprint`. Schema
+`mesc-pilot-01-b2a-portability-evidence/1` is corrected in place; no version 2
+is created.

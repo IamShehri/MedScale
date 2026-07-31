@@ -2,22 +2,38 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -38,9 +54,57 @@ N-12 remains in force exactly as ratified.
 
 Every decision below was ratified by the founder on 2026-07-27 and adopted as
 `FD-PV-1` through `FD-PV-10`; the canonical record is `founder-ratification.md`.
-Ratification freezes these design decisions only. It grants no
-infrastructure-implementation, B2A-implementation, execution, or
-evidence-production authority, and merging this package grants no authority.
+
+### What each state does and does not grant
+
+Three states are distinct. Do not read any one of them as the others.
+
+**Historical — `FD-PV-1` through `FD-PV-10`.** Ratification on 2026-07-27 froze
+the original design decisions only. That ratification, and the adoption of the
+package that recorded it, granted **no** infrastructure-implementation, **no**
+B2A-implementation, **no** execution, **no** evidence-production, **no**
+B2A-acceptance, and **no** B2B authority. Nothing in that state authorized any
+implementation work, and the work now in Draft PR #61 was not authorized by it.
+
+**Current — before the complete activation gate.** While this package's
+`FD-PV-11` through `FD-PV-15` record remains Draft, unmerged, or otherwise
+unadopted, and at any point before **every one** of the five activation
+conditions below has been satisfied:
+
+- no PR #61 branch mutation is authorized;
+- no synchronization is authorized;
+- neither Correction A nor Correction B is authorized.
+
+Recording a decision is not executing it.
+
+**After `FD-PV-15` activation.** Remediation authority becomes operative only
+after **all five** of the following:
+
+1. a genuinely independent exact-head approval of PR #62;
+2. a separate founder Ready-transition decision for PR #62;
+3. a separate founder merge decision for PR #62;
+4. merge into canonical main;
+5. mechanical verification of the canonical merge SHA and the resulting main
+   tree.
+
+Once all five are satisfied, `FD-PV-15` authorizes the exact sequence — one
+non-force synchronization merge commit, preservation of both existing PR #61
+commit identities, Correction A, Correction B, the normal push, and the
+automatically triggered workflows — without any further founder authorization.
+
+**No subset activates `FD-PV-15`.** Adoption alone activates nothing. Merge
+alone activates nothing. Independent exact-head approval plus merge, without the
+separate Ready decision, the separate merge decision, or the mechanical
+verification, activates nothing. Adoption plus mechanical verification, without
+the independent exact-head approval and both separate founder decisions,
+activates nothing. Only the complete five-condition gate activates `FD-PV-15`,
+and no synchronization or implementation correction may begin before it is
+complete.
+
+Nothing in any of the three states authorizes execution, admissible evidence
+production, evidence acceptance, B2A acceptance, discharge of binding `N-12`,
+closure of the Windows or macOS obligations, B2B, PR #61 Ready, or PR #61 merge.
+Each of those remains a separate founder act.
 
 ---
 
@@ -79,6 +143,33 @@ FOUNDER-RATIFIED 2026-07-27 AS FD-PV-2
 ```
 
 ## PD-PV-3 — Least privilege and immutable dependencies
+
+> ### Current controlling amendment — FD-PV-13
+>
+> The `contents: read` only rule stated below records the policy ratified
+> **before** the remediation authority gap was resolved. It is retained as the
+> historical ratified decision text and is **not** the current rule for the
+> portability-remediation workflow.
+>
+> `FD-PV-13` narrowly supersedes it for that workflow only. The current
+> permitted workflow permissions are exactly:
+>
+> ```yaml
+> permissions:
+>   contents: read
+>   actions: read
+> ```
+>
+> `actions: read` is limited to enumerating artifacts belonging to the current
+> exact workflow run, reading artifact metadata including archive size, and
+> downloading the exact expected artifacts through the documented GitHub Actions
+> API.
+>
+> No workflow mutation, rerun, cancellation, dispatch, artifact deletion, write
+> permission, secrets, OIDC, cache, package publication, release creation, or
+> unrelated-run artifact access is authorized. Every other prohibition in
+> `PD-PV-3` remains controlling, and its ratification status as `FD-PV-3` is
+> unchanged.
 
 The workflow runs with `contents: read` only, no secrets, no write permissions,
 no OIDC, no publication and no release creation. **All GitHub Actions, including
@@ -272,3 +363,114 @@ The founder decided PD-PV-1 through PD-PV-10 on 2026-07-27, adopting them as
 That decision does not by itself authorize infrastructure implementation, B2A
 implementation, execution, evidence production, or B2A acceptance; each remains
 a separate act.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## FD-PV-11 — Historical truth and prospective remediation authorization
+
+Recorded 2026-07-30. The PR #61 implementation work predates any canonical
+infrastructure-implementation authorization. This record does not retroactively
+authorize it. Remediation and further review are recorded prospectively and
+become operative only after **all five** `FD-PV-15` activation conditions have
+been satisfied; adoption alone, merge alone, and adoption plus mechanical
+verification alone are each insufficient. PR #61 remains Draft until that
+complete activation gate, non-rewriting synchronization, correction, passing
+exact-head workflows, a genuinely independent exact-head review, and a separate
+Ready-transition decision have all occurred.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-11
+```
+
+## FD-PV-12 — Preserve FD-PV-6 through bounded artifact handling
+
+The four `FD-PV-6` limits are unchanged. Compressed limits are measured against
+artifact archive bytes and enforced before or during download; extracted limits
+are measured against extracted regular-file bytes and enforced during bounded
+extraction. Archive structure is inspected before extraction.
+Post-extraction-only enforcement is prohibited. `1048576` is a compressed
+per-artifact limit and must not be reinterpreted as an extracted per-file limit;
+no general per-file 1 MiB extracted limit is ratified, and any such invented
+limit is removed during remediation.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-12
+```
+
+## FD-PV-13 — Narrow read-only Actions permission
+
+`permissions: contents: read` is amended to `contents: read` plus
+`actions: read`, solely for enumerating the current run's artifacts, reading
+artifact metadata including archive byte size, and downloading the exact
+expected artifacts through the documented GitHub Actions API. No other expansion
+is authorized. The helper remains network-free.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-13
+```
+
+## FD-PV-14 — Canonical SHA binding in the evidence envelope
+
+`canonical_sha` is added to the evidence envelope for canonical-main
+`workflow_dispatch` runs only, absent from pull-request envelopes, validated as
+exactly 40 lowercase hexadecimal characters, passed explicitly from the guarded
+dispatch input, never inferred from the environment, failing closed through
+`evidence_generation_failure`. `mesc-pilot-01-b2a-portability-evidence/1` is
+corrected in place; no version 2 is created.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-14
+```
+
+## FD-PV-15 — Remediation and sequencing authority
+
+Once, and only once, all five activation conditions have been satisfied —
+independent exact-head approval of PR #62, a separate founder Ready-transition
+decision, a separate founder merge decision, canonical merge, and mechanical
+verification of the canonical merge SHA and the resulting main tree — a
+non-force merge commit synchronizes canonical main into the PR #61 branch,
+preserving both existing commit identities, followed by exactly two additive
+correction commits — Correction A for `FD-PV-14`, Correction B for `FD-PV-12`
+and `FD-PV-13` — each confined to the three implementation paths. Before that
+complete gate, none of those commits is authorized.
+
+```text
+FOUNDER-RATIFIED 2026-07-30 AS FD-PV-15
+```
+
+The full text of `FD-PV-11` through `FD-PV-15` is canonical in
+`founder-ratification.md`. This file records them for continuity only; on any
+conflict the founder-ratification record controls.

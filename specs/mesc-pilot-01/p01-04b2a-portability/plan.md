@@ -2,22 +2,38 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-NOT AUTHORIZED
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -104,3 +120,109 @@ Stop without mutation if:
 - secrets, write permissions, OIDC, dataset access, model access, or network
   fetches beyond the locked dependency environment would be introduced;
 - any document would claim authority the founder has not recorded.
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Remediation sequence (FD-PV-15)
+
+Each step is a hard boundary. No step may begin before the previous step has
+completed and been verified. This sequence is authorized prospectively and is
+not executed by the record that authorizes it.
+
+1. Complete the full activation gate for this governance package. All five
+   conditions are required, in order, and none may be inferred from another:
+   1. a genuinely independent exact-head approval of PR #62;
+   2. a separate founder Ready-transition decision for PR #62;
+   3. a separate founder merge decision for PR #62;
+   4. merge of PR #62 into canonical main;
+   5. mechanical verification of the canonical merge SHA and the resulting main
+      tree.
+
+   Only after all five have occurred may step 2 begin. Merge alone, without the
+   other four, activates nothing.
+2. Synchronize the new canonical main into
+   `feat/mesc-b2a-portability-infrastructure` with a normal non-force merge
+   commit. Preserve both existing commit identities. No rebase, amend, squash,
+   reset, cherry-pick, or force-push.
+3. Correction A — bind the canonical SHA into the evidence envelope
+   (`FD-PV-14`).
+4. Correction B — bounded artifact handling, corrected limit axes and timing,
+   removal of the invented per-file limit, and real safe-extraction regression
+   tests (`FD-PV-12`, `FD-PV-13`).
+5. Verify exact-head workflows pass.
+6. Obtain a genuinely independent exact-head review from a reviewer that did not
+   author the work.
+7. Obtain a separate founder Ready-transition decision.
+
+### What activation authorizes
+
+Step 1 is the complete five-condition activation gate; every one of its five
+conditions must be satisfied before anything below it is authorized. Step 2 and
+steps 3 through 5 — the non-force synchronization merge commit, Correction A,
+Correction B, the normal push, and the automatically triggered validation those
+pushes cause — become authorized **together** by `FD-PV-15` once it activates,
+and need no further founder decision.
+
+Their strict ordering above remains binding: no step may begin before the
+previous step has completed and been verified.
+
+Step 6, independent exact-head review, remains a **mandatory gate** and is not
+satisfied by any earlier step.
+
+Step 7, the PR #61 Ready transition, remains a **separate founder decision**.
+
+Outside `FD-PV-15` entirely, and requiring separate founder decisions where
+applicable: PR #61 merge, manual workflow rerun, manual workflow dispatch,
+admissible evidence production, evidence acceptance, B2A acceptance, discharge
+of binding `N-12`, closure of the Windows or macOS obligations, B2B, and branch
+deletion.
+
+## Additional stop conditions for remediation
+
+Stop without mutation if:
+
+- any one of the five `FD-PV-15` activation conditions is not yet satisfied,
+  including this governance package not yet being adopted on canonical main and
+  the canonical merge SHA and resulting main tree not yet being mechanically
+  verified;
+- either existing PR #61 commit identity would change;
+- a fourth or later correction commit would be required;
+- any path outside the three implementation paths would be modified;
+- a permission beyond `contents: read` and `actions: read` would be required;
+- any of the four `FD-PV-6` byte values would change;
+- the twenty-one-category failure taxonomy would be renamed, merged, or
+  extended;
+- a new evidence schema version would be created.
