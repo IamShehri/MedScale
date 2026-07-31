@@ -82,22 +82,29 @@ weakened.
 
 ## B3 — exact taxonomy propagation
 
-Workflow-side guards must surface the existing precise taxonomy category. At
-minimum:
+The defect is confined to the **shell/workflow execution layer**. The Python
+helper already raises the correct typed category for every guard it owns, and
+those mappings are compliant. What is missing is category emission from the
+workflow-side guards, which currently fail closed with prose only.
 
-| Guard | Required category |
-|---|---|
-| Malformed canonical SHA dispatch input | `evidence_generation_failure` |
-| Compressed or extracted size violation | `artifact_size_limit_exceeded` |
-| Unsafe archive structure | `unsafe_archive_entry` |
-| Matrix or artifact cardinality failure | the applicable existing matrix or evidence-file category |
+### Required category behaviour by failure path
+
+| Failure path | Execution layer | Current state | Required category |
+|---|---|---|---|
+| Malformed canonical SHA dispatch input | Workflow guard step | **Absent** — prose only | `evidence_generation_failure` |
+| Workflow-side artifact size violation (declared or transferred compressed bytes, aggregate compressed) | Workflow download step | **Absent** — prose only | `artifact_size_limit_exceeded` |
+| Workflow-side unsafe archive condition, where applicable | Workflow steps | **Absent** — prose only | `unsafe_archive_entry` |
+| Matrix or artifact-set cardinality failure | Workflow set-equality step | **Absent** — prose only | the applicable existing matrix or evidence-file category |
+| Helper-side extraction, size, structure, encoding, manifest and comparison guards | Python helper | **Present and compliant** | unchanged — preserve exactly |
 
 Constraints:
 
 - **no twenty-second category** may be added; the ratified twenty-one are exact;
 - the category must be **machine-verifiable** — emitted in a fixed, parseable
   position that a test can assert against, not merely mentioned in prose;
-- existing helper-side categories and their mapping are unchanged.
+- the existing compliant helper-side mappings must be **preserved unchanged**;
+  this finding does not authorize helper modification, and the helper path
+  remains conditional under `FD-PV-16`.
 
 ## B4 — test-quality closure
 
@@ -105,14 +112,20 @@ Replace or correct:
 
 - the tautological string-literal test that asserts a property of its own
   literals and never invokes the implementation;
-- source-token-only tests that never execute the shell guard they describe;
+- any guard or failure category whose runtime behaviour is claimed but proved
+  only by a static source or wiring assertion;
 - assertions that accept several unrelated categories where one deterministic
   category applies — the four multi-category sites identified in the findings;
 - the expired-unexpected-artifact test that currently expects success.
 
-Every required test must **execute the actual guard or helper path** and assert
-**one exact intended outcome**. A test that would pass for an unrelated early
-failure does not satisfy this requirement.
+Where runtime behaviour is claimed, the test must **execute the actual guard or
+helper path** and assert **one exact intended outcome**. A test that would pass
+for an unrelated early failure does not satisfy this requirement.
+
+Static source and wiring assertions are **not** prohibited. They may remain as
+**supplemental** checks that pin structure a runtime test cannot reach — such as
+workflow permission blocks or action pinning — but they may not be the sole
+proof that a guard fires or that a failure category is emitted.
 
 ## N1 — optional, non-blocking
 

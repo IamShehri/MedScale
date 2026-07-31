@@ -66,7 +66,7 @@ before the work does.
 | Path scope | `.github/workflows/mesc-b2a-portability.yml` and `tests/test_mesc_b2a_portability.py`; the helper only on proven necessity |
 | B2 closed | Six total artifacts required; an unexpected artifact fails whether expired or not; the reversed test proves it |
 | B3 closed | Each workflow-side guard emits its exact ratified category in a machine-verifiable form; still exactly twenty-one categories |
-| B4 closed | No tautological test, no source-token-only safety test, no multi-category assertion where one category applies; every required test executes the real path and asserts one exact outcome |
+| B4 closed | No tautological test and no multi-category assertion where one deterministic category applies; every guard or failure category whose runtime behaviour is claimed has a test that executes the real path and asserts one exact outcome. Static source or wiring assertions may remain as **supplemental** checks, but may not constitute the sole runtime proof of a guard or failure category |
 | Preservation | All limits, axes, permissions, taxonomy, `canonical_sha` behaviour, schema, pins and matrix properties unchanged |
 | Gates | Lock check, Ruff lint and format, Mypy, focused and full Pytest, and `medscale check` all pass |
 | Exact-head checks | CI, CodeQL and the portability workflow succeed on the final head, automatically triggered, attempt 1 |

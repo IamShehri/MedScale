@@ -71,9 +71,11 @@ records that never existed.
 5. The absence of durable authority evidence at the time of execution is a
    **governance defect**, not a documentation inconvenience. The adopted
    `FD-PV-15` record lists "a fourth implementation correction commit" among the
-   acts that remain a separate founder act; commits 6 and 7 are the fourth and
-   fifth implementation-side commits on that branch, and no repository-native
-   record authorizes them.
+   acts that remain a separate founder act. Commits 6 and 7 are the **fourth and
+   fifth correction commits**, and the **fifth and sixth
+   implementation-path-changing commits**, on that branch. No repository-native
+   record authorizes either of them. The exact SHAs below remain controlling
+   over any ordinal description.
 
 ### What this disposition is not
 

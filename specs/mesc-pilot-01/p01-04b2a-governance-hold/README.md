@@ -56,14 +56,18 @@ Governed pull request:
 
 ## Purpose
 
-This package does exactly three things, and nothing else:
+This package performs exactly three functions:
 
 1. issues a **founder governance disposition** for the historical
    authority-record gap surrounding PR #61 commits 6 and 7;
-2. records the **accidental canonical-`main` ref incident** and its containment;
+2. records the **accidental canonical-`main` ref incident**, its containment,
+   and the **prospective preventive controls** adopted in response to it;
 3. **prospectively** authorizes one narrowly scoped PR #61 correction commit,
    effective only after this package completes its own five-condition activation
    gate.
+
+The preventive control decision is part of function 2, not a separate function.
+It is controlling from adoption and is not weakened by being recorded there.
 
 It implements no workflow correction, no test correction, and no helper change.
 It touches no `.github/**`, `tests/**`, `src/**`, dependency, lockfile, dataset,

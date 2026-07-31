@@ -96,6 +96,26 @@ is not by itself a durable guarantee, which is why the preventive controls in
 [`founder-disposition.md`](founder-disposition.md) are adopted alongside this
 record.
 
+## Automatic workflow side effects
+
+Both the accidental push and the restoration push triggered the repository's
+normal `push` workflows. These runs are **audit-trail side effects**, recorded
+here for completeness. Every one was automatically triggered on attempt 1. None
+was a manual rerun and none was a dispatch. They do not alter containment and
+they do not touch PR #61.
+
+| Push | Workflow | Run | Head | Event | Attempt | Conclusion |
+|---|---|---|---|---|---|---|
+| Incident | CI | `30598020634` | `d2c5ecc9…` | `push` | 1 | success |
+| Incident | CodeQL | `30598020644` | `d2c5ecc9…` | `push` | 1 | success |
+| Incident | Optional Extras / Backends | `30598020665` | `d2c5ecc9…` | `push` | 1 | success |
+| Restoration | CI | `30598058622` | `3a0fd67c…` | `push` | 1 | success |
+| Restoration | CodeQL | `30598058636` | `3a0fd67c…` | `push` | 1 | success |
+| Restoration | Optional Extras / Backends | `30598058623` | `3a0fd67c…` | `push` | 1 | success |
+
+These runs produced no portability evidence, no artifact promotion, and no
+change to any pull request.
+
 ## Classification and consequence
 
 ```text

@@ -42,9 +42,11 @@ The repository contains no canonical record authorizing PR #61 commits
 The adopted `FD-PV-15` record on canonical main authorizes exactly one
 synchronization merge commit, Correction A, and Correction B, and lists "a
 fourth implementation correction commit" among the acts that remain a separate
-founder act. Commits 6 and 7 are the fourth and fifth implementation-side
-commits on the PR #61 branch. A reviewer working only from the repository
-therefore cannot reconstruct any authority for them.
+founder act. Commits 6 and 7 are the **fourth and fifth correction commits**,
+and the **fifth and sixth implementation-path-changing commits**, on the PR #61
+branch; the exact SHAs are controlling over any ordinal description. A reviewer
+working only from the repository therefore cannot reconstruct any authority for
+them.
 
 The founder disposition for this finding is recorded in
 [`founder-disposition.md`](founder-disposition.md).

@@ -397,6 +397,11 @@ cross-platform golden-vector evidence infrastructure.
 ```text
 P01-T03B6 — P01-04B2A portability remediation authorization gate
 
+--- State at the time this entry was recorded (2026-07-30) ---
+The block below is a historical snapshot. It was accurate when written and is
+NOT the current state. The later chronological facts and the current
+controlling state follow it.
+
 Documentation status:
 RECORDED — NOT ADOPTED; REMEDIATION AUTHORITY NOT ACTIVE
 
@@ -468,6 +473,49 @@ plus exactly two additive correction commits — three commits in the activated
 remediation sequence. The synchronization merge commit is synchronization only
 and is not a correction commit; exactly two correction commits, Correction A
 then Correction B, are authorized, and no third correction commit is authorized.
+
+--- Later chronological facts (superseding the snapshot above) ---
+
+Governance authorization package:
+ADOPTED ON CANONICAL MAIN — PR #62 merged as
+3a0fd67c8433bd25eab77c05b44aa84a3a86ddb9 (main tree
+f8c80688c1a31ef06cedad4ce44cc13546a92919)
+
+FD-PV-15:
+ACTIVATED — all five activation conditions satisfied and mechanically verified
+
+PR #61 remediation:
+EXECUTED — one non-force synchronization merge commit plus Correction A and
+Correction B, followed by two separately authorized additional commits
+
+Independent clean-room exact-head review of PR #61:
+COMPLETED
+
+Accepted verdict:
+GOVERNANCE HOLD — PR #61 MUST REMAIN DRAFT
+
+Resolution pull request:
+PR #63 OPENED — see P01-T03B7
+
+--- Current controlling state ---
+
+P01-T03B6 documentation:
+ADOPTED ON CANONICAL MAIN
+
+FD-PV-11 through FD-PV-15:
+ADOPTED AND CONTROLLING
+
+PR #61:
+OPEN / DRAFT / NOT MERGED — HELD by the four blocking findings recorded in
+P01-T03B7. NOT accepted, NOT Ready, NOT merged, NOT adopted.
+
+PR #63:
+OPEN / DRAFT / NOT MERGED — not adopted
+
+--- Future gated authority ---
+
+FD-PV-16:
+RECORDED BUT NOT ACTIVE — see P01-T03B7
 ```
 
 ```text
@@ -515,7 +563,18 @@ BRANCH PROTECTION RECOMMENDED AS A SEPARATE OPERATIONAL ACTION
 
 Prospective correction authority:
 FD-PV-16 RECORDED BUT NOT ACTIVE — ONE ADDITIVE PR #61 COMMIT, PARENT
-2260fa540c440ce3584535f30e74323381568b98, TWO IMPLEMENTATION PATHS
+2260fa540c440ce3584535f30e74323381568b98
+
+Two primary authorized paths:
+.github/workflows/mesc-b2a-portability.yml
+tests/test_mesc_b2a_portability.py
+
+Conditional helper path:
+tests/_mesc_b2a_portability.py
+
+The helper may change only upon strictly proven necessity under FD-PV-16, with
+that necessity explicitly recorded. This clarification does not broaden
+authority.
 
 Independent exact-head review of this governance package:
 OUTSTANDING — REQUIRED BEFORE READY OR MERGE
