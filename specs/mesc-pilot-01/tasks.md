@@ -180,7 +180,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); execution not authorized; B2A not accepted |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability infrastructure remediation authority recorded 2026-07-30 (FD-PV-11..15) but not active until all five FD-PV-15 activation conditions are satisfied, and not adopted; execution not authorized; B2A not accepted |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -356,7 +356,13 @@ FD-PV-6 numeric limits:
 6291456 BYTES COMPRESSED AND 25165824 BYTES EXTRACTED ACROSS SIX ARTIFACTS
 
 Infrastructure implementation:
-NOT AUTHORIZED
+HISTORICAL DRAFT WORK CREATED BEFORE CANONICAL AUTHORIZATION (PR #61);
+REMEDIATION AUTHORITY RECORDED 2026-07-30 BY FD-PV-11 THROUGH FD-PV-15 BUT NOT
+ACTIVE UNTIL ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED;
+NOT RETROACTIVELY AUTHORIZED; NOT ADOPTED
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 B2A implementation:
 ADOPTED THROUGH PR #59
@@ -386,4 +392,80 @@ B2B NOT AUTHORIZED
 Scope:
 Design and founder-decision gate for deterministic six-cell
 cross-platform golden-vector evidence infrastructure.
+```
+
+```text
+P01-T03B6 — P01-04B2A portability remediation authorization gate
+
+Documentation status:
+RECORDED — NOT ADOPTED; REMEDIATION AUTHORITY NOT ACTIVE
+
+Founder authorization:
+FD-PV-11 THROUGH FD-PV-15 RECORDED ON 2026-07-30
+
+Required canonical baseline:
+f71c6abf2b2f905f605951605efd6c8ab016523e
+
+Affected Draft pull request:
+PR #61 — OPEN / DRAFT / NOT MERGED
+
+Exact reviewed head:
+8e484739ba72f4a3be357bd5934b305fd9e7cf41
+
+Exact reviewed tree:
+a6bfb21cb2bfa34964ce68190e53f5f809661002
+
+Accepted determination:
+AUTHORITY GAP — PR #61 MUST REMAIN DRAFT UNTIL MISSING DECISIONS ARE CANONICALIZED
+
+Historical initial implementation:
+OCCURRED BEFORE CANONICAL AUTHORIZATION; NOT RETROACTIVELY AUTHORIZED
+
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
+
+Independent clean-room review of pre-remediation exact head:
+COMPLETED — AUTHORITY GAP VERDICT ACCEPTED
+
+Independent clean-room review of b9c523138917e22c31d31ded857aeecb8aef55e4:
+COMPLETED — CHANGES REQUIRED
+
+Independent clean-room review of a78ccf4dff2c6dc1df8b76ea9cb9ff395b001e53:
+COMPLETED — CHANGES REQUIRED
+
+Post-correction independent exact-head review:
+OUTSTANDING — REQUIRED BEFORE PR #62 READY OR MERGE
+
+Post-remediation independent exact-head review of PR #61:
+OUTSTANDING — REQUIRED BEFORE PR #61 READY OR MERGE
+
+Infrastructure adoption:
+NOT ACHIEVED
+
+Execution:
+NOT AUTHORIZED
+
+Admissible evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+
+Downstream status:
+B2B NOT AUTHORIZED
+
+Prerequisite:
+P01-T03B5 COMPLETED AND ADOPTED
+
+Scope:
+Canonicalize the missing portability implementation decisions, preserve the
+historical record that PR #61 predates authorization, and authorize a bounded
+remediation sequence prospectively: one non-force synchronization merge commit
+plus exactly two additive correction commits — three commits in the activated
+remediation sequence. The synchronization merge commit is synchronization only
+and is not a correction commit; exactly two correction commits, Correction A
+then Correction B, are authorized, and no third correction commit is authorized.
 ```

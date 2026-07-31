@@ -2,23 +2,41 @@
 
 ```text
 Status:
-FOUNDER-RATIFIED CONTRACTS — ADOPTED ON CANONICAL MAIN;
-IMPLEMENTATION NOT AUTHORIZED
+CONTRACTS FOUNDER RATIFIED;
+REMEDIATION AUTHORITY RECORDED BY FD-PV-11 THROUGH FD-PV-15 BUT NOT ACTIVE
 
-Infrastructure implementation:
-NOT AUTHORIZED
+Contracts:
+FOUNDER RATIFIED
 
-B2A implementation:
-ADOPTED THROUGH PR #59; NOT AUTHORIZED HERE
+Original infrastructure work:
+CREATED BEFORE CANONICAL AUTHORIZATION
+
+Current remediation authority:
+RECORDED BUT NOT ACTIVE
+
+Activation:
+OPERATIVE ONLY AFTER ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED
+(INDEPENDENT EXACT-HEAD APPROVAL OF PR #62; SEPARATE FOUNDER READY DECISION;
+SEPARATE FOUNDER MERGE DECISION; CANONICAL MERGE; MECHANICAL VERIFICATION OF
+THE MERGE SHA AND RESULTING MAIN TREE)
+
+Infrastructure adoption:
+NOT ACHIEVED
 
 Execution:
 NOT AUTHORIZED
 
-Evidence production:
+Admissible evidence production:
 NOT AUTHORIZED
 
 B2A acceptance:
 NOT ACHIEVED
+
+B2B:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
 ```
 
 Canonical planning baseline:
@@ -74,14 +92,24 @@ This package designs a future, separately authorized cross-platform
 portability-validation infrastructure for P01-04B2A. It exists so the founder
 could decide the infrastructure contracts **before** any workflow file, test
 file, or B2A implementation file is written. Those contracts were ratified on
-2026-07-27 as `FD-PV-1` through `FD-PV-10`; implementation remains unauthorized.
+2026-07-27 as `FD-PV-1` through `FD-PV-10`. Remediation of the existing Draft
+work is recorded prospectively by `FD-PV-15`, which becomes operative only after
+**all five** of its activation conditions are satisfied: a genuinely independent
+exact-head approval of PR #62, a separate founder Ready-transition decision for
+PR #62, a separate founder merge decision for PR #62, merge into canonical main,
+and mechanical verification of the canonical merge SHA and the resulting main
+tree.
 
 This package designs infrastructure. It does not build it, run it, or produce
 evidence with it.
 
 The canonical B2A artifact implementation was adopted through PR #59.
 
-Portability-infrastructure implementation remains unauthorized.
+Portability-infrastructure remediation authority is **recorded but not active**.
+It stays inactive until every one of the five `FD-PV-15` activation conditions
+has been satisfied; no subset of them — adoption alone, merge alone, independent
+approval plus merge, or adoption plus mechanical verification — activates
+anything. Infrastructure adoption is not achieved.
 
 Portability evidence remains unauthorized and unproduced.
 
@@ -120,17 +148,26 @@ There is therefore **no Windows or macOS byte-identity evidence in this
 repository today**, and none is produced by this package. That obligation
 remains open.
 
-## Four distinct things, none authorized here
+## Five distinct things, and their current authority
 
 | Activity | Meaning | Status |
 |---|---|---|
 | **B2A implementation** | Writing the private canonical-serialization and artifact-identity modules and their tests, in the four already-ratified paths | **ADOPTED THROUGH PR #59; NOT AUTHORIZED BY THIS PORTABILITY PACKAGE** |
-| **Validation-infrastructure implementation** | Writing the portability workflow and its helper/test modules in the three paths proposed here | **NOT AUTHORIZED** |
+| **Historical initial implementation** | The workflow and helper/test modules created in Draft PR #61 before any canonical authorization existed | **CREATED BEFORE CANONICAL AUTHORIZATION; NOT RETROACTIVELY AUTHORIZED; NOT ADOPTED** |
+| **Prospective remediation** | The synchronization merge commit and exactly two correction commits, in the three ratified paths | **AUTHORITY RECORDED BY FD-PV-15; NOT ACTIVE UNTIL ALL FIVE FD-PV-15 ACTIVATION CONDITIONS ARE SATISFIED** |
 | **Portability evidence production** | Actually running the six-cell matrix and generating comparison evidence | **NOT AUTHORIZED** |
 | **B2A acceptance** | Declaring B2A accepted, which unblocks B2B consideration | **NOT ACHIEVED** |
 
-Each is a separate founder act. None is granted by this documentation package,
-and none is granted by merging it.
+Historical initial implementation is not retroactively authorized by anything in
+this package. Prospective remediation is recorded by `FD-PV-15` and becomes
+operative only after **all five** of its activation conditions have been
+satisfied — independent exact-head approval of PR #62, a separate founder
+Ready-transition decision, a separate founder merge decision, canonical merge,
+and mechanical verification of the merge SHA and resulting main tree — after
+which the synchronization merge commit and the two correction commits need no
+further founder decision. Portability evidence production and B2A acceptance remain
+separate founder acts, and neither is granted by this package or by merging
+it.
 
 ## This package does not alter the B2A contracts
 
@@ -173,8 +210,72 @@ B2A and does not unblock B2B.
 |---|---|
 | `README.md` | This document: purpose, authority relationship, boundaries |
 | `spec.md` | Proposed infrastructure contract: paths, matrix, evidence, aggregation, security |
-| `decision-record.md` | PD-PV-1 through PD-PV-10, adopted as FD-PV-1 through FD-PV-10 |
-| `founder-ratification.md` | Canonical founder record of FD-PV-1 through FD-PV-10 and the FD-PV-6 numeric limits |
+| `decision-record.md` | PD-PV-1 through PD-PV-10, adopted as FD-PV-1 through FD-PV-10; continuity entries for FD-PV-11 through FD-PV-15 |
+| `founder-ratification.md` | Canonical founder record of FD-PV-1 through FD-PV-10, the FD-PV-6 numeric limits, and FD-PV-11 through FD-PV-15 |
 | `plan.md` | The full controlled sequence and its prohibitions |
 | `acceptance.md` | Documentation-gate, future-infrastructure, and future-B2A-acceptance criteria |
 | `implementation-task.md` | Future builder brief; not executable without separate authorization |
+
+## Historical chronology — status before FD-PV-11
+
+This section preserves the status this document carried before founder decisions
+`FD-PV-11` through `FD-PV-15` were recorded. It is retained as history. It is
+**not** the current status, and it was **not** wrong when written: it accurately
+described the period it covers.
+
+```text
+Status:
+FOUNDER-RATIFIED CONTRACTS — ADOPTED ON CANONICAL MAIN;
+IMPLEMENTATION NOT AUTHORIZED
+
+Infrastructure implementation:
+NOT AUTHORIZED
+
+B2A implementation:
+ADOPTED THROUGH PR #59; NOT AUTHORIZED HERE
+
+Execution:
+NOT AUTHORIZED
+
+Evidence production:
+NOT AUTHORIZED
+
+B2A acceptance:
+NOT ACHIEVED
+```
+
+Between the ratification of `FD-PV-1` through `FD-PV-10` on 2026-07-27 and the
+adoption of this record, **no canonical infrastructure-implementation
+authorization existed**. The implementation work now present in Draft PR #61 was
+created during that period. `FD-PV-11` records that fact. It does not convert it
+into retroactive authorization.
+
+---
+
+## Remediation authorization recorded 2026-07-30
+
+Founder decisions `FD-PV-11` through `FD-PV-15` are recorded in
+`founder-ratification.md` and are canonical there.
+
+- `FD-PV-11` — historical truth and prospective remediation authorization.
+- `FD-PV-12` — preserve `FD-PV-6` through bounded artifact handling.
+- `FD-PV-13` — narrow read-only `actions: read` permission.
+- `FD-PV-14` — canonical SHA binding in the evidence envelope.
+- `FD-PV-15` — remediation and sequencing authority.
+
+The implementation work in Draft `PR #61` (head
+`8e484739ba72f4a3be357bd5934b305fd9e7cf41`, tree
+`a6bfb21cb2bfa34964ce68190e53f5f809661002`) was created before any canonical
+infrastructure-implementation authorization existed. That work is **not**
+retroactively authorized. It remains Draft, unmerged, and unadopted.
+
+Remediation of that work is now recorded **prospectively**, effective only after
+every one of the five `FD-PV-15` activation conditions has been satisfied.
+Canonical adoption alone does not make it effective. Authorizing repair is not
+accepting the thing repaired.
+
+`PR #61` is not corrected, not accepted, not adopted, not Ready, and not
+mergeable by authority. Infrastructure adoption is not achieved. Execution and
+admissible evidence production remain unauthorized. Windows and macOS evidence
+remains open and binding `N-12` is not discharged. B2A remains not accepted.
+B2B remains not authorized. P01-04B remains incomplete and not accepted.
