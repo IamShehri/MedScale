@@ -13,7 +13,10 @@ from __future__ import annotations
 
 import builtins
 import json
+import os
+import shutil
 import socket
+import subprocess
 import sys
 import zipfile
 from pathlib import Path
@@ -1518,3 +1521,420 @@ def test_preserved_workflow_invariants() -> None:
         "if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'"
         in workflow
     )
+
+
+# --------------------------------------------------------------------------
+# Bounded transport and exact artifact-set equality
+#
+# The audit of head 17cfb845c99de33d229644f1d64945c267cd482c found two defects
+# in the workflow half of the pipeline:
+#
+#   B-1  the artifact body was redirected straight to a file and only measured
+#        afterwards, so nothing capped the transfer itself;
+#   B-2  each expected name was required to appear once, but the complete
+#        non-expired artifact set was never compared, so an extra seventh
+#        current-run artifact was ignored instead of failing closed.
+#
+# The tests below execute the real step script from the workflow, with a stub
+# ``gh`` on PATH, so they exercise the actual control flow rather than reading
+# comments or matching tokens.
+# --------------------------------------------------------------------------
+
+DOWNLOAD_STEP_NAME = "Validate the current-run artifact set and download within caps"
+TRANSPORT_LIMIT_BYTES = 1_048_576
+
+RATIFIED_ARTIFACT_NAMES = (
+    "b2a-portability-linux-py3.11",
+    "b2a-portability-linux-py3.12",
+    "b2a-portability-macos-py3.11",
+    "b2a-portability-macos-py3.12",
+    "b2a-portability-windows-py3.11",
+    "b2a-portability-windows-py3.12",
+)
+
+
+def _step_script(step_name: str) -> str:
+    """Return the executable body of a named workflow step's ``run:`` block."""
+    lines = _workflow_text().splitlines()
+    header = f"- name: {step_name}"
+    start = next((position for position, line in enumerate(lines) if line.strip() == header), None)
+    if start is None:  # pragma: no cover - guarded by test_download_step_exists
+        raise AssertionError(f"step {step_name!r} not found")
+    for offset in range(start, len(lines)):
+        if lines[offset].strip() == "run: |":
+            body_start = offset + 1
+            break
+    else:  # pragma: no cover
+        raise AssertionError("step has no run block")
+    indent = len(lines[body_start]) - len(lines[body_start].lstrip())
+    body: list[str] = []
+    for line in lines[body_start:]:
+        if line.strip() and (len(line) - len(line.lstrip())) < indent:
+            break
+        body.append(line[indent:] if line.strip() else "")
+    return "\n".join(body) + "\n"
+
+
+def test_download_step_exists_and_is_extractable() -> None:
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    assert "set -euo pipefail" in script
+    assert "gh api" in script
+
+
+# -- structural guards ------------------------------------------------------
+
+
+def test_artifact_body_is_never_redirected_straight_to_a_file() -> None:
+    """B-1 regression: the download must not be an unrestricted redirection."""
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    download_lines = [line for line in script.splitlines() if "actions/artifacts/" in line]
+    assert download_lines, "no artifact download command found"
+    for line in download_lines:
+        assert '> "${part}"' not in line
+        assert 'zip.part"' not in line.split("|")[0]
+
+
+def test_transport_is_a_bounded_streaming_consumer() -> None:
+    """B-1: the producer is piped into a sink that stops at limit + 1 bytes."""
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    assert 'transport_cap="$(( MAX_COMPRESSED_ARTIFACT_BYTES + 1 ))"' in script
+    assert '| head -c "${transport_cap}" > "${part}"' in script
+    # Both halves of the pipeline must be inspected, so neither a producer nor a
+    # consumer failure can be swallowed.
+    assert 'statuses=("${PIPESTATUS[@]}")' in script
+    assert 'producer="${statuses[0]}"' in script
+    assert 'consumer="${statuses[1]}"' in script
+    assert 'if [ "${consumer}" != "0" ]' in script
+    assert 'if [ "${producer}" != "0" ]' in script
+
+
+def test_no_false_claim_of_a_control_that_is_absent() -> None:
+    workflow = _workflow_text()
+    if "max-filesize" in workflow:
+        assert "--max-filesize" in workflow.replace("# ", "")
+
+
+def test_transport_limit_is_the_ratified_compressed_limit() -> None:
+    workflow = _workflow_text()
+    assert "MAX_COMPRESSED_ARTIFACT_BYTES: '1048576'" in workflow
+    assert "MAX_AGGREGATE_COMPRESSED_BYTES: '6291456'" in workflow
+
+
+def test_post_download_size_check_remains_a_second_defence() -> None:
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    assert 'actual="$(wc -c < "${part}" | tr -d \'[:space:]\')"' in script
+    assert 'if [ "${actual}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]' in script
+    assert 'if [ "${actual}" != "${size}" ]' in script
+
+
+def test_set_equality_is_computed_against_the_api_response() -> None:
+    """B-2: comparison targets the API response, not the download directory."""
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    assert "artifacts.tsv" in script
+    assert "cmp -s live-names.txt expected-names.txt" in script
+    assert 'if [ "${live_count}" != "6" ]' in script
+    assert "grep -qxF -f expected-names.txt expired-names.txt" in script
+    equality_index = script.index("cmp -s live-names.txt expected-names.txt")
+    download_index = script.index("actions/artifacts/")
+    assert equality_index < download_index, "set equality must precede any download"
+
+
+def test_current_run_only_endpoint_is_enforced() -> None:
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    assert "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" in script
+    assert "actions/runs/latest" not in script
+
+
+def test_no_authorization_material_is_echoed() -> None:
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    assert "set +x" in script
+    assert "GH_TOKEN" not in script
+    assert 'echo "${GH_TOKEN' not in script
+
+
+# -- behavioural execution of the real step script --------------------------
+
+_BASH = shutil.which("bash")
+_STUB_GH = """#!/usr/bin/env bash
+set -u
+printf '%s\\n' "$*" >> "${GH_CALL_LOG}"
+if [ "${GH_STUB_FAIL:-0}" = "1" ]; then
+  printf 'stub failure\\n' >&2
+  exit 3
+fi
+url=""
+for arg in "$@"; do
+  case "${arg}" in repos/*) url="${arg}" ;; esac
+done
+case "${url}" in
+  */actions/runs/*/artifacts*)
+    cat "${ARTIFACTS_TSV}"
+    ;;
+  */actions/artifacts/*/zip)
+    id="${url%/zip}"
+    id="${id##*/}"
+    cat "${ZIP_DIR}/${id}.bin"
+    ;;
+  *)
+    printf 'unexpected stub url: %s\\n' "${url}" >&2
+    exit 9
+    ;;
+esac
+"""
+
+
+def _run_download_step(
+    tmp_path: Path,
+    rows: list[tuple[str, int, str, int]],
+    *,
+    payload_sizes: dict[int, int] | None = None,
+    stub_fails: bool = False,
+) -> subprocess.CompletedProcess[str]:
+    """Execute the real workflow step against a stub ``gh``.
+
+    ``rows`` are ``(name, declared_size, expired, artifact_id)`` tuples exactly
+    as the API would report them. ``payload_sizes`` overrides how many bytes the
+    stub actually streams for a given artifact id, which is how an under-reported
+    or oversized response is simulated.
+    """
+    work = tmp_path / "work"
+    work.mkdir(parents=True, exist_ok=True)
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    stub = bin_dir / "gh"
+    stub.write_text(_STUB_GH, encoding="utf-8", newline="\n")
+    stub.chmod(0o755)
+
+    tsv = tmp_path / "artifacts.tsv"
+    tsv.write_text(
+        "".join(f"{name}\t{size}\t{expired}\t{ident}\n" for name, size, expired, ident in rows),
+        encoding="utf-8",
+        newline="\n",
+    )
+    zip_dir = tmp_path / "zips"
+    zip_dir.mkdir(parents=True, exist_ok=True)
+    for _name, size, _expired, ident in rows:
+        streamed = (payload_sizes or {}).get(ident, size)
+        (zip_dir / f"{ident}.bin").write_bytes(b"Z" * streamed)
+
+    script = work / "step.sh"
+    script.write_text(_step_script(DOWNLOAD_STEP_NAME), encoding="utf-8", newline="\n")
+
+    environment = {
+        **os.environ,
+        "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
+        "GITHUB_REPOSITORY": "IamShehri/MedScale",
+        "GITHUB_RUN_ID": "424242",
+        "GH_TOKEN": "stub-token-never-printed",
+        "MAX_COMPRESSED_ARTIFACT_BYTES": str(TRANSPORT_LIMIT_BYTES),
+        "MAX_AGGREGATE_COMPRESSED_BYTES": str(6_291_456),
+        "ARTIFACTS_TSV": str(tsv),
+        "ZIP_DIR": str(zip_dir),
+        "GH_CALL_LOG": str(tmp_path / "gh-calls.log"),
+        "GH_STUB_FAIL": "1" if stub_fails else "0",
+    }
+    assert _BASH is not None
+    # Fixed argv, no shell interpolation: the script path and bash path are ours.
+    return subprocess.run(
+        [_BASH, str(script)],
+        cwd=work,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=180,
+    )
+
+
+def _rows(size: int = 855) -> list[tuple[str, int, str, int]]:
+    return [(name, size, "false", index + 1) for index, name in enumerate(RATIFIED_ARTIFACT_NAMES)]
+
+
+def _downloads_attempted(tmp_path: Path) -> int:
+    log = tmp_path / "gh-calls.log"
+    if not log.exists():
+        return 0
+    return sum(1 for line in log.read_text(encoding="utf-8").splitlines() if "/zip" in line)
+
+
+bash_required = pytest.mark.skipif(_BASH is None, reason="bash is unavailable on this platform")
+
+
+@bash_required
+def test_exactly_the_six_ratified_artifacts_pass(tmp_path: Path) -> None:
+    result = _run_download_step(tmp_path, _rows())
+    assert result.returncode == 0, result.stderr
+    archives = sorted(p.name for p in (tmp_path / "work" / "archives").iterdir())
+    assert archives == sorted(f"{name}.zip" for name in RATIFIED_ARTIFACT_NAMES)
+    for name in RATIFIED_ARTIFACT_NAMES:
+        assert (tmp_path / "work" / "archives" / f"{name}.zip").stat().st_size == 855
+    declared = json.loads((tmp_path / "work" / "declared-sizes.json").read_text(encoding="utf-8"))
+    assert declared == dict.fromkeys(RATIFIED_ARTIFACT_NAMES, 855)
+
+
+@bash_required
+def test_transfer_of_exactly_the_limit_is_accepted(tmp_path: Path) -> None:
+    rows = [(RATIFIED_ARTIFACT_NAMES[0], TRANSPORT_LIMIT_BYTES, "false", 1)]
+    rows += [
+        (other, 10, "false", position + 2)
+        for position, other in enumerate(RATIFIED_ARTIFACT_NAMES[1:])
+    ]
+    result = _run_download_step(tmp_path, rows)
+    assert result.returncode == 0, result.stderr
+    first = tmp_path / "work" / "archives" / f"{RATIFIED_ARTIFACT_NAMES[0]}.zip"
+    assert first.stat().st_size == TRANSPORT_LIMIT_BYTES
+
+
+@bash_required
+def test_one_byte_over_the_limit_is_rejected_and_partial_output_removed(tmp_path: Path) -> None:
+    """The response lies: metadata says 855 bytes, the body streams limit + 1."""
+    rows = _rows()
+    result = _run_download_step(tmp_path, rows, payload_sizes={1: TRANSPORT_LIMIT_BYTES + 1})
+    assert result.returncode != 0
+    assert "exceeded the transport cap" in result.stderr
+    archives = tmp_path / "work" / "archives"
+    assert list(archives.iterdir()) == []
+    # Nothing larger than limit + 1 was ever written, and the partial file is gone.
+    assert not (archives / f"{RATIFIED_ARTIFACT_NAMES[0]}.zip.part").exists()
+
+
+@bash_required
+def test_declared_metadata_over_the_limit_fails_before_download(tmp_path: Path) -> None:
+    rows = _rows()
+    rows[0] = (rows[0][0], TRANSPORT_LIMIT_BYTES + 1, "false", 1)
+    result = _run_download_step(tmp_path, rows, payload_sizes={1: 10})
+    assert result.returncode != 0
+    assert "over the limit" in result.stderr
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_declared_and_actual_size_mismatch_is_rejected(tmp_path: Path) -> None:
+    result = _run_download_step(tmp_path, _rows(), payload_sizes={2: 700})
+    assert result.returncode != 0
+    assert "does not match declared" in result.stderr
+    assert not (tmp_path / "work" / "archives" / f"{RATIFIED_ARTIFACT_NAMES[1]}.zip").exists()
+
+
+@bash_required
+def test_producer_failure_is_not_hidden_by_the_pipeline(tmp_path: Path) -> None:
+    result = _run_download_step(tmp_path, _rows(), stub_fails=True)
+    assert result.returncode != 0
+    assert list((tmp_path / "work" / "archives").iterdir()) == []
+
+
+@bash_required
+def test_consumer_failure_is_not_hidden_by_the_pipeline(tmp_path: Path) -> None:
+    """A sink that cannot be written must abort the step, never pass silently."""
+    work = tmp_path / "work"
+    work.mkdir(parents=True, exist_ok=True)
+    blocked = work / "archives"
+    blocked.write_bytes(b"not a directory")  # mkdir -p will fail against a file
+    result = _run_download_step(tmp_path, _rows())
+    assert result.returncode != 0
+
+
+@bash_required
+def test_an_unexpected_seventh_artifact_fails_before_any_download(tmp_path: Path) -> None:
+    rows = _rows()
+    rows.append(("unrelated-debug-bundle", 100, "false", 99))
+    result = _run_download_step(tmp_path, rows)
+    assert result.returncode != 0
+    assert "expected exactly 6" in result.stderr or "not exactly the six" in result.stderr
+    assert _downloads_attempted(tmp_path) == 0
+    assert list((tmp_path / "work" / "archives").iterdir()) == []
+
+
+@bash_required
+def test_a_missing_expected_artifact_fails_before_any_download(tmp_path: Path) -> None:
+    rows = _rows()[:-1]
+    result = _run_download_step(tmp_path, rows)
+    assert result.returncode != 0
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_a_duplicate_expected_artifact_fails_before_any_download(tmp_path: Path) -> None:
+    rows = _rows()
+    rows.append((RATIFIED_ARTIFACT_NAMES[0], 855, "false", 77))
+    result = _run_download_step(tmp_path, rows)
+    assert result.returncode != 0
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_an_expired_expected_artifact_fails_before_any_download(tmp_path: Path) -> None:
+    rows = _rows()
+    rows[3] = (rows[3][0], rows[3][1], "true", rows[3][3])
+    result = _run_download_step(tmp_path, rows)
+    assert result.returncode != 0
+    assert _downloads_attempted(tmp_path) == 0
+
+
+@bash_required
+def test_an_expired_extra_artifact_alone_does_not_pass_the_set_check(tmp_path: Path) -> None:
+    """Expiry filtering must not become a way to smuggle a seventh artifact."""
+    rows = _rows()
+    rows.append(("unrelated-debug-bundle", 100, "true", 99))
+    result = _run_download_step(tmp_path, rows)
+    assert result.returncode == 0, result.stderr
+    assert _downloads_attempted(tmp_path) == 6
+
+
+# -- unchanged guarantees ---------------------------------------------------
+
+
+def test_permissions_remain_exactly_contents_and_actions_read() -> None:
+    assert "permissions:\n  contents: read\n  actions: read\n" in _workflow_text()
+
+
+def test_no_additional_authority_is_introduced() -> None:
+    workflow = _workflow_text()
+    for forbidden in (
+        "packages:",
+        "id-token:",
+        "contents: write",
+        "actions: write",
+        "secrets.",
+        "workflow_dispatch:\n    inputs:\n      token",
+        "actions/cache",
+    ):
+        assert forbidden not in workflow
+    assert workflow.count("workflow_dispatch:") == 1
+
+
+def test_fd_pv_6_limits_survive_the_transport_correction() -> None:
+    assert h.MAX_COMPRESSED_ARTIFACT_BYTES == 1_048_576
+    assert h.MAX_EXTRACTED_ARTIFACT_BYTES == 4_194_304
+    assert h.MAX_AGGREGATE_COMPRESSED_BYTES == 6_291_456
+    assert h.MAX_AGGREGATE_EXTRACTED_BYTES == 25_165_824
+
+
+def test_taxonomy_survives_the_transport_correction() -> None:
+    assert len(h.TAXONOMY) == 21
+    assert set(h.iter_taxonomy_codes()) == set(EXPECTED_TAXONOMY)
+
+
+def test_canonical_sha_behaviour_survives_the_transport_correction(tmp_path: Path) -> None:
+    workflow = _workflow_text()
+    assert '--canonical-sha "${EXPECTED_SHA}"' in workflow
+    assert "EXPECTED_SHA: ${{ inputs.expected_sha }}" in workflow
+    document = json.loads(h.aggregate(_six_cells(tmp_path / "pr")))
+    assert h.CANONICAL_SHA_KEY not in document
+    dispatched = json.loads(
+        h.aggregate(_six_cells(tmp_path / "dispatch"), canonical_sha=VALID_CANONICAL_SHA)
+    )
+    assert dispatched[h.CANONICAL_SHA_KEY] == VALID_CANONICAL_SHA
+
+
+def test_helper_module_is_untouched_by_this_correction() -> None:
+    """The transport fix is workflow-side only; the helper contract is stable."""
+    for attribute in (
+        "aggregate_from_archives",
+        "extract_all_bounded",
+        "extract_archive_bounded",
+        "enforce_compressed_limits",
+        "collect_archive_paths",
+        "inspect_archive",
+        "require_canonical_sha",
+    ):
+        assert hasattr(h, attribute)

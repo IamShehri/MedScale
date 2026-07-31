@@ -230,11 +230,14 @@ jobs:
         run: uv sync --frozen
 
       # FD-PV-12/FD-PV-13 bounded transport. Automatic full download-and-extract
-      # is replaced by explicit, capped handling: enumerate this run's artifacts,
-      # reject anything unexpected, refuse oversized archives from metadata
-      # BEFORE any byte is fetched, and cap the bytes actually read so trusted
-      # metadata is never the only defence. Nothing is extracted in this step.
-      - name: Enumerate current-run artifacts and download within caps
+      # is replaced by explicit, capped handling. Two independent guards run
+      # before any byte is fetched: the complete non-expired current-run artifact
+      # set must equal the six ratified names exactly, and each declared size
+      # must be within the ratified compressed limits. Transport itself is then
+      # capped by a bounded consumer, so an under-reported or lying response is
+      # cut off at one byte past the limit instead of filling runner storage.
+      # Nothing is extracted in this step.
+      - name: Validate the current-run artifact set and download within caps
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -242,61 +245,97 @@ jobs:
           MAX_AGGREGATE_COMPRESSED_BYTES: '6291456'
         run: |
           set -euo pipefail
+          # Never trace this step: a trace would echo the authorization
+          # environment into the log.
+          set +x
           mkdir -p archives
-          expected="b2a-portability-linux-py3.11 b2a-portability-linux-py3.12 \
-          b2a-portability-macos-py3.11 b2a-portability-macos-py3.12 \
-          b2a-portability-windows-py3.11 b2a-portability-windows-py3.12"
 
-          # Current exact run only. No cross-run and no cross-repository access.
+          printf '%s\n' \
+            'b2a-portability-linux-py3.11' \
+            'b2a-portability-linux-py3.12' \
+            'b2a-portability-macos-py3.11' \
+            'b2a-portability-macos-py3.12' \
+            'b2a-portability-windows-py3.11' \
+            'b2a-portability-windows-py3.12' \
+            | sort > expected-names.txt
+
+          # Current exact run only. The endpoint is bound to this repository and
+          # this run id, so no artifact from another run or repository can enter.
           gh api --paginate \
             "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" \
-            --jq '.artifacts[] | {name: .name, size: .size_in_bytes, expired: .expired, id: .id}' \
-            > artifacts.ndjson
+            --jq '.artifacts[] | [.name, (.size_in_bytes|tostring), (.expired|tostring), (.id|tostring)] | @tsv' \
+            > artifacts.tsv
 
-          jq -s 'map(select(.expired == false))' artifacts.ndjson > artifacts.json
-          jq -r 'group_by(.name) | map({name: .[0].name, count: length}) | .[] | @text' \
-            artifacts.json > /dev/null
+          # ---- exact artifact-set equality, before any download -------------
+          awk -F'\t' '$3 == "false" { print $1 }' artifacts.tsv | sort > live-names.txt
+          live_count="$(wc -l < live-names.txt | tr -d '[:space:]')"
+          if [ "${live_count}" != "6" ]; then
+            echo "current run exposes ${live_count} non-expired artifacts, expected exactly 6" >&2
+            echo "observed:" >&2; cat live-names.txt >&2
+            exit 1
+          fi
+          if ! cmp -s live-names.txt expected-names.txt; then
+            echo "current-run artifact set is not exactly the six ratified names" >&2
+            echo "observed:" >&2; cat live-names.txt >&2
+            echo "expected:" >&2; cat expected-names.txt >&2
+            exit 1
+          fi
+          # An expected artifact that has expired must fail closed rather than be
+          # silently skipped by the non-expired filter above.
+          awk -F'\t' '$3 == "true" { print $1 }' artifacts.tsv | sort > expired-names.txt
+          if grep -qxF -f expected-names.txt expired-names.txt; then
+            echo "an expected artifact is expired" >&2; cat expired-names.txt >&2; exit 1
+          fi
 
+          # ---- capped transport ---------------------------------------------
+          # The sink accepts at most limit + 1 bytes. Reaching limit + 1 proves
+          # the response is oversized, and closing the pipe terminates the
+          # producer, so runner storage never holds more than limit + 1 bytes of
+          # any single artifact.
+          transport_cap="$(( MAX_COMPRESSED_ARTIFACT_BYTES + 1 ))"
           total=0
-          : > declared-sizes.json.tmp
-          for name in ${expected}; do
-            matches="$(jq --arg n "${name}" '[.[] | select(.name == $n)] | length' artifacts.json)"
-            if [ "${matches}" != "1" ]; then
-              echo "artifact ${name}: expected exactly 1, found ${matches}" >&2; exit 1
-            fi
-            size="$(jq -r --arg n "${name}" '.[] | select(.name == $n) | .size' artifacts.json)"
-            id="$(jq -r --arg n "${name}" '.[] | select(.name == $n) | .id' artifacts.json)"
+          : > declared-sizes.tsv
+          while IFS="$(printf '\t')" read -r name size expired id; do
+            if [ "${expired}" != "false" ]; then continue; fi
             if [ "${size}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
               echo "artifact ${name} declares ${size} compressed bytes, over the limit" >&2
               exit 1
             fi
-            total=$(( total + size ))
+            total="$(( total + size ))"
             if [ "${total}" -gt "${MAX_AGGREGATE_COMPRESSED_BYTES}" ]; then
               echo "aggregate compressed limit exceeded at ${name}" >&2; exit 1
             fi
-            # --max-filesize caps the transfer itself: an under-reported size
-            # cannot smuggle extra bytes onto the runner.
-            gh api \
-              "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" \
-              > "archives/${name}.zip.part" 2>/dev/null || {
-                echo "download failed for ${name}" >&2; exit 1; }
-            actual="$(wc -c < "archives/${name}.zip.part" | tr -d '[:space:]')"
+            part="archives/${name}.zip.part"
+            set +e
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" </dev/null \
+              | head -c "${transport_cap}" > "${part}"
+            statuses=("${PIPESTATUS[@]}")
+            set -e
+            producer="${statuses[0]}"
+            consumer="${statuses[1]}"
+            actual="$(wc -c < "${part}" | tr -d '[:space:]')"
             if [ "${actual}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
-              echo "artifact ${name} transferred ${actual} bytes, over the cap" >&2
-              rm -f "archives/${name}.zip.part"; exit 1
+              echo "artifact ${name} exceeded the transport cap after ${actual} bytes" >&2
+              rm -f "${part}"; exit 1
+            fi
+            if [ "${consumer}" != "0" ]; then
+              echo "bounded consumer failed for ${name} (status ${consumer})" >&2
+              rm -f "${part}"; exit 1
+            fi
+            if [ "${producer}" != "0" ]; then
+              echo "download failed for ${name} (status ${producer})" >&2
+              rm -f "${part}"; exit 1
             fi
             if [ "${actual}" != "${size}" ]; then
               echo "artifact ${name} size ${actual} does not match declared ${size}" >&2
-              rm -f "archives/${name}.zip.part"; exit 1
+              rm -f "${part}"; exit 1
             fi
-            mv "archives/${name}.zip.part" "archives/${name}.zip"
-            printf '%s\t%s\n' "${name}" "${size}" >> declared-sizes.json.tmp
-          done
+            mv "${part}" "archives/${name}.zip"
+            printf '%s\t%s\n' "${name}" "${size}" >> declared-sizes.tsv
+          done < artifacts.tsv
 
-          jq -R -s 'split("\n") | map(select(length > 0) | split("\t"))
-            | map({(.[0]): (.[1] | tonumber)}) | add' \
-            declared-sizes.json.tmp > declared-sizes.json
-          rm -f declared-sizes.json.tmp
+          awk -F'\t' 'BEGIN { printf "{" } { if (NR > 1) printf ","; printf "\"%s\":%s", $1, $2 }
+            END { print "}" }' declared-sizes.tsv > declared-sizes.json
           cat declared-sizes.json
 
       - name: Verify archive cardinality
