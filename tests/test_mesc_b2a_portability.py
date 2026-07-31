@@ -363,9 +363,12 @@ def test_noncanonical_manifest(tmp_path: Path) -> None:
     payloads = _payloads()
     payloads[h.MANIFEST_NAME] = payloads[h.MANIFEST_NAME].replace(b'{"', b'{ "', 1)
     _six_cells(tmp_path, payloads)
-    with pytest.raises((h.NoncanonicalManifestError, h.InvalidJsonError)) as excinfo:
+    # A space after the opening brace is still valid JSON, so the parse
+    # succeeds and the canonical-bytes comparison is what fails. Exactly one
+    # category applies.
+    with pytest.raises(h.NoncanonicalManifestError) as excinfo:
         h.aggregate(tmp_path)
-    assert excinfo.value.code in {"noncanonical_manifest", "invalid_json"}
+    assert excinfo.value.code == "noncanonical_manifest"
 
 
 def test_evidence_generation_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -452,9 +455,11 @@ def test_aggregate_verifier_internal_error(tmp_path: Path, monkeypatch: pytest.M
 def test_unsafe_archive_entry_nested_directory(tmp_path: Path) -> None:
     _six_cells(tmp_path)
     (tmp_path / h.ARTIFACT_NAMES[0] / "nested").mkdir()
-    with pytest.raises((h.UnsafeArchiveEntryError, h.UnexpectedEvidenceFileError)) as excinfo:
+    # The per-entry safety check runs before the name-set checks, so a directory
+    # entry is rejected as a non-regular file. Exactly one category applies.
+    with pytest.raises(h.UnsafeArchiveEntryError) as excinfo:
         h.aggregate(tmp_path)
-    assert excinfo.value.code in {"unsafe_archive_entry", "unexpected_evidence_file"}
+    assert excinfo.value.code == "unsafe_archive_entry"
 
 
 def test_unsafe_archive_entry_non_directory_artifact(tmp_path: Path) -> None:
@@ -530,9 +535,19 @@ def test_no_evidence_envelope_is_produced_on_failure(
     assert called == []
 
 
-def test_traversal_and_absolute_paths_are_rejected() -> None:
-    for name in ("../escape.json", "/abs.json"):
-        assert ".." in name or name.startswith("/")
+def test_traversal_and_absolute_paths_are_rejected(tmp_path: Path) -> None:
+    """Executes the real member-name guard instead of asserting on literals."""
+    for name in ("../escape.json", "/abs.json", "..\\escape.json", "C:/abs.json"):
+        archive = tmp_path / f"{abs(hash(name))}.zip"
+        with zipfile.ZipFile(archive, "w") as bundle:
+            for required in h.REQUIRED_FILES:
+                bundle.writestr(required, b"{}")
+            bundle.writestr(name, b"payload")
+        destination = tmp_path / f"out-{abs(hash(name))}"
+        with pytest.raises(h.UnsafeArchiveEntryError) as excinfo:
+            h.extract_archive_bounded(archive, destination, where="cell")
+        assert excinfo.value.code == "unsafe_archive_entry"
+        assert not destination.exists() or list(destination.iterdir()) == []
 
 
 # --------------------------------------------------------------------------
@@ -1196,9 +1211,12 @@ def test_unsafe_member_names_are_rejected_before_extraction(tmp_path: Path, memb
             bundle.writestr(name, b"{}")
         bundle.writestr(member, b"payload")
     destination = tmp_path / "out"
-    with pytest.raises((h.UnsafeArchiveEntryError, h.UnexpectedEvidenceFileError)) as excinfo:
+    # Every parametrized name is rejected by a structural rule - backslash,
+    # absolute, drive prefix, nesting or traversal - before the expected-name
+    # membership check, so exactly one category applies to all of them.
+    with pytest.raises(h.UnsafeArchiveEntryError) as excinfo:
         h.extract_archive_bounded(archive, destination, where="cell")
-    assert excinfo.value.code in {"unsafe_archive_entry", "unexpected_evidence_file"}
+    assert excinfo.value.code == "unsafe_archive_entry"
     assert not destination.exists() or list(destination.iterdir()) == []
 
 
@@ -1302,9 +1320,11 @@ def test_corrupt_member_stream_fails_closed(tmp_path: Path) -> None:
     raw[60] ^= 0xFF
     corrupt = tmp_path / "corrupt.zip"
     corrupt.write_bytes(bytes(raw))
-    with pytest.raises(h.PortabilityError) as excinfo:
+    # Corrupt compressed data surfaces as zlib.error or BadZipFile, both of
+    # which the helper maps to the archive-integrity category.
+    with pytest.raises(h.UnsafeArchiveEntryError) as excinfo:
         h.extract_archive_bounded(corrupt, tmp_path / "out", where="cell")
-    assert excinfo.value.code in {"unsafe_archive_entry", "aggregate_verifier_internal_error"}
+    assert excinfo.value.code == "unsafe_archive_entry"
 
 
 def test_output_write_failure_fails_closed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -1631,10 +1651,14 @@ def test_set_equality_is_computed_against_the_api_response() -> None:
     """B-2: comparison targets the API response, not the download directory."""
     script = _step_script(DOWNLOAD_STEP_NAME)
     assert "artifacts.tsv" in script
-    assert "cmp -s live-names.txt expected-names.txt" in script
-    assert 'if [ "${live_count}" != "6" ]' in script
-    assert "grep -qxF -f expected-names.txt expired-names.txt" in script
-    equality_index = script.index("cmp -s live-names.txt expected-names.txt")
+    # The complete response is compared against the ratified set: duplicates,
+    # unexpected names and missing names are each detected on their own.
+    assert "comm -23 unique-names.txt expected-names.txt" in script
+    assert "comm -13 unique-names.txt expected-names.txt" in script
+    assert 'if [ "${total_count}" != "${unique_count}" ]' in script
+    assert 'if [ "${total_count}" != "6" ]' in script
+    assert "expired-names.txt" in script
+    equality_index = script.index("comm -23 unique-names.txt expected-names.txt")
     download_index = script.index("actions/artifacts/")
     assert equality_index < download_index, "set equality must precede any download"
 
@@ -1704,6 +1728,7 @@ def _run_download_step(
     payload_sizes: dict[int, int] | None = None,
     fail_zip_id: str | None = None,
     failing_consumer_status: int | None = None,
+    skip_declared_size_guard: bool = False,
 ) -> subprocess.CompletedProcess[str]:
     """Execute the real workflow step against a stub ``gh``.
 
@@ -1750,8 +1775,12 @@ def _run_download_step(
         "GITHUB_REPOSITORY": "IamShehri/MedScale",
         "GITHUB_RUN_ID": "424242",
         "GH_TOKEN": "stub-token-never-printed",
-        "MAX_COMPRESSED_ARTIFACT_BYTES": str(TRANSPORT_LIMIT_BYTES),
-        "MAX_AGGREGATE_COMPRESSED_BYTES": str(6_291_456),
+        "MAX_COMPRESSED_ARTIFACT_BYTES": str(
+            10_000_000 if skip_declared_size_guard else TRANSPORT_LIMIT_BYTES
+        ),
+        "MAX_AGGREGATE_COMPRESSED_BYTES": str(
+            60_000_000 if skip_declared_size_guard else 6_291_456
+        ),
         "ARTIFACTS_TSV": str(tsv),
         "ZIP_DIR": str(zip_dir),
         "GH_CALL_LOG": str(tmp_path / "gh-calls.log"),
@@ -1791,6 +1820,25 @@ def _archive_dir(tmp_path: Path) -> Path:
     return tmp_path / "work" / "archives"
 
 
+CATEGORY_PREFIX = "MESC_PORTABILITY_FAILURE_CATEGORY="
+
+
+def _category(result: subprocess.CompletedProcess[str]) -> str:
+    """Return the single ratified category the workflow guard emitted.
+
+    Fails the test if no category, or more than one, was emitted: one
+    deterministic failure must produce exactly one deterministic category.
+    """
+    emitted = [
+        line[len(CATEGORY_PREFIX) :].strip()
+        for line in result.stderr.splitlines()
+        if line.startswith(CATEGORY_PREFIX)
+    ]
+    assert len(emitted) == 1, f"expected exactly one category, got {emitted}"
+    assert emitted[0] in EXPECTED_TAXONOMY, f"{emitted[0]!r} is not a ratified category"
+    return emitted[0]
+
+
 bash_required = pytest.mark.skipif(_BASH is None, reason="bash is unavailable on this platform")
 
 
@@ -1798,6 +1846,7 @@ bash_required = pytest.mark.skipif(_BASH is None, reason="bash is unavailable on
 def test_exactly_the_six_ratified_artifacts_pass(tmp_path: Path) -> None:
     result = _run_download_step(tmp_path, _rows())
     assert result.returncode == 0, result.stderr
+    assert CATEGORY_PREFIX not in result.stderr
     archives = sorted(p.name for p in (tmp_path / "work" / "archives").iterdir())
     assert archives == sorted(f"{name}.zip" for name in RATIFIED_ARTIFACT_NAMES)
     for name in RATIFIED_ARTIFACT_NAMES:
@@ -1825,8 +1874,9 @@ def test_one_byte_over_the_limit_is_rejected_and_partial_output_removed(tmp_path
     rows = _rows()
     result = _run_download_step(tmp_path, rows, payload_sizes={1: TRANSPORT_LIMIT_BYTES + 1})
     assert result.returncode != 0
+    assert _category(result) == "artifact_size_limit_exceeded"
     assert "exceeded the transport cap" in result.stderr
-    archives = tmp_path / "work" / "archives"
+    archives = _archive_dir(tmp_path)
     assert list(archives.iterdir()) == []
     # Nothing larger than limit + 1 was ever written, and the partial file is gone.
     assert not (archives / f"{RATIFIED_ARTIFACT_NAMES[0]}.zip.part").exists()
@@ -1838,7 +1888,8 @@ def test_declared_metadata_over_the_limit_fails_before_download(tmp_path: Path) 
     rows[0] = (rows[0][0], TRANSPORT_LIMIT_BYTES + 1, "false", 1)
     result = _run_download_step(tmp_path, rows, payload_sizes={1: 10})
     assert result.returncode != 0
-    assert "over the limit" in result.stderr
+    assert _category(result) == "artifact_size_limit_exceeded"
+    assert "over the per-artifact limit" in result.stderr
     assert _downloads_attempted(tmp_path) == 0
 
 
@@ -1846,6 +1897,7 @@ def test_declared_metadata_over_the_limit_fails_before_download(tmp_path: Path) 
 def test_declared_and_actual_size_mismatch_is_rejected(tmp_path: Path) -> None:
     result = _run_download_step(tmp_path, _rows(), payload_sizes={2: 700})
     assert result.returncode != 0
+    assert _category(result) == "artifact_size_limit_exceeded"
     assert "does not match declared" in result.stderr
     assert not (tmp_path / "work" / "archives" / f"{RATIFIED_ARTIFACT_NAMES[1]}.zip").exists()
 
@@ -1874,9 +1926,11 @@ def test_producer_failure_is_not_hidden_by_the_pipeline(tmp_path: Path) -> None:
     # consumer completed normally: the workflow checks the consumer first and
     # would have exited with a different message had it been non-zero.
     assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
     assert f"download failed for {failing}" in result.stderr
     assert "bounded consumer failed" not in result.stderr
     assert "(status 4)" in result.stderr
+    assert "producer status 4" in result.stderr
 
     # No partial file survives and nothing was promoted.
     assert not (_archive_dir(tmp_path) / f"{failing}.zip.part").exists()
@@ -1899,7 +1953,12 @@ def test_consumer_failure_is_not_hidden_by_the_pipeline(tmp_path: Path) -> None:
           rm -f "${part}"; exit 1
         fi
     """
-    result = _run_download_step(tmp_path, _rows(), failing_consumer_status=7)
+    # N1: the producer emits far more than the stub consumer reads, so the
+    # producer genuinely observes a broken pipe rather than completing first.
+    rows = _rows(size=2_000_000)
+    result = _run_download_step(
+        tmp_path, rows, failing_consumer_status=7, skip_declared_size_guard=True
+    )
 
     # Setup and enumeration succeeded, and the pipeline was reached.
     assert _enumerations_attempted(tmp_path) == 1
@@ -1910,9 +1969,15 @@ def test_consumer_failure_is_not_hidden_by_the_pipeline(tmp_path: Path) -> None:
     # The consumer status is the controlling reported failure, not the producer's
     # broken pipe.
     assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
     assert f"bounded consumer failed for {failing}" in result.stderr
     assert "(status 7)" in result.stderr
     assert "download failed for" not in result.stderr
+    # N1: both statuses are recorded, and the consumer remains the controlling
+    # diagnostic even though the producer observes a broken pipe.
+    assert "consumer status 7" in result.stderr
+    producer_line = next(line for line in result.stderr.splitlines() if "producer status" in line)
+    assert "producer status 0" not in producer_line
 
     assert not (_archive_dir(tmp_path) / f"{failing}.zip.part").exists()
     assert list(_archive_dir(tmp_path).iterdir()) == []
@@ -1941,9 +2006,10 @@ def test_an_unexpected_seventh_artifact_fails_before_any_download(tmp_path: Path
     rows.append(("unrelated-debug-bundle", 100, "false", 99))
     result = _run_download_step(tmp_path, rows)
     assert result.returncode != 0
-    assert "expected exactly 6" in result.stderr or "not exactly the six" in result.stderr
+    assert _category(result) == "unexpected_matrix_cell"
+    assert "unrelated-debug-bundle" in result.stderr
     assert _downloads_attempted(tmp_path) == 0
-    assert list((tmp_path / "work" / "archives").iterdir()) == []
+    assert list(_archive_dir(tmp_path).iterdir()) == []
 
 
 @bash_required
@@ -1951,7 +2017,9 @@ def test_a_missing_expected_artifact_fails_before_any_download(tmp_path: Path) -
     rows = _rows()[:-1]
     result = _run_download_step(tmp_path, rows)
     assert result.returncode != 0
+    assert _category(result) == "missing_matrix_cell"
     assert _downloads_attempted(tmp_path) == 0
+    assert list(_archive_dir(tmp_path).iterdir()) == []
 
 
 @bash_required
@@ -1960,7 +2028,9 @@ def test_a_duplicate_expected_artifact_fails_before_any_download(tmp_path: Path)
     rows.append((RATIFIED_ARTIFACT_NAMES[0], 855, "false", 77))
     result = _run_download_step(tmp_path, rows)
     assert result.returncode != 0
+    assert _category(result) == "duplicate_matrix_cell"
     assert _downloads_attempted(tmp_path) == 0
+    assert list(_archive_dir(tmp_path).iterdir()) == []
 
 
 @bash_required
@@ -1969,17 +2039,27 @@ def test_an_expired_expected_artifact_fails_before_any_download(tmp_path: Path) 
     rows[3] = (rows[3][0], rows[3][1], "true", rows[3][3])
     result = _run_download_step(tmp_path, rows)
     assert result.returncode != 0
+    assert _category(result) == "missing_matrix_cell"
+    assert RATIFIED_ARTIFACT_NAMES[3] in result.stderr
     assert _downloads_attempted(tmp_path) == 0
+    assert list(_archive_dir(tmp_path).iterdir()) == []
 
 
 @bash_required
-def test_an_expired_extra_artifact_alone_does_not_pass_the_set_check(tmp_path: Path) -> None:
-    """Expiry filtering must not become a way to smuggle a seventh artifact."""
+def test_an_expired_unexpected_artifact_fails_before_download(tmp_path: Path) -> None:
+    """B2: expiry is not a way to smuggle a seventh artifact past the set check.
+
+    The complete response is evaluated before any expiry filtering, so an
+    unexpected artifact is rejected whether or not it has expired.
+    """
     rows = _rows()
     rows.append(("unrelated-debug-bundle", 100, "true", 99))
     result = _run_download_step(tmp_path, rows)
-    assert result.returncode == 0, result.stderr
-    assert _downloads_attempted(tmp_path) == 6
+    assert result.returncode != 0
+    assert _category(result) == "unexpected_matrix_cell"
+    assert "unrelated-debug-bundle" in result.stderr
+    assert _downloads_attempted(tmp_path) == 0
+    assert list(_archive_dir(tmp_path).iterdir()) == []
 
 
 # -- unchanged guarantees ---------------------------------------------------
@@ -2042,15 +2122,159 @@ def test_helper_module_is_untouched_by_this_correction() -> None:
         assert hasattr(h, attribute)
 
 
-@bash_required
-def test_workflow_and_helper_bytes_are_unchanged_by_this_test_commit() -> None:
-    """This commit is test-only: the two production files must be untouched."""
+def test_pipeline_branches_and_helper_surface_are_intact() -> None:
+    """Supplemental: the branches these tests drive still exist as written."""
     workflow = _workflow_text()
-    # The exact branches these tests exercise, quoted from the workflow itself.
-    assert 'echo "download failed for ${name} (status ${producer})" >&2' in workflow
-    assert 'echo "bounded consumer failed for ${name} (status ${consumer})" >&2' in workflow
+    assert '"download failed for ${name} (status ${producer})"' in workflow
+    assert '"bounded consumer failed for ${name} (status ${consumer})"' in workflow
     assert '| head -c "${transport_cap}" > "${part}"' in workflow
     assert "permissions:\n  contents: read\n  actions: read\n" in workflow
     helper = Path(h.__file__).read_text(encoding="utf-8")
     assert "def extract_archive_bounded(" in helper
     assert "def require_canonical_sha(" in helper
+
+
+# --------------------------------------------------------------------------
+# FD-PV-16 B3 — the canonical-main dispatch guard emits its exact category
+# --------------------------------------------------------------------------
+
+DISPATCH_STEP_NAME = "Guard canonical-main dispatch"
+
+
+def _run_dispatch_guard(
+    tmp_path: Path, *, ref: str, expected_sha: str, head_sha: str
+) -> subprocess.CompletedProcess[str]:
+    """Execute the real dispatch-guard step with a stub ``git rev-parse``."""
+    work = tmp_path / "work"
+    work.mkdir(parents=True, exist_ok=True)
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    stub_git = bin_dir / "git"
+    stub_git.write_text(
+        '#!/usr/bin/env bash\nprintf "%s\\n" "${GIT_STUB_HEAD}"\n',
+        encoding="utf-8",
+        newline="\n",
+    )
+    stub_git.chmod(0o755)
+    script = work / "guard.sh"
+    script.write_text(_step_script(DISPATCH_STEP_NAME), encoding="utf-8", newline="\n")
+    environment = {
+        **os.environ,
+        "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
+        "GITHUB_REF": ref,
+        "EXPECTED_SHA": expected_sha,
+        "GIT_STUB_HEAD": head_sha,
+    }
+    assert _BASH is not None
+    return subprocess.run(
+        [_BASH, str(script)],
+        cwd=work,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+
+
+CANONICAL_MAIN_SHA = "02d0aafb61fa62de414c0e8e5d61187c03b650bd"
+
+
+@bash_required
+def test_dispatch_guard_accepts_a_valid_canonical_sha(tmp_path: Path) -> None:
+    result = _run_dispatch_guard(
+        tmp_path,
+        ref="refs/heads/main",
+        expected_sha=CANONICAL_MAIN_SHA,
+        head_sha=CANONICAL_MAIN_SHA,
+    )
+    assert result.returncode == 0, result.stderr
+    assert CATEGORY_PREFIX not in result.stderr
+
+
+@bash_required
+@pytest.mark.parametrize(
+    "expected_sha",
+    [
+        "02D0AAFB61FA62DE414C0E8E5D61187C03B650BD",
+        "",
+        CANONICAL_MAIN_SHA[:-1],
+        CANONICAL_MAIN_SHA + "0",
+        "refs/heads/main",
+        "main",
+        "v0.2.0",
+        "02d0aafb-61fa-62de-414c-0e8e5d61187c03b",
+    ],
+)
+def test_malformed_canonical_sha_emits_evidence_generation_failure(
+    tmp_path: Path, expected_sha: str
+) -> None:
+    """B3: a malformed dispatch input emits exactly evidence_generation_failure."""
+    result = _run_dispatch_guard(
+        tmp_path,
+        ref="refs/heads/main",
+        expected_sha=expected_sha,
+        head_sha=CANONICAL_MAIN_SHA,
+    )
+    assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
+
+
+@bash_required
+def test_noncanonical_ref_emits_evidence_generation_failure(tmp_path: Path) -> None:
+    result = _run_dispatch_guard(
+        tmp_path,
+        ref="refs/heads/feature",
+        expected_sha=CANONICAL_MAIN_SHA,
+        head_sha=CANONICAL_MAIN_SHA,
+    )
+    assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
+    assert "not refs/heads/main" in result.stderr
+
+
+@bash_required
+def test_head_mismatch_emits_evidence_generation_failure(tmp_path: Path) -> None:
+    result = _run_dispatch_guard(
+        tmp_path,
+        ref="refs/heads/main",
+        expected_sha=CANONICAL_MAIN_SHA,
+        head_sha="0" * 40,
+    )
+    assert result.returncode != 0
+    assert _category(result) == "evidence_generation_failure"
+
+
+# --------------------------------------------------------------------------
+# FD-PV-16 B3 — every emitted category is one of the ratified twenty-one
+# --------------------------------------------------------------------------
+
+
+def test_workflow_emits_only_ratified_categories() -> None:
+    """Supplemental wiring check: no workflow guard invents a category."""
+    workflow = _workflow_text()
+    emitted: set[str] = set()
+    for line in workflow.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("fail_with "):
+            emitted.add(stripped.split()[1])
+        if stripped.startswith("aggregate_verifier_internal_error"):
+            emitted.add("aggregate_verifier_internal_error")
+    assert emitted, "no workflow-side categories found"
+    assert emitted <= set(EXPECTED_TAXONOMY)
+    assert len(EXPECTED_TAXONOMY) == 21
+
+
+def test_workflow_category_emission_is_machine_verifiable() -> None:
+    """Supplemental wiring check for the fixed, parseable emission form."""
+    workflow = _workflow_text()
+    assert "MESC_PORTABILITY_FAILURE_CATEGORY=%s" in workflow
+    assert workflow.count("fail_with() {") == 3
+
+
+def test_complete_response_is_validated_before_expiry_filtering() -> None:
+    """Supplemental wiring check for the B2 ordering guarantee."""
+    script = _step_script(DOWNLOAD_STEP_NAME)
+    all_names_index = script.index("sort > all-names.txt")
+    expiry_index = script.index("expired-names.txt")
+    download_index = script.index("actions/artifacts/")
+    assert all_names_index < expiry_index < download_index

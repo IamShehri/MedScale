@@ -82,21 +82,33 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Every dispatch refusal is an evidence-generation refusal and emits
+          # that exact ratified category in machine-verifiable form.
+          fail_with() {
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' "$1" >&2
+            shift
+            printf '%s\n' "$@" >&2
+            exit 1
+          }
           if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
-            echo "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"; exit 1
+            fail_with evidence_generation_failure \
+              "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"
           fi
           # FD-PV-14: validate the dispatch input's exact form here, before it is
           # threaded anywhere. Exactly forty lowercase hexadecimal characters.
           case "${EXPECTED_SHA}" in
             *[!0-9a-f]* | "")
-              echo "dispatch rejected: expected_sha is not lowercase hexadecimal"; exit 1 ;;
+              fail_with evidence_generation_failure \
+                "dispatch rejected: expected_sha is not lowercase hexadecimal" ;;
           esac
           if [ "${#EXPECTED_SHA}" -ne 40 ]; then
-            echo "dispatch rejected: expected_sha is not exactly 40 characters"; exit 1
+            fail_with evidence_generation_failure \
+              "dispatch rejected: expected_sha is not exactly 40 characters"
           fi
           head="$(git rev-parse HEAD)"
           if [ "${head}" != "${EXPECTED_SHA}" ]; then
-            echo "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"; exit 1
+            fail_with evidence_generation_failure \
+              "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"
           fi
         env:
           EXPECTED_SHA: ${{ inputs.expected_sha }}
@@ -175,21 +187,33 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Every dispatch refusal is an evidence-generation refusal and emits
+          # that exact ratified category in machine-verifiable form.
+          fail_with() {
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' "$1" >&2
+            shift
+            printf '%s\n' "$@" >&2
+            exit 1
+          }
           if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
-            echo "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"; exit 1
+            fail_with evidence_generation_failure \
+              "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"
           fi
           # FD-PV-14: validate the dispatch input's exact form here, before it is
           # threaded anywhere. Exactly forty lowercase hexadecimal characters.
           case "${EXPECTED_SHA}" in
             *[!0-9a-f]* | "")
-              echo "dispatch rejected: expected_sha is not lowercase hexadecimal"; exit 1 ;;
+              fail_with evidence_generation_failure \
+                "dispatch rejected: expected_sha is not lowercase hexadecimal" ;;
           esac
           if [ "${#EXPECTED_SHA}" -ne 40 ]; then
-            echo "dispatch rejected: expected_sha is not exactly 40 characters"; exit 1
+            fail_with evidence_generation_failure \
+              "dispatch rejected: expected_sha is not exactly 40 characters"
           fi
           head="$(git rev-parse HEAD)"
           if [ "${head}" != "${EXPECTED_SHA}" ]; then
-            echo "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"; exit 1
+            fail_with evidence_generation_failure \
+              "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"
           fi
         env:
           EXPECTED_SHA: ${{ inputs.expected_sha }}
@@ -229,14 +253,16 @@ jobs:
         shell: bash
         run: uv sync --frozen
 
-      # FD-PV-12/FD-PV-13 bounded transport. Automatic full download-and-extract
-      # is replaced by explicit, capped handling. Two independent guards run
-      # before any byte is fetched: the complete non-expired current-run artifact
-      # set must equal the six ratified names exactly, and each declared size
-      # must be within the ratified compressed limits. Transport itself is then
-      # capped by a bounded consumer, so an under-reported or lying response is
-      # cut off at one byte past the limit instead of filling runner storage.
-      # Nothing is extracted in this step.
+      # FD-PV-12/FD-PV-13 bounded transport, with FD-PV-16 corrections.
+      #
+      # B2: the COMPLETE current-run artifact response is evaluated before any
+      # filtering. Expired entries are never discarded ahead of total-set
+      # equality, so an unexpected artifact cannot hide behind expiry.
+      #
+      # B3: every fail-closed guard emits one exact ratified taxonomy category in
+      # the fixed machine-verifiable form
+      # MESC_PORTABILITY_FAILURE_CATEGORY=<category>, followed by human-readable
+      # prose. Prose never replaces the category.
       - name: Validate the current-run artifact set and download within caps
         shell: bash
         env:
@@ -248,6 +274,16 @@ jobs:
           # Never trace this step: a trace would echo the authorization
           # environment into the log.
           set +x
+
+          # One deterministic failure emits one deterministic ratified category.
+          # No twenty-second category is introduced by this function.
+          fail_with() {
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' "$1" >&2
+            shift
+            printf '%s\n' "$@" >&2
+            exit 1
+          }
+
           mkdir -p archives
 
           printf '%s\n' \
@@ -266,25 +302,50 @@ jobs:
             --jq '.artifacts[] | [.name, (.size_in_bytes|tostring), (.expired|tostring), (.id|tostring)] | @tsv' \
             > artifacts.tsv
 
-          # ---- exact artifact-set equality, before any download -------------
-          awk -F'\t' '$3 == "false" { print $1 }' artifacts.tsv | sort > live-names.txt
-          live_count="$(wc -l < live-names.txt | tr -d '[:space:]')"
-          if [ "${live_count}" != "6" ]; then
-            echo "current run exposes ${live_count} non-expired artifacts, expected exactly 6" >&2
-            echo "observed:" >&2; cat live-names.txt >&2
-            exit 1
+          # ---- B2: complete-response validation, before any download --------
+          # Every artifact the run exposes is considered, expired or not.
+          awk -F'\t' '{ print $1 }' artifacts.tsv | sort > all-names.txt
+          awk -F'\t' '{ print $1 }' artifacts.tsv | sort -u > unique-names.txt
+          total_count="$(wc -l < all-names.txt | tr -d '[:space:]')"
+          unique_count="$(wc -l < unique-names.txt | tr -d '[:space:]')"
+
+          # Duplicates first, so a repeated name is never reported as a count or
+          # membership problem.
+          if [ "${total_count}" != "${unique_count}" ]; then
+            fail_with duplicate_matrix_cell \
+              "current run exposes a duplicated artifact name" \
+              "observed: $(tr '\n' ' ' < all-names.txt)"
           fi
-          if ! cmp -s live-names.txt expected-names.txt; then
-            echo "current-run artifact set is not exactly the six ratified names" >&2
-            echo "observed:" >&2; cat live-names.txt >&2
-            echo "expected:" >&2; cat expected-names.txt >&2
-            exit 1
+
+          # Unexpected artifacts, expired or non-expired alike.
+          if comm -23 unique-names.txt expected-names.txt | grep -q .; then
+            fail_with unexpected_matrix_cell \
+              "current run exposes an artifact outside the six ratified names" \
+              "unexpected: $(comm -23 unique-names.txt expected-names.txt | tr '\n' ' ')"
           fi
-          # An expected artifact that has expired must fail closed rather than be
-          # silently skipped by the non-expired filter above.
-          awk -F'\t' '$3 == "true" { print $1 }' artifacts.tsv | sort > expired-names.txt
-          if grep -qxF -f expected-names.txt expired-names.txt; then
-            echo "an expected artifact is expired" >&2; cat expired-names.txt >&2; exit 1
+
+          # Missing expected artifacts.
+          if comm -13 unique-names.txt expected-names.txt | grep -q .; then
+            fail_with missing_matrix_cell \
+              "current run is missing an expected artifact" \
+              "missing: $(comm -13 unique-names.txt expected-names.txt | tr '\n' ' ')"
+          fi
+
+          # Exactly six total. Reached only when the set is already exactly the
+          # six ratified names with no duplicate, so any other count is an
+          # internal inconsistency in this validation.
+          if [ "${total_count}" != "6" ]; then
+            fail_with aggregate_verifier_internal_error \
+              "artifact-set validation reached an inconsistent state: ${total_count} entries"
+          fi
+
+          # Every one of the six must be non-expired. An expired expected
+          # artifact makes that matrix cell unavailable.
+          awk -F'\t' '$3 != "false" { print $1 }' artifacts.tsv | sort > expired-names.txt
+          if [ -s expired-names.txt ]; then
+            fail_with missing_matrix_cell \
+              "an artifact required by the matrix has expired and is unavailable" \
+              "expired: $(tr '\n' ' ' < expired-names.txt)"
           fi
 
           # ---- capped transport ---------------------------------------------
@@ -296,14 +357,14 @@ jobs:
           total=0
           : > declared-sizes.tsv
           while IFS="$(printf '\t')" read -r name size expired id; do
-            if [ "${expired}" != "false" ]; then continue; fi
             if [ "${size}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
-              echo "artifact ${name} declares ${size} compressed bytes, over the limit" >&2
-              exit 1
+              fail_with artifact_size_limit_exceeded \
+                "artifact ${name} declares ${size} compressed bytes, over the per-artifact limit"
             fi
             total="$(( total + size ))"
             if [ "${total}" -gt "${MAX_AGGREGATE_COMPRESSED_BYTES}" ]; then
-              echo "aggregate compressed limit exceeded at ${name}" >&2; exit 1
+              fail_with artifact_size_limit_exceeded \
+                "aggregate compressed limit exceeded at ${name}"
             fi
             part="archives/${name}.zip.part"
             set +e
@@ -315,20 +376,27 @@ jobs:
             consumer="${statuses[1]}"
             actual="$(wc -c < "${part}" | tr -d '[:space:]')"
             if [ "${actual}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
-              echo "artifact ${name} exceeded the transport cap after ${actual} bytes" >&2
-              rm -f "${part}"; exit 1
+              rm -f "${part}"
+              fail_with artifact_size_limit_exceeded \
+                "artifact ${name} exceeded the transport cap after ${actual} bytes" \
+                "producer status ${producer}, consumer status ${consumer}"
             fi
             if [ "${consumer}" != "0" ]; then
-              echo "bounded consumer failed for ${name} (status ${consumer})" >&2
-              rm -f "${part}"; exit 1
+              rm -f "${part}"
+              fail_with evidence_generation_failure \
+                "bounded consumer failed for ${name} (status ${consumer})" \
+                "producer status ${producer}, consumer status ${consumer}"
             fi
             if [ "${producer}" != "0" ]; then
-              echo "download failed for ${name} (status ${producer})" >&2
-              rm -f "${part}"; exit 1
+              rm -f "${part}"
+              fail_with evidence_generation_failure \
+                "download failed for ${name} (status ${producer})" \
+                "producer status ${producer}, consumer status ${consumer}"
             fi
             if [ "${actual}" != "${size}" ]; then
-              echo "artifact ${name} size ${actual} does not match declared ${size}" >&2
-              rm -f "${part}"; exit 1
+              rm -f "${part}"
+              fail_with artifact_size_limit_exceeded \
+                "artifact ${name} size ${actual} does not match declared ${size}"
             fi
             mv "${part}" "archives/${name}.zip"
             printf '%s\t%s\n' "${name}" "${size}" >> declared-sizes.tsv
@@ -343,7 +411,14 @@ jobs:
         run: |
           set -euo pipefail
           count="$(ls -1 archives | wc -l | tr -d '[:space:]')"
-          if [ "${count}" != "6" ]; then echo "expected 6 archives, found ${count}"; exit 1; fi
+          if [ "${count}" != "6" ]; then
+            # Reached only if the validated six-artifact set and the downloaded
+            # archives disagree, which is an internal inconsistency.
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' \
+              aggregate_verifier_internal_error >&2
+            printf 'expected 6 archives, found %s\n' "${count}" >&2
+            exit 1
+          fi
 
       # Pull-request runs: no canonical SHA exists, so the flag is not passed and
       # the envelope omits the key entirely (FD-PV-14).
