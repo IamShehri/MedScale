@@ -180,7 +180,8 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`); evidence-production authority adopted on canonical main (PR #65 merge `e3478da9...`); FD-PV-17 and FD-PV-18 activated and consumed; canonical portability evidence produced by run 30678040133, mechanically verified, and independently reviewed APPROVE WITH NON-BLOCKING NOTES; founder evidence-acceptance decision FD-PV-19 adopted on canonical main (PR #66 merge `1f2d9152...`); founder implementation-acceptance decision FD-B2A-9 issued but not yet adopted on canonical main, with the N-12 discharge and the Windows and macOS closure decisions likewise issued but not yet canonical; execution not authorized; B2A founder-accepted in substance but not yet canonically adopted; B2B not authorized |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`); evidence-production authority adopted on canonical main (PR #65 merge `e3478da9...`); FD-PV-17 and FD-PV-18 activated and consumed; canonical portability evidence produced by run 30678040133, mechanically verified, and independently reviewed APPROVE WITH NON-BLOCKING NOTES; founder evidence-acceptance decision FD-PV-19 adopted on canonical main (PR #66 merge `1f2d9152...`); founder implementation-acceptance decision FD-B2A-9 adopted on canonical main (PR #67 merge `bfc4254b...`); P01-04B2A accepted; N-12 satisfied and discharged for P01-04B2A; Windows and macOS portability obligations satisfied and closed for P01-04B2A; execution not authorized |
+| P01-04B2B | Leakage primitive library | Design ratified under FD-B2-6; B2B prerequisite satisfied by P01-04B2A acceptance; founder implementation-authorization decisions FD-B2B-1 through FD-B2B-10 issued but not yet adopted on canonical main; implementation authority recorded but inactive; implementation not authorized to begin; B2B acceptance not achieved; execution not authorized |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -1198,6 +1199,14 @@ REMAINS CONSUMED — NOT REVIVED
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B10 was adopted. It is retained as
+historical governance evidence and is not the repository's present controlling
+state. The later P01-T03B11 Current controlling state supersedes this block;
+P01-T03B12 governs the subsequent FD-B2B-1 through FD-B2B-10 implementation
+authorization.
+
 P01-T03B10 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -1375,4 +1384,232 @@ specs/mesc-pilot-01/p01-04b2a-governance-hold/,
 specs/mesc-pilot-01/p01-04b2a-final-review-hold/,
 specs/mesc-pilot-01/p01-04b2a-evidence-production-gate/ and
 specs/mesc-pilot-01/p01-04b2a-evidence-acceptance/ and is not restated.
+
+--- Later chronological facts (superseding the entry above) ---
+
+Independent exact-head review of c59e4e16015a89197622227526458e9cead855fd:
+COMPLETED — APPROVE WITH NON-BLOCKING NOTES; 15 / 15 INDEPENDENCE
+ATTESTATIONS SATISFIED; NO BLOCKING FINDINGS; THREE ACCEPTED NON-BLOCKING
+NOTES (NB-A, NB-B, NB-C), NONE REQUIRING A SECOND COMMIT
+
+Founder Ready decision:
+EXERCISED — PR #67 transitioned from Draft to Ready
+
+Founder merge decision:
+EXERCISED — PR #67 merged 2026-08-01T03:32:26Z
+
+Governance package:
+ADOPTED ON CANONICAL MAIN — PR #67 merged as
+bfc4254b6a028ea7ec5969b505d73e7d66751272 (ordered parents
+1f2d9152281f3136d212dcf7729063f7b1c64ad1 and
+c59e4e16015a89197622227526458e9cead855fd; main tree
+4208ea672a01ac942a1caeee764167d530cc8f1e; 1 commit; 5 files; +1259 / -1)
+
+Mechanical post-merge verification:
+PASSED — REVIEWED HEAD TO FINAL MERGE ZERO FILE DELTA;
+SYNTHETIC MERGE fea2536250df1a33cbfba435b3affdf2928f5ddd TO FINAL MERGE
+ZERO FILE DELTA; FIRST-PARENT SCOPE EXACTLY FIVE PATHS
+
+Automatic post-merge runs at bfc4254b...:
+CI 30682190998 SUCCESS;
+CODEQL 30682191003 SUCCESS;
+OPTIONAL EXTRAS / BACKENDS 30682191010 SUCCESS
+(all event: push, head_branch main, all run_attempt: 1)
+
+MESC B2A Portability post-merge run:
+NONE — EXPECTED, NOT A FAILURE. The workflow declares only pull_request and
+workflow_dispatch triggers, so a merge push cannot trigger it.
+
+MESC B2A Portability run history:
+8 RUNS — 7 pull_request, 1 workflow_dispatch; 0 RUNS WITH run_attempt > 1;
+RUN 30678040133 REMAINS THE SOLE workflow_dispatch
+
+FD-PV-18:
+REMAINS CONSUMED — NOT REVIVED
+
+--- Current controlling state ---
+
+P01-T03B11 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #67:
+MERGED AND MECHANICALLY VERIFIED
+
+FD-B2A-9:
+ADOPTED ON CANONICAL MAIN AT
+bfc4254b6a028ea7ec5969b505d73e7d66751272
+
+P01-04B2A:
+ACCEPTED
+
+N-12:
+SATISFIED AND DISCHARGED FOR P01-04B2A
+
+Windows portability obligation:
+SATISFIED AND CLOSED FOR P01-04B2A
+
+macOS portability obligation:
+SATISFIED AND CLOSED FOR P01-04B2A
+
+B2 dependency DAG:
+B2B PREREQUISITE SATISFIED — A B2B AUTHORIZATION DECISION IS ELIGIBLE;
+B2B IS NOT THEREBY AUTHORIZED
+
+FD-B2B-1 through FD-B2B-10:
+FOUNDER DECISIONS ISSUED — NOT YET ADOPTED ON CANONICAL MAIN;
+see P01-T03B12
+
+P01-04B2B implementation authority:
+RECORDED BUT INACTIVE
+
+P01-04B2B implementation:
+NOT AUTHORIZED TO BEGIN
+
+P01-04B2B acceptance:
+NOT ACHIEVED
+
+P01-04B2C / P01-04B2D:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
+
+Real split, real leakage-audit execution, fixture facade, CLI, filesystem
+publication, P01-03G or real dataset access, B0/B1 execution, model access,
+inference, retrieval, metrics, benchmark execution, training, fine-tuning,
+publication, and clinical use:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-B2B-1 through FD-B2B-10:
+RECORDED BUT NOT YET ADOPTED — see P01-T03B12
+```
+
+```text
+P01-T03B12 — Authorize P01-04B2B leakage primitive implementation
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-B2B-1 THROUGH FD-B2B-10 NOT YET ADOPTED ON
+CANONICAL MAIN
+
+Founder disposition:
+P01-04B2B IMPLEMENTATION AUTHORIZATION ISSUED (2026-08-01)
+
+Required canonical baseline:
+bfc4254b6a028ea7ec5969b505d73e7d66751272
+
+Adopted predecessor:
+PR #67 — MERGED AS bfc4254b6a028ea7ec5969b505d73e7d66751272
+(merged head c59e4e16015a89197622227526458e9cead855fd; merge tree
+4208ea672a01ac942a1caeee764167d530cc8f1e; merged 2026-08-01T03:32:26Z;
+1 commit; 5 files; +1259 / -1)
+
+FD-B2A-9:
+ADOPTED ON CANONICAL MAIN AT bfc4254b6a028ea7ec5969b505d73e7d66751272
+
+P01-04B2A:
+ACCEPTED
+
+N-12:
+SATISFIED AND DISCHARGED FOR P01-04B2A
+
+Windows/macOS portability obligations:
+SATISFIED AND CLOSED FOR P01-04B2A
+
+Authority chain:
+P01-04A D1 THROUGH D10 RATIFIED;
+P01-04B1 FIXTURE-ONLY DETERMINISTIC SPLIT CORE ADOPTED;
+P01-04B2 DESIGN FD-B2-1 THROUGH FD-B2-8 RATIFIED;
+P01-04B2A CONTRACTS FD-B2A-1 THROUGH FD-B2A-8 ADOPTED;
+P01-04B2A IMPLEMENTATION PR #59 ADOPTED AND ACCEPTED;
+P01-04B2A PORTABILITY RUN 30678040133 ACCEPTED;
+FD-PV-19 ADOPTED AT 1f2d9152281f3136d212dcf7729063f7b1c64ad1;
+FD-B2A-9 ADOPTED AT bfc4254b6a028ea7ec5969b505d73e7d66751272
+
+B2 dependency DAG:
+B2B REQUIRES B2A ACCEPTANCE — SATISFIED;
+B2C REQUIRES B2A AND B2B ACCEPTANCE — NOT SATISFIED;
+B2D REQUIRES B2A, B2B AND B2C ACCEPTANCE — NOT SATISFIED.
+SATISFACTION OF THE B2B PREREQUISITE MAKES A B2B AUTHORIZATION DECISION
+ELIGIBLE; IT DOES NOT AUTHORIZE B2B.
+
+B2B design authority:
+FD-B2-6 LEAKAGE NORMALIZATION AND CLASSIFICATION, RATIFIED 2026-07-24;
+P01-04B2B DEFINED AS THE LEAKAGE PRIMITIVE LIBRARY
+
+Founder decisions issued:
+FD-B2B-1 PRIVATE MODULE BOUNDARY;
+FD-B2B-2 STRICT INPUT DOMAIN;
+FD-B2B-3 EXACT EQUALITY SEMANTICS;
+FD-B2B-4 QUESTION NORMALIZATION AND TOKENIZATION;
+FD-B2B-5 JACCARD AND EMPTY-INPUT SEMANTICS;
+FD-B2B-6 FINDING IDENTITY AND ORDERING;
+FD-B2B-7 CLASSIFICATION, SUPPRESSION AND REPORT SEMANTICS;
+FD-B2B-8 RAW-TEXT AND PROMOTABLE-ARTIFACT BOUNDARY;
+FD-B2B-9 DETERMINISTIC ERRORS AND SIDE-EFFECT PROHIBITION;
+FD-B2B-10 ACTIVATION AND SEQUENCING
+
+Subordination:
+FD-B2B-1 THROUGH FD-B2B-10 ARE SUBORDINATE TO D1 THROUGH D10,
+FD-B2-1 THROUGH FD-B2-8, FD-B2A-1 THROUGH FD-B2A-8, AND THE ACCEPTED B2A
+IMPLEMENTATION. THEY AMEND NONE OF THOSE AUTHORITIES.
+
+Exact future implementation allowlist:
+A src/medscale/mesc/_leakage_v1.py;
+A tests/test_mesc_leakage_v1.py.
+NO OTHER PATH IS AUTHORIZED. THE ALLOWLIST MUST NOT BE EXPANDED DURING
+IMPLEMENTATION; IMPOSSIBILITY REQUIRES A NEW FOUNDER AUTHORIZATION.
+
+Activation conditions:
+ALL FIVE REQUIRED — INDEPENDENT EXACT-HEAD PACKAGE REVIEW, SEPARATE FOUNDER
+READY DECISION, SEPARATE FOUNDER MERGE DECISION, MERGE INTO CANONICAL MAIN,
+AND MECHANICAL POST-MERGE VERIFICATION.
+NO SUBSET ACTIVATES P01-04B2B IMPLEMENTATION AUTHORITY.
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+FD-B2B-1 through FD-B2B-10:
+FOUNDER DECISIONS ISSUED — NOT YET ADOPTED ON CANONICAL MAIN
+
+P01-04B2B implementation authority:
+RECORDED BUT INACTIVE
+
+P01-04B2B implementation:
+NOT AUTHORIZED TO BEGIN
+
+P01-04B2B acceptance:
+NOT ACHIEVED
+
+P01-04B2C / P01-04B2D:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
+
+Real execution and downstream work:
+NOT AUTHORIZED — REAL PILOT-01 SPLIT, REAL LEAKAGE-AUDIT EXECUTION, FIXTURE
+FACADE, CLI, FILESYSTEM PUBLICATION, P01-03G OR REAL DATASET ACCESS, B0/B1
+EXECUTION, MODEL ACCESS, INFERENCE, RETRIEVAL, METRICS, BENCHMARK EXECUTION,
+TRAINING, FINE-TUNING, PUBLICATION AND CLINICAL USE
+
+Acceptance separation:
+COMPLETING THE B2B IMPLEMENTATION WILL NOT ACCEPT B2B. ACCEPTANCE REQUIRES AN
+INDEPENDENT EXACT-HEAD IMPLEMENTATION REVIEW, A SEPARATE FOUNDER READY
+DECISION, A SEPARATE MERGE DECISION, CANONICAL MERGE, MECHANICAL VERIFICATION,
+AND A LATER SEPARATE B2B IMPLEMENTATION-ACCEPTANCE DECISION. B2C REMAINS
+BLOCKED UNTIL B2B IS ACCEPTED, NOT MERELY IMPLEMENTED.
+
+Prerequisite:
+P01-T03B11 ADOPTED (PR #67 merge bfc4254b...) AND FD-B2A-9 ADOPTED
+
+Scope:
+Record the founder implementation-authorization decisions FD-B2B-1 through
+FD-B2B-10 for the P01-04B2B leakage primitive library, together with the exact
+future two-path implementation allowlist and the five activation conditions.
+This gate implements nothing, executes nothing, and inspects no real records.
+Prior governance history is adopted at specs/mesc-pilot-01/p01-04b2/,
+specs/mesc-pilot-01/p01-04b2a/ and
+specs/mesc-pilot-01/p01-04b2a-acceptance/ and is not restated.
 ```
