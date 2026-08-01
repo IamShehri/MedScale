@@ -180,7 +180,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`) after F1–F4 were closed and an independent exact-head review returned APPROVE WITH NON-BLOCKING NOTES; FD-PV-17 activated and consumed; admissible evidence not produced and not yet authorized (FD-PV-18 recorded but not active); execution not authorized; B2A not accepted |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`); evidence-production authority adopted on canonical main (PR #65 merge `e3478da9...`); FD-PV-17 and FD-PV-18 activated and consumed; canonical portability evidence produced by run 30678040133, mechanically verified, and independently reviewed APPROVE WITH NON-BLOCKING NOTES; founder evidence-acceptance decision FD-PV-19 issued but not yet adopted on canonical main; execution not authorized; B2A not accepted |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -751,6 +751,13 @@ EXERCISED — PR #61 merged 2026-07-31T22:00:34Z
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B8 was adopted. It is retained as
+historical governance evidence and is not the repository's present controlling
+state. The later P01-T03B9 Current controlling state supersedes this block;
+P01-T03B10 governs the subsequent FD-PV-19 evidence-acceptance disposition.
+
 P01-T03B8 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -932,4 +939,211 @@ under a five-condition activation gate. Successful evidence production does not
 itself accept B2A. Prior governance history is adopted at
 specs/mesc-pilot-01/p01-04b2a-governance-hold/ and
 specs/mesc-pilot-01/p01-04b2a-final-review-hold/ and is not restated.
+
+--- Later chronological facts (superseding the entry above) ---
+
+Independent exact-head review of the corrected head:
+COMPLETED — APPROVE WITH NON-BLOCKING NOTES; NO BLOCKING FINDINGS
+
+Governance authorization package:
+ADOPTED ON CANONICAL MAIN — PR #65 merged as
+e3478da94e62ad9af5858a69e28de7e5d5fc04f4 (ordered parents
+69f16455eb7ffb33f019dfe1f885cbb1cc8fc6a3 and
+626a23f01db978d43d51cdbae2c4378d2cf1733f; main tree
+e64e57a1c6c94703a7f20ef6598256fa77600b31; merged 2026-08-01T01:19:29Z;
+2 commits; 5 files; +909 / -1)
+
+FD-PV-18:
+ACTIVATED — all five activation conditions satisfied and mechanically verified
+
+Authorized dispatch:
+ACCEPTED — EXACTLY ONE, 2026-08-01T01:30:04Z
+
+FD-PV-18:
+CONSUMED
+
+Evidence run:
+30678040133 — run number 8, event workflow_dispatch, run_attempt 1,
+head_branch main, head_sha e3478da94e62ad9af5858a69e28de7e5d5fc04f4,
+actor IamShehri, COMPLETED / SUCCESS
+
+MESC B2A Portability run history:
+8 RUNS — 7 event: pull_request, 1 event: workflow_dispatch;
+0 RUNS WITH run_attempt > 1
+
+Job topology:
+SIX GENERATION JOBS AND ONE AGGREGATE JOB — ALL SUCCESS;
+PULL-REQUEST AGGREGATION SKIPPED; DISPATCH AGGREGATION EXECUTED;
+EVIDENCE UPLOAD EXECUTED EXACTLY ONCE
+
+Artifacts:
+SEVEN — SIX CELL ARTIFACTS PLUS b2a-portability-evidence;
+0 DUPLICATE, 0 MISSING, 0 UNEXPECTED, 0 EXPIRED AT INSPECTION AND AT REVIEW
+
+Mechanical evidence verification:
+PASSED — CROSS-CELL BYTE IDENTITY ACROSS ALL SIX CELLS;
+NB3-A, NB3-B AND NB3-C PASS; CONTENT BOUNDARY PASS
+
+Independent evidence review of the run:
+COMPLETED — APPROVE WITH NON-BLOCKING NOTES; NO BLOCKING FINDINGS
+
+Retry, rerun, second dispatch, replacement run:
+NOT AUTHORIZED — NONE OCCURRED
+
+--- Current controlling state ---
+
+P01-T03B9 documentation:
+ADOPTED ON CANONICAL MAIN
+
+FD-PV-18:
+ADOPTED, ACTIVATED AND CONSUMED
+
+PR #65:
+MERGED AS e3478da94e62ad9af5858a69e28de7e5d5fc04f4
+
+Admissible evidence:
+PRODUCED AND MECHANICALLY VERIFIED AT
+e3478da94e62ad9af5858a69e28de7e5d5fc04f4
+
+Founder evidence-acceptance decision:
+ISSUED — NOT YET ADOPTED ON CANONICAL MAIN; see P01-T03B10
+
+B2A acceptance:
+NOT ACHIEVED
+
+N-12:
+BINDING AND UNDISCHARGED
+
+Windows/macOS obligations:
+OPEN
+
+B2B:
+NOT AUTHORIZED
+
+Real split, B0, model access, training, and fine-tuning:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-PV-19:
+RECORDED BUT NOT YET ADOPTED — see P01-T03B10
+```
+
+```text
+P01-T03B10 — Record the P01-04B2A canonical portability evidence-acceptance decision
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-PV-19 NOT YET ADOPTED ON CANONICAL MAIN
+
+Founder disposition:
+CANONICAL PORTABILITY EVIDENCE ACCEPTED (2026-08-01)
+
+Required canonical baseline:
+e3478da94e62ad9af5858a69e28de7e5d5fc04f4
+
+Adopted authorization:
+PR #65 — MERGED AS e3478da94e62ad9af5858a69e28de7e5d5fc04f4
+(merged head 626a23f01db978d43d51cdbae2c4378d2cf1733f; merge tree
+e64e57a1c6c94703a7f20ef6598256fa77600b31; ordered parents
+69f16455eb7ffb33f019dfe1f885cbb1cc8fc6a3 and
+626a23f01db978d43d51cdbae2c4378d2cf1733f; merged 2026-08-01T01:19:29Z;
+2 commits; 5 files; +909 / -1)
+
+FD-PV-18:
+ACTIVATED AND CONSUMED
+
+Authorized dispatch requests:
+EXACTLY ONE — ACCEPTED
+
+Retry, rerun, second dispatch, replacement run:
+NOT AUTHORIZED
+
+Evidence run:
+30678040133 — COMPLETED / SUCCESS
+(run number 8; event workflow_dispatch; run_attempt 1; head_branch main;
+head_sha e3478da94e62ad9af5858a69e28de7e5d5fc04f4; actor IamShehri;
+created 2026-08-01T01:30:04Z)
+
+MESC B2A Portability run history:
+8 RUNS — 7 pull_request, 1 workflow_dispatch; 0 RUNS WITH run_attempt > 1
+
+Job topology:
+SIX GENERATION JOBS AND ONE AGGREGATE JOB — ALL SUCCESS
+
+Artifacts:
+SEVEN — 0 DUPLICATE, 0 MISSING, 0 UNEXPECTED, 0 EXPIRED AT INSPECTION AND
+AT REVIEW; ALL BOUND TO RUN 30678040133
+
+Accepted payload identities:
+canonical.json 228 BYTES; canonical.jsonl 79 BYTES; manifest.json 308 BYTES —
+BYTE-IDENTICAL ACROSS ALL SIX CELLS
+
+Schemas:
+MANIFEST mesc-pilot-01-b2a-portability-manifest/1;
+EVIDENCE mesc-pilot-01-b2a-portability-evidence/1;
+EVIDENCE result: pass;
+EVIDENCE canonical_sha e3478da94e62ad9af5858a69e28de7e5d5fc04f4
+
+Mechanical evidence verification:
+PASSED — NB3-A PASS; NB3-B PASS; NB3-C PASS; CONTENT BOUNDARY PASS
+
+Independent evidence review:
+COMPLETED — APPROVE WITH NON-BLOCKING NOTES
+
+Blocking findings:
+NONE
+
+Accepted non-blocking observations:
+NB-01 ZIP UNIX PERMISSION METADATA DIFFERS BY PRODUCER (0644 LINUX/MACOS,
+0666 WINDOWS) — ARCHIVE METADATA ONLY;
+NB-02 BROAD SUBSTRING SCANS PRODUCED FALSE POSITIVES FROM "decomposed" AND
+"windows-py3.11" — METHODOLOGY OBSERVATION ONLY.
+NEITHER REQUIRES AN EVIDENCE CORRECTION, NEW RUN, RERUN, REPLACEMENT
+ARTIFACT, OR IMPLEMENTATION CHANGE.
+
+Founder evidence-acceptance decision:
+ISSUED — NOT YET ADOPTED ON CANONICAL MAIN
+
+FD-PV-19:
+RECORDED BUT NOT YET ADOPTED
+
+Adoption conditions:
+ALL FIVE REQUIRED — INDEPENDENT EXACT-HEAD PACKAGE REVIEW, SEPARATE FOUNDER
+READY DECISION, SEPARATE FOUNDER MERGE DECISION, MERGE INTO CANONICAL MAIN,
+AND MECHANICAL POST-MERGE VERIFICATION. NO SUBSET ADOPTS FD-PV-19.
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+Canonical portability evidence:
+FOUNDER-ACCEPTED IN SUBSTANCE;
+NOT YET CANONICALLY ADOPTED UNTIL THIS PACKAGE IS MERGED AND VERIFIED
+
+B2A acceptance:
+NOT ACHIEVED
+
+Binding N-12:
+UNDISCHARGED; WINDOWS AND MACOS OBLIGATIONS OPEN
+
+Downstream status:
+B2B NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
+
+Real split, B0, model access, real dataset access, inference, retrieval,
+training, and fine-tuning:
+NOT AUTHORIZED
+
+Prerequisite:
+P01-T03B9 ADOPTED (PR #65 merge e3478da9...) AND FD-PV-18 CONSUMED
+
+Scope:
+Record the founder's acceptance of the canonical portability evidence produced
+by the single FD-PV-18-authorized dispatch, together with the immutable run,
+artifact, payload and review facts supporting it. Evidence acceptance is not
+B2A acceptance. Prior governance history is adopted at
+specs/mesc-pilot-01/p01-04b2a-governance-hold/,
+specs/mesc-pilot-01/p01-04b2a-final-review-hold/ and
+specs/mesc-pilot-01/p01-04b2a-evidence-production-gate/ and is not restated.
 ```
