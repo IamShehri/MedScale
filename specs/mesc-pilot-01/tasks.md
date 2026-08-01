@@ -180,7 +180,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability remediation and corrections executed on Draft PR #61, now under FINAL REVIEW HOLD (four blocking findings, FD-PV-17 correction authority recorded but not active); infrastructure not adopted; execution not authorized; B2A not accepted |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`) after F1–F4 were closed and an independent exact-head review returned APPROVE WITH NON-BLOCKING NOTES; FD-PV-17 activated and consumed; admissible evidence not produced and not yet authorized (FD-PV-18 recorded but not active); execution not authorized; B2A not accepted |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -499,6 +499,13 @@ PR #63 OPENED — see P01-T03B7
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B6 was adopted. It is retained as
+historical governance evidence and is not the repository's present controlling
+state. The later P01-T03B8 Current controlling state supersedes this block;
+P01-T03B9 governs the subsequent FD-PV-18 evidence-production gate.
+
 P01-T03B6 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -613,6 +620,11 @@ correction commit under a five-condition activation gate.
 ```text
 P01-T03B8 — P01-04B2A final independent-review hold gate
 
+--- State at the time this entry was recorded (2026-07-31) ---
+The block below is a historical snapshot. It was accurate when written and is
+NOT the current state. The later chronological facts and the current
+controlling state follow it.
+
 Documentation status:
 RECORDED — NOT ADOPTED; FD-PV-17 NOT ACTIVE
 
@@ -696,4 +708,228 @@ Record the final independent exact-head review verdict on PR #61 and
 prospectively authorize exactly one ninth correction commit under a
 five-condition activation gate. Prior governance history is adopted at
 specs/mesc-pilot-01/p01-04b2a-governance-hold/ and is not restated.
+
+--- Later chronological facts (superseding the snapshot above) ---
+
+Governance authorization package:
+ADOPTED ON CANONICAL MAIN — PR #64 merged as
+63c6e3200c4b8013ec068630a29118df0dfc7a6f (ordered parents
+02d0aafb61fa62de414c0e8e5d61187c03b650bd and
+0d28c4599f91afb40778226344bb6b3bede56f52; main tree
+95d2c59b8e536df2702987440ae524cf4e4e6352)
+
+FD-PV-17:
+ACTIVATED — all five activation conditions satisfied and mechanically verified
+
+Commit 9:
+CREATED, REVIEWED, AND ADOPTED — 7c1522ebfd5376fa237f9ff40a5856b8ed03f1ae,
+parent f68f8be8799c0ec67b26c319a4a06789f2ea1a7e, tree
+802fe54f976a8c89baffcaf87c99a62cb53250b4, additive and single-parent
+
+Commit 10:
+NOT AUTHORIZED / NOT CREATED
+
+FD-PV-17:
+CONSUMED
+
+F1 through F4:
+CLOSED — verified by an independent clean-room exact-head review
+
+Independent clean-room exact-head review of 7c1522ebfd5376fa237f9ff40a5856b8ed03f1ae:
+COMPLETED
+
+Accepted verdict:
+APPROVE WITH NON-BLOCKING NOTES — EXACT HEAD ELIGIBLE FOR A SEPARATE FOUNDER
+READY DECISION
+(no blocking findings; nine non-blocking notes, none authorizing a tenth commit)
+
+Founder Ready decision:
+EXERCISED — PR #61 transitioned from Draft to Ready
+
+Founder merge decision:
+EXERCISED — PR #61 merged 2026-07-31T22:00:34Z
+
+--- Current controlling state ---
+
+P01-T03B8 documentation:
+ADOPTED ON CANONICAL MAIN
+
+FD-PV-17:
+ADOPTED, ACTIVATED AND CONSUMED
+
+PR #61:
+MERGED AS 69f16455eb7ffb33f019dfe1f885cbb1cc8fc6a3
+(merged head 7c1522ebfd5376fa237f9ff40a5856b8ed03f1ae; merge tree
+ebbb61b905bde4773d48b40b9f667ceb0d558566; ordered parents
+63c6e3200c4b8013ec068630a29118df0dfc7a6f and
+7c1522ebfd5376fa237f9ff40a5856b8ed03f1ae; 9 commits; 3 files; +4411 / -0)
+
+Infrastructure adoption:
+ACHIEVED ON CANONICAL MAIN
+
+Admissible evidence production:
+NOT YET AUTHORIZED — FD-PV-18 RECORDED BUT NOT ACTIVE
+
+Admissible evidence:
+NOT PRODUCED
+
+B2A acceptance:
+NOT ACHIEVED
+
+N-12:
+BINDING AND UNDISCHARGED
+
+Windows/macOS obligations:
+OPEN
+
+B2B:
+NOT AUTHORIZED
+
+Real split, B0, training, and fine-tuning:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-PV-18:
+RECORDED BUT NOT ACTIVE — see P01-T03B9
+```
+
+```text
+P01-T03B9 — P01-04B2A canonical portability evidence-production authorization gate
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-PV-18 NOT ACTIVE
+
+Founder disposition:
+EVIDENCE-PRODUCTION AUTHORIZATION GATE OPENED (2026-08-01)
+
+Required canonical baseline:
+69f16455eb7ffb33f019dfe1f885cbb1cc8fc6a3
+
+Adopted infrastructure:
+PR #61 — MERGED AS 69f16455eb7ffb33f019dfe1f885cbb1cc8fc6a3
+
+PR #61 merged head:
+7c1522ebfd5376fa237f9ff40a5856b8ed03f1ae
+
+PR #61 merge tree:
+ebbb61b905bde4773d48b40b9f667ceb0d558566
+
+PR #61 ordered merge parents:
+63c6e3200c4b8013ec068630a29118df0dfc7a6f
+7c1522ebfd5376fa237f9ff40a5856b8ed03f1ae
+
+PR #61 merged at:
+2026-07-31T22:00:34Z
+
+PR #61 first-parent delta:
+3 FILES / +4411 / -0 — .github/workflows/mesc-b2a-portability.yml,
+tests/_mesc_b2a_portability.py, tests/test_mesc_b2a_portability.py
+
+Accepted independent exact-head verdict:
+APPROVE WITH NON-BLOCKING NOTES — EXACT HEAD ELIGIBLE FOR A SEPARATE FOUNDER
+READY DECISION
+
+Blocking findings:
+NONE
+
+Non-blocking notes:
+NINE — NONE AUTHORIZES OR REQUIRES A TENTH COMMIT
+
+Infrastructure adoption:
+ACHIEVED ON CANONICAL MAIN
+
+FD-PV-17:
+ACTIVATED AND CONSUMED
+
+Commit 9:
+CREATED, REVIEWED, AND ADOPTED
+
+Commit 10:
+NOT AUTHORIZED / NOT CREATED
+
+Post-merge automatic runs at 69f16455...:
+CI 30668524206 SUCCESS;
+CODEQL 30668524193 SUCCESS;
+OPTIONAL EXTRAS / BACKENDS 30668524166 SUCCESS
+(all event: push, all run_attempt: 1)
+
+MESC B2A Portability post-merge run:
+NONE — EXPECTED, NOT A FAILURE. The workflow declares only pull_request and
+workflow_dispatch triggers, so a merge push cannot trigger it.
+
+MESC B2A Portability run history:
+7 RUNS, ALL event: pull_request, ALL run_attempt: 1;
+0 workflow_dispatch RUNS; 0 MANUAL RERUNS
+
+Existing portability artifacts:
+NON-ADMISSIBLE PULL-REQUEST INFRASTRUCTURE VALIDATION ONLY;
+0 b2a-portability-evidence ARTIFACTS EXIST REPOSITORY-WIDE
+
+Accepted taxonomy mappings — settled, not to be changed:
+EXPIRED EXPECTED ARTIFACT -> missing_matrix_cell
+POST-VALIDATION ARCHIVE-COUNT INCONSISTENCY ->
+  aggregate_verifier_internal_error
+
+Taxonomy:
+EXACTLY TWENTY-ONE CATEGORIES — UNCHANGED
+
+Prospective evidence-production authority:
+FD-PV-18 RECORDED BUT NOT ACTIVE — EXACTLY ONE workflow_dispatch ATTEMPT
+AGAINST .github/workflows/mesc-b2a-portability.yml ON REF main
+
+Required dispatch input:
+expected_sha = THE MECHANICALLY VERIFIED CANONICAL-MAIN SHA PRODUCED BY MERGING
+THIS PACKAGE. NOT 69f16455... — THAT SHA PREDATES THIS PACKAGE'S MERGE.
+
+Authority consumption:
+CONSUMED WHEN GITHUB ACCEPTS THE DISPATCH REQUEST, REGARDLESS OF OUTCOME.
+NO RETRY, RERUN, SECOND DISPATCH, OR REPLACEMENT RUN IS AUTHORIZED.
+
+Authorized inspection:
+READ-ONLY INSPECTION OF THAT ONE RUN AND OFFLINE VERIFICATION OF ITS SEVEN
+ARTIFACTS — SIX CELL ARTIFACTS PLUS b2a-portability-evidence
+
+First independent exact-head review of 617c632f4c67628c9b3fa165aa6712f7b3698079:
+COMPLETED — REPORT RETURNED APPROVE WITH NON-BLOCKING NOTES
+
+Founder disposition of that report:
+CHANGES REQUIRED — THE CONTRADICTORY CURRENT-CONTROLLING-STATE HEADINGS WERE
+RECLASSIFIED AS BLOCKING
+
+Independent exact-head review of the corrected head:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+Independent evidence review of the future run:
+OUTSTANDING — REQUIRED BEFORE ANY EVIDENCE ACCEPTANCE
+
+Admissible evidence production:
+NOT YET AUTHORIZED
+
+Admissible evidence:
+NOT PRODUCED
+
+B2A acceptance:
+NOT ACHIEVED
+
+Binding N-12:
+UNDISCHARGED; WINDOWS AND MACOS OBLIGATIONS OPEN
+
+Downstream status:
+B2B NOT AUTHORIZED
+
+Real split, B0, training, and fine-tuning:
+NOT AUTHORIZED
+
+Prerequisite:
+P01-T03B8 ADOPTED (PR #64 merge 63c6e320...) AND PR #61 ADOPTED
+(merge 69f16455...)
+
+Scope:
+Record the verified post-merge truth of PR #61 and prospectively authorize
+exactly one canonical-main portability evidence-production workflow dispatch
+under a five-condition activation gate. Successful evidence production does not
+itself accept B2A. Prior governance history is adopted at
+specs/mesc-pilot-01/p01-04b2a-governance-hold/ and
+specs/mesc-pilot-01/p01-04b2a-final-review-hold/ and is not restated.
 ```
