@@ -180,7 +180,7 @@ Stop conditions: executable without authorization; scientific identity mutated
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
 | P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
-| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`); evidence-production authority adopted on canonical main (PR #65 merge `e3478da9...`); FD-PV-17 and FD-PV-18 activated and consumed; canonical portability evidence produced by run 30678040133, mechanically verified, and independently reviewed APPROVE WITH NON-BLOCKING NOTES; founder evidence-acceptance decision FD-PV-19 issued but not yet adopted on canonical main; execution not authorized; B2A not accepted |
+| P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`); evidence-production authority adopted on canonical main (PR #65 merge `e3478da9...`); FD-PV-17 and FD-PV-18 activated and consumed; canonical portability evidence produced by run 30678040133, mechanically verified, and independently reviewed APPROVE WITH NON-BLOCKING NOTES; founder evidence-acceptance decision FD-PV-19 adopted on canonical main (PR #66 merge `1f2d9152...`); founder implementation-acceptance decision FD-B2A-9 issued but not yet adopted on canonical main, with the N-12 discharge and the Windows and macOS closure decisions likewise issued but not yet canonical; execution not authorized; B2A founder-accepted in substance but not yet canonically adopted; B2B not authorized |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
@@ -992,6 +992,14 @@ NOT AUTHORIZED — NONE OCCURRED
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B9 was adopted. It is retained as
+historical governance evidence and is not the repository's present controlling
+state. The later P01-T03B10 Current controlling state supersedes this block;
+P01-T03B11 governs the subsequent FD-B2A-9 implementation-acceptance
+disposition.
+
 P01-T03B9 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -1146,4 +1154,225 @@ B2A acceptance. Prior governance history is adopted at
 specs/mesc-pilot-01/p01-04b2a-governance-hold/,
 specs/mesc-pilot-01/p01-04b2a-final-review-hold/ and
 specs/mesc-pilot-01/p01-04b2a-evidence-production-gate/ and is not restated.
+
+--- Later chronological facts (superseding the entry above) ---
+
+Independent exact-head review of bf26351ff84c7ed6d30f0ad054109309af64b04b:
+COMPLETED — APPROVE WITH NON-BLOCKING NOTES; NO BLOCKING FINDINGS;
+THREE ACCEPTED NON-BLOCKING NOTES, NONE REQUIRING A SECOND COMMIT
+
+Founder Ready decision:
+EXERCISED — PR #66 transitioned from Draft to Ready
+
+Founder merge decision:
+EXERCISED — PR #66 merged 2026-08-01T02:37:09Z
+
+Governance package:
+ADOPTED ON CANONICAL MAIN — PR #66 merged as
+1f2d9152281f3136d212dcf7729063f7b1c64ad1 (ordered parents
+e3478da94e62ad9af5858a69e28de7e5d5fc04f4 and
+bf26351ff84c7ed6d30f0ad054109309af64b04b; main tree
+83de598c69c5ab963f400f9f69d1d0b2a3b0ac81; 1 commit; 5 files; +1056 / -1)
+
+Mechanical post-merge verification:
+PASSED — REVIEWED HEAD TO FINAL MERGE ZERO FILE DELTA;
+SYNTHETIC MERGE a1e248e9b1c905c00f7e84c78835fc6926bc3e34 TO FINAL MERGE
+ZERO FILE DELTA; FIRST-PARENT SCOPE EXACTLY FIVE PATHS
+
+Automatic post-merge runs at 1f2d9152...:
+CI 30680367441 SUCCESS;
+CODEQL 30680367434 SUCCESS;
+OPTIONAL EXTRAS / BACKENDS 30680367448 SUCCESS
+(all event: push, all run_attempt: 1)
+
+MESC B2A Portability post-merge run:
+NONE — EXPECTED, NOT A FAILURE. The workflow declares only pull_request and
+workflow_dispatch triggers, so a merge push cannot trigger it.
+
+MESC B2A Portability run history:
+8 RUNS — 7 pull_request, 1 workflow_dispatch; 0 RUNS WITH run_attempt > 1;
+RUN 30678040133 REMAINS THE SOLE workflow_dispatch
+
+FD-PV-18:
+REMAINS CONSUMED — NOT REVIVED
+
+--- Current controlling state ---
+
+P01-T03B10 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #66:
+MERGED AND MECHANICALLY VERIFIED
+
+FD-PV-19:
+ADOPTED ON CANONICAL MAIN AT
+1f2d9152281f3136d212dcf7729063f7b1c64ad1
+
+Canonical portability evidence:
+FOUNDER-ACCEPTED AND CANONICALLY ADOPTED
+
+FD-B2A-9:
+FOUNDER DECISION ISSUED — NOT YET ADOPTED ON CANONICAL MAIN; see P01-T03B11
+
+P01-04B2A:
+FOUNDER-ACCEPTED IN SUBSTANCE;
+NOT YET CANONICALLY ADOPTED
+
+N-12:
+FOUNDER DISCHARGE DECISION ISSUED;
+CANONICALLY BINDING UNTIL THAT PACKAGE IS ADOPTED
+
+Windows/macOS portability obligations:
+FOUNDER CLOSURE DECISIONS ISSUED;
+CANONICALLY OPEN UNTIL THAT PACKAGE IS ADOPTED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
+
+B2B:
+NOT AUTHORIZED
+
+Real split, B0, B1, model access, real dataset access, inference, retrieval,
+metrics, benchmark execution, training, and fine-tuning:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-B2A-9:
+RECORDED BUT NOT YET ADOPTED — see P01-T03B11
+```
+
+```text
+P01-T03B11 — Record P01-04B2A implementation acceptance, N-12 discharge and
+platform-obligation closure
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-B2A-9 NOT YET ADOPTED ON CANONICAL MAIN
+
+Founder disposition:
+P01-04B2A IMPLEMENTATION ACCEPTED (2026-08-01)
+
+Required canonical baseline:
+1f2d9152281f3136d212dcf7729063f7b1c64ad1
+
+Adopted predecessor:
+PR #66 — MERGED AS 1f2d9152281f3136d212dcf7729063f7b1c64ad1
+(merged head bf26351ff84c7ed6d30f0ad054109309af64b04b; merge tree
+83de598c69c5ab963f400f9f69d1d0b2a3b0ac81; merged 2026-08-01T02:37:09Z;
+1 commit; 5 files; +1056 / -1)
+
+FD-PV-19:
+ADOPTED ON CANONICAL MAIN AT
+1f2d9152281f3136d212dcf7729063f7b1c64ad1
+
+Contract authority:
+PR #55 — MERGE 5c083a0c5f23d0f9837e7543c444633a68524e67;
+FOUNDER-RATIFICATION HEAD edc09743a1aa9478c2accbe9debb8fcc5bcbe268;
+FD-B2A-1 THROUGH FD-B2A-8 RATIFIED 2026-07-26;
+FD-B2A-5 INCLUDES THE PD-B2A-5.1 NON-CIRCULAR FINGERPRINT CLARIFICATION
+
+Accepted implementation:
+PR #59 — MERGE 5736b1171f1aa467105d931713f5749fb81acd5b;
+MERGED HEAD 7307fcf9085d3d15114984731b49d484523f09eb;
+REVIEWED TREE 575fcf124792cd38b546a58a6845ad2ecd317281;
+2 COMMITS / 4 FILES / +2559 / -0
+
+Accepted implementation scope:
+src/medscale/mesc/_canonical_json_v1.py;
+src/medscale/mesc/_split_artifacts_v1.py;
+tests/test_mesc_canonical_json_v1.py;
+tests/test_mesc_split_artifacts_v1.py
+
+Accepted implementation observations:
+IMPLEMENTATION NB-01 UNTYPED StopIteration ON A DELIBERATELY MALFORMED
+LOW-LEVEL OBJECT — NON-BLOCKING, NOT CORRECTED;
+IMPLEMENTATION NB-02 PRIMITIVE SUBCLASSES ACCEPTED BEFORE THE CANONICAL
+SERIALIZATION BOUNDARY REJECTS THEM — NON-BLOCKING, NOT CORRECTED.
+NEITHER IS UPGRADED INTO ACCEPTED PUBLIC BEHAVIOUR.
+
+Portability infrastructure:
+PR #61 — MERGE 69f16455eb7ffb33f019dfe1f885cbb1cc8fc6a3;
+REVIEWED HEAD 7c1522ebfd5376fa237f9ff40a5856b8ed03f1ae;
+INDEPENDENTLY REVIEWED AND ADOPTED BEFORE FD-PV-18 ACTIVATION;
+SIX MATRIX CELLS PRESERVED; EVIDENCE-ONLY; UNMODIFIED AND NOT RERUN
+
+Accepted evidence:
+RUN 30678040133 — RUN NUMBER 8; EVENT workflow_dispatch; run_attempt 1;
+head_branch main; EVIDENCE CANONICAL SHA
+e3478da94e62ad9af5858a69e28de7e5d5fc04f4; COMPLETED / SUCCESS;
+6 GENERATION JOBS AND 1 AGGREGATE JOB ALL SUCCESS;
+7 ARTIFACTS, 0 DUPLICATE, 0 MISSING, 0 UNEXPECTED, 0 EXPIRED
+
+Accepted payload identities:
+canonical.json 228 BYTES; canonical.jsonl 79 BYTES; manifest.json 308 BYTES —
+BYTE-IDENTICAL AND HASH-IDENTICAL ACROSS ALL SIX CELLS
+
+Independent evidence review:
+COMPLETED — APPROVE WITH NON-BLOCKING NOTES; BLOCKING FINDINGS NONE;
+EVIDENCE NB-01 ZIP UNIX PERMISSION METADATA AND EVIDENCE NB-02 SUBSTRING-SCAN
+FALSE POSITIVES BOTH ACCEPTED AS NON-BLOCKING
+
+N-12 requirement mapping:
+LINUX SATISFIED; WINDOWS SATISFIED; MACOS SATISFIED; PYTHON 3.11 SATISFIED;
+PYTHON 3.12 SATISFIED; CROSS-CELL BYTE AND HASH EQUALITY SATISFIED;
+INDEPENDENT EVIDENCE REVIEW SATISFIED; FOUNDER EVIDENCE ACCEPTANCE AND
+CANONICAL ADOPTION SATISFIED
+
+Founder decision:
+FD-B2A-9 — P01-04B2A IMPLEMENTATION ACCEPTANCE DISPOSITION;
+DECISION: ACCEPT P01-04B2A IMPLEMENTATION;
+N-12 SATISFIED AND DISCHARGED FOR P01-04B2A;
+WINDOWS PORTABILITY OBLIGATION SATISFIED AND CLOSED FOR P01-04B2A;
+MACOS PORTABILITY OBLIGATION SATISFIED AND CLOSED FOR P01-04B2A
+
+FD-B2A-9:
+FOUNDER DECISION ISSUED — NOT YET ADOPTED ON CANONICAL MAIN
+
+P01-04B2A acceptance:
+FOUNDER-ACCEPTED IN SUBSTANCE; NOT YET CANONICALLY ADOPTED
+
+N-12:
+FOUNDER DISCHARGE DECISION ISSUED;
+CANONICALLY BINDING UNTIL THIS PACKAGE IS ADOPTED
+
+Windows/macOS portability obligations:
+FOUNDER CLOSURE DECISIONS ISSUED;
+CANONICALLY OPEN UNTIL THIS PACKAGE IS ADOPTED
+
+Adoption conditions:
+ALL FIVE REQUIRED — INDEPENDENT EXACT-HEAD PACKAGE REVIEW, SEPARATE FOUNDER
+READY DECISION, SEPARATE FOUNDER MERGE DECISION, MERGE INTO CANONICAL MAIN,
+AND MECHANICAL POST-MERGE VERIFICATION. NO SUBSET ADOPTS FD-B2A-9.
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
+
+B2B:
+NOT AUTHORIZED
+
+B2C, B2D, and P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Real Pilot-01 split, P01-03G or real dataset access, B0/B1 execution, model
+access, inference, retrieval, metrics or benchmark execution, training,
+fine-tuning, publication, and clinical use:
+NOT AUTHORIZED
+
+Prerequisite:
+P01-T03B10 ADOPTED (PR #66 merge 1f2d9152...) AND FD-PV-19 ADOPTED
+
+Scope:
+Record the founder's acceptance of the P01-04B2A implementation, the discharge
+of the binding N-12 sequencing obligation for P01-04B2A, and the closure of the
+Windows and macOS portability obligations for P01-04B2A, together with the exact
+immutable basis supporting those decisions. B2A acceptance makes a later B2B
+authorization decision eligible for consideration and does not itself authorize
+B2B. Prior governance history is adopted at specs/mesc-pilot-01/p01-04b2a/,
+specs/mesc-pilot-01/p01-04b2a-governance-hold/,
+specs/mesc-pilot-01/p01-04b2a-final-review-hold/,
+specs/mesc-pilot-01/p01-04b2a-evidence-production-gate/ and
+specs/mesc-pilot-01/p01-04b2a-evidence-acceptance/ and is not restated.
 ```
