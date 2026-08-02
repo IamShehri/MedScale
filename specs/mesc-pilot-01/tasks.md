@@ -1652,6 +1652,13 @@ OUTSTANDING — REQUIRED BEFORE READY OR MERGE
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B13 was recorded, before FD-B2B-11
+was adopted on canonical main through PR #73. It is retained as historical
+governance evidence and is not the repository's present controlling state. The
+later P01-T03B14 Current controlling state supersedes this block.
+
 P01-T03B12 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -1724,4 +1731,177 @@ downstream phase. Prior governance history is adopted at
 specs/mesc-pilot-01/p01-04b2/, specs/mesc-pilot-01/p01-04b2a/,
 specs/mesc-pilot-01/p01-04b2a-acceptance/ and
 specs/mesc-pilot-01/p01-04b2b-authorization/ and is not restated.
+```
+
+```text
+P01-T03B14 — Authorize P01-04B2C fixture-facade implementation
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-B2C-1 THROUGH FD-B2C-12 NOT YET ADOPTED ON
+CANONICAL MAIN
+
+Founder decision:
+AUTHORIZE P01-04B2C IMPLEMENTATION SUBJECT TO VALID CANONICAL ADOPTION OF THIS
+PACKAGE (2026-08-02)
+
+Required canonical baseline:
+3c4d7f153522128533fa9aba26209426b248b4f1
+(tree e548aab1342c8783c1b919e707e5036a18e4a80a;
+ordered parents d91f76e77c4753e556b2ca9c2ee1bfcd5923d863 THEN
+a7b25f1755da2ca62fe516a68ae684b493be6bce;
+subject "Merge pull request #73 from IamShehri/docs/mesc-p01-04b2b-acceptance")
+
+Governance state entering this decision:
+FD-B2B-11 ADOPTED ON CANONICAL MAIN THROUGH PR #73.
+P01-04B2A ACCEPTED. P01-04B2B ACCEPTED.
+P01-04B2C ELIGIBLE FOR A SEPARATE AUTHORIZATION DECISION BUT NOT YET
+AUTHORIZED BEFORE THIS DECISION — ELIGIBILITY WAS NEVER IMPLEMENTATION
+AUTHORITY.
+P01-04B2D NOT AUTHORIZED. P01-04B INCOMPLETE / NOT ACCEPTED.
+
+Authority chain:
+SUBORDINATE TO P01-04A D1-D10, FD-B2-1 THROUGH FD-B2-8, FD-B2A-1 THROUGH
+FD-B2A-8, FD-B2A-9, FD-B2B-1 THROUGH FD-B2B-10, FD-B2B-11, AND THE ACCEPTED
+B2A AND B2B IMPLEMENTATIONS. ON CONFLICT THE SENIOR AUTHORITY CONTROLS.
+
+Accepted modules the future implementation reuses without forking:
+src/medscale/mesc/_split_v1.py (B1);
+src/medscale/mesc/_canonical_json_v1.py AND
+src/medscale/mesc/_split_artifacts_v1.py (B2A, canonical merge
+5736b1171f1aa467105d931713f5749fb81acd5b, final head
+7307fcf9085d3d15114984731b49d484523f09eb);
+src/medscale/mesc/_leakage_v1.py (B2B, canonical merge
+d91f76e77c4753e556b2ca9c2ee1bfcd5923d863, reviewed head
+86cfdca1797cf1be60761284af1cc81e25047f41, accepted tree
+070b177194094e5ae55d34570a86997fde956302).
+
+Founder decisions issued:
+FD-B2C-1 PRIVATE MODULE AND EXACT FUTURE PATH ALLOWLIST;
+FD-B2C-2 STATELESS FIXTURE-ONLY FACADE;
+FD-B2C-3 EXACT IMMUTABLE REQUEST CONTRACT;
+FD-B2C-4 FIXTURE IDENTITY AND HONEST PROOF SEMANTICS;
+FD-B2C-5 EXACT B1 INTEGRATION PIPELINE;
+FD-B2C-6 B1 COMPATIBILITY MANIFEST;
+FD-B2C-7 CANONICAL IN-MEMORY ARTIFACTS;
+FD-B2C-8 LEAKAGE INTEGRATION WITHOUT SCANNING;
+FD-B2C-9 EXACT IMMUTABLE RESULT CONTRACT;
+FD-B2C-10 TYPED ERRORS AND VALIDATION ORDER;
+FD-B2C-11 SIDE-EFFECT AND AUTHORITY PROHIBITION;
+FD-B2C-12 ACTIVATION AND SEQUENCING.
+
+Exact future implementation allowlist:
+src/medscale/mesc/_fixture_split_v1.py;
+tests/test_mesc_fixture_split_v1.py.
+EXACTLY TWO PATHS; NO THIRD PATH AUTHORIZED. THE FUTURE IMPLEMENTATION MUST
+NOT MODIFY __init__.py, split.py, _split_v1.py, _canonical_json_v1.py,
+_split_artifacts_v1.py, _leakage_v1.py, ANY CLI, ANY WORKFLOW, ANY DEPENDENCY
+OR LOCKFILE, OR ANY GOVERNANCE DOCUMENT.
+
+Honest structural-proof semantics:
+fixture_only, non_evidence AND synthetic_identity_proof ARE DECLARED MARKERS
+ESTABLISHING INTERNAL IDENTITY CONSISTENCY ONLY. THEY ARE NOT A CRYPTOGRAPHIC
+OR REAL-WORLD PROVENANCE ORACLE, AND NO FLAG COMBINATION CAN DETECT A CALLER
+REPACKAGING REAL DATA. B2C SAFETY DERIVES FROM STRUCTURE: PRIVATE MODULE, NO
+PUBLIC EXPORT, NO CLI, NO PATH INPUT, NO REGISTRY ADAPTER, NO FILESYSTEM
+ACCESS, NO REAL-DATA ENTRY POINT, AND SourceDocumentGroupedSplitter.assign
+REMAINING FAIL-CLOSED.
+
+Implementation authority:
+RECORDED BUT INACTIVE. P01-04B2C IMPLEMENTATION IS NOT AUTHORIZED TO BEGIN.
+
+Activation gate:
+ALL FIVE REQUIRED — INDEPENDENT CLEAN-ROOM EXACT-HEAD REVIEW OF THIS
+AUTHORIZATION PACKAGE, SEPARATE FOUNDER READY DECISION, SEPARATE FOUNDER MERGE
+DECISION, MERGE INTO CANONICAL MAIN, AND MECHANICAL POST-MERGE VERIFICATION.
+NO SUBSET ACTIVATES P01-04B2C IMPLEMENTATION AUTHORITY.
+UPON VALID ACTIVATION THE AUTHORITY IS ACTIVE FOR ONE BOUNDED IMPLEMENTATION
+ONLY AND IS SPENT AFTER ONE IMPLEMENTATION COMMIT SERIES IS ACCEPTED FOR
+PUBLICATION. IMPLEMENTATION DOES NOT EQUAL ACCEPTANCE.
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+--- Current controlling state ---
+
+P01-T03B13 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #73:
+MERGED AND MECHANICALLY VERIFIED AS
+3c4d7f153522128533fa9aba26209426b248b4f1
+
+FD-B2B-11:
+ADOPTED ON CANONICAL MAIN
+
+P01-04B2A:
+ACCEPTED
+
+P01-04B2B:
+ACCEPTED
+
+FD-B2C-1 through FD-B2C-12:
+FOUNDER DECISIONS ISSUED —
+NOT YET ADOPTED ON CANONICAL MAIN
+
+P01-04B2C implementation authority:
+RECORDED BUT INACTIVE
+
+P01-04B2C implementation:
+NOT AUTHORIZED TO BEGIN
+
+P01-04B2D:
+NOT AUTHORIZED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
+
+P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Real split generation, real or canonical leakage-audit execution,
+leakage-audit orchestration, dataset scanning, registry scanning, record-pair
+discovery, automatic finding discovery, CLI, public export, filesystem
+publication, P01-03G or real dataset access, B0/B1 execution, model access,
+inference, retrieval, metrics, benchmark execution, training, fine-tuning,
+publication and clinical use:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-B2C-1 through FD-B2C-12:
+RECORDED BUT NOT YET ADOPTED — see the five activation conditions above
+
+P01-04B2C implementation:
+UPON VALID ACTIVATION, AUTHORIZED FOR ONE BOUNDED IMPLEMENTATION WITHIN THE
+EXACT TWO-PATH ALLOWLIST; STILL REQUIRES AN INDEPENDENT EXACT-HEAD
+IMPLEMENTATION REVIEW, EXACT-HEAD CI AND CODEQL, A SEPARATE READY DECISION, A
+SEPARATE MERGE DECISION, POST-MERGE MECHANICAL VERIFICATION, A SEPARATE
+IMPLEMENTATION-ACCEPTANCE DISPOSITION, AND CANONICAL ADOPTION OF THAT
+DISPOSITION
+
+P01-04B2D:
+NOT AUTHORIZED — REMAINS UNAUTHORIZED UNTIL P01-04B2C IS CANONICALLY ACCEPTED.
+ITS THREE 1,000-ROW FIXTURES exact-reference-1000-v1,
+constraint-stress-1000-v1 AND leakage-positive-v1 MUST NOT BE IMPLEMENTED OR
+QUALIFIED DURING B2C
+
+Prerequisite:
+P01-T03B13 ADOPTED (PR #73 merge 3c4d7f15...) AND FD-B2B-11 ADOPTED;
+P01-04B2A AND P01-04B2B ACCEPTED
+
+Scope:
+Record the founder's authorization of the P01-04B2C fixture-only in-memory
+facade and integration entry point as FD-B2C-1 through FD-B2C-12, together with
+the exact future two-path implementation allowlist, the exact request and
+result contracts, the exact fixture and request identity payloads, the exact B1
+integration pipeline, the canonical in-memory artifact schemas and ordering,
+the non-circular summary and fingerprint construction, the explicit-finding
+leakage integration, the typed error categories and validation order, the
+side-effect prohibition, and the five-condition activation gate. This gate
+implements nothing, executes nothing, accepts nothing, and authorizes no
+downstream phase. Prior governance history is adopted at
+specs/mesc-pilot-01/p01-04b2/, specs/mesc-pilot-01/p01-04b2a/,
+specs/mesc-pilot-01/p01-04b2a-acceptance/,
+specs/mesc-pilot-01/p01-04b2b-authorization/ and
+specs/mesc-pilot-01/p01-04b2b-acceptance/ and is not restated.
 ```
