@@ -2023,6 +2023,14 @@ OUTSTANDING — REQUIRED BEFORE READY OR MERGE
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B15 was recorded, before FD-B2C-ACT-1
+and FD-B2C-13 were adopted on canonical main through PR #76 and before P01-04B2D
+was authorized. It is retained as historical governance evidence and is not the
+repository's present controlling state. The later P01-T03B16 Current controlling
+state supersedes this block.
+
 P01-T03B14 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -2110,4 +2118,159 @@ specs/mesc-pilot-01/p01-04b2a-acceptance/,
 specs/mesc-pilot-01/p01-04b2b-authorization/,
 specs/mesc-pilot-01/p01-04b2b-acceptance/ and
 specs/mesc-pilot-01/p01-04b2c-authorization/ and is not restated.
+```
+
+```text
+P01-T03B16 — Authorize P01-04B2D integrated synthetic qualification
+
+Documentation status:
+RECORDED — NOT ADOPTED; FD-B2D-1 THROUGH FD-B2D-14 NOT YET ADOPTED ON CANONICAL
+MAIN
+
+Founder decision:
+AUTHORIZE ONE BOUNDED P01-04B2D INTEGRATED SYNTHETIC QUALIFICATION
+IMPLEMENTATION SUBJECT TO THE ACTIVATION GATE (2026-08-02)
+
+Required canonical baseline:
+a0c623aa08354a343fccc1d066a7a6acaa5b8576
+(tree 6e766deb531a9d7332942c3a524be0b3de698af3;
+ordered parents 9d4b9ed0bada16455781240bb074ffd852397988 THEN
+3edcc476cf403bbd4d9c2d5bb05d739b40abe748;
+subject "Merge pull request #76 from IamShehri/docs/mesc-p01-04b2c-acceptance")
+
+Chronological completion of P01-T03B15:
+P01-04B2C acceptance package: PR #76.
+Reviewed package head: 3edcc476cf403bbd4d9c2d5bb05d739b40abe748.
+Canonical acceptance merge: a0c623aa08354a343fccc1d066a7a6acaa5b8576.
+FD-B2C-ACT-1: CANONICALLY RECORDED.
+FD-B2C-13: ADOPTED.
+P01-04B2C: ACCEPTED.
+
+Governance state entering this decision:
+P01-04B2A, P01-04B2B AND P01-04B2C ACCEPTED. FD-B2C-ACT-1 CANONICALLY RECORDED
+AND FD-B2C-13 ADOPTED THROUGH PR #76. THE P01-04B2C IMPLEMENTATION AUTHORITY IS
+SPENT. P01-04B2D WAS ELIGIBLE FOR A SEPARATE AUTHORIZATION DECISION AND WAS NOT
+AUTHORIZED. ELIGIBILITY WAS NEVER IMPLEMENTATION AUTHORITY.
+
+FD-B2-7 conformance:
+AN EARLIER DRAFTING ATTEMPT PROPOSED FIXTURE CONTRACTS THAT CONTRADICTED
+FOUNDER-RATIFIED FD-B2-7, WHICH specs/mesc-pilot-01/p01-04b2/decision-record.md
+DECLARES CONTROLLING ON CONFLICT. THE BUILD WAS STOPPED RATHER THAN SILENTLY
+RECONCILED. THE FOUNDER SELECTED PATH 1 — CONFORM P01-04B2D TO RATIFIED FD-B2-7.
+FD-B2-7 IS NOT AMENDED, SUPERSEDED OR NARROWED. THE CONFLICTING REQUIREMENTS ARE
+WITHDRAWN. CORRECTED CONTROLLING VALUES: exact-reference-1000-v1 HAS 89 GROUPS
+SPANNING SIZES 1, 2, 3, 5, 8 AND 13 WITH THE EXACT MATRIX FEASIBLE;
+constraint-stress-1000-v1 HAS 500 GROUPS OF SIZE 2 MAKING THE EXACT MATRIX
+INFEASIBLE WITH GLOBAL MINIMUM-DEVIATION SCORE 6; leakage-positive-v1 HAS 1000
+ROWS AND EXACTLY 999 SOURCE-DOCUMENT GROUPS, BEING EXACTLY ONE HOMOGENEOUS
+TWO-EXAMPLE SOURCE-DOCUMENT GROUP WHOSE MEMBERS SHARE A DECISION, REMAIN IN ONE
+ACTUAL PARTITION AND NEVER STRADDLE A PARTITION BOUNDARY, PLUS EXACTLY 998
+SINGLETON GROUPS AND NO OTHER MULTI-EXAMPLE GROUP, WITH 9 FINDINGS, AT LEAST
+THREE SUPPORTED false_positive CLASSIFICATIONS AND AT LEAST ONE unresolved. THE
+999-GROUP STRUCTURE IS A FOUNDER-FROZEN FIXTURE REQUIREMENT, NOT AN INFERENCE,
+AND IS SUBORDINATE TO AND CONSISTENT WITH FD-B2-7 WITHOUT AMENDING IT.
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+--- Current controlling state ---
+
+P01-T03B15 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #76:
+MERGED AND MECHANICALLY VERIFIED AS
+a0c623aa08354a343fccc1d066a7a6acaa5b8576
+
+FD-B2C-ACT-1:
+CANONICALLY RECORDED
+
+FD-B2C-13:
+ADOPTED ON CANONICAL MAIN
+
+P01-04B2A:
+ACCEPTED
+
+P01-04B2B:
+ACCEPTED
+
+P01-04B2C:
+ACCEPTED
+
+P01-04B2C implementation authority:
+SPENT
+
+FD-B2D-1 through FD-B2D-14:
+FOUNDER DECISIONS ISSUED — NOT YET ADOPTED ON CANONICAL MAIN; see P01-T03B16
+
+P01-04B2D implementation authority:
+RECORDED BUT INACTIVE
+
+P01-04B2D implementation:
+NOT AUTHORIZED TO BEGIN
+
+P01-04B2D qualification:
+NOT EXECUTED
+
+P01-04B:
+INCOMPLETE / NOT ACCEPTED
+
+P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Real split generation, real or canonical leakage-audit execution,
+leakage-audit orchestration, dataset scanning, registry scanning, record-pair
+discovery, automatic finding discovery, CLI, public export, filesystem
+publication, P01-03G or real dataset access, B0/B1 execution, model access,
+inference, retrieval, metrics, benchmark execution, training, fine-tuning,
+adapter creation, publication and clinical use:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-B2D-1 through FD-B2D-14:
+RECORDED BUT NOT YET ADOPTED — see the five activation conditions above
+
+P01-04B2D implementation:
+UPON CANONICAL ADOPTION OF FD-B2D-1 THROUGH FD-B2D-14, AUTHORIZED TO BEGIN
+EXACTLY ONCE WITHIN THE THREE-PATH ALLOWLIST
+tests/_mesc_p01_04b2d_fixtures_v1.py,
+tests/test_mesc_p01_04b2d_qualification_v1.py AND
+.github/workflows/mesc-p01-04b2d-qualification.yml, AND NOTHING MORE. THE
+AUTHORITY IS SPENT AT THAT COMMIT. NO PRODUCTION SOURCE CHANGE, PUBLIC EXPORT,
+CLI OR NEW DEPENDENCY IS AUTHORIZED
+
+P01-04B:
+REMAINS NOT ACCEPTED WHILE ANY CRITERION IS UNSATISFIED. THE INDIVISIBLE-GROUP
+GLOBAL MINIMUM-DEVIATION CRITERION OF FD-B2-7 FIXTURE B IS EXPECTED TO BE
+RECORDED UNSATISFIED BECAUSE THE ACCEPTED IMPLEMENTATION FAILS CLOSED WITH THE
+TYPED ALLOCATION ERROR RATHER THAN PRODUCING A MINIMUM-DEVIATION ALLOCATION. A
+GREEN B2D QUALIFICATION CI DOES NOT EQUAL P01-04B ACCEPTANCE. A SEPARATE FOUNDER
+CORRECTION AUTHORIZATION MUST PRECEDE ANY PRODUCTION IMPLEMENTATION OF GLOBALLY
+MINIMUM-DEVIATION GROUPED ALLOCATION
+
+Prerequisite:
+P01-T03B15 ADOPTED (PR #76 merge a0c623aa...) AND FD-B2C-ACT-1 AND FD-B2C-13
+ADOPTED; P01-04B2C ACCEPTED
+
+Scope:
+Record the founder's separate prospective authorization for P01-04B2D integrated
+synthetic qualification as FD-B2D-1 through FD-B2D-14, together with the exact
+three-path future implementation allowlist, the three ratified fixture contracts
+conformed to FD-B2-7 without amendment, the shared synthetic identity contract
+and non-circular generator-specification proof, the literal-golden requirements,
+the six-cell cross-platform qualification workflow, the criterion-by-criterion
+P01-04B acceptance-review contract including the expected UNSATISFIED
+minimum-deviation criterion, the anti-circularity and fail-closed rules, the
+evidence classification, the continuing prohibitions, the five-condition
+activation gate and the nine post-implementation gates. This gate implements
+nothing, constructs no fixture, invokes no facade, calculates no B2D output
+value, executes nothing, and authorizes no downstream phase. Prior governance
+history is adopted at specs/mesc-pilot-01/p01-04/,
+specs/mesc-pilot-01/p01-04b2/, specs/mesc-pilot-01/p01-04b2a/,
+specs/mesc-pilot-01/p01-04b2a-acceptance/,
+specs/mesc-pilot-01/p01-04b2b-authorization/,
+specs/mesc-pilot-01/p01-04b2b-acceptance/,
+specs/mesc-pilot-01/p01-04b2c-authorization/ and
+specs/mesc-pilot-01/p01-04b2c-acceptance/ and is not restated.
 ```
