@@ -2607,6 +2607,15 @@ correction does not retroactively make those records false.
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B18 was recorded, before FD-BR-1 and
+FD-BMD-1 through FD-BMD-14 were adopted on canonical main through PR #80, before
+the minimum-deviation implementation was merged through PR #81, and before
+FD-BPUB-1 through FD-BPUB-18 were issued. It is retained as historical governance
+evidence and is not the repository's present controlling state. The later
+P01-T03B19 Current controlling state supersedes this block.
+
 P01-T03B17 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -2719,4 +2728,376 @@ specs/mesc-pilot-01/p01-04b2c-authorization/,
 specs/mesc-pilot-01/p01-04b2c-acceptance/,
 specs/mesc-pilot-01/p01-04b2d-authorization/ and
 specs/mesc-pilot-01/p01-04b2d-acceptance/ and is not restated.
+```
+
+```text
+P01-T03B19 — Authorize P01-04B atomic publication and write-path protection
+boundary
+
+Documentation status:
+RECORDED — NOT ADOPTED
+
+FD-BPUB-1 through FD-BPUB-18:
+ISSUED — NOT YET ADOPTED
+
+Publication-boundary implementation authority:
+RECORDED BUT INACTIVE
+
+Minimum-deviation capability:
+SATISFIED
+
+P01-04B:
+CHANGES REQUIRED / NOT ACCEPTED
+
+Atomic publication:
+NOT SATISFIED / NOT IMPLEMENTATION-AUTHORIZED
+
+Write-path protections:
+NOT SATISFIED / NOT IMPLEMENTATION-AUTHORIZED
+
+P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Required canonical baseline:
+1e8b78379ee4af0c2870a5388001f528ae977221
+(tree 0dba04f0baf8107e5b52e0f5f5f1b7014c818ced;
+ordered parents 70bf280fccff4d9f4ecc24839dd9f7597c18e489 THEN
+97bec19bca47933bd6f81cf482f668779f9a8298;
+subject "Merge pull request #81 from IamShehri/fix/mesc-p01-04b-minimum-deviation";
+body "fix(mesc): implement P01-04B minimum-deviation allocation")
+
+Chronological completion of P01-T03B18:
+P01-04B minimum-deviation authorization package: PR #80.
+Reviewed package head: 823ca6d5a46ac9f6ec317c2f9f320ee7dcc4cf21.
+Canonical authorization merge: 70bf280fccff4d9f4ecc24839dd9f7597c18e489.
+FD-BR-1: ADOPTED ON CANONICAL MAIN.
+FD-BMD-1 through FD-BMD-14: ADOPTED ON CANONICAL MAIN.
+Minimum-deviation implementation authority: ACTIVATED, EXERCISED EXACTLY ONCE,
+AND SPENT.
+
+Accepted minimum-deviation implementation identity:
+PR #81 on branch fix/mesc-p01-04b-minimum-deviation.
+Reviewed and merged head: 97bec19bca47933bd6f81cf482f668779f9a8298.
+Reviewed implementation tree: 0dba04f0baf8107e5b52e0f5f5f1b7014c818ced.
+Implementation parent: 70bf280fccff4d9f4ecc24839dd9f7597c18e489.
+Canonical implementation merge: 1e8b78379ee4af0c2870a5388001f528ae977221.
+1 commit / 4 files / 1539 additions / 68 deletions, being exactly
+src/medscale/mesc/_split_v1.py blob
+f755771b68ef80c895f98f529c1b708716458673, src/medscale/mesc/_fixture_split_v1.py
+blob 1e73ddf2c9e7def247d5d88d20ae013458528edc, tests/test_mesc_split_v1.py blob
+2f38d7a34f6ab785f0a129beb33482850e156d95 and
+tests/test_mesc_p01_04b2d_qualification_v1.py blob
+ffc776cfbcdf39f8f1ab6072a4609a4ccb6284e6. No path was added or deleted, and no
+workflow, dependency, lockfile, public export, CLI or entry point was changed.
+
+Implementation disposition:
+Independent clean-room exact-head implementation review: COMPLETED. The reviewed
+head was published, opened as a Draft pull request, taken Ready through a
+separate founder decision and merged through a separate founder decision.
+Mechanical post-merge verification: PERFORMED. Founder acceptance of the
+minimum-deviation implementation: GRANTED. The indivisible-group global
+minimum-deviation allocation capability is therefore SATISFIED. Implementation
+merge is not implementation acceptance, and implementation acceptance is not
+P01-04B acceptance. The founder acceptance recorded here is an explicit founder
+decision; there is no separate canonically adopted minimum-deviation acceptance
+package at this baseline, and none is claimed. Historical governance documents
+that truthfully record the pre-correction UNSATISFIED result are not rewritten.
+
+FD-BR-1 recovery position:
+Step 1 global minimum-deviation grouped allocation correction: COMPLETE.
+Step 2 atomic publication and write-path protection boundary: NEXT — the subject
+of this task. Step 3 integrated P01-04B requalification and acceptance
+disposition: NOT YET ELIGIBLE.
+
+Prospective implementation authority recorded as FD-BPUB-1 through FD-BPUB-18:
+FD-BPUB-1 atomic publication and write-path protection are one cohesive
+capability that must never be independently implemented, activated, accepted,
+exported or made partially operable. FD-BPUB-2 the future publisher is private,
+unexported, library-only, fixture-only, synthetic-only and non-evidence, with no
+CLI and no public API; it must not make SourceDocumentGroupedSplitter.assign
+executable, and it creates no real split, canonical dataset partition, research
+artifact, clinical artifact or admissible evidence. FD-BPUB-3 it consumes only
+exact FixtureSplitRequest and FixtureSplitResult instances plus one explicit
+absolute publication-parent pathlib.Path and one exact tuple of protected roots,
+with no mapping, string, duck-typed object, implicit path, environment default,
+URL, file handle, generator, iterator or adapter, and the request/result binding
+is completely verified before mutation. FD-BPUB-4 freezes the fail-closed
+publication-parent and protected-root rules, full two-way disjointness, direct
+one-component child names, and canonical filesystem identity that fails closed
+when identity cannot be established. FD-BPUB-5 fixes the final directory name
+mesc-p01-04b-split-<split_fingerprint> and the staging directory name
+.mesc-p01-04b-split-<split_fingerprint>.staging, derived only from the verified
+lowercase 64-hex authoritative split fingerprint, with the literal -split-
+component mandatory and no clock, timestamp, PID, hostname, username,
+randomness, UUID, retry counter, environment value or caller suffix.
+
+FD-BPUB-6 fixes the exact seven-file inventory: group-registry.jsonl,
+example-registry.jsonl, excluded-ledger.json, split-summary-identity-core.json,
+split-summary.json and leakage-audit.json bound respectively to
+result.group_registry_bytes, result.example_registry_bytes,
+result.excluded_ledger_bytes, result.split_summary_identity_core_bytes,
+result.split_summary_document_bytes and result.audit_report_bytes, plus exactly
+one publication-manifest.json. The leakage audit filename is exactly
+leakage-audit.json; a -report infix variant of that filename is prohibited, as
+are a compatibility manifest file, request dump, pickle, log, marker, checksum
+sidecar, receipt file, lock file, temp file, README and any eighth file.
+FD-BPUB-7 fixes the non-circular publication manifest at schema
+mesc-pilot-01-fixture-publication-manifest/1 with exactly five top-level members
+schema_version, request_id, split_fingerprint, publication_directory_name and
+files; publication_directory_name is the final directory basename and never an
+absolute path; files holds exactly six records ordered by ascending filename,
+each with exactly four members filename, surface, sha256 and byte_size; the six
+surface identifiers are exactly group_registry, example_registry,
+excluded_ledger, split_summary_identity_core, split_summary_document and
+leakage_audit. The manifest describes only the six payload files, carries no
+digest or size of itself, and carries no fixture_only, non_evidence, fixture_id,
+synthetic_identity_proof, split_hash, execution_evidence_ref, per-record
+schema_version, absolute path, protected root, date, time, timestamp, runtime,
+host, user or repository metadata and no clinical, research or
+evidence-promotion claim. Serialization uses the accepted canonical JSON
+serializer with its accepted terminal-LF behaviour preserved, and descriptor
+schemas are not inferred from ARTIFACT_SCHEMA_VERSIONS for this manifest: the
+exact per-file field is surface, not schema_version.
+
+FD-BPUB-8 requires the complete verified plan — input types, request/result
+identity binding, authoritative fingerprint, fingerprint record, artifact
+descriptors where present, six exact byte surfaces, six recomputed digests, six
+recomputed byte sizes, the six-payload plan, the exact canonical manifest bytes,
+filename uniqueness, the exact seven-name inventory, directory names, parent and
+protected-root safety, staging absence, final absence and availability of a
+supported atomic no-replace rename primitive — to be built and frozen immutably
+before the first filesystem mutation, with no planning or canonical-byte
+construction after attempt acquisition and no invented descriptor requirement
+for byte surfaces the accepted fingerprint record does not describe. FD-BPUB-9
+acquires one attempt only through exclusive creation of the deterministic
+staging directory as a direct child of the publication parent, writing no
+payload file if that creation fails and deriving no alternate staging name.
+FD-BPUB-10 writes all seven files exactly once, binary, exclusively, with no
+append, truncation, overwrite, temporary sibling, individual-file rename, reopen
+for modification or partial rewrite, using no-follow and exclusive facilities
+where available and failing closed otherwise. FD-BPUB-11 writes the six payload
+files first in exact ascending filename order and publication-manifest.json
+last, and staging is never accepted or final merely because the manifest exists
+there.
+
+FD-BPUB-12 requires, immediately after every write, a language-level buffer
+flush, a supported file synchronization primitive such as os.fsync or a
+platform equivalent, close, reopen read-only without following an indirection,
+and verification of exact bytes, SHA-256, byte size and regular-file type; the
+contract guarantees atomic namespace visibility only and claims no universal
+power-loss, storage-controller, filesystem-journal or directory-entry
+durability. FD-BPUB-13 requires the complete pre-rename inventory to be
+enumerated from the filesystem and verified as exactly seven entries with
+exactly the seven expected names, all regular files, with no directory, symlink,
+junction, reparse indirection, socket, FIFO, device, missing file, duplicate,
+unexpected entry or alternate filename, all seven contents reverified, and the
+manifest confirmed to describe exactly the six payload files with matching
+request_id, split_fingerprint and publication_directory_name; hard-link
+substitution is detected and rejected where the platform exposes reliable
+identity or link-count information, and universal hard-link detection is not
+claimed where the platform cannot prove it. FD-BPUB-14 publishes through exactly
+one same-parent staging-directory-to-final-directory rename with atomic
+directory namespace visibility and a destination that must not exist, with no
+replace-existing behaviour, merge, copy fallback, cross-device fallback,
+recursive move or per-file publication; os.replace is prohibited, a destination
+precheck does not provide no-replace semantics, a plain os.rename is authorized
+only where that exact primitive guarantees atomic no-replace behaviour for this
+directory rename, otherwise a private supported atomic no-replace primitive is
+used or the typed unsupported-atomic-rename error is raised before attempt
+acquisition, and "precheck, rename and postcheck" is not authorized as a
+substitute.
+
+FD-BPUB-15 preserves staging exactly as left after any post-creation failure,
+with no deletion, cleanup, retry, resume, repair, alternate name, overwrite or
+final rename, and later recovery is outside this authorization. FD-BPUB-16
+requires post-rename verification that staging no longer exists, that final
+exists under the exact FD-BPUB-5 name as a real directory and not an
+indirection, that parent identity matches, that the seven-entry inventory holds,
+and that all seven files and the manifest bindings are reread and reverified;
+failure raises a typed post-rename verification error and leaves the visible
+final directory untouched, with no rollback, cleanup, replacement or repair.
+FD-BPUB-17 returns, only after successful post-rename verification, one private
+frozen slotted runtime receipt with fields equivalent to exactly
+publication_directory (pathlib.Path), request_id (str), split_fingerprint (str),
+publication_manifest_sha256 (str) and published_filenames (tuple[str, ...]); the
+names final_directory and publication_manifest_bytes must not be used as
+substitutes for the selected fields; published_filenames is the exact ascending
+seven-file inventory; the receipt is not written, is not canonical evidence, is
+not exported, contains no timestamp and no clinical or research claim, does not
+promote the fixture result, and is never returned on failure. FD-BPUB-18
+authorizes one private base publication error with narrowly typed categories
+covering at least invalid input or identity binding, unsafe or protected path,
+existing staging or final conflict, unsupported atomic no-replace rename,
+exclusive staging creation failure, exclusive file creation or write failure,
+content verification failure, inventory verification failure, final rename
+failure and post-rename verification failure, preserving accepted upstream typed
+exceptions where that gives more precise attribution, with no message parsing
+for exception dispatch, and continues the prohibitions on public export, CLI,
+environment switch, network, subprocess, clock, randomness, real-data adapter,
+evidence-root promotion, repository-root promotion, source-tree publication,
+dataset-registry publication, model or weight access, inference, retrieval,
+training, fine-tuning, real split execution, real partition membership,
+canonical leakage execution, P01-04B acceptance and P01-04C through P01-04G.
+
+Exact activation sequence:
+Publication-boundary implementation authority remains inactive until all nine
+conditions occur: 1 independent clean-room exact-head documentation review;
+2 exact reviewed head pushed; 3 Draft PR opened from that exact head; 4 CI and
+CodeQL verified at that exact head; 5 separate Founder Ready decision;
+6 separate Founder Merge decision; 7 merge-commit adoption on canonical main;
+8 mechanical post-merge verification; 9 separate explicit founder activation of
+the implementation gate. The first eight establish canonical adoption and
+eligibility only and do not activate implementation. Condition nine remains
+separately required. NO SEVEN-CONDITION SUBSTITUTE. NO GROUPED OR IMPLIED
+SUBSTITUTE. NO SUBSET ACTIVATES AUTHORITY.
+
+Future implementation identity:
+Branch feat/mesc-p01-04b-publication-boundary; subject
+"feat(mesc): implement P01-04B publication boundary"; exactly four paths, being
+src/medscale/mesc/_fixture_publication_v1.py,
+tests/test_mesc_fixture_publication_v1.py,
+tests/test_mesc_p01_04b_publication_qualification_v1.py and
+.github/workflows/mesc-p01-04b-publication-qualification.yml. No fifth path.
+src/medscale/mesc/__init__.py, src/medscale/mesc/split.py,
+src/medscale/mesc/_split_v1.py, src/medscale/mesc/_fixture_split_v1.py,
+src/medscale/mesc/_canonical_json_v1.py,
+src/medscale/mesc/_split_artifacts_v1.py, src/medscale/mesc/_leakage_v1.py,
+tests/_mesc_p01_04b2d_fixtures_v1.py, pyproject.toml, uv.lock and every prior
+governance package remain byte-identical.
+
+--- Current controlling state ---
+
+P01-T03B18 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #80:
+MERGED AND MECHANICALLY VERIFIED AS
+70bf280fccff4d9f4ecc24839dd9f7597c18e489
+
+FD-BR-1:
+ADOPTED ON CANONICAL MAIN
+
+FD-BMD-1 through FD-BMD-14:
+ADOPTED ON CANONICAL MAIN
+
+PR #81:
+MERGED AND MECHANICALLY VERIFIED AS
+1e8b78379ee4af0c2870a5388001f528ae977221
+
+Minimum-deviation implementation:
+BUILT, INDEPENDENTLY REVIEWED, PUBLISHED, READY, MERGED, MECHANICALLY VERIFIED
+AND FOUNDER-ACCEPTED
+
+Minimum-deviation implementation authority:
+ACTIVATED, EXERCISED EXACTLY ONCE, AND SPENT
+
+MINIMUM-DEVIATION CAPABILITY:
+SATISFIED
+
+P01-04B2A:
+ACCEPTED
+
+P01-04B2B:
+ACCEPTED
+
+P01-04B2C:
+ACCEPTED
+
+P01-04B2D:
+ACCEPTED
+
+FD-BPUB-1 THROUGH FD-BPUB-18:
+ISSUED — NOT YET ADOPTED
+
+PUBLICATION-BOUNDARY IMPLEMENTATION AUTHORITY:
+RECORDED BUT INACTIVE
+
+ATOMIC PUBLICATION:
+NOT YET IMPLEMENTED
+
+WRITE-PATH PROTECTIONS:
+NOT YET IMPLEMENTED
+
+P01-04B acceptance eligibility:
+FALSE
+
+P01-04B:
+CHANGES REQUIRED / NOT ACCEPTED
+
+REAL EXECUTION:
+NOT AUTHORIZED
+
+P01-04C THROUGH P01-04G:
+NOT AUTHORIZED
+
+Real split execution, real partition membership, canonical leakage execution,
+leakage-audit orchestration, dataset scanning, registry scanning, record-pair
+discovery, CLI, public export, filesystem publication, promotion of any fixture
+output, P01-03G or real dataset access, B0/B1 execution, model access,
+inference, retrieval, metrics, benchmark execution, training, fine-tuning,
+adapter creation, publication and clinical use:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-BPUB-1 through FD-BPUB-18:
+RECORDED BUT NOT YET ADOPTED — canonical adoption requires activation conditions
+one through eight, and activation of implementation authority additionally
+requires condition nine, the separate explicit founder activation of the
+implementation gate. NO SUBSET ACTIVATES IMPLEMENTATION AUTHORITY.
+
+Publication-boundary implementation:
+AFTER ADOPTION AND CONDITION NINE ONLY — ONE BRANCH, ONE NORMAL COMMIT, FOUR
+PATHS, ONE BOUNDED ATTEMPT. THE AUTHORITY IS SPENT WHEN THE IMPLEMENTATION
+COMMIT IS CREATED. A DEFECT AFTER COMMIT REQUIRES STOP, REPORT, NO AMEND, NO
+SECOND COMMIT AND A SEPARATE FOUNDER CORRECTION AUTHORIZATION. IMPLEMENTATION
+MERGE DOES NOT EQUAL IMPLEMENTATION ACCEPTANCE
+
+Integrated P01-04B requalification and acceptance disposition:
+FD-BR-1 STEP 3 — NOT YET ELIGIBLE. IT BECOMES ELIGIBLE FOR A SEPARATE FOUNDER
+CONSIDERATION ONLY AFTER THE PUBLICATION BOUNDARY IS SEPARATELY IMPLEMENTED,
+INDEPENDENTLY REVIEWED, ADOPTED AND ACCEPTED. ELIGIBILITY IS NEVER AUTHORITY
+
+P01-04B:
+REMAINS CHANGES REQUIRED / NOT ACCEPTED UNTIL THE PUBLICATION BOUNDARY IS
+CLOSED AND A SEPARATE INTEGRATED REQUALIFICATION AND ACCEPTANCE DISPOSITION IS
+ADOPTED
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+Prerequisite:
+P01-T03B18 ADOPTED (PR #80 merge 70bf280f...) AND FD-BR-1 AND FD-BMD-1 THROUGH
+FD-BMD-14 ADOPTED; MINIMUM-DEVIATION IMPLEMENTATION MERGED (PR #81 merge
+1e8b7837...), MECHANICALLY VERIFIED AND FOUNDER-ACCEPTED; MINIMUM-DEVIATION
+CAPABILITY SATISFIED
+
+Scope:
+Record the founder's bounded prospective authority for the P01-04B atomic
+publication and write-path protection boundary as FD-BPUB-1 through FD-BPUB-18,
+together with the exact canonical baseline, the PR #80 adoption and PR #81
+implementation identity, the founder acceptance of the minimum-deviation
+implementation and the resulting SATISFIED capability, the FD-BR-1 recovery
+position, the private fixture-only boundary, the exact object and path inputs,
+the publication-parent and protected-root rules, the exact directory names with
+the mandatory -split- component, the exact seven-file inventory and six byte
+bindings, the exact five-member non-circular manifest with four-member
+surface-keyed file records, the plan-before-mutation requirement, the
+one-attempt acquisition, the exact-once exclusive writes, the manifest-last
+ordering, the bounded durability claim, the filesystem-derived inventory, the
+atomic no-replace rename requirement, the failure-preservation rule, the
+post-rename verification, the exact five-field private receipt, the typed error
+taxonomy, the four-path future implementation allowlist, the exact nine-condition
+activation sequence and the continuing prohibitions. This gate implements
+nothing, executes nothing, publishes nothing, promotes nothing, and authorizes no
+downstream phase. Prior governance history is adopted at
+specs/mesc-pilot-01/p01-04/, specs/mesc-pilot-01/p01-04b2/,
+specs/mesc-pilot-01/p01-04b2a/, specs/mesc-pilot-01/p01-04b2a-acceptance/,
+specs/mesc-pilot-01/p01-04b2b-authorization/,
+specs/mesc-pilot-01/p01-04b2b-acceptance/,
+specs/mesc-pilot-01/p01-04b2c-authorization/,
+specs/mesc-pilot-01/p01-04b2c-acceptance/,
+specs/mesc-pilot-01/p01-04b2d-authorization/,
+specs/mesc-pilot-01/p01-04b2d-acceptance/ and
+specs/mesc-pilot-01/p01-04b-min-deviation-authorization/ and is not restated.
 ```
