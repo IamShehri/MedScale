@@ -2175,6 +2175,15 @@ OUTSTANDING — REQUIRED BEFORE READY OR MERGE
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B16 was recorded, before FD-B2D-1
+through FD-B2D-14 were adopted on canonical main through PR #77, before the
+P01-04B2D implementation was merged through PR #78, and before FD-B2D-15 was
+issued. It is retained as historical governance evidence and is not the
+repository's present controlling state. The later P01-T03B17 Current controlling
+state supersedes this block.
+
 P01-T03B15 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -2273,4 +2282,212 @@ specs/mesc-pilot-01/p01-04b2b-authorization/,
 specs/mesc-pilot-01/p01-04b2b-acceptance/,
 specs/mesc-pilot-01/p01-04b2c-authorization/ and
 specs/mesc-pilot-01/p01-04b2c-acceptance/ and is not restated.
+```
+
+```text
+P01-T03B17 — Record P01-04B2D qualification acceptance
+and P01-04B non-acceptance disposition
+
+Documentation status:
+RECORDED — NOT ADOPTED
+
+Founder decision:
+FD-B2D-15 ISSUED —
+NOT YET ADOPTED ON CANONICAL MAIN
+
+P01-04B2D:
+FOUNDER-ACCEPTED IN SUBSTANCE;
+NOT YET CANONICALLY ADOPTED
+
+P01-04B:
+CHANGES REQUIRED / NOT ACCEPTED
+
+Minimum-deviation capability:
+UNSATISFIED
+
+Production correction authority:
+NOT GRANTED
+
+P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Required canonical baseline:
+faf58c3fbfa9a83e7d392630e3ad1f322c616259
+(tree 3d27b9c43462ef9880d5fab1ea45b675d5ff55c1;
+ordered parents 63cefe04c23726957aa26ac60ca8087ac9ca333a THEN
+6e5867829006770ad2ed50f26a9af0c455923594;
+subject "Merge pull request #78 from IamShehri/test/mesc-p01-04b2d-qualification";
+body "test(mesc): qualify P01-04B2D synthetic suite")
+
+Chronological completion of P01-T03B16:
+P01-04B2D authorization package: PR #77.
+Reviewed package head: 096f6667251b4783fc9511336301dfaaa4c7f336.
+Reviewed package tree: 30b4cb5433a7f8496e62b8a94d879cf34a8ff26a.
+Canonical authorization merge: 63cefe04c23726957aa26ac60ca8087ac9ca333a.
+Independent exact-head review of that package: COMPLETED, NO BLOCKING FINDING.
+FD-B2D-1 THROUGH FD-B2D-14: ADOPTED.
+P01-04B2D implementation authority: ACTIVATED, EXERCISED EXACTLY ONCE, AND SPENT.
+
+Accepted implementation identity:
+PR #78 on branch test/mesc-p01-04b2d-qualification.
+Reviewed and merged head: 6e5867829006770ad2ed50f26a9af0c455923594.
+Reviewed implementation tree: 3d27b9c43462ef9880d5fab1ea45b675d5ff55c1.
+Implementation parent: 63cefe04c23726957aa26ac60ca8087ac9ca333a.
+Canonical implementation merge: faf58c3fbfa9a83e7d392630e3ad1f322c616259.
+1 commit / 3 files / 3223 additions / 0 deletions, being exactly
+.github/workflows/mesc-p01-04b2d-qualification.yml blob
+b45811a2e104e61149c766b39d3c1ad832959b69, tests/_mesc_p01_04b2d_fixtures_v1.py
+blob f35b4443e79338d2309ca9f4197eee8368ea7069 and
+tests/test_mesc_p01_04b2d_qualification_v1.py blob
+ad215f717ef1b27bc7adbfb5c68d81e91ccfc6dd. No production module, dependency,
+lockfile, public export, CLI or entry point was changed.
+
+Review and workflow basis:
+Independent clean-room exact-head implementation review returned APPROVE WITH
+NON-BLOCKING NOTES with NO BLOCKING FINDING at head
+6e5867829006770ad2ed50f26a9af0c455923594 and tree
+3d27b9c43462ef9880d5fab1ea45b675d5ff55c1. All nine non-blocking observations are
+carried forward in full and ACCEPTED AS NON-BLOCKING; no correction authorization
+is issued and no deferred implementation obligation is created. Pull-request
+checks at the exact head: CI run 30780440275 success 2/2, CodeQL run 30780440276
+success 1/1, MESC P01-04B2D Qualification run 30780440318 success 6/6. Post-merge
+push-triggered runs at faf58c3f...: CI run 30781355622 success 2/2, CodeQL run
+30781355591 success 1/1, MESC P01-04B2D Qualification run 30781355599 success
+6/6. Mechanical post-merge verification: PASSED. Workflow success is
+qualification-harness evidence only and is not scientific, clinical, dataset or
+real-split evidence.
+
+Criterion disposition:
+Criteria 1 through 10 SATISFIED. Criterion 11 atomic publication and criterion 12
+write-path protections are NOT APPLICABLE TO B2D and NOT SATISFIED FOR P01-04B
+OVERALL. Criterion 13 date-free promotable artifacts is NOT APPLICABLE TO B2D
+OUTPUT PROMOTION, with the date-free canonical-byte invariant SATISFIED for the
+synthetic B2D surfaces and establishing no promotability. Recorded separately,
+outside the thirteen numbered criteria, the indivisible-group global
+minimum-deviation allocation capability of FD-B2-7 Fixture B is UNSATISFIED
+because the accepted allocation performs exact-target allocation only and fails
+closed with the typed allocation error rather than producing a minimum-deviation
+allocation. The typed fail-closed failure is correct detection of a missing
+capability and is never conformance to it. NOT APPLICABLE is never converted to
+SATISFIED. A GREEN QUALIFICATION WORKFLOW DOES NOT EQUAL P01-04B ACCEPTANCE.
+
+--- Current controlling state ---
+
+P01-T03B16 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #77:
+MERGED AND MECHANICALLY VERIFIED AS
+63cefe04c23726957aa26ac60ca8087ac9ca333a
+
+FD-B2D-1 through FD-B2D-14:
+ADOPTED ON CANONICAL MAIN
+
+P01-04B2D implementation authority:
+ACTIVATED, EXERCISED EXACTLY ONCE, AND SPENT
+
+PR #78:
+MERGED AND MECHANICALLY VERIFIED AS
+faf58c3fbfa9a83e7d392630e3ad1f322c616259
+
+P01-04B2D implementation:
+COMPLETE ON CANONICAL MAIN — INDEPENDENTLY REVIEWED AT ITS EXACT HEAD WITH NO
+BLOCKING FINDING; SIX-CELL QUALIFICATION SUCCEEDED BEFORE AND AFTER MERGE
+
+FD-B2D-15:
+FOUNDER DECISION ISSUED — NOT YET ADOPTED ON CANONICAL MAIN; see P01-T03B17
+
+P01-04B2A:
+ACCEPTED
+
+P01-04B2B:
+ACCEPTED
+
+P01-04B2C:
+ACCEPTED
+
+P01-04B2D:
+FOUNDER-ACCEPTED IN SUBSTANCE; NOT YET CANONICALLY ADOPTED
+
+Indivisible-group global minimum-deviation allocation:
+UNSATISFIED
+
+Atomic publication:
+NOT APPLICABLE TO B2D; NOT SATISFIED FOR P01-04B OVERALL
+
+Write-path protections:
+NOT APPLICABLE TO B2D; NOT SATISFIED FOR P01-04B OVERALL
+
+Date-free canonical-byte invariant:
+SATISFIED FOR THE SYNTHETIC B2D SURFACES; ESTABLISHES NO PROMOTABILITY
+
+P01-04B acceptance eligibility:
+FALSE
+
+P01-04B:
+CHANGES REQUIRED / NOT ACCEPTED
+
+Production correction authority:
+NOT GRANTED
+
+P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Real split generation, real or canonical leakage-audit execution,
+leakage-audit orchestration, dataset scanning, registry scanning, record-pair
+discovery, automatic finding discovery, CLI, public export, filesystem
+publication, promotion of any B2D output, P01-03G or real dataset access,
+B0/B1 execution, model access, inference, retrieval, metrics, benchmark
+execution, training, fine-tuning, adapter creation, publication and clinical
+use:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-B2D-15:
+RECORDED BUT NOT YET ADOPTED — canonical adoption requires all five conditions:
+a genuinely independent clean-room exact-head review of this acceptance package,
+a separate Founder Ready decision, a separate Founder Merge decision, merge into
+canonical main, and mechanical post-merge verification. NO SUBSET ADOPTS
+FD-B2D-15. NO SUBSET CANONICALLY ACCEPTS P01-04B2D.
+
+Minimum-deviation production correction, atomic-publication implementation and
+write-path implementation:
+EACH ELIGIBLE FOR A SEPARATE FOUNDER CONSIDERATION WITH ITS OWN AUTHORIZATION,
+CONTRACT, INDEPENDENT REVIEW AND ACCEPTANCE DECISION. ELIGIBILITY IS NEVER
+AUTHORITY. NONE IS AUTHORIZED BY THIS PACKAGE
+
+P01-04B:
+REMAINS CHANGES REQUIRED / NOT ACCEPTED WHILE THE INDIVISIBLE-GROUP GLOBAL
+MINIMUM-DEVIATION CRITERION IS UNSATISFIED AND THE ATOMIC-PUBLICATION AND
+WRITE-PATH CRITERIA ARE NOT SATISFIED FOR P01-04B OVERALL
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+Prerequisite:
+P01-T03B16 ADOPTED (PR #77 merge 63cefe04...) AND FD-B2D-1 THROUGH FD-B2D-14
+ADOPTED; P01-04B2D IMPLEMENTATION MERGED (PR #78 merge faf58c3f...) AND
+MECHANICALLY VERIFIED
+
+Scope:
+Record the founder's qualification-acceptance disposition for the exact
+P01-04B2D implementation as FD-B2D-15, together with the exact authorization and
+implementation identity, the three accepted paths and blobs, the independent
+exact-head review verdict and its nine accepted non-blocking observations, the
+pull-request and post-merge CI, CodeQL and six-cell qualification evidence, the
+mechanical post-merge verification, the three fixture dispositions, the complete
+thirteen-criterion mapping, the separately recorded UNSATISFIED minimum-deviation
+capability, the P01-04B CHANGES REQUIRED / NOT ACCEPTED decision, the withholding
+of production correction authority, the five-condition adoption gate and the
+continuing prohibitions. This gate implements nothing, executes nothing, corrects
+nothing, promotes nothing, and authorizes no downstream phase. Prior governance
+history is adopted at specs/mesc-pilot-01/p01-04/,
+specs/mesc-pilot-01/p01-04b2/, specs/mesc-pilot-01/p01-04b2a/,
+specs/mesc-pilot-01/p01-04b2a-acceptance/,
+specs/mesc-pilot-01/p01-04b2b-authorization/,
+specs/mesc-pilot-01/p01-04b2b-acceptance/,
+specs/mesc-pilot-01/p01-04b2c-authorization/,
+specs/mesc-pilot-01/p01-04b2c-acceptance/ and
+specs/mesc-pilot-01/p01-04b2d-authorization/ and is not restated.
 ```
