@@ -52,7 +52,7 @@ from medscale.mesc._split_v1 import (
     LabeledExample,
     OrderedExampleRow,
     SourceLabelRow,
-    allocate_indivisible_groups,
+    _allocate_indivisible_groups_with_minimum_deviation,
     constrained_apportionment,
     join_labels,
 )
@@ -789,7 +789,10 @@ class FixtureSplitFacade:
         for example in joined:
             label_totals[example.decision] += 1
         targets = constrained_apportionment(label_totals, request.partition_totals)
-        assignments = allocate_indivisible_groups(joined, targets)
+        # Exact allocation first, unchanged; the bounded private minimum-deviation
+        # correction is reached only when the accepted allocator raises its typed
+        # ranked-boundary failure (FD-BMD-12).
+        assignments = _allocate_indivisible_groups_with_minimum_deviation(joined, targets)
 
         row_ordinals = _row_ordinals_by_example_id(joined)
         manifest = _compatibility_manifest(assignments, row_ordinals)
