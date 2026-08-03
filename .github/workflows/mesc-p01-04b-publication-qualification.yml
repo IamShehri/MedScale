@@ -1,0 +1,133 @@
+name: MESC P01-04B Publication Qualification
+
+# Dedicated cross-platform qualification of the P01-04B atomic publication and
+# write-path protection boundary (FD-BPUB-1 .. FD-BPUB-18).
+#
+# The atomic no-replace directory rename primitive is platform-specific, so the
+# matrix is the evidence: every supported platform must satisfy the same exact
+# contract, or fail closed before acquiring an attempt.
+#
+# All inputs and outputs are synthetic, fixture-only and non-evidence. Every
+# filesystem operation happens inside the runner's temporary workspace. This
+# workflow performs no real split generation, no real partition membership, no
+# real or canonical leakage audit, no dataset or model access, no inference, no
+# retrieval, no training, no fine-tuning and no publication. It promotes no file
+# into the repository and uploads no fixture output.
+#
+# A green run is qualification-harness evidence only. It DOES NOT EQUAL
+# P01-04B ACCEPTANCE and activates no further authority.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/mesc-p01-04b-publication-qualification.yml'
+      - 'src/medscale/mesc/_fixture_publication_v1.py'
+      - 'tests/test_mesc_fixture_publication_v1.py'
+      - 'tests/test_mesc_p01_04b_publication_qualification_v1.py'
+      - 'src/medscale/mesc/__init__.py'
+      - 'src/medscale/mesc/split.py'
+      - 'src/medscale/mesc/_split_v1.py'
+      - 'src/medscale/mesc/_fixture_split_v1.py'
+      - 'src/medscale/mesc/_canonical_json_v1.py'
+      - 'src/medscale/mesc/_split_artifacts_v1.py'
+      - 'src/medscale/mesc/_leakage_v1.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mesc-p01-04b-publication-qualification.yml'
+      - 'src/medscale/mesc/_fixture_publication_v1.py'
+      - 'tests/test_mesc_fixture_publication_v1.py'
+      - 'tests/test_mesc_p01_04b_publication_qualification_v1.py'
+      - 'src/medscale/mesc/__init__.py'
+      - 'src/medscale/mesc/split.py'
+      - 'src/medscale/mesc/_split_v1.py'
+      - 'src/medscale/mesc/_fixture_split_v1.py'
+      - 'src/medscale/mesc/_canonical_json_v1.py'
+      - 'src/medscale/mesc/_split_artifacts_v1.py'
+      - 'src/medscale/mesc/_leakage_v1.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+
+# Read-only. No write scope, no secret, no OIDC, no package, no release and no
+# cache publication is requested or used.
+permissions:
+  contents: read
+
+concurrency:
+  group: mesc-p01-04b-publication-qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    name: publication (${{ matrix.os }} py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python-version: '3.11'
+          - os: ubuntu-latest
+            python-version: '3.12'
+          - os: windows-latest
+            python-version: '3.11'
+          - os: windows-latest
+            python-version: '3.12'
+          - os: macos-latest
+            python-version: '3.11'
+          - os: macos-latest
+            python-version: '3.12'
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Install uv and Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: '0.11.14'
+          python-version: ${{ matrix.python-version }}
+          enable-cache: false
+
+      - name: Sync (locked)
+        shell: bash
+        run: uv sync --frozen
+
+      - name: Lockfile is unchanged
+        shell: bash
+        run: uv lock --check
+
+      - name: Lint
+        shell: bash
+        run: uv run ruff check .
+
+      - name: Format check
+        shell: bash
+        run: uv run ruff format --check .
+
+      - name: Type check
+        shell: bash
+        run: uv run python -m mypy
+
+      - name: Publication boundary behaviour
+        shell: bash
+        run: uv run pytest tests/test_mesc_fixture_publication_v1.py
+
+      - name: Independent publication qualification
+        shell: bash
+        run: uv run pytest tests/test_mesc_p01_04b_publication_qualification_v1.py
+
+      - name: Accepted split, artifact and leakage non-regression
+        shell: bash
+        run: |
+          uv run pytest \
+            tests/test_mesc_split_v1.py \
+            tests/test_mesc_fixture_split_v1.py \
+            tests/test_mesc_leakage_v1.py \
+            tests/test_mesc_p01_04b2d_qualification_v1.py
