@@ -1,0 +1,99 @@
+name: MESC P01-04B2D Qualification
+
+# Dedicated cross-platform qualification of the P01-04B2D integrated synthetic
+# suite (FD-B2D-1 .. FD-B2D-14).
+#
+# Every cell runs exactly one test module against the same committed literal
+# golden vectors. No OS-specific expected value exists, so success in all six
+# cells is the cross-runtime byte-identity evidence.
+#
+# All inputs and outputs are synthetic, fixture-only and non-evidence. This
+# workflow performs no real split generation, no real or canonical leakage
+# audit, no dataset or model access, no inference, no metrics and no
+# publication. It promotes no result file into the repository.
+#
+# A green run is qualification-harness evidence only. It records one UNSATISFIED
+# P01-04B criterion (indivisible-group global minimum-deviation allocation) and
+# therefore DOES NOT EQUAL P01-04B ACCEPTANCE.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/mesc-p01-04b2d-qualification.yml'
+      - 'tests/_mesc_p01_04b2d_fixtures_v1.py'
+      - 'tests/test_mesc_p01_04b2d_qualification_v1.py'
+      - 'src/medscale/mesc/split.py'
+      - 'src/medscale/mesc/_split_v1.py'
+      - 'src/medscale/mesc/_canonical_json_v1.py'
+      - 'src/medscale/mesc/_split_artifacts_v1.py'
+      - 'src/medscale/mesc/_leakage_v1.py'
+      - 'src/medscale/mesc/_fixture_split_v1.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mesc-p01-04b2d-qualification.yml'
+      - 'tests/_mesc_p01_04b2d_fixtures_v1.py'
+      - 'tests/test_mesc_p01_04b2d_qualification_v1.py'
+      - 'src/medscale/mesc/split.py'
+      - 'src/medscale/mesc/_split_v1.py'
+      - 'src/medscale/mesc/_canonical_json_v1.py'
+      - 'src/medscale/mesc/_split_artifacts_v1.py'
+      - 'src/medscale/mesc/_leakage_v1.py'
+      - 'src/medscale/mesc/_fixture_split_v1.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+
+# Read-only. No write scope, no secret, no OIDC, no package, no release and no
+# cache publication is requested or used.
+permissions:
+  contents: read
+
+concurrency:
+  group: mesc-p01-04b2d-qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    name: qualification (${{ matrix.os }} py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python-version: '3.11'
+          - os: ubuntu-latest
+            python-version: '3.12'
+          - os: windows-latest
+            python-version: '3.11'
+          - os: windows-latest
+            python-version: '3.12'
+          - os: macos-latest
+            python-version: '3.11'
+          - os: macos-latest
+            python-version: '3.12'
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Install uv and Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: '0.11.14'
+          python-version: ${{ matrix.python-version }}
+          enable-cache: false
+
+      - name: Sync (locked)
+        shell: bash
+        run: uv sync --frozen
+
+      - name: Qualify P01-04B2D synthetic suite
+        shell: bash
+        run: uv run pytest tests/test_mesc_p01_04b2d_qualification_v1.py
