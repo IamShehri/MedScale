@@ -2373,6 +2373,14 @@ SATISFIED. A GREEN QUALIFICATION WORKFLOW DOES NOT EQUAL P01-04B ACCEPTANCE.
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B17 was recorded, before FD-B2D-15
+was adopted on canonical main through PR #79, and before FD-BR-1 and FD-BMD-1
+through FD-BMD-14 were issued. It is retained as historical governance evidence
+and is not the repository's present controlling state. The later P01-T03B18
+Current controlling state supersedes this block.
+
 P01-T03B16 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -2490,4 +2498,225 @@ specs/mesc-pilot-01/p01-04b2b-acceptance/,
 specs/mesc-pilot-01/p01-04b2c-authorization/,
 specs/mesc-pilot-01/p01-04b2c-acceptance/ and
 specs/mesc-pilot-01/p01-04b2d-authorization/ and is not restated.
+```
+
+```text
+P01-T03B18 — Authorize P01-04B minimum-deviation correction
+
+Documentation status:
+RECORDED — NOT ADOPTED
+
+FD-BR-1:
+ISSUED — NOT YET ADOPTED
+
+FD-BMD-1 through FD-BMD-14:
+ISSUED — NOT YET ADOPTED
+
+Minimum-deviation implementation authority:
+RECORDED BUT INACTIVE
+
+P01-04B:
+CHANGES REQUIRED / NOT ACCEPTED
+
+Atomic publication:
+NOT SATISFIED / NOT AUTHORIZED
+
+Write-path protections:
+NOT SATISFIED / NOT AUTHORIZED
+
+P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Required canonical baseline:
+3513d66bc36650363a6368bb4e42901119419802
+(tree e08393388f4684b39ef9226a3a90b719ea1ba494;
+ordered parents faf58c3fbfa9a83e7d392630e3ad1f322c616259 THEN
+c38473d69c996e626510256d6297640bd87405ad;
+subject "Merge pull request #79 from IamShehri/docs/mesc-p01-04b2d-acceptance";
+body "docs(mesc): record P01-04B2D qualification acceptance")
+
+Chronological completion of P01-T03B17:
+P01-04B2D acceptance package: PR #79.
+Reviewed package head: c38473d69c996e626510256d6297640bd87405ad.
+Canonical acceptance merge: 3513d66bc36650363a6368bb4e42901119419802.
+Independent exact-head review of that package: COMPLETED, NO BLOCKING FINDING.
+FD-B2D-15: ADOPTED ON CANONICAL MAIN.
+P01-04B2D: ACCEPTED.
+
+Recovery architecture recorded as FD-BR-1:
+Increment 1 global minimum-deviation grouped allocation correction; increment 2
+atomic publication and write-path protection boundary; increment 3 integrated
+P01-04B requalification and acceptance disposition. Each increment requires its
+own authorization, implementation, independent review, acceptance and canonical
+adoption. Atomic publication and write-path protections form one cohesive
+filesystem-publication boundary and must not be implemented as independent,
+partially operable production surfaces. The allocation correction must be
+accepted before publication work may be authorized, and publication-boundary
+acceptance must precede final P01-04B requalification. No increment is named
+P01-04B2E because P01-04E is an existing official downstream stage.
+
+Prospective implementation authority recorded as FD-BMD-1 through FD-BMD-14:
+The correction stays private and library-only, and
+SourceDocumentGroupedSplitter.assign remains unconditionally fail-closed. The
+accepted exact allocator allocate_indivisible_groups is preserved, not replaced,
+and every currently successful exact-feasible request must retain byte-identical
+assignments, registries, summaries, hashes and fingerprints. One private typed
+SplitAllocationError subclass, raised only at the ranked-boundary crossing, is
+the sole fallback trigger; no fallback may depend on parsing an exception
+message. One private exact-first/minimum-deviation resolver is authorized. The
+objective is the integer sum of squared deviations over the nine cells ordered
+yes/train, yes/validation, yes/test, no/train, no/validation, no/test,
+maybe/train, maybe/validation, maybe/test, with no floating point, no tolerance
+and no heuristic, and the selected result must be a proven global minimum. Ties
+break first to the lexicographically smallest nine-cell matrix, then to the
+lexicographically smallest partition-code vector using decision order yes, no,
+maybe, the existing rank_groups ordering within each decision, and codes
+train = 0, validation = 1, test = 2. The search must be a complete deterministic
+reachable-state dynamic program, bounded to 1000 examples, 1000 source-document
+groups, 3 decisions and 3 partitions, failing closed beyond that boundary.
+
+Required corrected result:
+constraint-stress-1000-v1 with 1000 rows, 500 groups of size 2 and target matrix
+386,83,83,237,50,51,77,17,16 has an INFEASIBLE exact target, a global minimum
+squared-deviation score of 6, exactly 2 minimum-score matrices, selected matrix
+386,82,84,238,50,50,76,18,16 and runner-up 386,84,82,236,50,52,78,16,16. It must
+then produce a successful deterministic in-memory FixtureSplitResult with frozen
+literal goldens. exact-reference-1000-v1 and leakage-positive-v1 must remain
+byte-identical, and ALGORITHM_VERSION, SPLIT_SEED and every canonical
+serialization, artifact, leakage, fixture-identity and request-identity schema
+version must be unchanged.
+
+Future implementation identity:
+Branch fix/mesc-p01-04b-minimum-deviation; subject
+"fix(mesc): implement P01-04B minimum-deviation allocation"; exactly four paths,
+being src/medscale/mesc/_split_v1.py, src/medscale/mesc/_fixture_split_v1.py,
+tests/test_mesc_split_v1.py and tests/test_mesc_p01_04b2d_qualification_v1.py.
+No fifth path. tests/_mesc_p01_04b2d_fixtures_v1.py,
+.github/workflows/mesc-p01-04b2d-qualification.yml, src/medscale/mesc/split.py,
+pyproject.toml and uv.lock remain byte-identical, and no workflow edit is
+authorized; the existing qualification workflow triggers automatically through
+its existing path filters.
+
+Post-correction qualification disposition:
+The indivisible-group global minimum-deviation capability becomes SATISFIED,
+while atomic publication and write-path protections remain NOT SATISFIED FOR
+P01-04B OVERALL, P01-04B acceptance eligibility remains FALSE and P01-04B remains
+CHANGES REQUIRED / NOT ACCEPTED. Historical governance documents that truthfully
+record the pre-correction UNSATISFIED result are not rewritten, and a successful
+correction does not retroactively make those records false.
+
+--- Current controlling state ---
+
+P01-T03B17 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #79:
+MERGED AND MECHANICALLY VERIFIED AS
+3513d66bc36650363a6368bb4e42901119419802
+
+FD-B2D-15:
+ADOPTED ON CANONICAL MAIN
+
+P01-04B2A:
+ACCEPTED
+
+P01-04B2B:
+ACCEPTED
+
+P01-04B2C:
+ACCEPTED
+
+P01-04B2D:
+ACCEPTED
+
+FD-BR-1:
+FOUNDER DECISION ISSUED — NOT YET ADOPTED ON CANONICAL MAIN; see P01-T03B18
+
+FD-BMD-1 through FD-BMD-14:
+FOUNDER DECISIONS ISSUED — NOT YET ADOPTED ON CANONICAL MAIN; see P01-T03B18
+
+Minimum-deviation implementation authority:
+RECORDED BUT INACTIVE
+
+Minimum-deviation implementation:
+NOT AUTHORIZED TO BEGIN
+
+Indivisible-group global minimum-deviation allocation:
+UNSATISFIED
+
+Atomic publication:
+NOT SATISFIED FOR P01-04B OVERALL; IMPLEMENTATION NOT AUTHORIZED
+
+Write-path protections:
+NOT SATISFIED FOR P01-04B OVERALL; IMPLEMENTATION NOT AUTHORIZED
+
+P01-04B acceptance eligibility:
+FALSE
+
+P01-04B:
+CHANGES REQUIRED / NOT ACCEPTED
+
+P01-04C through P01-04G:
+NOT AUTHORIZED
+
+Real split generation, real or canonical leakage-audit execution,
+leakage-audit orchestration, dataset scanning, registry scanning, record-pair
+discovery, automatic finding discovery, CLI, public export, filesystem
+publication, promotion of any B2D output, P01-03G or real dataset access,
+B0/B1 execution, model access, inference, retrieval, metrics, benchmark
+execution, training, fine-tuning, adapter creation, publication and clinical
+use:
+NOT AUTHORIZED
+
+--- Future gated authority ---
+
+FD-BR-1 and FD-BMD-1 through FD-BMD-14:
+RECORDED BUT NOT YET ADOPTED — canonical adoption and activation require all
+five conditions: a genuinely independent clean-room exact-head review of this
+authorization package, a separate Founder Ready decision, a separate Founder
+Merge decision, merge into canonical main, and mechanical post-merge
+verification. NO SUBSET ACTIVATES IMPLEMENTATION AUTHORITY.
+
+Minimum-deviation implementation:
+AFTER ADOPTION ONLY — ONE BRANCH, ONE NORMAL COMMIT, FOUR PATHS, ONE BOUNDED
+ATTEMPT. THE AUTHORITY IS SPENT WHEN THE IMPLEMENTATION COMMIT IS CREATED. A
+DEFECT AFTER COMMIT REQUIRES STOP, REPORT, NO AMEND, NO SECOND COMMIT AND A
+SEPARATE FOUNDER CORRECTION AUTHORIZATION. IMPLEMENTATION MERGE DOES NOT EQUAL
+IMPLEMENTATION ACCEPTANCE
+
+Atomic-publication and write-path boundary:
+ELIGIBLE FOR A SEPARATE FOUNDER CONSIDERATION ONLY AFTER THE MINIMUM-DEVIATION
+IMPLEMENTATION IS SEPARATELY ACCEPTED. ELIGIBILITY IS NEVER AUTHORITY
+
+P01-04B:
+REMAINS CHANGES REQUIRED / NOT ACCEPTED UNTIL ALL THREE GAPS ARE CLOSED AND A
+SEPARATE INTEGRATED REQUALIFICATION AND ACCEPTANCE DISPOSITION IS ADOPTED
+
+Independent exact-head review of this governance package:
+OUTSTANDING — REQUIRED BEFORE READY OR MERGE
+
+Prerequisite:
+P01-T03B17 ADOPTED (PR #79 merge 3513d66b...) AND FD-B2D-15 ADOPTED;
+P01-04B2D ACCEPTED
+
+Scope:
+Record the founder's P01-04B recovery architecture as FD-BR-1 and the bounded
+prospective minimum-deviation correction authority as FD-BMD-1 through
+FD-BMD-14, together with the exact canonical baseline, the accepted B2D
+identity, the three remaining P01-04B gaps, the four-path future implementation
+allowlist, the exact integer objective, the nine-cell matrix order, both
+tie-break rules, the complete deterministic search requirement, the
+constraint-stress expected result, the exact-feasible byte non-regression
+requirement, the five activation conditions, the one-attempt authority, the
+pre-adoption and post-adoption states and the continuing prohibitions. This gate
+implements nothing, executes nothing, corrects nothing, promotes nothing, and
+authorizes no downstream phase. Prior governance history is adopted at
+specs/mesc-pilot-01/p01-04/, specs/mesc-pilot-01/p01-04b2/,
+specs/mesc-pilot-01/p01-04b2a/, specs/mesc-pilot-01/p01-04b2a-acceptance/,
+specs/mesc-pilot-01/p01-04b2b-authorization/,
+specs/mesc-pilot-01/p01-04b2b-acceptance/,
+specs/mesc-pilot-01/p01-04b2c-authorization/,
+specs/mesc-pilot-01/p01-04b2c-acceptance/,
+specs/mesc-pilot-01/p01-04b2d-authorization/ and
+specs/mesc-pilot-01/p01-04b2d-acceptance/ and is not restated.
 ```
