@@ -208,6 +208,91 @@ P01-04C passes acceptance when:
 
 P01-04C acceptance requires a separate founder authorization.
 
+### Current acceptance disposition
+
+This subsection is the current controlling status for P01-04C.
+
+```text
+Canonical acceptance baseline:
+b20dbe0000a129f3019d6f7d2895622ce0560069
+
+Accepted reviewed head:
+c9cf1cc58b3ff89c39327c328a10308c0a9dbf4d
+
+Merged PR:
+#85
+
+Founder P01-04C acceptance:
+ISSUED ON 2026-08-04
+
+P01-04C synthetic fixture qualification:
+ACCEPTED
+
+Post-merge CI:
+SUCCESS
+
+Post-merge CodeQL:
+SUCCESS
+
+Post-merge Optional Extras / Backends:
+SUCCESS
+
+P01-04D:
+NOT AUTHORIZED
+
+Real dataset execution:
+NOT AUTHORIZED
+```
+
+Each of the four P01-04C acceptance criteria above is mapped individually
+against canonical main `b20dbe0000a129f3019d6f7d2895622ce0560069`.
+
+```text
+1. Deterministic synthetic small-input fixture tests:
+SATISFIED
+
+2. Repeated-run artifact byte identity:
+SATISFIED
+
+3. Ratified edge-case semantics:
+SATISFIED
+
+4. No real dataset partition membership:
+SATISFIED
+```
+
+The ratified edge-case semantics are that `pass` does not require a successful
+split in every case: empty input is expected to fail closed deterministically,
+single-example input is expected to succeed, and all-one-label input is expected
+to succeed.
+
+The accepted synthetic qualification fixtures are exactly:
+
+```text
+p01-04c-small-20-v1
+p01-04c-single-example-v1
+p01-04c-all-one-label-20-v1
+empty-input deterministic fail-closed case
+```
+
+This disposition accepts the synthetic fixture qualification only. It authorizes
+no real dataset access, no P01-03G registry access, no real split generation, no
+real partition membership, no canonical leakage execution, no dataset or
+registry scanning, no record-pair discovery, no public export, no filesystem or
+evidence publication, no model access, inference, retrieval, benchmark
+execution, training, fine-tuning, adapter creation and no clinical use.
+
+```text
+P01-04C:
+ACCEPTED
+
+P01-04D:
+NOT AUTHORIZED
+```
+
+The P01-04D acceptance criteria recorded below are unchanged by this
+disposition. P01-04D is not accepted and is not authorized.
+
 ---
 
 ## P01-04D — Formal Split Generation

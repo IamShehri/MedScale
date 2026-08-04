@@ -88,9 +88,10 @@ Note: P01-04B acceptance is tooling acceptance only. It does not authorize any r
   - single-example: expected success
   - all-one-label: expected success
 - Stop conditions: real dataset partition membership generated; qualification performed without separate founder authorization; fixtures substituted with real data.
-- Authorization status: SYNTHETIC FIXTURE QUALIFICATION AUTHORIZED — ACCEPTANCE PENDING — REAL DATASET EXECUTION NOT AUTHORIZED.
+- Acceptance summary: all four P01-04C criteria SATISFIED; canonical acceptance baseline `b20dbe0000a129f3019d6f7d2895622ce0560069`; reviewed candidate head `c9cf1cc58b3ff89c39327c328a10308c0a9dbf4d`; PR #85 merged; post-merge CI, CodeQL and Optional Extras / Backends all successful; no real dataset membership generated.
+- Authorization status: COMPLETED AND ACCEPTED — REAL DATASET EXECUTION NOT AUTHORIZED.
 
-Note: the P01-04C authorization covers synthetic fixture construction, in-memory fixture execution and local qualification evidence only. It is not P01-04C acceptance, and it authorizes no real dataset access, no real partition generation, no canonical leakage execution and no P01-04D or later work.
+Note: P01-04C acceptance accepts synthetic qualification only. It does not authorize P01-04D, real split generation, real membership, canonical leakage execution or any later phase.
 
 ## P01-05 — B0/B1 baseline runner
 

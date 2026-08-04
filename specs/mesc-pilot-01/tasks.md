@@ -3295,6 +3295,11 @@ P01-05 is not unlocked.
 ```text
 P01-T03C1 — P01-04C synthetic fixture qualification
 
+HISTORICAL CANDIDATE-BUILD RECORD — SUPERSEDED FOR CURRENT STATUS.
+Every field below was true when the candidate was built and is preserved
+unrewritten. The later P01-T03C2 block records the current status: the candidate
+was independently reviewed, merged through PR #85 and founder-accepted.
+
 Founder authorization:
 ISSUED ON 2026-08-04
 
@@ -3372,7 +3377,13 @@ canonical leakage audit, publishes no evidence, and authorizes no downstream
 phase. Qualification evidence is never canonical evidence, research evidence or
 real split evidence.
 
---- Current controlling state ---
+--- Historical controlling-state snapshot — SUPERSEDED ---
+
+This was the controlling state when P01-T03C1 was recorded, before the P01-04C
+qualification candidate was independently reviewed, published as PR #85, merged
+onto canonical main and founder-accepted. Its facts remain truthful for that
+point in the chronology and are preserved unrewritten. The later P01-T03C2
+Current controlling state supersedes this block for all current status purposes.
 
 P01-T03B20 documentation:
 ADOPTED ON CANONICAL MAIN
@@ -3432,4 +3443,157 @@ A passing synthetic qualification candidate is not P01-04C acceptance. No real
 split exists, no real partition membership exists, no real labels were
 processed, no canonical leakage was executed and no evidence was published.
 P01-04 overall is not complete and P01-05 is not unlocked.
+```
+
+```text
+P01-T03C2 — P01-04C acceptance closeout
+
+Founder P01-04C acceptance:
+ISSUED ON 2026-08-04
+
+Prerequisite:
+P01-04C QUALIFICATION CANDIDATE MERGED AND POST-MERGE GREEN
+
+Accepted canonical baseline:
+b20dbe0000a129f3019d6f7d2895622ce0560069
+
+Accepted reviewed head:
+c9cf1cc58b3ff89c39327c328a10308c0a9dbf4d
+
+Merged PR:
+#85
+
+P01-04C:
+ACCEPTED
+
+P01-04D:
+NOT AUTHORIZED
+
+Real dataset execution:
+NOT AUTHORIZED
+
+Accepted canonical baseline detail:
+b20dbe0000a129f3019d6f7d2895622ce0560069
+(tree 92e78e8020f655316b8b487deb199f444a0ec75f;
+ordered parents 78cb1004b15c4ff4daa25895e4bbec99c4bb4eae THEN
+c9cf1cc58b3ff89c39327c328a10308c0a9dbf4d;
+subject "Merge pull request #85 from IamShehri/test/mesc-p01-04c-fixture-qualification";
+body "test(mesc): qualify P01-04C synthetic fixtures")
+
+Closeout branch:
+docs/mesc-p01-04c-acceptance-closeout
+
+Closeout commit identity:
+Recorded outside this block. The closeout is exactly one commit whose parent is
+the accepted canonical baseline above, carrying exactly five documentation
+paths. Its SHA is reported in the build report and in the independent review
+request, never written inside the content it would have to hash.
+
+Exact five-path scope:
+M specs/mesc-pilot-01/p01-04/acceptance.md
+M specs/mesc-pilot-01/p01-04/decision-record.md
+M specs/mesc-pilot-01/p01-04c-fixture-qualification/qualification-record.md
+M specs/mesc-pilot-01/plan.md
+M specs/mesc-pilot-01/tasks.md
+No sixth path. No source, test, workflow, dependency or lockfile change.
+
+Acceptance basis:
+C1 SUPPORTED AND ACCEPTED — all dedicated P01-04C deterministic synthetic
+fixture tests pass.
+C2 SUPPORTED AND ACCEPTED — all successful fixture artifacts are byte-identical
+across three fresh, semantically identical runs.
+C3 SUPPORTED AND ACCEPTED — the ratified edge-case semantics pass: empty input
+expected deterministic fail-closed, single-example input expected success,
+all-one-label input expected success.
+C4 SUPPORTED AND ACCEPTED — no real dataset partition membership was generated,
+disclosed or accessed.
+
+Accepted fixtures:
+p01-04c-small-20-v1
+p01-04c-single-example-v1
+p01-04c-all-one-label-20-v1
+empty-input deterministic fail-closed case
+
+Accepted evidence:
+Focused qualification suite 31 passed. Accepted predecessor suites 846 passed,
+2 skipped. Canonical pull-request CI SUCCESS. Canonical pull-request CodeQL
+SUCCESS. Post-merge CI run 30879121118, run number 264, SUCCESS, with
+quality (py3.11) SUCCESS and quality (py3.12) SUCCESS. Post-merge CodeQL run
+30879121116, run number 268, SUCCESS, with analyze (python) SUCCESS. Post-merge
+Optional Extras / Backends run 30879121117, run number 87, SUCCESS, with
+core-without-backends SUCCESS, backends-transformers SUCCESS and
+backends-llamacpp SUCCESS.
+
+Non-blocking review notes preserved:
+F-01 the exact empty-input sanitized message is accepted implementation text
+frozen as a deterministic behavioral surface, rather than a separately ratified
+message-contract string. F-02 the builder host encountered a Windows
+Application Control console-shim limitation for the medscale check wrapper; the
+same exact wrapper succeeded and reported CLEAN in the independent clean-room
+review and canonical CI. F-03 the independent Windows host reproduced 54
+pre-existing tests/test_mesc_b2a_portability.py failures caused by WSL/bash path
+mangling; the same failures reproduced on the canonical parent and the P01-04C
+candidate changed no affected path. No source or test was modified to address
+these notes.
+
+Scope:
+Record the founder's P01-04C acceptance closeout against the exact canonical
+merge baseline, the accepted reviewed head, the four-criterion acceptance basis,
+the accepted synthetic fixtures and the post-merge evidence. This gate
+implements nothing, executes nothing, publishes nothing, promotes nothing and
+authorizes no downstream phase. It accepts synthetic fixture qualification only.
+
+--- Current controlling state ---
+
+P01-T03C1 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #85:
+MERGED AND MECHANICALLY VERIFIED AS
+b20dbe0000a129f3019d6f7d2895622ce0560069
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04C SYNTHETIC QUALIFICATION:
+ACCEPTED
+
+P01-04C ACCEPTANCE:
+ISSUED ON 2026-08-04
+
+P01-04C CANONICAL ACCEPTANCE BASELINE:
+b20dbe0000a129f3019d6f7d2895622ce0560069
+
+P01-04C acceptance closeout:
+BUILT LOCALLY / NOT YET CANONICALLY ADOPTED
+
+P01-04D:
+NOT AUTHORIZED
+
+P01-04E THROUGH P01-04G:
+NOT AUTHORIZED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+REAL SPLIT EXECUTION:
+NOT AUTHORIZED
+
+REAL PARTITION MEMBERSHIP:
+NOT AUTHORIZED
+
+CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+P01-03G registry access, dataset scanning, registry scanning, record-pair
+discovery, public export, filesystem publication, evidence publication, model
+access, inference, retrieval, benchmark execution, training, fine-tuning,
+adapter creation and clinical use:
+NOT AUTHORIZED
+
+P01-04C acceptance accepts synthetic fixture qualification only. No real split
+exists, no real partition membership exists, no real labels were processed, no
+canonical leakage was executed and no real evidence was published.
+P01-04 overall is not complete.
+P01-05 is not unlocked.
 ```
