@@ -3208,6 +3208,15 @@ nothing and authorizes no downstream phase. It records tooling acceptance only.
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B20 was recorded, before the P01-04B
+acceptance closeout was adopted on canonical main through PR #84 and before the
+founder issued the P01-04C synthetic fixture-qualification authorization. It is
+retained as historical governance evidence and is not the repository's present
+controlling state. The later P01-T03C1 Current controlling state supersedes this
+block.
+
 P01-T03B19 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -3281,4 +3290,146 @@ P01-04C, P01-04D or any later stage. No real split exists, no real partition
 membership exists, no real labels were processed, no canonical leakage was
 executed and no evidence was published. P01-04 overall is not complete and
 P01-05 is not unlocked.
+```
+
+```text
+P01-T03C1 — P01-04C synthetic fixture qualification
+
+Founder authorization:
+ISSUED ON 2026-08-04
+
+Prerequisite:
+P01-04B COMPLETED, ADOPTED AND ACCEPTED
+
+Qualification status:
+BUILT LOCALLY / ACCEPTANCE PENDING
+
+Authorized data:
+SYNTHETIC FIXTURES ONLY
+
+Edge-case semantics:
+EMPTY EXPECTED FAIL-CLOSED
+SINGLE-EXAMPLE EXPECTED SUCCESS
+ALL-ONE-LABEL EXPECTED SUCCESS
+
+Real dataset access:
+NOT AUTHORIZED
+
+Real partition membership:
+NOT AUTHORIZED
+
+P01-04D:
+NOT AUTHORIZED
+
+Required canonical baseline:
+78cb1004b15c4ff4daa25895e4bbec99c4bb4eae
+(tree f01a6b44b85f5e8964e26b3c8940b1de369cc1b8;
+ordered parents d5a6ac1654cabd33b6a795756d2796bceaf1652a THEN
+e2d4308e4fdc99c206f62cf6b6a78ea6ed14c60b;
+subject "Merge pull request #84 from IamShehri/docs/mesc-p01-04b-acceptance-closeout";
+body "docs(mesc): record P01-04B acceptance closeout")
+
+Candidate branch:
+test/mesc-p01-04c-fixture-qualification
+
+Candidate commit identity:
+Recorded outside this block. The candidate is exactly one commit whose parent is
+the canonical baseline above, carrying exactly four paths. Its SHA is reported in
+the build report and in the independent review request, never written inside the
+content it would have to hash.
+
+Exact four-path scope:
+A tests/test_mesc_p01_04c_fixture_qualification_v1.py
+A specs/mesc-pilot-01/p01-04c-fixture-qualification/qualification-record.md
+M specs/mesc-pilot-01/plan.md
+M specs/mesc-pilot-01/tasks.md
+No fifth path. No source, existing test, workflow, dependency or lockfile change.
+
+Qualification fixtures:
+p01-04c-small-20-v1, twenty single-example source documents, decisions yes 8 /
+no 7 / maybe 5 assigned by row ordinal 00-07 yes, 08-14 no, 15-19 maybe,
+partition totals train 14 / validation 3 / test 3.
+p01-04c-single-example-v1, one example, one source document, decision yes,
+partition totals train 1 / validation 0 / test 0.
+p01-04c-all-one-label-20-v1, twenty single-example source documents, decision
+yes for every example, partition totals train 14 / validation 3 / test 3.
+Empty input carries zero rows, zero source labels and zero partition totals and
+is expected to fail closed with InvalidFixtureRequestError.
+
+Canonical acceptance criteria addressed:
+C1 dedicated fixture tests pass for deterministic synthetic small input.
+C2 every successful fixture is byte-identical across three fresh runs.
+C3 empty, single-example and all-one-label edge cases pass under the ratified
+semantics above.
+C4 no real dataset partition membership is generated.
+
+Scope:
+Record the founder-authorized P01-04C synthetic fixture-qualification candidate
+over the accepted and canonically adopted P01-04B tooling. This gate constructs
+and executes synthetic fixtures only. It accesses no real dataset, reads or
+generates no P01-03G registry membership, generates no real split, executes no
+canonical leakage audit, publishes no evidence, and authorizes no downstream
+phase. Qualification evidence is never canonical evidence, research evidence or
+real split evidence.
+
+--- Current controlling state ---
+
+P01-T03B20 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #84:
+MERGED AND MECHANICALLY VERIFIED AS
+78cb1004b15c4ff4daa25895e4bbec99c4bb4eae
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04B TOOLING:
+ACCEPTED
+
+P01-04C SYNTHETIC QUALIFICATION AUTHORIZATION:
+ISSUED ON 2026-08-04
+
+P01-04C QUALIFICATION CANDIDATE:
+BUILT AND EXECUTED LOCALLY
+
+P01-04C independent review:
+OUTSTANDING — REQUIRED BEFORE PUBLICATION OR ACCEPTANCE
+
+P01-04C ACCEPTANCE:
+NOT ISSUED
+
+CANONICAL ADOPTION OF THE CANDIDATE:
+NOT ACHIEVED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+REAL SPLIT EXECUTION:
+NOT AUTHORIZED
+
+REAL PARTITION MEMBERSHIP:
+NOT AUTHORIZED
+
+CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+P01-04D:
+NOT AUTHORIZED
+
+P01-04E THROUGH P01-04G:
+NOT AUTHORIZED
+
+Real split execution, real partition membership, canonical leakage execution,
+leakage-audit orchestration, dataset scanning, registry scanning, record-pair
+discovery, CLI, public export, filesystem publication, promotion of any fixture
+output, P01-03G or real dataset access, B0/B1 execution, model access,
+inference, retrieval, metrics, benchmark execution, training, fine-tuning,
+adapter creation, publication and clinical use:
+NOT AUTHORIZED
+
+A passing synthetic qualification candidate is not P01-04C acceptance. No real
+split exists, no real partition membership exists, no real labels were
+processed, no canonical leakage was executed and no evidence was published.
+P01-04 overall is not complete and P01-05 is not unlocked.
 ```
