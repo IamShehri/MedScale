@@ -3543,7 +3543,13 @@ the accepted synthetic fixtures and the post-merge evidence. This gate
 implements nothing, executes nothing, publishes nothing, promotes nothing and
 authorizes no downstream phase. It accepts synthetic fixture qualification only.
 
---- Current controlling state ---
+--- Historical pre-merge controlling-state snapshot — SUPERSEDED ---
+
+This block was accurate before PR #86 merged, when the P01-04C acceptance
+closeout had been built locally but had not yet been adopted on canonical main.
+It is preserved as historical truth and no historical field inside it has been
+rewritten. The later P01-T03C3 Current controlling state supersedes this block
+for all current status purposes.
 
 P01-T03C1 documentation:
 ADOPTED ON CANONICAL MAIN
@@ -3596,4 +3602,138 @@ exists, no real partition membership exists, no real labels were processed, no
 canonical leakage was executed and no real evidence was published.
 P01-04 overall is not complete.
 P01-05 is not unlocked.
+```
+
+```text
+P01-T03C3 — P01-04C post-merge canonical adoption reconciliation
+
+Founder authorization:
+ISSUED ON 2026-08-04
+
+Prerequisite:
+PR #86 MERGED AND ALL POST-MERGE CHECKS GREEN
+
+Acceptance-closeout PR:
+#86
+
+Accepted closeout head:
+c7b55fad1dc9213870608253f8055560b53264c6
+
+Canonical merge commit:
+fe2dc1e6fe65d4823655f6d958cf3307629623ec
+
+Canonical merge tree:
+b905d696609c9de9488cb10785d9fed8796752f3
+
+P01-04C acceptance closeout:
+CANONICALLY ADOPTED
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+Canonical merge identity detail:
+fe2dc1e6fe65d4823655f6d958cf3307629623ec
+(tree b905d696609c9de9488cb10785d9fed8796752f3;
+ordered parents b20dbe0000a129f3019d6f7d2895622ce0560069 THEN
+c7b55fad1dc9213870608253f8055560b53264c6;
+subject "Merge pull request #86 from IamShehri/docs/mesc-p01-04c-acceptance-closeout";
+body "docs(mesc): record P01-04C acceptance closeout")
+
+Reconciliation branch:
+docs/mesc-p01-04c-post-merge-truth-reconciliation
+
+Reconciliation commit identity:
+Recorded outside this block. The reconciliation is exactly one commit whose
+parent is the canonical merge commit above, carrying exactly two documentation
+paths. Its SHA is reported in the build report and in the independent review
+request, never written inside the content it would have to hash.
+
+Exact two-path scope:
+A specs/mesc-pilot-01/p01-04c-fixture-qualification/canonical-adoption-record.md
+M specs/mesc-pilot-01/tasks.md
+No third path. No source, test, workflow, dependency or lockfile change.
+
+Post-merge evidence:
+Post-merge CI run 30914968296, run number 266, SUCCESS, with quality (py3.11)
+SUCCESS and quality (py3.12) SUCCESS. Post-merge CodeQL run 30914966999, run
+number 270, SUCCESS, with analyze (python) SUCCESS. Post-merge Optional Extras /
+Backends run 30914968267, run number 88, SUCCESS, with core-without-backends
+SUCCESS, backends-transformers SUCCESS and backends-llamacpp SUCCESS.
+
+Scope:
+Reconcile post-merge canonical truth after PR #86 merged. This gate marks the
+P01-T03C2 controlling-state block historical, records the canonical adoption of
+the P01-04C acceptance closeout, and adds the P01-04C canonical adoption record.
+It implements nothing, executes nothing, accesses no dataset, reads no P01-03G
+registry, generates no split, creates no partition membership, performs no
+leakage analysis, publishes nothing, promotes nothing and authorizes no
+downstream phase.
+
+--- Current controlling state ---
+
+P01-T03C2 documentation:
+ADOPTED ON CANONICAL MAIN
+
+PR #86:
+MERGED AND MECHANICALLY VERIFIED AS
+fe2dc1e6fe65d4823655f6d958cf3307629623ec
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+Founder P01-04C acceptance:
+ISSUED ON 2026-08-04
+
+P01-04C SYNTHETIC QUALIFICATION:
+ACCEPTED
+
+P01-04C ACCEPTANCE CLOSEOUT:
+CANONICALLY ADOPTED THROUGH PR #86
+
+P01-04C CANONICAL MERGE:
+fe2dc1e6fe65d4823655f6d958cf3307629623ec
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+P01-04D:
+NOT AUTHORIZED
+
+P01-04E THROUGH P01-04G:
+NOT AUTHORIZED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+P01-03G REGISTRY ACCESS:
+NOT AUTHORIZED
+
+REAL SPLIT EXECUTION:
+NOT AUTHORIZED
+
+REAL PARTITION MEMBERSHIP:
+NOT AUTHORIZED
+
+CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+P01-04 OVERALL:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+
+Dataset scanning, registry scanning, record-pair discovery, public export,
+filesystem publication, evidence publication, model access, inference,
+retrieval, benchmark execution, training, fine-tuning, adapter creation and
+clinical use:
+NOT AUTHORIZED
+
+P01-04C is closed as a synthetic fixture-qualification gate only. No real split
+exists, no real partition membership exists, no real labels were processed, no
+canonical leakage was executed and no real evidence was published.
+P01-04 overall is not complete.
+P01-05 is not unlocked.
+Entry into P01-04D remains subject to a separate founder entry decision that has
+not been issued.
 ```
