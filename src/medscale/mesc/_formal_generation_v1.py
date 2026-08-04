@@ -20,6 +20,7 @@ writes.
 
 from __future__ import annotations
 
+import json
 import sys
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -29,15 +30,25 @@ from typing import Final
 
 from medscale.mesc._canonical_json_v1 import sha256_of_bytes
 from medscale.mesc._formal_split_v1 import (
+    ARTIFACT_FILE_SCHEMAS,
     ARTIFACT_FILENAMES,
+    ARTIFACT_SURFACES,
     DECISION_RECORD_SURFACE,
+    EXAMPLE_REGISTRY_FILENAME,
+    EXCLUDED_LEDGER_FILENAME,
     GENERATION_IDENTITIES,
     GENERATION_MANIFEST_FILENAME,
+    GENERATION_MANIFEST_SCHEMA,
+    GROUP_REGISTRY_FILENAME,
+    MANIFEST_DIGESTED_FILENAMES,
     ORDERED_EXAMPLE_REGISTRY_SURFACE,
     REQUIRED_INPUT_SURFACES,
     SOURCE_DOCUMENT_REGISTRY_SURFACE,
     SOURCE_RECORDS_SURFACE,
+    SPLIT_POLICY_FILENAME,
+    SPLIT_POLICY_SCHEMA,
     SPLIT_SUMMARY_FILENAME,
+    SPLIT_SUMMARY_IDENTITY_CORE_FILENAME,
     TRANSFORMED_DATASET_IDENTITY_SURFACE,
     FormalArtifactBundle,
     FormalByteEqualityError,
@@ -45,7 +56,9 @@ from medscale.mesc._formal_split_v1 import (
     FormalFingerprintError,
     FormalGenerationError,
     FormalInputIdentityError,
+    FormalInputSchemaError,
     FormalInventoryError,
+    FormalMetadataError,
     FormalSplitInputIdentity,
     FormalWorkspaceSafetyError,
     allocate_formal_groups,
@@ -59,6 +72,14 @@ from medscale.mesc._formal_split_v1 import (
     verify_bundle,
     verify_input_digest,
 )
+from medscale.mesc._split_artifacts_v1 import (
+    SplitSummaryIdentityCore,
+    build_split_fingerprint_identity,
+    build_split_fingerprint_record,
+    reject_forbidden_metadata,
+    verify_split_fingerprint_record,
+)
+from medscale.mesc._split_v1 import ALGORITHM_VERSION, SPLIT_SEED
 
 _HEX_DIGITS: Final = frozenset("0123456789abcdef")
 _COMMIT_LENGTH: Final = 40
@@ -376,12 +397,30 @@ def build_bundle_for_request(request: FormalSplitRequest) -> FormalArtifactBundl
     return bundle
 
 
+def _reverify_repository_identity(request: FormalSplitRequest) -> None:
+    """Re-read the repository commit immediately before the first mutation.
+
+    ``build_request`` verified the commit when the request was assembled, but an
+    arbitrary amount of time and work passes between then and workspace creation.
+    This re-reads the actual repository identity from disk through the same
+    accepted helper — never a value cached on the request — so a commit that moved
+    in between is refused before any filesystem mutation (review finding F2).
+    """
+    actual = resolve_repository_commit(request.repository_root)
+    if actual != request.expected_canonical_commit:
+        raise FormalInputIdentityError(
+            f"canonical commit moved before generation: repository is at {actual!r}, "
+            f"not the expected {request.expected_canonical_commit!r}"
+        )
+
+
 def generate(request: FormalSplitRequest) -> FormalGenerationResult:
     """Execute exactly one generation. Every check completes before any mutation."""
     if not isinstance(request, FormalSplitRequest):
         raise FormalGenerationError("generate requires an exact FormalSplitRequest")
     bundle = build_bundle_for_request(request)
     _validate_workspace_safety(request)
+    _reverify_repository_identity(request)
 
     workspace = request.workspace
     workspace.mkdir(parents=False, exist_ok=False)
@@ -432,26 +471,303 @@ def _verify_inventory(workspace: Path) -> dict[str, bytes]:
     return payloads
 
 
-def _fingerprint_of(payloads: Mapping[str, bytes], workspace: Path) -> str:
-    summary = payloads[SPLIT_SUMMARY_FILENAME].decode("utf-8")
-    manifest = payloads[GENERATION_MANIFEST_FILENAME].decode("utf-8")
-    marker = '"split_fingerprint":"'
-    start = manifest.find(marker)
-    if start < 0:
-        raise FormalFingerprintError(f"{workspace}: manifest carries no authoritative fingerprint")
-    begin = start + len(marker)
-    fingerprint = manifest[begin : begin + 64]
-    if len(fingerprint) != 64 or any(character not in _HEX_DIGITS for character in fingerprint):
-        raise FormalFingerprintError(f"{workspace}: manifest fingerprint is malformed")
-    if f'"split_fingerprint":"{fingerprint}"' not in summary:
-        raise FormalFingerprintError(
-            f"{workspace}: split summary and manifest carry different fingerprints"
+@dataclass(frozen=True, slots=True)
+class _VerifiedWorkspace:
+    """One completed workspace proved self-consistent from its own bytes alone.
+
+    An instance exists only after every non-self descriptor and the authoritative
+    fingerprint have been recomputed from the actual files, so possessing one is
+    proof of integrity rather than a claim of it.
+    """
+
+    workspace: Path
+    payloads: Mapping[str, bytes]
+    split_fingerprint: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "payloads", MappingProxyType(dict(self.payloads)))
+
+
+def _decode(payload: bytes, *, workspace: Path, filename: str) -> str:
+    if payload.startswith(b"\xef\xbb\xbf"):
+        raise FormalInputSchemaError(
+            f"{workspace}: {filename} must not begin with a byte-order mark"
         )
-    return fingerprint
+    try:
+        return payload.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise FormalInputSchemaError(f"{workspace}: {filename} is not valid UTF-8") from error
+
+
+def _reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    seen: set[str] = set()
+    for key, _ in pairs:
+        if key in seen:
+            raise FormalInputSchemaError(f"duplicate JSON object key: {key!r}")
+        seen.add(key)
+    return dict(pairs)
+
+
+def _read_json_object(
+    payloads: Mapping[str, bytes], filename: str, *, workspace: Path
+) -> Mapping[str, object]:
+    text = _decode(payloads[filename], workspace=workspace, filename=filename)
+    try:
+        value = json.loads(text, object_pairs_hook=_reject_duplicate_keys)
+    except FormalInputSchemaError:
+        raise
+    except ValueError as error:
+        raise FormalInputSchemaError(f"{workspace}: {filename} is not valid JSON") from error
+    if not isinstance(value, dict):
+        raise FormalInputSchemaError(f"{workspace}: {filename} must be a JSON object")
+    return value
+
+
+def _read_jsonl_records(
+    payloads: Mapping[str, bytes], filename: str, *, workspace: Path
+) -> tuple[Mapping[str, object], ...]:
+    text = _decode(payloads[filename], workspace=workspace, filename=filename)
+    if text == "" or not text.endswith("\n") or "\r" in text:
+        raise FormalInputSchemaError(
+            f"{workspace}: {filename} must be non-empty and line-feed terminated"
+        )
+    records: list[Mapping[str, object]] = []
+    for index, line in enumerate(text[:-1].split("\n")):
+        if line.strip() == "":
+            raise FormalInputSchemaError(f"{workspace}: {filename} record {index} is blank")
+        try:
+            value = json.loads(line, object_pairs_hook=_reject_duplicate_keys)
+        except FormalInputSchemaError:
+            raise
+        except ValueError as error:
+            raise FormalInputSchemaError(
+                f"{workspace}: {filename} record {index} is not valid JSON"
+            ) from error
+        if not isinstance(value, dict):
+            raise FormalInputSchemaError(
+                f"{workspace}: {filename} record {index} must be a JSON object"
+            )
+        records.append(value)
+    return tuple(records)
+
+
+def _require_declared_schema(
+    document: Mapping[str, object], filename: str, *, workspace: Path
+) -> None:
+    expected = ARTIFACT_FILE_SCHEMAS[filename]
+    if document.get("schema_version") != expected:
+        raise FormalInputSchemaError(
+            f"{workspace}: {filename} requires schema {expected!r}, "
+            f"got {document.get('schema_version')!r}"
+        )
+
+
+def _reject_metadata(document: object, *, workspace: Path, filename: str) -> None:
+    try:
+        reject_forbidden_metadata(document)
+    except Exception as error:  # re-typed, never suppressed
+        raise FormalMetadataError(f"{workspace}: {filename}: {error}") from error
+
+
+def _carrier_fingerprint(document: Mapping[str, object], filename: str, *, workspace: Path) -> str:
+    value = document.get("split_fingerprint")
+    if not isinstance(value, str) or len(value) != 64:
+        raise FormalFingerprintError(
+            f"{workspace}: {filename} carries no well-formed authoritative fingerprint"
+        )
+    if any(character not in _HEX_DIGITS for character in value):
+        raise FormalFingerprintError(f"{workspace}: {filename} fingerprint is not lowercase hex")
+    return value
+
+
+def _rebuild_identity_core(
+    document: Mapping[str, object], *, workspace: Path
+) -> SplitSummaryIdentityCore:
+    """Reconstruct the accepted identity core from the on-disk core document."""
+    required = (
+        "algorithm_version",
+        "excluded_record_count",
+        "group_counts_by_partition",
+        "label_totals",
+        "partition_label_matrix",
+        "partition_totals",
+        "schema_version",
+        "total_example_count",
+        "total_group_count",
+    )
+    if sorted(document) != sorted(required):
+        raise FormalInputSchemaError(
+            f"{workspace}: {SPLIT_SUMMARY_IDENTITY_CORE_FILENAME} must have exactly "
+            f"{sorted(required)}, got {sorted(document)}"
+        )
+    try:
+        return SplitSummaryIdentityCore(
+            total_example_count=document["total_example_count"],  # type: ignore[arg-type]
+            total_group_count=document["total_group_count"],  # type: ignore[arg-type]
+            excluded_record_count=document["excluded_record_count"],  # type: ignore[arg-type]
+            partition_totals=document["partition_totals"],  # type: ignore[arg-type]
+            label_totals=document["label_totals"],  # type: ignore[arg-type]
+            partition_label_matrix=document["partition_label_matrix"],  # type: ignore[arg-type]
+            group_counts_by_partition=document["group_counts_by_partition"],  # type: ignore[arg-type]
+            algorithm_version=document["algorithm_version"],  # type: ignore[arg-type]
+            schema_version=document["schema_version"],  # type: ignore[arg-type]
+        )
+    except Exception as error:  # re-typed, never suppressed
+        raise FormalInputSchemaError(
+            f"{workspace}: {SPLIT_SUMMARY_IDENTITY_CORE_FILENAME} is not a valid identity core: "
+            f"{error}"
+        ) from error
+
+
+def _verify_manifest_descriptors(
+    manifest: Mapping[str, object], payloads: Mapping[str, bytes], *, workspace: Path
+) -> None:
+    """Recompute every non-self digest and byte size from the actual file bytes."""
+    bundle_filenames = manifest.get("bundle_filenames")
+    if not isinstance(bundle_filenames, list) or tuple(bundle_filenames) != ARTIFACT_FILENAMES:
+        raise FormalInventoryError(
+            f"{workspace}: manifest must list exactly {list(ARTIFACT_FILENAMES)}, "
+            f"got {bundle_filenames!r}"
+        )
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, list):
+        raise FormalInputSchemaError(f"{workspace}: manifest artifacts must be an array")
+    described = tuple(
+        entry.get("filename") if isinstance(entry, dict) else None for entry in artifacts
+    )
+    if described != MANIFEST_DIGESTED_FILENAMES:
+        raise FormalInventoryError(
+            f"{workspace}: manifest must describe exactly {list(MANIFEST_DIGESTED_FILENAMES)}, "
+            f"got {list(described)}"
+        )
+    if any(entry.get("filename") == GENERATION_MANIFEST_FILENAME for entry in artifacts):
+        raise FormalInventoryError(f"{workspace}: the manifest must not describe itself")
+
+    for entry in artifacts:
+        filename = entry["filename"]
+        payload = payloads[filename]
+        actual_digest = sha256_of_bytes(payload)
+        actual_size = len(payload)
+        if entry.get("sha256") != actual_digest:
+            raise FormalFingerprintError(
+                f"{workspace}: descriptor digest for {filename!r} is "
+                f"{entry.get('sha256')!r}, recomputed {actual_digest!r}"
+            )
+        if entry.get("byte_size") != actual_size:
+            raise FormalFingerprintError(
+                f"{workspace}: descriptor byte size for {filename!r} is "
+                f"{entry.get('byte_size')!r}, recomputed {actual_size}"
+            )
+        if entry.get("surface") != ARTIFACT_SURFACES[filename]:
+            raise FormalInputSchemaError(
+                f"{workspace}: descriptor surface for {filename!r} is {entry.get('surface')!r}"
+            )
+        if entry.get("schema_version") != ARTIFACT_FILE_SCHEMAS[filename]:
+            raise FormalInputSchemaError(
+                f"{workspace}: descriptor schema for {filename!r} is "
+                f"{entry.get('schema_version')!r}"
+            )
+
+
+def _verify_completed_workspace(workspace: Path) -> _VerifiedWorkspace:
+    """Prove one completed workspace self-consistent from its own bytes. Never writes.
+
+    Byte equality between two workspaces proves only that they agree, not that
+    either is a valid bundle, so this runs independently against each workspace
+    before any comparison is attempted (review finding F1).
+    """
+    if not isinstance(workspace, Path):
+        raise FormalInventoryError("a workspace must be a path")
+    resolved = workspace.resolve()
+    payloads = _verify_inventory(resolved)
+
+    policy = _read_json_object(payloads, SPLIT_POLICY_FILENAME, workspace=resolved)
+    _require_declared_schema(policy, SPLIT_POLICY_FILENAME, workspace=resolved)
+    _reject_metadata(policy, workspace=resolved, filename=SPLIT_POLICY_FILENAME)
+
+    ledger = _read_json_object(payloads, EXCLUDED_LEDGER_FILENAME, workspace=resolved)
+    _require_declared_schema(ledger, EXCLUDED_LEDGER_FILENAME, workspace=resolved)
+    _reject_metadata(ledger, workspace=resolved, filename=EXCLUDED_LEDGER_FILENAME)
+
+    for filename in (GROUP_REGISTRY_FILENAME, EXAMPLE_REGISTRY_FILENAME):
+        records = _read_jsonl_records(payloads, filename, workspace=resolved)
+        expected_schema = ARTIFACT_FILE_SCHEMAS[filename]
+        for index, record in enumerate(records):
+            if record.get("schema_version") != expected_schema:
+                raise FormalInputSchemaError(
+                    f"{resolved}: {filename} record {index} requires schema {expected_schema!r}"
+                )
+
+    core_document = _read_json_object(
+        payloads, SPLIT_SUMMARY_IDENTITY_CORE_FILENAME, workspace=resolved
+    )
+    _require_declared_schema(
+        core_document, SPLIT_SUMMARY_IDENTITY_CORE_FILENAME, workspace=resolved
+    )
+    _reject_metadata(
+        core_document, workspace=resolved, filename=SPLIT_SUMMARY_IDENTITY_CORE_FILENAME
+    )
+    core = _rebuild_identity_core(core_document, workspace=resolved)
+
+    summary = _read_json_object(payloads, SPLIT_SUMMARY_FILENAME, workspace=resolved)
+    _require_declared_schema(summary, SPLIT_SUMMARY_FILENAME, workspace=resolved)
+
+    manifest = _read_json_object(payloads, GENERATION_MANIFEST_FILENAME, workspace=resolved)
+    _require_declared_schema(manifest, GENERATION_MANIFEST_FILENAME, workspace=resolved)
+    if manifest.get("schema_version") != GENERATION_MANIFEST_SCHEMA:  # pragma: no cover - as above
+        raise FormalInputSchemaError(f"{resolved}: manifest schema is wrong")
+    _reject_metadata(manifest, workspace=resolved, filename=GENERATION_MANIFEST_FILENAME)
+
+    _verify_manifest_descriptors(manifest, payloads, workspace=resolved)
+
+    # The accepted fingerprint layer digests the core it is handed, so the core
+    # must first be proved to re-serialize to exactly the bytes on disk.
+    if core.canonical_bytes() != payloads[SPLIT_SUMMARY_IDENTITY_CORE_FILENAME]:
+        raise FormalFingerprintError(
+            f"{resolved}: {SPLIT_SUMMARY_IDENTITY_CORE_FILENAME} does not re-serialize to its "
+            "own canonical bytes"
+        )
+    try:
+        identity = build_split_fingerprint_identity(
+            policy_id=SPLIT_POLICY_SCHEMA,
+            algorithm_version=ALGORITHM_VERSION,
+            split_seed=SPLIT_SEED,
+            group_registry_payload=payloads[GROUP_REGISTRY_FILENAME],
+            example_registry_payload=payloads[EXAMPLE_REGISTRY_FILENAME],
+            excluded_ledger_payload=payloads[EXCLUDED_LEDGER_FILENAME],
+            split_summary_identity_core=core,
+        )
+        fingerprint_record = build_split_fingerprint_record(identity)
+        verify_split_fingerprint_record(fingerprint_record)
+    except Exception as error:  # re-typed, never suppressed
+        raise FormalFingerprintError(
+            f"{resolved}: authoritative fingerprint could not be reconstructed: {error}"
+        ) from error
+    recomputed = fingerprint_record.split_fingerprint
+
+    summary_carrier = _carrier_fingerprint(summary, SPLIT_SUMMARY_FILENAME, workspace=resolved)
+    manifest_carrier = _carrier_fingerprint(
+        manifest, GENERATION_MANIFEST_FILENAME, workspace=resolved
+    )
+    if summary_carrier != manifest_carrier:
+        raise FormalFingerprintError(
+            f"{resolved}: split summary and manifest carry different fingerprints"
+        )
+    if recomputed != summary_carrier:
+        raise FormalFingerprintError(
+            f"{resolved}: {SPLIT_SUMMARY_FILENAME} carries {summary_carrier!r}, "
+            f"recomputed {recomputed!r}"
+        )
+    if recomputed != manifest_carrier:  # pragma: no cover - equality with the summary implies this
+        raise FormalFingerprintError(
+            f"{resolved}: {GENERATION_MANIFEST_FILENAME} carries {manifest_carrier!r}, "
+            f"recomputed {recomputed!r}"
+        )
+    return _VerifiedWorkspace(workspace=resolved, payloads=payloads, split_fingerprint=recomputed)
 
 
 def compare(workspace_a: Path, workspace_b: Path) -> FormalComparisonResult:
-    """Compare two completed generations byte-for-byte. It never writes."""
+    """Verify each workspace independently, then compare byte-for-byte. Never writes."""
     if not isinstance(workspace_a, Path) or not isinstance(workspace_b, Path):
         raise FormalInventoryError("compare requires two workspace paths")
     resolved_a = workspace_a.resolve()
@@ -459,15 +775,16 @@ def compare(workspace_a: Path, workspace_b: Path) -> FormalComparisonResult:
     if resolved_a == resolved_b:
         raise FormalInventoryError("comparison requires two distinct generation workspaces")
 
-    payloads_a = _verify_inventory(resolved_a)
-    payloads_b = _verify_inventory(resolved_b)
-    fingerprint_a = _fingerprint_of(payloads_a, resolved_a)
-    fingerprint_b = _fingerprint_of(payloads_b, resolved_b)
+    # Complete independent integrity verification precedes any equality question,
+    # so two identically corrupted workspaces fail before an equality disposition
+    # can be produced (review finding F1).
+    verified_a = _verify_completed_workspace(resolved_a)
+    verified_b = _verify_completed_workspace(resolved_b)
 
     unequal: list[str] = []
     equal: list[str] = []
     for filename in ARTIFACT_FILENAMES:
-        if payloads_a[filename] == payloads_b[filename]:
+        if verified_a.payloads[filename] == verified_b.payloads[filename]:
             equal.append(filename)
         else:
             unequal.append(filename)
@@ -476,14 +793,16 @@ def compare(workspace_a: Path, workspace_b: Path) -> FormalComparisonResult:
             "Generation A and Generation B are not byte-identical; both candidates are "
             f"invalidated. Differing artifacts: {unequal}"
         )
-    if fingerprint_a != fingerprint_b:  # pragma: no cover - byte equality already implies this
-        raise FormalFingerprintError("recomputed authoritative fingerprints disagree")
+    if verified_a.split_fingerprint != verified_b.split_fingerprint:
+        raise FormalFingerprintError(  # pragma: no cover - byte equality already implies this
+            "recomputed authoritative fingerprints disagree"
+        )
     return FormalComparisonResult(
         workspace_a=resolved_a,
         workspace_b=resolved_b,
         filenames=ARTIFACT_FILENAMES,
         equal_filenames=tuple(equal),
-        split_fingerprint=fingerprint_a,
+        split_fingerprint=verified_a.split_fingerprint,
         equal=True,
     )
 

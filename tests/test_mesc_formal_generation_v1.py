@@ -9,8 +9,9 @@ registry, external source-record file or real dataset is read anywhere here.
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import json
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from pathlib import Path
 
 import pytest
@@ -27,8 +28,15 @@ from medscale.mesc._formal_generation_v1 import (
 )
 from medscale.mesc._formal_split_v1 import (
     ARTIFACT_FILENAMES,
+    EXAMPLE_REGISTRY_FILENAME,
+    EXCLUDED_LEDGER_FILENAME,
     GENERATION_MANIFEST_FILENAME,
+    GROUP_REGISTRY_FILENAME,
+    SOURCE_RECORDS_SURFACE,
     SPLIT_POLICY_FILENAME,
+    SPLIT_SUMMARY_FILENAME,
+    SPLIT_SUMMARY_IDENTITY_CORE_FILENAME,
+    TRANSFORMED_DATASET_IDENTITY_SURFACE,
     FormalByteEqualityError,
     FormalEvidenceConfigurationError,
     FormalFingerprintError,
@@ -40,7 +48,13 @@ from medscale.mesc._formal_split_v1 import (
     FormalMetadataError,
     FormalWorkspaceSafetyError,
 )
-from test_mesc_formal_split_v1 import write_synthetic_inputs
+from medscale.mesc._split_artifacts_v1 import (
+    SplitSummaryIdentityCore,
+    build_split_fingerprint_identity,
+    compute_split_fingerprint,
+)
+from medscale.mesc._split_v1 import ALGORITHM_VERSION, SPLIT_SEED
+from test_mesc_formal_split_v1 import synthetic_payloads, write_synthetic_inputs
 
 SYNTHETIC_COMMIT = "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
 
@@ -417,11 +431,18 @@ def test_identical_synthetic_workspaces_compare_equal(
 def test_altered_byte_invalidates_both_candidates(
     tmp_path: Path, environment: dict[str, Path]
 ) -> None:
+    """A one-sided tamper is an integrity failure, not a byte-equality disposition.
+
+    Each workspace is now verified independently before equality is considered, so
+    the tampered side fails its own descriptor check first.  Reporting this as mere
+    byte inequality would understate it: the bundle is internally invalid, not
+    merely different from its counterpart.
+    """
     first = generate(make_request(tmp_path, environment, generation="A", workspace_name="ws-a"))
     second = generate(make_request(tmp_path, environment, generation="B", workspace_name="ws-b"))
     target = second.workspace / SPLIT_POLICY_FILENAME
     target.write_bytes(target.read_bytes().replace(b"none", b"NONE"))
-    with pytest.raises(FormalByteEqualityError, match="invalidated"):
+    with pytest.raises(FormalFingerprintError, match="descriptor digest"):
         compare(first.workspace, second.workspace)
 
 
@@ -467,8 +488,10 @@ def test_manifest_verification_detects_a_missing_fingerprint(
 ) -> None:
     first = generate(make_request(tmp_path, environment, generation="A", workspace_name="ws-a"))
     second = generate(make_request(tmp_path, environment, generation="B", workspace_name="ws-b"))
+    # An empty manifest object no longer reaches the fingerprint carrier check:
+    # it fails the declared-schema check first, which is the mapped schema error.
     (first.workspace / GENERATION_MANIFEST_FILENAME).write_text("{}\n", encoding="utf-8")
-    with pytest.raises(FormalFingerprintError, match="no authoritative fingerprint"):
+    with pytest.raises(FormalInputSchemaError, match="requires schema"):
         compare(first.workspace, second.workspace)
 
 
@@ -538,3 +561,440 @@ def test_synthetic_inputs_never_reference_protected_locations(
             "source_records",
             "decision_record",
         }
+
+
+# ---------------------------------------------------------------------------
+# F1 — independent completed-workspace integrity verification
+#
+# The independent clean-room review demonstrated that byte equality alone let a
+# pair of identically corrupted workspaces compare successfully.  Comparison now
+# verifies each workspace against its own bytes first, so every case below must
+# fail closed before any equality disposition can be produced.
+# ---------------------------------------------------------------------------
+
+
+def snapshot_tree(workspace: Path) -> dict[str, bytes]:
+    """Return the exact byte content of a workspace, for zero-write proofs."""
+    return {entry.name: entry.read_bytes() for entry in sorted(workspace.iterdir())}
+
+
+def make_pair(tmp_path: Path, environment: Mapping[str, Path]) -> tuple[Path, Path]:
+    """Generate two valid synthetic workspaces from the same synthetic inputs."""
+    first = generate(make_request(tmp_path, environment, generation="A", workspace_name="pair-a"))
+    second = generate(make_request(tmp_path, environment, generation="B", workspace_name="pair-b"))
+    return first.workspace, second.workspace
+
+
+def _canonical_line(document: object) -> bytes:
+    return (json.dumps(document, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+
+
+def _corrupt_zero_length(payload: bytes) -> bytes:
+    return b""
+
+
+def _corrupt_policy_field(payload: bytes) -> bytes:
+    document = json.loads(payload)
+    document["holdout_policy"] = "tampered"
+    return _canonical_line(document)
+
+
+def _corrupt_jsonl_byte(payload: bytes) -> bytes:
+    lines = payload.decode("utf-8").splitlines()
+    record = json.loads(lines[0])
+    record["assigned_split"] = "train" if record["assigned_split"] != "train" else "test"
+    lines[0] = json.dumps(record, sort_keys=True, separators=(",", ":"))
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+def _corrupt_ledger_count(payload: bytes) -> bytes:
+    document = json.loads(payload)
+    document["count"] = 1
+    return _canonical_line(document)
+
+
+def _corrupt_core_total(payload: bytes) -> bytes:
+    document = json.loads(payload)
+    document["total_example_count"] = document["total_example_count"] + 1
+    return _canonical_line(document)
+
+
+def _corrupt_summary_hash(payload: bytes) -> bytes:
+    document = json.loads(payload)
+    document["split_hash"] = "0" * 16
+    return _canonical_line(document)
+
+
+def _corrupt_manifest_descriptor(payload: bytes) -> bytes:
+    document = json.loads(payload)
+    document["artifacts"][0]["sha256"] = "0" * 64
+    return _canonical_line(document)
+
+
+IDENTICAL_CORRUPTIONS: tuple[tuple[str, str, Callable[[bytes], bytes], type[Exception]], ...] = (
+    ("policy-zero-length", SPLIT_POLICY_FILENAME, _corrupt_zero_length, FormalInputSchemaError),
+    ("policy-field", SPLIT_POLICY_FILENAME, _corrupt_policy_field, FormalFingerprintError),
+    ("group-registry-byte", GROUP_REGISTRY_FILENAME, _corrupt_jsonl_byte, FormalFingerprintError),
+    (
+        "example-registry-byte",
+        EXAMPLE_REGISTRY_FILENAME,
+        _corrupt_jsonl_byte,
+        FormalFingerprintError,
+    ),
+    ("ledger-count", EXCLUDED_LEDGER_FILENAME, _corrupt_ledger_count, FormalFingerprintError),
+    (
+        "identity-core-total",
+        SPLIT_SUMMARY_IDENTITY_CORE_FILENAME,
+        _corrupt_core_total,
+        FormalFingerprintError,
+    ),
+    ("summary-hash", SPLIT_SUMMARY_FILENAME, _corrupt_summary_hash, FormalFingerprintError),
+    (
+        "manifest-descriptor",
+        GENERATION_MANIFEST_FILENAME,
+        _corrupt_manifest_descriptor,
+        FormalFingerprintError,
+    ),
+    (
+        "manifest-zero-length",
+        GENERATION_MANIFEST_FILENAME,
+        _corrupt_zero_length,
+        FormalInputSchemaError,
+    ),
+    ("registry-zero-length", GROUP_REGISTRY_FILENAME, _corrupt_zero_length, FormalInputSchemaError),
+    (
+        "core-zero-length",
+        SPLIT_SUMMARY_IDENTITY_CORE_FILENAME,
+        _corrupt_zero_length,
+        FormalInputSchemaError,
+    ),
+    (
+        "example-registry-zero-length",
+        EXAMPLE_REGISTRY_FILENAME,
+        _corrupt_zero_length,
+        FormalInputSchemaError,
+    ),
+    (
+        "ledger-zero-length",
+        EXCLUDED_LEDGER_FILENAME,
+        _corrupt_zero_length,
+        FormalInputSchemaError,
+    ),
+    (
+        "summary-zero-length",
+        SPLIT_SUMMARY_FILENAME,
+        _corrupt_zero_length,
+        FormalInputSchemaError,
+    ),
+)
+
+
+@pytest.mark.parametrize(
+    ("label", "filename", "corrupt", "expected"),
+    IDENTICAL_CORRUPTIONS,
+    ids=[case[0] for case in IDENTICAL_CORRUPTIONS],
+)
+def test_identical_corruption_in_both_workspaces_is_rejected(
+    tmp_path: Path,
+    environment: dict[str, Path],
+    label: str,
+    filename: str,
+    corrupt: Callable[[bytes], bytes],
+    expected: type[Exception],
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    corrupted = corrupt((workspace_a / filename).read_bytes())
+    (workspace_a / filename).write_bytes(corrupted)
+    (workspace_b / filename).write_bytes(corrupted)
+    # The pair stays byte-identical, which is exactly what the pre-correction
+    # comparison accepted as proof of a valid bundle.
+    assert (workspace_a / filename).read_bytes() == (workspace_b / filename).read_bytes()
+
+    before = (snapshot_tree(workspace_a), snapshot_tree(workspace_b))
+    with pytest.raises(expected):
+        compare(workspace_a, workspace_b)
+    assert (snapshot_tree(workspace_a), snapshot_tree(workspace_b)) == before
+    assert len(list(workspace_a.iterdir())) == 7
+    assert len(list(workspace_b.iterdir())) == 7
+
+
+def test_every_artifact_has_identical_corruption_coverage() -> None:
+    covered = {case[1] for case in IDENTICAL_CORRUPTIONS}
+    assert covered == set(ARTIFACT_FILENAMES)
+    assert len(covered) == 7
+
+
+def test_altered_payload_with_stale_fingerprint_text_is_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    """Both carriers keep the old fingerprint text while the payload changed."""
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    original = json.loads((workspace_a / SPLIT_SUMMARY_FILENAME).read_bytes())["split_fingerprint"]
+    corrupted = _corrupt_jsonl_byte((workspace_a / EXAMPLE_REGISTRY_FILENAME).read_bytes())
+    for workspace in (workspace_a, workspace_b):
+        (workspace / EXAMPLE_REGISTRY_FILENAME).write_bytes(corrupted)
+        summary = json.loads((workspace / SPLIT_SUMMARY_FILENAME).read_bytes())
+        manifest = json.loads((workspace / GENERATION_MANIFEST_FILENAME).read_bytes())
+        assert summary["split_fingerprint"] == original
+        assert manifest["split_fingerprint"] == original
+    with pytest.raises(FormalFingerprintError):
+        compare(workspace_a, workspace_b)
+
+
+def test_identical_policy_tamper_with_stale_descriptor_is_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    """The tampered policy stays syntactically valid; only its digest disagrees."""
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    tampered = _corrupt_policy_field((workspace_a / SPLIT_POLICY_FILENAME).read_bytes())
+    assert json.loads(tampered)["holdout_policy"] == "tampered"
+    for workspace in (workspace_a, workspace_b):
+        (workspace / SPLIT_POLICY_FILENAME).write_bytes(tampered)
+    with pytest.raises(FormalFingerprintError, match="descriptor digest"):
+        compare(workspace_a, workspace_b)
+
+
+def test_identical_descriptor_digest_corruption_is_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    tampered = _corrupt_manifest_descriptor(
+        (workspace_a / GENERATION_MANIFEST_FILENAME).read_bytes()
+    )
+    for workspace in (workspace_a, workspace_b):
+        (workspace / GENERATION_MANIFEST_FILENAME).write_bytes(tampered)
+    with pytest.raises(FormalFingerprintError, match="descriptor digest"):
+        compare(workspace_a, workspace_b)
+
+
+def test_manifest_must_not_describe_itself(tmp_path: Path, environment: dict[str, Path]) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    document = json.loads((workspace_a / GENERATION_MANIFEST_FILENAME).read_bytes())
+    document["artifacts"].append(
+        {
+            "byte_size": 1,
+            "filename": GENERATION_MANIFEST_FILENAME,
+            "schema_version": "mesc-pilot-01-formal-generation-manifest/1",
+            "sha256": "0" * 64,
+            "surface": "generation_manifest",
+        }
+    )
+    payload = _canonical_line(document)
+    for workspace in (workspace_a, workspace_b):
+        (workspace / GENERATION_MANIFEST_FILENAME).write_bytes(payload)
+    with pytest.raises(FormalInventoryError):
+        compare(workspace_a, workspace_b)
+
+
+def test_independent_descriptor_oracle(tmp_path: Path, environment: dict[str, Path]) -> None:
+    """Recompute every non-self descriptor without using the comparison verifier."""
+    result = generate(make_request(tmp_path, environment))
+    manifest = json.loads((result.workspace / GENERATION_MANIFEST_FILENAME).read_bytes())
+    described = {entry["filename"]: entry for entry in manifest["artifacts"]}
+    non_self = [name for name in ARTIFACT_FILENAMES if name != GENERATION_MANIFEST_FILENAME]
+    assert sorted(described) == sorted(non_self)
+    assert len(non_self) == 6
+    for filename in non_self:
+        payload = (result.workspace / filename).read_bytes()
+        expected_digest = hashlib.sha256(payload).hexdigest()
+        assert described[filename]["sha256"] == expected_digest
+        assert described[filename]["byte_size"] == len(payload)
+        assert len(expected_digest) == 64
+
+
+def test_independent_fingerprint_oracle(tmp_path: Path, environment: dict[str, Path]) -> None:
+    """Rebuild the fingerprint from workspace bytes via the accepted primitives only."""
+    result = generate(make_request(tmp_path, environment))
+    workspace = result.workspace
+    core_document = json.loads((workspace / SPLIT_SUMMARY_IDENTITY_CORE_FILENAME).read_bytes())
+    core = SplitSummaryIdentityCore(
+        total_example_count=core_document["total_example_count"],
+        total_group_count=core_document["total_group_count"],
+        excluded_record_count=core_document["excluded_record_count"],
+        partition_totals=core_document["partition_totals"],
+        label_totals=core_document["label_totals"],
+        partition_label_matrix=core_document["partition_label_matrix"],
+        group_counts_by_partition=core_document["group_counts_by_partition"],
+        algorithm_version=core_document["algorithm_version"],
+        schema_version=core_document["schema_version"],
+    )
+    identity = build_split_fingerprint_identity(
+        policy_id="mesc-pilot-01-split-policy/1",
+        algorithm_version=ALGORITHM_VERSION,
+        split_seed=SPLIT_SEED,
+        group_registry_payload=(workspace / GROUP_REGISTRY_FILENAME).read_bytes(),
+        example_registry_payload=(workspace / EXAMPLE_REGISTRY_FILENAME).read_bytes(),
+        excluded_ledger_payload=(workspace / EXCLUDED_LEDGER_FILENAME).read_bytes(),
+        split_summary_identity_core=core,
+    )
+    recomputed = compute_split_fingerprint(identity)
+    summary = json.loads((workspace / SPLIT_SUMMARY_FILENAME).read_bytes())
+    manifest = json.loads((workspace / GENERATION_MANIFEST_FILENAME).read_bytes())
+    assert len(recomputed) == 64
+    assert recomputed == summary["split_fingerprint"]
+    assert recomputed == manifest["split_fingerprint"]
+    assert recomputed == result.split_fingerprint
+
+
+def make_variant_environment(tmp_path: Path, revision: str) -> dict[str, Path]:
+    """Build a second, legitimately different synthetic corpus.
+
+    Only the synthetic dataset revision changes, so every derived example
+    identifier changes and the bundle is internally valid but not byte-identical.
+    """
+    payloads = dict(synthetic_payloads())
+    records = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
+    rebuilt: list[str] = []
+    for line in records:
+        envelope = json.loads(line)
+        envelope["record"]["dataset_revision"] = revision
+        rebuilt.append(json.dumps(envelope, sort_keys=True))
+    payloads[SOURCE_RECORDS_SURFACE] = ("\n".join(rebuilt) + "\n").encode("utf-8")
+    identity = json.loads(payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE])
+    identity["dataset_revision"] = revision
+    identity["source_records_sha256"] = hashlib.sha256(payloads[SOURCE_RECORDS_SURFACE]).hexdigest()
+    identity["source_records_byte_size"] = len(payloads[SOURCE_RECORDS_SURFACE])
+    payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE] = (
+        json.dumps(identity, sort_keys=True) + "\n"
+    ).encode("utf-8")
+
+    root = tmp_path / f"variant-{revision}"
+    repository = make_repository(root / "repo")
+    inputs = write_synthetic_inputs(root / "inputs", payloads)
+    external = root / "external-evidence"
+    future = root / "future-evidence"
+    external.mkdir()
+    future.mkdir()
+    return {
+        "repository": repository,
+        "external": external.resolve(),
+        "future": future.resolve(),
+        **{f"input:{surface}": location for surface, location in inputs.items()},
+    }
+
+
+def test_valid_but_different_pair_raises_byte_equality(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    """Two independently valid bundles that differ raise the byte-equality error."""
+    valid_a = generate(make_request(tmp_path, environment, workspace_name="classify-a")).workspace
+    variant = make_variant_environment(tmp_path, "synthetic-revision-0002")
+    valid_b = generate(
+        make_request(tmp_path, variant, generation="B", workspace_name="classify-b")
+    ).workspace
+
+    first = json.loads((valid_a / SPLIT_SUMMARY_FILENAME).read_bytes())["split_fingerprint"]
+    second = json.loads((valid_b / SPLIT_SUMMARY_FILENAME).read_bytes())["split_fingerprint"]
+    assert first != second
+
+    with pytest.raises(FormalByteEqualityError, match="invalidated"):
+        compare(valid_a, valid_b)
+
+
+def test_equality_classification_matrix(tmp_path: Path, environment: dict[str, Path]) -> None:
+    """valid+identical succeeds; invalid+valid and invalid+invalid never do."""
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    assert compare(workspace_a, workspace_b).equal is True
+
+    tampered = _corrupt_policy_field((workspace_a / SPLIT_POLICY_FILENAME).read_bytes())
+    (workspace_a / SPLIT_POLICY_FILENAME).write_bytes(tampered)
+    with pytest.raises(FormalFingerprintError):
+        compare(workspace_a, workspace_b)
+
+    (workspace_b / SPLIT_POLICY_FILENAME).write_bytes(tampered)
+    with pytest.raises(FormalFingerprintError):
+        compare(workspace_a, workspace_b)
+
+
+# ---------------------------------------------------------------------------
+# F2 — second repository-identity check immediately before first mutation
+# ---------------------------------------------------------------------------
+
+
+def test_commit_movement_between_validation_and_generation_is_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    request = make_request(tmp_path, environment, workspace_name="moved-ws")
+    external_before = snapshot_tree(environment["external"])
+    future_before = snapshot_tree(environment["future"])
+    head = environment["repository"] / ".git" / "HEAD"
+    original_head = head.read_bytes()
+
+    moved = "b" * 40
+    head.write_text(f"{moved}\n", encoding="utf-8")
+    with pytest.raises(FormalInputIdentityError, match="moved"):
+        generate(request)
+
+    assert not request.workspace.exists()
+    assert snapshot_tree(environment["external"]) == external_before
+    assert snapshot_tree(environment["future"]) == future_before
+    assert head.read_text(encoding="utf-8").strip() == moved
+    git_entries = sorted(entry.name for entry in (environment["repository"] / ".git").iterdir())
+    assert git_entries == ["HEAD"]
+    head.write_bytes(original_head)
+
+
+def test_repository_identity_is_read_twice_and_second_read_blocks_mutation(
+    tmp_path: Path, environment: dict[str, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The reader runs once at request build and again just before first mutation."""
+    import medscale.mesc._formal_generation_v1 as module
+
+    real_reader = module.resolve_repository_commit
+    observed: list[str] = []
+
+    def reader(repository_root: Path) -> str:
+        actual = real_reader(repository_root)
+        observed.append(actual if not observed else "b" * 40)
+        return observed[-1]
+
+    monkeypatch.setattr(module, "resolve_repository_commit", reader)
+
+    mkdir_calls: list[Path] = []
+    real_mkdir = Path.mkdir
+
+    def spy_mkdir(self: Path, *args: object, **kwargs: object) -> None:
+        mkdir_calls.append(self)
+        real_mkdir(self, *args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(Path, "mkdir", spy_mkdir)
+
+    request = make_request(tmp_path, environment, workspace_name="spied-ws")
+    assert len(observed) == 1
+    assert observed[0] == SYNTHETIC_COMMIT
+
+    with pytest.raises(FormalInputIdentityError, match="moved"):
+        generate(request)
+    assert len(observed) == 2
+    assert observed[1] != SYNTHETIC_COMMIT
+    assert not request.workspace.exists()
+    assert [path for path in mkdir_calls if path == request.workspace] == []
+
+
+def test_second_check_supports_every_accepted_repository_shape(tmp_path: Path) -> None:
+    """The re-verification reuses the accepted helper, so no layout support is lost."""
+    detached = make_repository(tmp_path / "detached")
+    assert resolve_repository_commit(detached) == SYNTHETIC_COMMIT
+
+    symbolic = tmp_path / "symbolic"
+    symbolic.mkdir()
+    git_dir = symbolic / ".git"
+    (git_dir / "refs" / "heads").mkdir(parents=True)
+    (git_dir / "HEAD").write_text("ref: refs/heads/main\r\n", encoding="utf-8")
+    (git_dir / "refs" / "heads" / "main").write_text(f"{SYNTHETIC_COMMIT}\r\n", encoding="utf-8")
+    assert resolve_repository_commit(symbolic.resolve()) == SYNTHETIC_COMMIT
+
+    linked = tmp_path / "linked"
+    linked.mkdir()
+    (linked / ".git").write_text(f"gitdir: {git_dir}\n", encoding="utf-8")
+    assert resolve_repository_commit(linked.resolve()) == SYNTHETIC_COMMIT
+
+    packed = tmp_path / "packed"
+    packed.mkdir()
+    packed_git = packed / ".git"
+    packed_git.mkdir()
+    (packed_git / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+    (packed_git / "packed-refs").write_text(
+        f"# pack-refs with: peeled\n{SYNTHETIC_COMMIT} refs/heads/main\n", encoding="utf-8"
+    )
+    assert resolve_repository_commit(packed.resolve()) == SYNTHETIC_COMMIT
