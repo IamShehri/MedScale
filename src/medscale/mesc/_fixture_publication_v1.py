@@ -421,11 +421,23 @@ def _validate_write_path_boundary(
     return parent_path, tuple(resolved_roots)
 
 
+def _path_separators() -> tuple[str, ...]:
+    """Return every real, non-empty path separator for this platform.
+
+    ``os.altsep`` is ``None`` on POSIX. A ``None`` or empty candidate must never
+    reach a membership test, because ``"" in name`` is true for every name and
+    would reject every valid publication child name. The two literal separators
+    are always included, so a backslash stays rejected on POSIX as well.
+    """
+    candidates = ("/", "\\", os.sep, os.altsep)
+    return tuple(separator for separator in candidates if separator)
+
+
 def _assert_direct_child_name(name: str) -> None:
     """Reject traversal, separator injection, dot components and stream suffixes."""
     if not name or name in {".", ".."}:
         raise _UnsafePublicationPathError("a publication child name must be a real name")
-    if "/" in name or "\\" in name or os.sep in name or (os.altsep or "") in name:
+    if any(separator in name for separator in _path_separators()):
         raise _UnsafePublicationPathError("a publication child name must not inject a separator")
     if ":" in name:
         raise _UnsafePublicationPathError(

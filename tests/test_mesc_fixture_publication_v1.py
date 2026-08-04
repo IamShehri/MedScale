@@ -729,6 +729,155 @@ def test_rejects_traversal_and_separator_injection() -> None:
 
 
 # ---------------------------------------------------------------------------
+# Absent POSIX alternate separator
+#
+# ``os.altsep`` is ``None`` on Linux and macOS. These tests simulate that exact
+# platform value on whatever host runs them. Simulation is NOT a substitute for
+# real Linux or macOS execution; it exists so the regression is observable
+# locally before the cross-platform matrix runs in CI.
+# ---------------------------------------------------------------------------
+
+
+FINGERPRINT_PLACEHOLDER = "0" * 64
+VALID_FINAL_NAME = f"mesc-p01-04b-split-{FINGERPRINT_PLACEHOLDER}"
+VALID_STAGING_NAME = f".mesc-p01-04b-split-{FINGERPRINT_PLACEHOLDER}.staging"
+
+
+def _simulated_altsep() -> object:
+    """Return ``os.altsep`` as a plain object.
+
+    The Windows type stubs declare ``os.altsep`` as ``str``, so asserting it is
+    ``None`` directly would narrow to an impossible type and mark the rest of the
+    test unreachable. Reading it through ``object`` keeps the runtime assertion
+    while staying honest about the declared type.
+    """
+    return os.altsep
+
+
+@pytest.fixture
+def posix_separators(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Simulate the POSIX separator configuration; monkeypatch restores it."""
+    monkeypatch.setattr(os, "sep", "/")
+    monkeypatch.setattr(os, "altsep", None)
+
+
+def test_separator_set_never_contains_an_empty_candidate(
+    posix_separators: None,
+) -> None:
+    """An empty or absent separator must never reach ``separator in name``."""
+    from medscale.mesc._fixture_publication_v1 import _path_separators
+
+    separators = _path_separators()
+    assert _simulated_altsep() is None
+    assert "" not in separators
+    assert None not in separators
+    assert all(separator for separator in separators)
+    assert set(separators) == {"/", "\\"}
+
+
+def test_valid_final_name_accepted_when_altsep_is_absent(posix_separators: None) -> None:
+    from medscale.mesc._fixture_publication_v1 import _assert_direct_child_name
+
+    assert _simulated_altsep() is None
+    _assert_direct_child_name(VALID_FINAL_NAME)
+
+
+def test_valid_staging_name_accepted_when_altsep_is_absent(posix_separators: None) -> None:
+    from medscale.mesc._fixture_publication_v1 import _assert_direct_child_name
+
+    assert _simulated_altsep() is None
+    _assert_direct_child_name(VALID_STAGING_NAME)
+
+
+def test_forward_slash_still_rejected_when_altsep_is_absent(posix_separators: None) -> None:
+    from medscale.mesc._fixture_publication_v1 import _assert_direct_child_name
+
+    for candidate in ("a/b", "/absolute", f"{VALID_FINAL_NAME}/nested", "../escape"):
+        with pytest.raises(_UnsafePublicationPathError):
+            _assert_direct_child_name(candidate)
+
+
+def test_backslash_still_rejected_when_altsep_is_absent(posix_separators: None) -> None:
+    from medscale.mesc._fixture_publication_v1 import _assert_direct_child_name
+
+    for candidate in ("a\\b", "\\absolute", f"{VALID_FINAL_NAME}\\nested"):
+        with pytest.raises(_UnsafePublicationPathError):
+            _assert_direct_child_name(candidate)
+
+
+def test_traversal_and_empty_names_still_rejected_when_altsep_is_absent(
+    posix_separators: None,
+) -> None:
+    from medscale.mesc._fixture_publication_v1 import _assert_direct_child_name
+
+    for candidate in ("", ".", ".."):
+        with pytest.raises(_UnsafePublicationPathError):
+            _assert_direct_child_name(candidate)
+
+
+def test_publication_succeeds_when_altsep_is_absent(
+    request_object: FixtureSplitRequest,
+    result_object: FixtureSplitResult,
+    parent: Path,
+    protected: tuple[Path, ...],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A complete synthetic publication must survive ``os.altsep is None``.
+
+    Only ``os.altsep`` is simulated here: ``os.sep`` is left at the host value so
+    the host's own path handling stays consistent while the exact POSIX
+    difference that caused the regression is exercised end to end.
+    """
+    monkeypatch.setattr(os, "altsep", None)
+    receipt = _publish(request_object, result_object, parent, protected)
+    assert receipt.publication_directory.name == f"mesc-p01-04b-split-{_fingerprint(result_object)}"
+    assert sorted(entry.name for entry in receipt.publication_directory.iterdir()) == list(
+        ALL_FILENAMES
+    )
+    assert receipt.published_filenames == ALL_FILENAMES
+    assert len(receipt.published_filenames) == 7
+
+
+def test_typed_input_errors_are_not_masked_when_altsep_is_absent(
+    request_object: FixtureSplitRequest,
+    result_object: FixtureSplitResult,
+    parent: Path,
+    protected: tuple[Path, ...],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The separator check must not shadow the earlier typed input categories.
+
+    The child-name check runs before the write-path boundary, so a name rejected
+    unconditionally would surface as an unsafe-path error for every caller and
+    hide the real input defect.
+    """
+    monkeypatch.setattr(os, "altsep", None)
+
+    with pytest.raises(_InvalidPublicationInputError):
+        _publish_fixture_split_v1(
+            request_object,
+            result_object,
+            publication_parent=parent,
+            protected_roots=list(protected),  # type: ignore[arg-type]
+        )
+    with pytest.raises(_InvalidPublicationInputError):
+        _publish_fixture_split_v1(
+            request_object,
+            result_object,
+            publication_parent=parent,
+            protected_roots=(),
+        )
+    with pytest.raises(_InvalidPublicationInputError):
+        _publish_fixture_split_v1(
+            "not-a-request",  # type: ignore[arg-type]
+            result_object,
+            publication_parent=parent,
+            protected_roots=protected,
+        )
+    assert list(parent.iterdir()) == []
+
+
+# ---------------------------------------------------------------------------
 # Conflicts (FD-BPUB-9)
 # ---------------------------------------------------------------------------
 
