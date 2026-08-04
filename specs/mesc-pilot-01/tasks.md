@@ -3669,7 +3669,13 @@ registry, generates no split, creates no partition membership, performs no
 leakage analysis, publishes nothing, promotes nothing and authorizes no
 downstream phase.
 
---- Current controlling state ---
+--- Historical controlling-state snapshot — SUPERSEDED ---
+
+This block was the controlling state when P01-T03C3 was recorded, after PR #86
+merged and before the founder-authorized P01-04D entry-readiness review
+completed. Its facts remain truthful for that point in the chronology and are
+preserved unrewritten; no field below has been edited. The later P01-T03D0
+Current controlling state supersedes this block for all current status purposes.
 
 P01-T03C2 documentation:
 ADOPTED ON CANONICAL MAIN
@@ -3736,4 +3742,174 @@ P01-04 overall is not complete.
 P01-05 is not unlocked.
 Entry into P01-04D remains subject to a separate founder entry decision that has
 not been issued.
+```
+
+```text
+P01-T03D0 — P01-04D entry-readiness remediation design
+
+Founder authorization:
+ISSUED ON 2026-08-04
+
+Prerequisite:
+P01-04D ENTRY-READINESS REVIEW COMPLETE / NOT READY
+
+Blockers:
+B-1 / B-2
+
+Scope:
+DOCUMENTATION AND CONTRACTS ONLY
+
+Implementation:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Blocker detail:
+B-1 no controlled formal operator invocation path exists for Generation A and
+Generation B.
+B-2 the P01-04A/E policy artifact inventory is not reconciled with the accepted
+fixture-only implementation inventory.
+
+Founder decisions recorded:
+FD-DREADY-1 THROUGH FD-DREADY-12, ISSUED ON 2026-08-04,
+DESIGN AND CONTRACT AUTHORITY ONLY.
+Implementation authority NOT ISSUED. Execution authority NOT ISSUED.
+
+Canonical baseline:
+78bab082bde3b53cbdbd5f37109437b68ba2e5c5
+(tree 9ca9a042f71fa6df09d73198698043719b770cf7;
+ordered parents fe2dc1e6fe65d4823655f6d958cf3307629623ec THEN
+a9f789d04a54315ad9d68deeac173cce861cd8f8;
+subject "Merge pull request #87 from IamShehri/docs/mesc-p01-04c-post-merge-truth-reconciliation";
+body "docs(mesc): reconcile P01-04C canonical adoption")
+
+Remediation branch:
+docs/mesc-p01-04d-entry-readiness-remediation
+
+Remediation commit identity:
+Recorded outside this block. The remediation is exactly one commit whose parent
+is the canonical baseline above, carrying exactly nine documentation paths. Its
+SHA is reported in the build report and in the independent review request, never
+written inside the content it would have to hash.
+
+Exact nine-path scope:
+A specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/README.md
+A specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/founder-authorization.md
+A specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/implementation-contract.md
+A specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/acceptance.md
+M specs/mesc-pilot-01/p01-04/plan.md
+M specs/mesc-pilot-01/p01-04/artifact-contracts.md
+M specs/mesc-pilot-01/p01-04/execution-protocol.md
+M specs/mesc-pilot-01/p01-04/decision-record.md
+M specs/mesc-pilot-01/tasks.md
+No tenth path. No source, test, script, workflow, dependency or lockfile change.
+
+Task-identifier note:
+The ledger runs P01-T03, P01-T03A, P01-T03B1 through P01-T03B20 and P01-T03C1
+through P01-T03C3. P01-T03D0 was verified absent before this block was appended.
+
+Formal operator surface recorded:
+scripts/mesc_p01_04d_operator.py
+commands generate and compare, command count 2, no third command.
+The script does not exist at this baseline and is not created by this gate.
+
+P01-04D artifact count:
+7
+
+P01-04D artifact filenames:
+split-policy.json
+group-registry.jsonl
+example-registry.jsonl
+excluded-ledger.json
+split-summary-identity-core.json
+split-summary.json
+generation-manifest.json
+No eighth artifact. No log, receipt, lock, marker, PID file, timestamp file or
+sidecar. All seven are compared byte-for-byte between Generation A and
+Generation B.
+
+Artifact-name supersession map:
+example-split-registry.jsonl -> example-registry.jsonl
+excluded-or-unassigned-ledger.json -> excluded-ledger.json
+split-fingerprint.json -> no standalone file
+
+Standalone fingerprint file:
+NONE
+
+Stage separation:
+P01-04E audit filename leakage-audit.json.
+P01-04F closeout filename p01-04-closeout-record.json.
+publication-manifest.json is the existing fixture-only publication artifact.
+generation-manifest.json is the formal P01-04D candidate-bundle manifest.
+
+Fixture-only tooling:
+FixtureSplitFacade and _fixture_publication_v1 remain private, fixture-only,
+synthetic-only, non-evidence, unexported and unchanged.
+
+Scientific identity:
+D1 THROUGH D10 UNCHANGED
+
+Scope:
+Record the founder-authorized P01-04D entry-readiness remediation design over
+the canonical baseline above. This gate resolves readiness blockers B-1 and B-2
+at the design and contract level only. It implements nothing, executes nothing,
+creates no formal executor and no operator script, opens no real input, creates
+no Generation A or Generation B workspace, generates no split artifact, produces
+no partition membership, performs no leakage analysis, accesses no P01-03G
+registry content, probes no external source-records file, publishes nothing,
+promotes nothing and authorizes no downstream phase.
+
+--- Current controlling state ---
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+P01-04C POST-MERGE TRUTH RECONCILIATION:
+CANONICALLY ADOPTED
+
+P01-04D ENTRY-READINESS REVIEW:
+COMPLETE — NOT READY
+
+P01-04D READINESS BLOCKER B-1:
+FORMAL OPERATOR INVOCATION CONTRACT ABSENT
+
+P01-04D READINESS BLOCKER B-2:
+FORMAL ARTIFACT INVENTORY UNRECONCILED
+
+P01-04D REMEDIATION DESIGN:
+AUTHORIZED / BUILT LOCALLY ONLY AFTER THIS TASK COMPLETES
+
+P01-04D IMPLEMENTATION:
+NOT AUTHORIZED
+
+P01-04D EXECUTION:
+NOT AUTHORIZED
+
+P01-03G REGISTRY ACCESS:
+NOT AUTHORIZED
+
+EXTERNAL SOURCE-RECORD ACCESS:
+NOT AUTHORIZED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+REAL SPLIT GENERATION:
+NOT AUTHORIZED
+
+REAL PARTITION MEMBERSHIP:
+NOT AUTHORIZED
+
+CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+P01-04 OVERALL:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
 ```

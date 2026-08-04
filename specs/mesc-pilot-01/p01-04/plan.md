@@ -6,6 +6,13 @@ Status: **specification and policy only — no execution authorized**
 
 ## Phase overview
 
+### Historical phase table — SUPERSEDED FOR CURRENT STATUS
+
+The table below is the original P01-04A phase table. It is preserved unrewritten
+as a truthful historical record of the baseline it describes. It is superseded
+for current status by the **Current maintenance disposition** section further
+below. No row in it has been edited.
+
 | Stage | Name | Authorization required | Current status |
 |---|---|---|---|
 | P01-04A | Specification and Policy Ratification | Founder ratification | **Ratified** |
@@ -29,6 +36,55 @@ on canonical baseline
 The current maintenance context does not replace the original P01-04A
 ratification identity or authority.
 
+### Current maintenance disposition
+
+This section is the current controlling status of the phase overview. It
+supersedes the historical phase table above for current status only. It records
+no new scientific policy and amends no ratified decision.
+
+```text
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+P01-04D:
+NOT AUTHORIZED
+
+P01-04D entry-readiness:
+BLOCKED BY B-1 AND B-2
+
+remediation design:
+AUTHORIZED / NOT IMPLEMENTED
+```
+
+The two blocking findings returned by the founder-authorized P01-04D
+entry-readiness review are:
+
+```text
+B-1:
+No controlled formal operator invocation path exists for Generation A and
+Generation B.
+
+B-2:
+The P01-04A/E policy artifact inventory is not reconciled with the accepted
+fixture-only implementation inventory.
+```
+
+Both are resolved at the design and contract level by `FD-DREADY-1` through
+`FD-DREADY-12`, recorded in
+[`../p01-04d-entry-readiness-remediation/founder-authorization.md`](../p01-04d-entry-readiness-remediation/founder-authorization.md).
+Design-level resolution is not entry, not implementation authority and not
+execution authority.
+
+```text
+P01-04D implementation:
+NOT AUTHORIZED
+
+P01-04D execution:
+NOT AUTHORIZED
+```
 
 No P01-04 stage authorizes P01-05.
 
@@ -55,6 +111,13 @@ P01-04A produces:
 - `specs/mesc-pilot-01/p01-04/artifact-contracts.md`
 - `specs/mesc-pilot-01/p01-04/data-model.md`
 
+### Historical P01-04A proposed downstream inventory — SUPERSEDED FOR CURRENT FORMAL STAGE CONTRACTING
+
+The list below is the original undifferentiated "P01-04B and later produce"
+inventory. It is preserved unrewritten as a historical P01-04A proposal. It is
+superseded for current formal stage contracting by the stage-scoped contracts
+that follow, and it must not be read as the formal P01-04D inventory.
+
 P01-04B and later produce:
 
 - `split-policy.json`
@@ -65,6 +128,96 @@ P01-04B and later produce:
 - `leakage-audit-report.json`
 - `excluded-or-unassigned-ledger.json`
 - `p01-04-closeout-record.json`
+
+### Current stage-scoped output contracts
+
+These are the current contracts. They supersede the historical proposal above
+for current formal stage contracting. Nothing here is produced: no stage below
+P01-04D or above is authorized to execute.
+
+**P01-04D — formal split generation candidate bundle.** Each Generation A and
+Generation B workspace contains exactly these seven candidate artifacts:
+
+```text
+split-policy.json
+group-registry.jsonl
+example-registry.jsonl
+excluded-ledger.json
+split-summary-identity-core.json
+split-summary.json
+generation-manifest.json
+```
+
+```text
+P01-04D artifact count:
+7
+```
+
+No eighth artifact. No log, receipt, lock, marker, PID file, timestamp file or
+sidecar belongs to the deterministic bundle. All seven are compared
+byte-for-byte between Generation A and Generation B.
+
+Superseded names:
+
+```text
+example-split-registry.jsonl       ->  example-registry.jsonl
+excluded-or-unassigned-ledger.json ->  excluded-ledger.json
+split-fingerprint.json             ->  no standalone file
+```
+
+```text
+standalone fingerprint file:
+none
+```
+
+The authoritative full lowercase 64-hex `split_fingerprint` is carried and
+verified through `split-summary.json` and `generation-manifest.json`. The 16-hex
+`split_hash` is compatibility/display-only.
+
+**P01-04E — canonical leakage audit and finding resolution.** Output:
+
+```text
+leakage-audit.json
+```
+
+**P01-04F — freeze, independent verification and closeout record.** Output:
+
+```text
+p01-04-closeout-record.json
+```
+
+**P01-04G — separately authorized repository promotion.** Produces no new
+scientific artifact; it is a promotion boundary only.
+
+**Existing fixture-only publication inventory.** The accepted fixture-only
+publication manifest is:
+
+```text
+publication-manifest.json
+```
+
+It is not the formal P01-04D generation manifest. The formal P01-04D
+candidate-bundle manifest is `generation-manifest.json`.
+
+The single supported prospective operator surface for P01-04D is:
+
+```text
+scripts/mesc_p01_04d_operator.py
+
+commands:
+generate
+compare
+```
+
+It does not exist at this baseline.
+
+```text
+P01-04D implementation:
+NOT AUTHORIZED
+
+P01-04D execution:
+NOT AUTHORIZED
+```
 
 No future stage produces real partition membership until founder authorization explicitly permits it.
 

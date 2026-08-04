@@ -339,3 +339,188 @@ P01-04D through P01-04G. Each remains subject to its own separate founder
 authorization.
 
 On conflict between this closeout and D1–D10, D1–D10 control.
+
+---
+
+## Implementation and Readiness Appendix — P01-04D entry-readiness remediation
+
+This appendix records founder decisions `FD-DREADY-1` through `FD-DREADY-12`,
+issued on 2026-08-04 as **design and contract authority only**.
+
+```text
+FD-DREADY-1 THROUGH FD-DREADY-12:
+ISSUED ON 2026-08-04
+
+Decision class:
+DESIGN AND CONTRACT AUTHORITY ONLY
+
+P01-04D implementation authority:
+NOT ISSUED
+
+P01-04D execution authority:
+NOT ISSUED
+```
+
+### This appendix does not amend D1–D10
+
+```text
+D1 partition set                          UNCHANGED
+D2 exact 700 / 150 / 150 totals           UNCHANGED
+D3 source_document_id grouping            UNCHANGED
+D4 decision stratification                UNCHANGED
+D5 constrained integer apportionment      UNCHANGED
+D6 deterministic SHA-256 ranking          UNCHANGED
+D7 minimum sizes                          UNCHANGED
+D8 no holdout                             UNCHANGED
+D9 public repository content boundary     UNCHANGED
+D10 split-version policy                  UNCHANGED
+```
+
+No text of D1 through D10 is edited, repealed or reinterpreted by this appendix.
+Scientific identity is unchanged. Only operator and artifact-contract ambiguity
+is reconciled.
+
+On conflict between this appendix and D1–D10, **D1–D10 control**.
+
+### The two readiness blockers resolved at design level
+
+The founder-authorized P01-04D entry-readiness review completed with the verdict
+**NOT READY** on two blocking findings:
+
+```text
+B-1:
+No controlled formal operator invocation path exists for Generation A and
+Generation B.
+
+B-2:
+The P01-04A/E policy artifact inventory is not reconciled with the accepted
+fixture-only implementation inventory.
+```
+
+```text
+B-1 resolved at design level by:
+FD-DREADY-2, FD-DREADY-3, FD-DREADY-4, FD-DREADY-5
+
+B-2 resolved at design level by:
+FD-DREADY-6, FD-DREADY-7, FD-DREADY-8, FD-DREADY-9, FD-DREADY-10
+```
+
+Design-level resolution of a readiness blocker is not entry, not implementation
+authority and not execution authority.
+
+### FD-DREADY decision summary
+
+```text
+FD-DREADY-1   scope and authority — design and contracts only
+FD-DREADY-2   a separate private formal executor; fixture-only tooling
+              untouched and never reused for formal execution
+FD-DREADY-3   one controlled operator surface; exactly two commands
+FD-DREADY-4   one generation per invocation; explicit inputs;
+              fail-closed rejections
+FD-DREADY-5   comparison boundary; any inequality invalidates both
+              candidates
+FD-DREADY-6   the exact seven-file P01-04D generation inventory
+FD-DREADY-7   the artifact-name supersession map
+FD-DREADY-8   stage separation across P01-04D, E, F and G
+FD-DREADY-9   deterministic, date-free formal policy snapshot
+FD-DREADY-10  non-circular, identity-free formal generation manifest
+FD-DREADY-11  future implementation boundary — synthetic only
+FD-DREADY-12  D1 through D10 preserved unchanged
+```
+
+The exact meaning of each identifier is carried by
+[`../p01-04d-entry-readiness-remediation/founder-authorization.md`](../p01-04d-entry-readiness-remediation/founder-authorization.md),
+which controls. No identifier beyond `FD-DREADY-12` exists.
+
+### Reconciled operator and artifact contracts
+
+```text
+formal operator script:
+scripts/mesc_p01_04d_operator.py
+
+operator commands:
+generate
+compare
+
+P01-04D artifact count:
+7
+
+P01-04D artifact filenames:
+split-policy.json
+group-registry.jsonl
+example-registry.jsonl
+excluded-ledger.json
+split-summary-identity-core.json
+split-summary.json
+generation-manifest.json
+
+standalone fingerprint file:
+none
+
+P01-04E audit filename:
+leakage-audit.json
+
+P01-04F closeout filename:
+p01-04-closeout-record.json
+
+fixture manifest:
+publication-manifest.json
+
+formal D manifest:
+generation-manifest.json
+```
+
+Superseded names:
+
+```text
+example-split-registry.jsonl       ->  example-registry.jsonl
+excluded-or-unassigned-ledger.json ->  excluded-ledger.json
+split-fingerprint.json             ->  no standalone file
+```
+
+The authoritative full lowercase 64-hex `split_fingerprint` is carried and
+verified through `split-summary.json` and `generation-manifest.json`. The 16-hex
+`split_hash` is compatibility/display-only.
+
+### This appendix authorizes nothing
+
+```text
+P01-04D entry:
+NOT AUTHORIZED
+
+P01-04D implementation:
+NOT AUTHORIZED
+
+P01-04D execution:
+NOT AUTHORIZED
+
+P01-03G registry access:
+NOT AUTHORIZED
+
+External source-record access:
+NOT AUTHORIZED
+
+Real dataset access:
+NOT AUTHORIZED
+
+Real split generation:
+NOT AUTHORIZED
+
+Real partition membership:
+NOT AUTHORIZED
+
+Canonical leakage execution:
+NOT AUTHORIZED
+
+P01-04 overall:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+```
+
+No formal executor was implemented, no operator script was created, no
+generation workspace was created, no split artifact was generated, no partition
+membership was calculated, no leakage check was executed, no P01-03G registry
+content was accessed and no real dataset was accessed. Every one of the six
+prospective implementation paths remains absent or unchanged.
