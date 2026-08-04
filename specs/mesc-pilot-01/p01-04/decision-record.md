@@ -255,3 +255,42 @@ identity, scope, branch, baseline, or decisions D1–D10.
   B2 implementation does not authorize execution.
   Execution authorization requires explicit founder authorization for each stage
   (P01-04B, P01-04C, P01-04D, P01-04E, P01-04F, P01-04G).
+
+### Current controlling closeout — P01-04B acceptance
+
+This section is the current controlling status of the Implementation Status
+Appendix. It supersedes the appendix entries above for current status only. It
+does not amend, repeal or reinterpret D1–D10, and it records no new founder
+ratification of split policy.
+
+```text
+P01-04B implementation:
+ADOPTED AND ACCEPTED
+
+Canonical acceptance baseline:
+d5a6ac1654cabd33b6a795756d2796bceaf1652a
+
+Accepted reviewed head:
+e78d1fca2d972cdbcdb7ff78bdf09af4cd03966f
+
+Merged PR:
+#83
+
+Real execution:
+NOT AUTHORIZED
+```
+
+The appendix entries above, and every prior entry recording P01-04B as
+incomplete or as `CHANGES REQUIRED / NOT ACCEPTED`, remain truthful historical
+snapshots of the baselines they describe. They are preserved unrewritten. They
+are superseded for current status by this closeout.
+
+This closeout records tooling acceptance only. D1–D10 remain ratified policy for
+specification purposes and were not executed. No real split was generated, no
+real partition membership exists, no canonical leakage execution was performed
+and no evidence was published. Real split generation, real partition membership,
+canonical leakage execution, evidence publication, model access, inference,
+retrieval, training and fine-tuning all remain unauthorized, as do P01-04C
+through P01-04G. Each remains subject to its own separate founder authorization.
+
+On conflict between this closeout and D1–D10, D1–D10 control.

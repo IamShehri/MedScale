@@ -177,13 +177,19 @@ Stop conditions: executable without authorization; scientific identity mutated
 | Name | Workstream | Status |
 |---|---|---|
 | P01-04B1 | Split-tooling subphase | Adopted |
+| P01-04B | Split-tooling and contract implementation phase | Completed, adopted and founder-accepted on canonical main `d5a6ac1654cabd33b6a795756d2796bceaf1652a` (PR #83, 2026-08-04); all ten acceptance criteria SATISFIED; tooling acceptance only; real execution not authorized; P01-04C not authorized |
 | MESC B0 | Model-execution spine | Adopted |
 | MESC B1 | Model-runner / experiment phase | Not evidenced as completed |
-| P01-04B2 | Remaining tooling design gate | Design ratified; implementation not authorized except for the separately authorized P01-04B2A increment below; execution not authorized |
+| P01-04B2 | Remaining tooling design gate | Design ratified; every authorized increment (B2A, B2B, B2C, B2D), the minimum-deviation correction and the atomic publication boundary implemented, adopted and accepted; execution not authorized |
 | P01-04B2A | Deterministic artifact types and canonical serialization | Contracts ratified; implementation adopted (PR #59); portability validation infrastructure adopted on canonical main (PR #61 merge `69f16455...`); evidence-production authority adopted on canonical main (PR #65 merge `e3478da9...`); FD-PV-17 and FD-PV-18 activated and consumed; canonical portability evidence produced by run 30678040133, mechanically verified, and independently reviewed APPROVE WITH NON-BLOCKING NOTES; founder evidence-acceptance decision FD-PV-19 adopted on canonical main (PR #66 merge `1f2d9152...`); founder implementation-acceptance decision FD-B2A-9 issued but not yet adopted on canonical main, with the N-12 discharge and the Windows and macOS closure decisions likewise issued but not yet canonical; execution not authorized; B2A founder-accepted in substance but not yet canonically adopted; B2B not authorized |
 
 P01-04B1 split-tooling naming and MESC B0/B1 model-experiment naming
 refer to different workstreams and are not interchangeable.
+
+The per-increment status text in the P01-04B2A row above is a historical
+snapshot of that increment's governance position at the time it was written and
+is preserved unrewritten. For current status of every P01-04B increment, the
+final Current controlling state block in this file controls.
 
 ```text
 P01-T10 — Perform Colab feasibility test
@@ -2967,6 +2973,15 @@ governance package remain byte-identical.
 
 --- Current controlling state ---
 
+HISTORICAL CONTROLLING-STATE SNAPSHOT — SUPERSEDED.
+
+This was the controlling state when P01-T03B19 was recorded, before FD-BPUB-1
+through FD-BPUB-18 were adopted on canonical main through PR #82, before the
+publication-boundary implementation was merged through PR #83, and before the
+founder issued the P01-04B acceptance disposition. It is retained as historical
+governance evidence and is not the repository's present controlling state. The
+later P01-T03B20 Current controlling state supersedes this block.
+
 P01-T03B18 documentation:
 ADOPTED ON CANONICAL MAIN
 
@@ -3100,4 +3115,170 @@ specs/mesc-pilot-01/p01-04b2c-acceptance/,
 specs/mesc-pilot-01/p01-04b2d-authorization/,
 specs/mesc-pilot-01/p01-04b2d-acceptance/ and
 specs/mesc-pilot-01/p01-04b-min-deviation-authorization/ and is not restated.
+```
+
+```text
+P01-T03B20 — P01-04B acceptance closeout
+
+Founder acceptance:
+ISSUED ON 2026-08-04
+
+Canonical implementation merge:
+d5a6ac1654cabd33b6a795756d2796bceaf1652a
+
+Merged PR:
+#83
+
+Reviewed correction head:
+e78d1fca2d972cdbcdb7ff78bdf09af4cd03966f
+
+Implementation status:
+COMPLETED, ADOPTED AND ACCEPTED
+
+Post-merge qualification:
+ALL REQUIRED AND OPTIONAL RUNS SUCCESSFUL
+
+Execution status:
+NOT AUTHORIZED
+
+Downstream status:
+P01-04C NOT AUTHORIZED
+
+Task-identifier note:
+This block is numbered P01-T03B20. The identifier P01-T03B7 is already assigned
+to the P01-04B2A portability governance-hold resolution gate recorded earlier in
+this append-only ledger and adopted through PR #63, so it is not reused here.
+
+Accepted canonical baseline:
+d5a6ac1654cabd33b6a795756d2796bceaf1652a
+(tree 0037f61ff4fba45fe4e5b2ed126f8bb2567d64b7;
+ordered parents 24025f44cc7bdc8fd007616983630d825fc0b233 THEN
+e78d1fca2d972cdbcdb7ff78bdf09af4cd03966f;
+subject "Merge pull request #83 from IamShehri/feat/mesc-p01-04b-publication-boundary";
+body "feat(mesc): implement P01-04B publication boundary";
+merge timestamp 2026-08-04T01:41:46Z)
+
+Accepted implementation identity:
+Original implementation commit cb73b94b87880f49a220a15a2d4a24412c7d0d0b.
+Reviewed correction head e78d1fca2d972cdbcdb7ff78bdf09af4cd03966f.
+Adopted through PR #83 as a merge commit.
+
+First-parent scope:
+A .github/workflows/mesc-p01-04b-publication-qualification.yml
+A src/medscale/mesc/_fixture_publication_v1.py
+A tests/test_mesc_fixture_publication_v1.py
+A tests/test_mesc_p01_04b_publication_qualification_v1.py
+4 files changed, 2707 insertions, 0 deletions. No fifth path.
+
+Accepted post-merge evidence:
+CI run 30869536586, run number 260, SUCCESS;
+quality (py3.11) SUCCESS; quality (py3.12) SUCCESS.
+CodeQL run 30869536582, run number 264, SUCCESS;
+analyze (python) SUCCESS.
+MESC P01-04B Publication Qualification run 30869536588, run number 3, SUCCESS;
+Ubuntu Python 3.11 SUCCESS; Ubuntu Python 3.12 SUCCESS;
+Windows Python 3.11 SUCCESS; Windows Python 3.12 SUCCESS;
+macOS Python 3.11 SUCCESS; macOS Python 3.12 SUCCESS.
+Optional Extras / Backends run 30869536570, run number 85, SUCCESS;
+core-without-backends SUCCESS; backends-transformers SUCCESS;
+backends-llamacpp SUCCESS.
+No workflow was rerun, manually dispatched or cancelled.
+
+Acceptance criterion mapping:
+1 public SourceDocumentGroupedSplitter remains fail-closed SATISFIED;
+2 separate private FixtureSplitFacade SATISFIED;
+3 library-only in-memory execution path SATISFIED;
+4 no formal CLI SATISFIED;
+5 full 64-hex split_fingerprint authoritative SATISFIED;
+6 16-hex split_hash compatibility and display only SATISFIED;
+7 FD-B2-6 leakage normalization SATISFIED;
+8 three accepted synthetic qualification fixtures SATISFIED;
+9 deterministic byte-identical supported-runtime qualification SATISFIED;
+10 no real P01-03G membership generated or disclosed SATISFIED.
+The three accepted synthetic fixtures are exactly exact-reference-1000-v1,
+constraint-stress-1000-v1 and leakage-positive-v1.
+
+Scope:
+Record the founder's P01-04B acceptance closeout against the exact canonical
+merge baseline, the accepted implementation identity, the first-parent scope and
+statistics, the post-merge CI, CodeQL, cross-platform qualification and optional
+backend evidence, and the individual mapping of all ten acceptance criteria.
+This gate implements nothing, executes nothing, publishes nothing, promotes
+nothing and authorizes no downstream phase. It records tooling acceptance only.
+
+--- Current controlling state ---
+
+P01-T03B19 documentation:
+ADOPTED ON CANONICAL MAIN
+
+FD-BPUB-1 THROUGH FD-BPUB-18:
+ADOPTED ON CANONICAL MAIN
+
+PR #82:
+MERGED AND MECHANICALLY VERIFIED AS
+24025f44cc7bdc8fd007616983630d825fc0b233
+
+PUBLICATION-BOUNDARY IMPLEMENTATION AUTHORITY:
+ACTIVATED, EXERCISED EXACTLY ONCE, AND SPENT
+
+Publication-boundary implementation:
+BUILT, INDEPENDENTLY REVIEWED, CORRECTED, INDEPENDENTLY REVIEWED, PUBLISHED,
+READY, MERGED, MECHANICALLY VERIFIED AND FOUNDER-ACCEPTED
+
+PR #83:
+MERGED AND MECHANICALLY VERIFIED AS
+d5a6ac1654cabd33b6a795756d2796bceaf1652a
+
+ATOMIC PUBLICATION:
+IMPLEMENTED, QUALIFIED AND ACCEPTED
+
+WRITE-PATH PROTECTIONS:
+IMPLEMENTED, QUALIFIED AND ACCEPTED
+
+MINIMUM-DEVIATION CAPABILITY:
+SATISFIED
+
+P01-04B2A:
+ACCEPTED
+
+P01-04B2B:
+ACCEPTED
+
+P01-04B2C:
+ACCEPTED
+
+P01-04B2D:
+ACCEPTED
+
+P01-04B acceptance eligibility:
+TRUE
+
+P01-04B TOOLING:
+ACCEPTED
+
+P01-04B:
+ACCEPTED
+
+REAL EXECUTION:
+NOT AUTHORIZED
+
+P01-04C:
+NOT AUTHORIZED
+
+P01-04D THROUGH P01-04G:
+NOT AUTHORIZED
+
+Real split execution, real partition membership, canonical leakage execution,
+leakage-audit orchestration, dataset scanning, registry scanning, record-pair
+discovery, CLI, public export, filesystem publication, promotion of any fixture
+output, P01-03G or real dataset access, B0/B1 execution, model access,
+inference, retrieval, metrics, benchmark execution, training, fine-tuning,
+adapter creation, publication and clinical use:
+NOT AUTHORIZED
+
+P01-04B acceptance is tooling acceptance only. It is never permission to run
+P01-04C, P01-04D or any later stage. No real split exists, no real partition
+membership exists, no real labels were processed, no canonical leakage was
+executed and no evidence was published. P01-04 overall is not complete and
+P01-05 is not unlocked.
 ```

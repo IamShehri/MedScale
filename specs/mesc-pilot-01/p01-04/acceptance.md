@@ -47,19 +47,19 @@ P01-04B acceptance requires a separate founder authorization.
 
 ## P01-04B — Implementation Status Matrix
 
-The following matrix maps each P01-04B acceptance criterion to its current
-implementation status on canonical main at `3edf328f583f13fcd9d566e5080ec3cce83ae178`.
+### Historical implementation snapshot — SUPERSEDED
 
-Current maintenance note:
+HISTORICAL IMPLEMENTATION SNAPSHOT — SUPERSEDED.
 
-The founder-ratified B2 design reconciliation is maintained on canonical
-documentation baseline
-`ce1272235cb48dbacdb18f20e1ae8db695b01328`.
+The block below records the implementation status that was true on canonical
+main at `3edf328f583f13fcd9d566e5080ec3cce83ae178`, with documentation
+maintenance on canonical documentation baseline
+`ce1272235cb48dbacdb18f20e1ae8db695b01328`. It was accurate for those baselines
+and is preserved unrewritten as a historical record. It does not state current
+status. The "Current acceptance disposition" subsection below supersedes it in
+full for all current status purposes.
 
-This current-maintenance baseline does not rewrite the historical implementation
-snapshot recorded above.
-
-
+```text
 The matrix does not mark P01-04B accepted. P01-04B overall remains incomplete.
 
 Public SourceDocumentGroupedSplitter activation:
@@ -81,6 +81,119 @@ P01-04B1 satisfies the private pure split-core criteria only.
 No real partition membership has been generated or disclosed.
 Public tooling, artifact builders, leakage checks, execution controls,
 and end-to-end synthetic qualification remain incomplete.
+```
+
+### Current acceptance disposition
+
+This subsection is the current controlling status for P01-04B.
+
+```text
+Canonical acceptance baseline:
+d5a6ac1654cabd33b6a795756d2796bceaf1652a
+
+Founder P01-04B acceptance:
+ISSUED ON 2026-08-04
+
+P01-04B tooling:
+ACCEPTED
+
+Implementation merged:
+YES
+
+Post-merge CI:
+SUCCESS
+
+Post-merge CodeQL:
+SUCCESS
+
+Cross-platform qualification:
+SUCCESS
+
+Optional backends:
+SUCCESS
+
+Real split execution:
+NOT AUTHORIZED
+
+Real partition membership:
+NOT AUTHORIZED
+
+Canonical leakage execution:
+NOT AUTHORIZED
+
+P01-04C:
+NOT AUTHORIZED
+
+P01-04D through P01-04G:
+NOT AUTHORIZED
+```
+
+Tooling acceptance is not real execution authorization. Accepting P01-04B
+accepts the implemented and qualified tooling only. It does not authorize any
+real split, real partition membership, canonical leakage execution, evidence
+publication, model access, inference, retrieval, training or fine-tuning, and it
+is never permission to perform P01-04C, P01-04D or any later stage. Each of
+those requires its own separate founder authorization.
+
+### Acceptance criterion mapping
+
+Each of the ten P01-04B acceptance criteria above is mapped individually against
+canonical main `d5a6ac1654cabd33b6a795756d2796bceaf1652a`.
+
+```text
+1. Public SourceDocumentGroupedSplitter remains fail-closed:
+SATISFIED
+
+2. Separate private FixtureSplitFacade:
+SATISFIED
+
+3. Library-only in-memory execution path:
+SATISFIED
+
+4. No formal CLI:
+SATISFIED
+
+5. Full 64-hex split_fingerprint authoritative:
+SATISFIED
+
+6. 16-hex split_hash compatibility/display only:
+SATISFIED
+
+7. FD-B2-6 leakage normalization:
+SATISFIED
+
+8. Three accepted synthetic qualification fixtures:
+SATISFIED
+
+9. Deterministic byte-identical supported-runtime qualification:
+SATISFIED
+
+10. No real P01-03G membership generated or disclosed:
+SATISFIED
+```
+
+The three accepted synthetic qualification fixtures are exactly:
+
+```text
+exact-reference-1000-v1
+constraint-stress-1000-v1
+leakage-positive-v1
+```
+
+All ten criteria are SATISFIED. The fixtures are synthetic. No real partition
+membership has been generated or disclosed, and no real P01-03G registry
+membership was accessed.
+
+```text
+P01-04B:
+ACCEPTED
+
+P01-04C:
+NOT AUTHORIZED
+```
+
+The P01-04C acceptance criteria recorded below are unchanged by this
+disposition. P01-04C is not accepted and is not authorized.
 
 ---
 
