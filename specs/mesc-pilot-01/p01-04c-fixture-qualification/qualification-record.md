@@ -3,7 +3,12 @@
 This document records a **synthetic qualification candidate**. It is not
 canonical evidence, not research evidence and not real split evidence.
 
-## Status
+## Historical candidate status — SUPERSEDED FOR CURRENT STATUS
+
+The block below is the original pre-acceptance candidate status. It was accurate
+when the candidate was built and is preserved unrewritten as historical truth.
+It does not state current status. The "Current acceptance disposition" section at
+the end of this document supersedes it in full for all current status purposes.
 
 ```text
 Founder qualification authorization:
@@ -503,7 +508,12 @@ freshly created virtual-environment console executable on this host. That is an
 environmental constraint of the build machine, not a property of the candidate,
 and the gate itself reports CLEAN.
 
-## Governance
+## Historical governance snapshot — SUPERSEDED FOR CURRENT STATUS
+
+The block below is the original pre-acceptance governance position. It was
+accurate when the candidate was built and is preserved unrewritten as historical
+truth. It does not state current status. The "Current acceptance disposition"
+section below supersedes it in full for all current status purposes.
 
 ```text
 P01-04B
@@ -525,6 +535,153 @@ real dataset execution
 NOT AUTHORIZED
 ```
 
-A passing synthetic qualification candidate is not P01-04C acceptance. P01-04C
-remains unaccepted until an independent review and a separate founder acceptance
-disposition.
+At the time that block was written, a passing synthetic qualification candidate
+was not P01-04C acceptance, and P01-04C remained unaccepted pending an
+independent review and a separate founder acceptance disposition. Both have
+since occurred, and the section below records the result.
+
+## Current acceptance disposition
+
+This section is the current controlling status of this document.
+
+```text
+Founder P01-04C acceptance:
+ISSUED ON 2026-08-04
+
+Qualification candidate:
+CANONICALLY ADOPTED THROUGH PR #85
+
+P01-04C synthetic fixture qualification:
+ACCEPTED
+
+Canonical acceptance baseline:
+b20dbe0000a129f3019d6f7d2895622ce0560069
+
+Accepted reviewed head:
+c9cf1cc58b3ff89c39327c328a10308c0a9dbf4d
+
+Independent review:
+APPROVE WITH NON-BLOCKING NOTES
+
+Post-merge checks:
+SUCCESS
+
+P01-04D:
+NOT AUTHORIZED
+
+Real dataset execution:
+NOT AUTHORIZED
+```
+
+### Accepted criteria
+
+```text
+C1:
+SUPPORTED AND ACCEPTED
+All dedicated P01-04C deterministic synthetic fixture tests pass.
+
+C2:
+SUPPORTED AND ACCEPTED
+All successful fixture artifacts are byte-identical across three fresh,
+semantically identical runs.
+
+C3:
+SUPPORTED AND ACCEPTED
+The ratified edge-case semantics pass: empty input expected deterministic
+fail-closed, single-example input expected success, all-one-label input expected
+success.
+
+C4:
+SUPPORTED AND ACCEPTED
+No real dataset partition membership was generated, disclosed or accessed.
+```
+
+### Accepted fixtures
+
+```text
+p01-04c-small-20-v1
+p01-04c-single-example-v1
+p01-04c-all-one-label-20-v1
+empty-input deterministic fail-closed case
+```
+
+### Exact post-merge run and job identities
+
+```text
+CI
+run 30879121118
+run number 264
+SUCCESS
+
+quality (py3.11):
+SUCCESS
+
+quality (py3.12):
+SUCCESS
+```
+
+```text
+CodeQL
+run 30879121116
+run number 268
+SUCCESS
+
+analyze (python):
+SUCCESS
+```
+
+```text
+Optional Extras / Backends
+run 30879121117
+run number 87
+SUCCESS
+
+core-without-backends:
+SUCCESS
+
+backends-transformers:
+SUCCESS
+
+backends-llamacpp:
+SUCCESS
+```
+
+The canonical pull-request CI and CodeQL runs bound to the accepted reviewed
+head were likewise successful.
+
+### Non-blocking review notes
+
+These are preserved as historical review notes. No source or test was modified
+to address them.
+
+```text
+F-01:
+The exact empty-input sanitized message is accepted implementation text frozen
+as a deterministic behavioral surface, rather than a separately ratified
+message-contract string.
+
+F-02:
+The builder host encountered a Windows Application Control console-shim
+limitation for `uv run medscale check`; the same exact wrapper succeeded and
+reported CLEAN in the independent clean-room review and canonical CI.
+
+F-03:
+The independent Windows host reproduced 54 pre-existing
+tests/test_mesc_b2a_portability.py failures caused by WSL/bash path mangling.
+The same failures reproduced on the canonical parent, and the P01-04C candidate
+changed no affected path.
+```
+
+### Scope of this acceptance
+
+P01-04C acceptance accepts the synthetic fixture qualification only. Every
+literal vector recorded above describes synthetic fixture output. It is not real
+split evidence, not canonical dataset evidence, not research evidence and not
+clinical evidence.
+
+This acceptance authorizes no P01-04D through P01-04G work, no P01-03G registry
+access, no real dataset access, no real split generation, no real partition
+membership, no canonical leakage execution, no dataset or registry scanning, no
+record-pair discovery, no public export, no filesystem or evidence publication,
+no model access, inference, retrieval, benchmark execution, training,
+fine-tuning, adapter creation and no clinical use.

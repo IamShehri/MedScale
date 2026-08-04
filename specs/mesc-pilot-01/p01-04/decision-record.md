@@ -294,3 +294,48 @@ retrieval, training and fine-tuning all remain unauthorized, as do P01-04C
 through P01-04G. Each remains subject to its own separate founder authorization.
 
 On conflict between this closeout and D1–D10, D1–D10 control.
+
+### Current controlling closeout — P01-04C acceptance
+
+This section is the current controlling status of the Implementation Status
+Appendix for P01-04C. It supersedes the entries above for current P01-04C status
+only. It does not amend, repeal or reinterpret D1–D10, and it records no new
+founder ratification of split policy.
+
+```text
+P01-04C qualification implementation:
+CANONICALLY ADOPTED
+
+P01-04C synthetic fixture qualification:
+ACCEPTED
+
+Canonical acceptance baseline:
+b20dbe0000a129f3019d6f7d2895622ce0560069
+
+Accepted reviewed head:
+c9cf1cc58b3ff89c39327c328a10308c0a9dbf4d
+
+Merged PR:
+#85
+
+Real execution:
+NOT AUTHORIZED
+
+P01-04D:
+NOT AUTHORIZED
+```
+
+D1–D10 remain specification policy only. No real split was generated. No real
+partition membership exists. No canonical leakage execution occurred. No real
+evidence was published.
+
+The accepted P01-04C qualification exercised deterministic synthetic fixtures
+against the private fixture-only tooling. It did not execute D1–D10 against the
+real dataset, and no part of it constitutes a real split, a real partition
+assignment or a canonical leakage audit. Real split generation, real partition
+membership, canonical leakage execution, evidence publication, model access,
+inference, retrieval, training and fine-tuning all remain unauthorized, as do
+P01-04D through P01-04G. Each remains subject to its own separate founder
+authorization.
+
+On conflict between this closeout and D1–D10, D1–D10 control.
