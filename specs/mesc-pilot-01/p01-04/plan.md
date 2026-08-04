@@ -52,12 +52,32 @@ ACCEPTED AND CANONICALLY CLOSED
 P01-04D:
 NOT AUTHORIZED
 
-P01-04D entry-readiness:
-BLOCKED BY B-1 AND B-2
+P01-04D entry-readiness review:
+COMPLETE — ORIGINAL VERDICT NOT READY
 
-remediation design:
-AUTHORIZED / NOT IMPLEMENTED
+P01-04D readiness blockers B-1 and B-2:
+RESOLVED AT DESIGN AND CONTRACT LEVEL
+
+P01-04D remediation design:
+CANONICALLY ADOPTED
+
+formal operator design:
+RATIFIED
+
+formal operator implementation:
+NOT AUTHORIZED / NOT IMPLEMENTED
+
+P01-04D entry:
+NOT AUTHORIZED
 ```
+
+The remediation design was adopted on canonical main through PR #88, merge
+`c208085dfcdbf8f2cab5e9308f938bcc609260c5`, whose tree is identical to the
+independently reviewed remediation head
+`8aa599e1eae0f53726ef63f08886cf2ba67c188e` and its tree
+`530808443825e080b75177f70943ca201efe16b8`. The post-merge canonical-adoption
+identity and verification record is
+[`../p01-04d-entry-readiness-remediation/canonical-adoption-record.md`](../p01-04d-entry-readiness-remediation/canonical-adoption-record.md).
 
 The two blocking findings returned by the founder-authorized P01-04D
 entry-readiness review are:

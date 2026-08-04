@@ -2,6 +2,12 @@
 
 ```text
 Package status:
+CANONICALLY ADOPTED
+
+Canonical adoption:
+PR #88 merge c208085dfcdbf8f2cab5e9308f938bcc609260c5
+
+Historical pre-merge package status:
 RECORDED — NOT ADOPTED
 
 FD-DREADY-1 THROUGH FD-DREADY-12:
@@ -28,6 +34,9 @@ NOT AUTHORIZED
 
 This README is **descriptive**.
 [`founder-authorization.md`](founder-authorization.md) **controls**.
+
+Post-merge canonical truth is recorded in:
+[`canonical-adoption-record.md`](canonical-adoption-record.md)
 
 ## The problem
 

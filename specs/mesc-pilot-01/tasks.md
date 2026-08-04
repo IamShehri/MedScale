@@ -3860,7 +3860,14 @@ no partition membership, performs no leakage analysis, accesses no P01-03G
 registry content, probes no external source-records file, publishes nothing,
 promotes nothing and authorizes no downstream phase.
 
---- Current controlling state ---
+--- Historical controlling-state snapshot — SUPERSEDED ---
+
+This block records the pre-merge/local-candidate state of P01-T03D0.
+
+It is superseded for all current status purposes by the later P01-T03D1
+Current controlling state.
+
+Its fields are preserved as historical evidence and are not rewritten.
 
 P01-04B:
 ACCEPTED AND CANONICALLY ADOPTED
@@ -3905,6 +3912,180 @@ REAL PARTITION MEMBERSHIP:
 NOT AUTHORIZED
 
 CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+P01-04 OVERALL:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+```
+
+```text
+P01-T03D1 — P01-04D remediation-design post-merge canonical-truth reconciliation
+
+Founder authorization:
+ISSUED ON 2026-08-04
+
+Prerequisite:
+PR #88 MERGED / POST-MERGE CHECKS GREEN
+
+Scope:
+DOCUMENTATION-ONLY CANONICAL-TRUTH RECONCILIATION
+
+Canonical baseline:
+c208085dfcdbf8f2cab5e9308f938bcc609260c5
+
+Remediation head:
+8aa599e1eae0f53726ef63f08886cf2ba67c188e
+
+Remediation tree:
+530808443825e080b75177f70943ca201efe16b8
+
+Canonical adoption:
+ACHIEVED BY PR #88
+
+Implementation:
+NOT AUTHORIZED
+
+Entry:
+NOT AUTHORIZED
+
+Execution:
+NOT AUTHORIZED
+
+Canonical baseline detail:
+c208085dfcdbf8f2cab5e9308f938bcc609260c5
+(tree 530808443825e080b75177f70943ca201efe16b8;
+ordered parents 78bab082bde3b53cbdbd5f37109437b68ba2e5c5 THEN
+8aa599e1eae0f53726ef63f08886cf2ba67c188e;
+parent count 2;
+subject "Merge pull request #88 from IamShehri/docs/mesc-p01-04d-entry-readiness-remediation";
+body "docs(mesc): resolve P01-04D entry-readiness design blockers";
+merged at 2026-08-04T17:35:36Z; merged by IamShehri; merge method MERGE COMMIT)
+
+The canonical merge tree is identical to the reviewed remediation tree, so the
+adopted content is exactly the independently reviewed content. The first-parent
+delta was the nine documentation paths of the remediation-design package, 2648
+insertions and 1 deletion.
+
+Post-merge workflow evidence:
+CI run 30934632694, run number 270, SUCCESS, with quality (py3.11) SUCCESS and
+quality (py3.12) SUCCESS. CodeQL run 30934632550, run number 274, SUCCESS, with
+analyze (python) SUCCESS. Optional Extras / Backends run 30934632516, run number
+90, SUCCESS, with core-without-backends SUCCESS, backends-transformers SUCCESS
+and backends-llamacpp SUCCESS. Three workflow runs, six jobs, all terminal
+SUCCESS. Workflow reruns 0, dispatches 0, cancellations 0.
+
+Reconciliation branch:
+docs/mesc-p01-04d-remediation-post-merge-truth
+
+Reconciliation commit identity:
+Recorded outside this block. The reconciliation is exactly one commit whose
+parent is the canonical baseline above, carrying exactly five documentation
+paths. Its SHA is reported in the build report and in the independent review
+request, never written inside the content it would have to hash.
+
+Exact five-path scope:
+A specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/canonical-adoption-record.md
+M specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/README.md
+M specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/founder-authorization.md
+M specs/mesc-pilot-01/p01-04/plan.md
+M specs/mesc-pilot-01/tasks.md
+No sixth path. No source, test, script, workflow, dependency or lockfile change.
+
+Blocker resolution recorded:
+B-1 design resolution is one prospective canonical operator surface
+scripts/mesc_p01_04d_operator.py with exactly generate and compare.
+B-2 design resolution is one exact seven-file formal P01-04D candidate inventory
+with stage-separated P01-04E, P01-04F and P01-04G outputs.
+Resolution at design and contract level does not mean that the formal executor
+exists, and does not authorize implementation, entry, execution or data access.
+
+Preserved unchanged:
+D1 through D10, FD-DREADY-1 through FD-DREADY-12, the prospective operator
+contract, the seven-file artifact inventory, the artifact-name supersession map
+and the P01-04D/E/F/G stage separation.
+
+Scope:
+Reconcile post-merge canonical truth after PR #88 merged. This gate marks the
+P01-T03D0 controlling-state block historical, records the canonical adoption of
+the P01-04D entry-readiness remediation design, and adds the P01-04D remediation
+canonical adoption record. It implements nothing, executes nothing, accesses no
+dataset, reads no P01-03G registry, probes no external source-record file,
+creates no Generation A or Generation B workspace, generates no split artifact,
+creates no partition membership, performs no leakage analysis, publishes
+nothing, promotes nothing and authorizes no downstream phase.
+
+--- Current controlling state ---
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+P01-04C POST-MERGE TRUTH RECONCILIATION:
+CANONICALLY ADOPTED
+
+P01-04D ENTRY-READINESS REVIEW:
+COMPLETE — ORIGINAL VERDICT NOT READY
+
+P01-04D READINESS BLOCKER B-1:
+RESOLVED AT DESIGN AND CONTRACT LEVEL
+
+P01-04D READINESS BLOCKER B-2:
+RESOLVED AT DESIGN AND CONTRACT LEVEL
+
+P01-04D REMEDIATION DESIGN:
+CANONICALLY ADOPTED
+
+FORMAL OPERATOR DESIGN:
+RATIFIED
+
+FORMAL OPERATOR IMPLEMENTATION:
+NOT AUTHORIZED / NOT IMPLEMENTED
+
+P01-04D ENTRY:
+NOT AUTHORIZED
+
+P01-04D EXECUTION:
+NOT AUTHORIZED
+
+P01-03G REGISTRY ACCESS:
+NOT AUTHORIZED
+
+EXTERNAL SOURCE-RECORD ACCESS:
+NOT AUTHORIZED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+REAL SPLIT GENERATION:
+NOT AUTHORIZED
+
+GENERATION A:
+NOT AUTHORIZED
+
+GENERATION B:
+NOT AUTHORIZED
+
+REAL PARTITION MEMBERSHIP:
+NOT AUTHORIZED
+
+CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+EVIDENCE PUBLICATION:
+NOT AUTHORIZED
+
+MODEL EXECUTION:
+NOT AUTHORIZED
+
+TRAINING:
+NOT AUTHORIZED
+
+FINE-TUNING:
 NOT AUTHORIZED
 
 P01-04 OVERALL:

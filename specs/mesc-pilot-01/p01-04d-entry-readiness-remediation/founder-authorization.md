@@ -2,6 +2,12 @@
 
 ```text
 Package status:
+CANONICALLY ADOPTED
+
+Canonical adoption:
+PR #88 merge c208085dfcdbf8f2cab5e9308f938bcc609260c5
+
+Historical pre-merge package status:
 RECORDED — NOT ADOPTED
 
 FD-DREADY-1 THROUGH FD-DREADY-12:
@@ -36,6 +42,11 @@ This document is the controlling record of this package. On any conflict between
 this document and [`README.md`](README.md),
 [`implementation-contract.md`](implementation-contract.md) or
 [`acceptance.md`](acceptance.md), this document controls.
+
+Canonical adoption does not expand the authority recorded here.
+
+The post-merge canonical-adoption identity and verification record is:
+[`canonical-adoption-record.md`](canonical-adoption-record.md)
 
 ---
 
