@@ -83,8 +83,14 @@ Note: P01-04B acceptance is tooling acceptance only. It does not authorize any r
 - Prerequisites: P01-04B canonically accepted; separate founder authorization for P01-04C.
 - Outputs: fixture qualification record for synthetic small inputs; repeated-run byte-identity evidence; edge-case qualification evidence.
 - Acceptance criteria: all fixture tests pass for synthetic small input; artifacts are byte-identical on repeated runs; empty, single-example, and all-one-label edge cases pass; no real dataset partition membership is generated.
+- Ratified edge-case semantics — `pass` does not mean every edge case produces a successful split:
+  - empty: expected fail-closed
+  - single-example: expected success
+  - all-one-label: expected success
 - Stop conditions: real dataset partition membership generated; qualification performed without separate founder authorization; fixtures substituted with real data.
-- Authorization status: NOT AUTHORIZED.
+- Authorization status: SYNTHETIC FIXTURE QUALIFICATION AUTHORIZED — ACCEPTANCE PENDING — REAL DATASET EXECUTION NOT AUTHORIZED.
+
+Note: the P01-04C authorization covers synthetic fixture construction, in-memory fixture execution and local qualification evidence only. It is not P01-04C acceptance, and it authorizes no real dataset access, no real partition generation, no canonical leakage execution and no P01-04D or later work.
 
 ## P01-05 — B0/B1 baseline runner
 
