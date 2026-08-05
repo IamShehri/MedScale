@@ -120,33 +120,54 @@ publication, model execution, training or fine-tuning has been authorized or has
 occurred, and no added line asserts that P01-04 is finished or that P01-05 is
 open.
 
-### 20. Exact three-commit candidate history and no publication
+### 20. Exact four-commit candidate history and no publication
 
 The entry-authorization candidate passes this criterion only when its history is
-one linear three-commit chain above the exact canonical baseline:
+one linear four-commit local chain above the exact canonical parent:
 
 ```text
-commit 1 subject:
+canonical parent:
+9229fea8c208021d3bbdb3767e71c3e3f790262e
+
+candidate commit 1:
+2e715fe5cb7e1d4d1f53fde91db226fd51093e45
 docs(mesc): authorize P01-04D entry
 
-commit 2 subject:
+candidate commit 2:
+cf2063d63d066de35942f6b4d3beca9407c5deed
 fix(mesc): correct P01-04D entry disposition narrative
 
-commit 3 subject:
+candidate commit 3:
+2b0720088859dc9d59411aa76c11d12525984744
 fix(mesc): reconcile entry-authorization acceptance truth
 
-canonical parent of commit 1:
-9229fea8c208021d3bbdb3767e71c3e3f790262e
+candidate commit 4 subject:
+fix(mesc): complete entry-authorization history evidence
+
+parent of candidate commit 4:
+2b0720088859dc9d59411aa76c11d12525984744
 
 parent count for every candidate commit:
 1
 
-commits above canonical main:
-3
+commits above the canonical parent:
+4
 
 cumulative changed paths:
 8
+```
 
+Candidate commit 1 is the direct child of the canonical parent, commit 2 the
+direct child of commit 1, commit 3 the direct child of commit 2, and commit 4 —
+the present correction — the direct child of commit 3. The order above is exact
+and must not change. The first records the founder entry decision, the second
+closes independent-review finding F-1, the third reconciles the acceptance
+criterion and the exact verdict wording, and the fourth completes this
+candidate-history and clean-room evidence record.
+
+All four candidate commits are local only.
+
+```text
 amends:
 0
 
@@ -156,31 +177,107 @@ rebases:
 squashes:
 0
 
+merge commits:
+0
+
 force-pushes:
 0
 
-pushes at this local acceptance gate:
+pushes:
 0
 
-remote branch at this local acceptance gate:
-absent
+remote branch publications:
+0
 
-pull-request mutations at this local acceptance gate:
+pull-request creations or mutations:
 0
 ```
 
-The three commits must remain in the order shown above. The first records the
-founder entry decision, the second closes independent-review finding F-1, and
-the third reconciles the acceptance criterion and exact verdict wording with
-the corrected candidate history.
-The cumulative candidate must still contain exactly the authorized eight
-documentation paths, with no ninth path and no protected-path change.
+The cumulative candidate still changes exactly eight repository paths, with no
+ninth path and no protected-path change.
+
+The final full hash of candidate commit 4 is intentionally not embedded in this
+document. Repository content is an input to the commit hash, so a commit cannot
+carry its own hash. That hash is recorded instead in the external post-commit
+verification report for this correction. No future pull-request number appears
+here, because none exists.
+
+No previous review report constitutes certification evidence for this candidate.
+Two review sessions are expressly excluded:
+
+```text
+procedurally contaminated re-review:
+NOT CERTIFICATION EVIDENCE
+
+review attempt that failed the candidate-checkout and clean-worktree identity
+preflight:
+NOT CERTIFICATION EVIDENCE
+```
+
+Neither may be cited, relied upon or presented as a passing review of this
+candidate.
+
+The next gate is a fresh independent clean-room review, conducted in an isolated
+clean worktree checked out at the exact candidate branch, HEAD and tree. The
+reviewer must have no exposure to either invalid prior review session or to
+either of their reports.
+
+Every content scan in that review must explicitly name the exact eight candidate
+files recorded in criterion 2. Directory-rooted, repository-wide, recursive and
+broad-scan-then-exclude content searches are forbidden.
+
 This criterion records the local build-and-review topology and publication
 boundary at the time of this acceptance gate. A later separately authorized
 push, pull request or canonical merge does not retroactively falsify this
-historical gate record and does not authorize P01-04D execution.
-Do not add any candidate commit SHA to repository content.
-Do not mention a future PR number.
+historical gate record. Neither this criterion nor the candidate grants
+authorization for:
+
+```text
+push:
+NOT AUTHORIZED
+
+pull-request creation or update:
+NOT AUTHORIZED
+
+publication:
+NOT AUTHORIZED
+
+canonical adoption:
+NOT AUTHORIZED
+
+P01-04D execution:
+NOT AUTHORIZED
+
+P01-03G access:
+NOT AUTHORIZED
+
+external real source-record access:
+NOT AUTHORIZED
+
+real dataset access:
+NOT AUTHORIZED
+
+Generation A:
+NOT AUTHORIZED
+
+Generation B:
+NOT AUTHORIZED
+
+canonical leakage execution:
+NOT AUTHORIZED
+
+evidence publication:
+NOT AUTHORIZED
+
+model execution:
+NOT AUTHORIZED
+
+training:
+NOT AUTHORIZED
+
+fine-tuning:
+NOT AUTHORIZED
+```
 
 ## 2. Non-authority
 
