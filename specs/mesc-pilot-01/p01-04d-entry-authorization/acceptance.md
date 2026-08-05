@@ -120,11 +120,67 @@ publication, model execution, training or fine-tuning has been authorized or has
 occurred, and no added line asserts that P01-04 is finished or that P01-05 is
 open.
 
-### 20. Exactly one local commit and no publication
+### 20. Exact three-commit candidate history and no publication
 
-Exactly one commit whose parent is the canonical baseline, carrying exactly the
-eight authorized paths, with a clean worktree and index. No amend, no second
-commit, no push and no pull request.
+The entry-authorization candidate passes this criterion only when its history is
+one linear three-commit chain above the exact canonical baseline:
+
+```text
+commit 1 subject:
+docs(mesc): authorize P01-04D entry
+
+commit 2 subject:
+fix(mesc): correct P01-04D entry disposition narrative
+
+commit 3 subject:
+fix(mesc): reconcile entry-authorization acceptance truth
+
+canonical parent of commit 1:
+9229fea8c208021d3bbdb3767e71c3e3f790262e
+
+parent count for every candidate commit:
+1
+
+commits above canonical main:
+3
+
+cumulative changed paths:
+8
+
+amends:
+0
+
+rebases:
+0
+
+squashes:
+0
+
+force-pushes:
+0
+
+pushes at this local acceptance gate:
+0
+
+remote branch at this local acceptance gate:
+absent
+
+pull-request mutations at this local acceptance gate:
+0
+```
+
+The three commits must remain in the order shown above. The first records the
+founder entry decision, the second closes independent-review finding F-1, and
+the third reconciles the acceptance criterion and exact verdict wording with
+the corrected candidate history.
+The cumulative candidate must still contain exactly the authorized eight
+documentation paths, with no ninth path and no protected-path change.
+This criterion records the local build-and-review topology and publication
+boundary at the time of this acceptance gate. A later separately authorized
+push, pull request or canonical merge does not retroactively falsify this
+historical gate record and does not authorize P01-04D execution.
+Do not add any candidate commit SHA to repository content.
+Do not mention a future PR number.
 
 ## 2. Non-authority
 

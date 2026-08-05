@@ -74,7 +74,7 @@ formal executor correction findings F1 / F2 / F3:
 CLOSED
 
 entry-readiness re-evaluation:
-READY FOR FOUNDER ENTRY DISPOSITION
+READY FOR FOUNDER P01-04D ENTRY DISPOSITION
 
 founder P01-04D entry authorization:
 ISSUED ON 2026-08-05
@@ -128,7 +128,7 @@ separately authorized entry-readiness re-evaluation is required before any entry
 decision.
 
 That re-evaluation was subsequently authorized and returned
-`READY FOR FOUNDER ENTRY DISPOSITION`, and the founder issued P01-04D entry
+`READY FOR FOUNDER P01-04D ENTRY DISPOSITION`, and the founder issued P01-04D entry
 authorization on 2026-08-05; see
 [`../p01-04d-entry-authorization/entry-readiness-re-evaluation.md`](../p01-04d-entry-authorization/entry-readiness-re-evaluation.md).
 The original entry-readiness verdict remains unchanged and historical.
