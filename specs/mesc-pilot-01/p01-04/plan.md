@@ -49,9 +49,6 @@ ACCEPTED AND CANONICALLY ADOPTED
 P01-04C:
 ACCEPTED AND CANONICALLY CLOSED
 
-P01-04D:
-NOT AUTHORIZED
-
 P01-04D entry-readiness review:
 COMPLETE — ORIGINAL VERDICT NOT READY
 
@@ -64,12 +61,45 @@ CANONICALLY ADOPTED
 formal operator design:
 RATIFIED
 
-formal operator implementation:
-NOT AUTHORIZED / NOT IMPLEMENTED
+formal operator implementation code:
+CANONICALLY ADOPTED
+
+formal executor correction findings F1 / F2 / F3:
+CLOSED
+
+P01-04D entry-readiness re-evaluation:
+NOT YET AUTHORIZED
 
 P01-04D entry:
 NOT AUTHORIZED
+
+P01-04D execution:
+NOT AUTHORIZED
+
+P01-04 overall:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
 ```
+
+The formal-executor implementation code was adopted on canonical main through
+PR #90, merge `e924027f1c8ea08ac4e5e4281fdcf75e5b419693`, whose tree is
+identical to the independently reviewed implementation head
+`962a5ef432c14aa74940e018373168f46a299669` and its tree
+`d5b51ee1569c30b0866e24c65fd15a77836787e5`. The canonical implementation
+adoption record is
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+
+Adoption of executor code is not P01-04D readiness, not entry authorization and
+not execution authorization. The original entry-readiness verdict is unchanged,
+and a separately authorized entry-readiness re-evaluation is required before any
+entry decision.
+
+The earlier disposition line `P01-04D: NOT AUTHORIZED` — and the earlier
+`formal operator implementation: NOT AUTHORIZED / NOT IMPLEMENTED` — were true
+before PR #90. They are superseded for current status by the block above, in
+which P01-04D entry and P01-04D execution both remain `NOT AUTHORIZED`.
 
 The remediation design was adopted on canonical main through PR #88, merge
 `c208085dfcdbf8f2cab5e9308f938bcc609260c5`, whose tree is identical to the
@@ -98,6 +128,8 @@ Both are resolved at the design and contract level by `FD-DREADY-1` through
 Design-level resolution is not entry, not implementation authority and not
 execution authority.
 
+Historical as of the remediation-design adoption:
+
 ```text
 P01-04D implementation:
 NOT AUTHORIZED
@@ -105,6 +137,12 @@ NOT AUTHORIZED
 P01-04D execution:
 NOT AUTHORIZED
 ```
+
+The `P01-04D implementation` line above was true when the remediation design was
+adopted. Implementation was subsequently authorized and the code canonically
+adopted through PR #90; see
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+`P01-04D execution: NOT AUTHORIZED` remains current and in force.
 
 No P01-04 stage authorizes P01-05.
 
@@ -229,7 +267,8 @@ generate
 compare
 ```
 
-It does not exist at this baseline.
+Historical as of the remediation-design adoption: it does not exist at this
+baseline.
 
 ```text
 P01-04D implementation:
@@ -238,6 +277,13 @@ NOT AUTHORIZED
 P01-04D execution:
 NOT AUTHORIZED
 ```
+
+Both statements above were true when the remediation design was adopted. The
+operator script and the two private formal modules now exist on canonical main,
+and the implementation code was canonically adopted through PR #90; see
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+`P01-04D execution: NOT AUTHORIZED` remains current and in force, so the
+operator has never been run against a protected or real input.
 
 No future stage produces real partition membership until founder authorization explicitly permits it.
 

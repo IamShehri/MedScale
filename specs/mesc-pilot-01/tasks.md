@@ -4017,7 +4017,13 @@ creates no Generation A or Generation B workspace, generates no split artifact,
 creates no partition membership, performs no leakage analysis, publishes
 nothing, promotes nothing and authorizes no downstream phase.
 
---- Current controlling state ---
+--- Historical controlling-state snapshot — SUPERSEDED ---
+
+This block records the post-PR #88 and pre-PR #90 controlling state.
+
+It is superseded for all current-status purposes by P01-T03D2.
+
+Its fields are preserved as historical evidence and are not rewritten.
 
 P01-04B:
 ACCEPTED AND CANONICALLY ADOPTED
@@ -4045,6 +4051,206 @@ RATIFIED
 
 FORMAL OPERATOR IMPLEMENTATION:
 NOT AUTHORIZED / NOT IMPLEMENTED
+
+P01-04D ENTRY:
+NOT AUTHORIZED
+
+P01-04D EXECUTION:
+NOT AUTHORIZED
+
+P01-03G REGISTRY ACCESS:
+NOT AUTHORIZED
+
+EXTERNAL SOURCE-RECORD ACCESS:
+NOT AUTHORIZED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+REAL SPLIT GENERATION:
+NOT AUTHORIZED
+
+GENERATION A:
+NOT AUTHORIZED
+
+GENERATION B:
+NOT AUTHORIZED
+
+REAL PARTITION MEMBERSHIP:
+NOT AUTHORIZED
+
+CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+EVIDENCE PUBLICATION:
+NOT AUTHORIZED
+
+MODEL EXECUTION:
+NOT AUTHORIZED
+
+TRAINING:
+NOT AUTHORIZED
+
+FINE-TUNING:
+NOT AUTHORIZED
+
+P01-04 OVERALL:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+```
+
+```text
+P01-T03D2 — P01-04D formal-executor implementation post-merge canonical-truth reconciliation
+
+Founder authorization:
+ISSUED ON 2026-08-05
+
+Prerequisite:
+PR #90 MERGED / ALL POST-MERGE CHECKS GREEN
+
+Scope:
+DOCUMENTATION-ONLY CANONICAL-TRUTH RECONCILIATION
+
+Canonical baseline:
+e924027f1c8ea08ac4e5e4281fdcf75e5b419693
+
+Formal-executor head:
+962a5ef432c14aa74940e018373168f46a299669
+
+Formal-executor tree:
+d5b51ee1569c30b0866e24c65fd15a77836787e5
+
+Canonical implementation adoption:
+ACHIEVED BY PR #90
+
+P01-04D entry:
+NOT AUTHORIZED
+
+P01-04D execution:
+NOT AUTHORIZED
+
+Entry-readiness re-evaluation:
+NOT YET AUTHORIZED
+
+Canonical baseline detail:
+e924027f1c8ea08ac4e5e4281fdcf75e5b419693
+(tree d5b51ee1569c30b0866e24c65fd15a77836787e5;
+ordered parents 4828a314f0c8f1fb4d1db8a5740a8d5d94afcd8b THEN
+962a5ef432c14aa74940e018373168f46a299669;
+parent count 2;
+subject "Merge pull request #90 from IamShehri/feat/mesc-p01-04d-formal-executor";
+body "feat(mesc): add P01-04D formal executor";
+merged at 2026-08-05T04:24:18Z; merged by IamShehri; merge method MERGE COMMIT)
+
+The canonical merge tree equals the reviewed implementation tree, so canonical
+main carries the exact independently reviewed implementation tree.
+
+Preserved three-commit chain:
+9ceff9ff0ddb894dbede65f8042a47d20dea6d1c feat(mesc): implement P01-04D formal executor
+93a0b0af1f45f2e38a5361053885721d79882d6d fix(mesc): close formal executor verification gaps
+962a5ef432c14aa74940e018373168f46a299669 fix(mesc): enforce formal manifest contract
+Each commit has exactly one parent. The correction history is not collapsed.
+
+Exact six-path implementation scope:
+A scripts/mesc_p01_04d_operator.py blob c1010c8ec227312e5b86e2599b1365ae4f2be4f4 +143 -0
+A src/medscale/mesc/_formal_generation_v1.py blob cc23fbffbce4ccb87a36136c1cd13ee0b6f42fb4 +997 -0
+A src/medscale/mesc/_formal_split_v1.py blob 7b921f915282d4d970af1ad8adff61ef6ca5be7a +1104 -0
+A tests/test_mesc_formal_generation_v1.py blob 3db877fb123c895c0bf3c196f39cdb05f8c15ac2 +1385 -0
+A tests/test_mesc_formal_split_v1.py blob e1c190a965a68c45cb587392447eb6a500bfbd47 +671 -0
+A tests/test_mesc_p01_04d_operator.py blob d1045fcf946a78fa4f989c48600116c49cab14c1 +405 -0
+Total 6 files changed, 4705 insertions, 0 deletions. No seventh path.
+
+Post-merge workflow evidence:
+CI run 30975038139, run number 274, attempt 1, SUCCESS, with quality (py3.11)
+SUCCESS job 92207193199 and quality (py3.12) SUCCESS job 92207193187.
+CodeQL run 30975038120, run number 278, attempt 1, SUCCESS, with analyze
+(python) SUCCESS job 92207192974. Optional Extras / Backends run 30975038141,
+run number 92, attempt 1, SUCCESS, with core-without-backends SUCCESS job
+92207192939, backends-transformers SUCCESS job 92207192957 and
+backends-llamacpp SUCCESS job 92207192962. Three workflow runs, six jobs, zero
+non-success, zero reruns, zero dispatches, zero cancellations.
+
+Formal-executor correction findings:
+F1 independent workspace verification and fingerprint/descriptor recomputation
+CLOSED. F2 second repository-identity verification immediately before the first
+mutation CLOSED. F3 exact generation-manifest schema, semantic and
+canonical-byte validation CLOSED. No correction expanded execution authority.
+
+Independent review disposition:
+APPROVE WITH NON-BLOCKING NOTES, zero blocking findings, four non-blocking
+notes. The reviewed Windows host carried 54 pre-existing
+tests/test_mesc_b2a_portability.py failures that reproduced identically on the
+canonical parent, so that host's full suite was not green and establishes
+non-regression only. GitHub CI passed on Python 3.11 and Python 3.12.
+
+Reconciliation branch:
+docs/mesc-p01-04d-formal-executor-post-merge-truth
+
+Reconciliation commit identity:
+Recorded outside this block. The reconciliation is exactly one commit whose
+parent is the canonical baseline above, carrying exactly four documentation
+paths. Its SHA is reported in the build report and in the independent review
+request, never written inside the content it would have to hash.
+
+Exact four-path documentation scope:
+A specs/mesc-pilot-01/p01-04d-formal-executor/canonical-adoption-record.md
+M specs/mesc-pilot-01/p01-04d-entry-readiness-remediation/canonical-adoption-record.md
+M specs/mesc-pilot-01/p01-04/plan.md
+M specs/mesc-pilot-01/tasks.md
+No fifth path. No source, test, script, workflow, dependency or lockfile change.
+
+Scope:
+Reconcile canonical governance and planning text with the completed
+formal-executor code adoption. This gate modifies no implementation code,
+authorizes no P01-04D entry, declares no P01-04D readiness, authorizes no real
+formal execution, accesses no protected or real input and performs no
+Generation A or Generation B. Canonical adoption of executor code is not
+P01-04D readiness, not entry authorization, not execution authorization, not
+protected-input authorization and not Generation A or Generation B
+authorization.
+
+--- Current controlling state ---
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+P01-04C POST-MERGE TRUTH RECONCILIATION:
+CANONICALLY ADOPTED
+
+P01-04D ENTRY-READINESS REVIEW:
+COMPLETE — ORIGINAL VERDICT NOT READY
+
+P01-04D READINESS BLOCKER B-1:
+RESOLVED AT DESIGN AND CONTRACT LEVEL
+
+P01-04D READINESS BLOCKER B-2:
+RESOLVED AT DESIGN AND CONTRACT LEVEL
+
+P01-04D REMEDIATION DESIGN:
+CANONICALLY ADOPTED
+
+FORMAL OPERATOR DESIGN:
+RATIFIED
+
+FORMAL OPERATOR IMPLEMENTATION CODE:
+CANONICALLY ADOPTED
+
+FORMAL EXECUTOR FINDING F1:
+CLOSED
+
+FORMAL EXECUTOR FINDING F2:
+CLOSED
+
+FORMAL EXECUTOR FINDING F3:
+CLOSED
+
+P01-04D ENTRY-READINESS RE-EVALUATION:
+NOT YET AUTHORIZED
 
 P01-04D ENTRY:
 NOT AUTHORIZED
