@@ -195,7 +195,8 @@ current formal stage contracting. They are recorded under `FD-DREADY-6`,
 [`../p01-04d-entry-readiness-remediation/founder-authorization.md`](../p01-04d-entry-readiness-remediation/founder-authorization.md),
 which controls.
 
-Nothing below is produced at this baseline.
+**Historical as of the remediation-design baseline.** Nothing below is produced
+at this baseline.
 
 ```text
 P01-04D implementation:
@@ -205,9 +206,29 @@ P01-04D execution:
 NOT AUTHORIZED
 ```
 
-The single supported prospective operator surface is
-`scripts/mesc_p01_04d_operator.py` with exactly the two commands `generate` and
-`compare`; it does not exist at this baseline.
+**Historical as of the remediation-design baseline.** The single supported
+prospective operator surface is `scripts/mesc_p01_04d_operator.py` with exactly
+the two commands `generate` and `compare`; it does not exist at this baseline.
+
+**Current truth.** The two statements above describe the remediation-design
+baseline and are preserved verbatim for it. The operator surface
+`scripts/mesc_p01_04d_operator.py` and the private formal implementation modules
+now exist on canonical main. The implementation code was adopted through PR #90,
+and the adoption truth was reconciled through PR #91, so the
+`P01-04D implementation: NOT AUTHORIZED` line above is superseded for current
+implementation status by
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+
+No formal P01-04D artifact has been generated. The line
+`P01-04D execution: NOT AUTHORIZED` remains current and in force, and P01-03G
+registry access, external source-record access and real dataset access all
+remain unauthorized. Under the founder decision recorded in
+[`../p01-04d-entry-authorization/founder-authorization.md`](../p01-04d-entry-authorization/founder-authorization.md),
+P01-04D entry is authorized and the control state is pre-execution governance
+only. Entry authorizes no execution and opens no input.
+
+The artifact names, schemas, descriptors, fingerprint rules, stage ownership and
+scientific contracts recorded below are unchanged by this note.
 
 ### Artifact-name supersession map
 

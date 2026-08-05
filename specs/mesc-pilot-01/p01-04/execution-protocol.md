@@ -148,9 +148,18 @@ External evidence must not be committed to the repository. It must be stored in 
 
 ## Prospective operator interface
 
+**Historical as of the remediation-design baseline.** The following status was
+true before canonical implementation adoption and before founder P01-04D entry
+authorization:
+
 ```text
 DESIGN RATIFIED / IMPLEMENTATION NOT AUTHORIZED / EXECUTION NOT AUTHORIZED
 ```
+
+That block is preserved unrewritten as historical evidence. It is not the
+current governing status. Current truth is recorded under **Current truth** in
+`Supported operator surface` below, and in the terminal status block under
+`Stage boundary` at the end of this document.
 
 This section records the design ratified by `FD-DREADY-3`, `FD-DREADY-4` and
 `FD-DREADY-5` in
@@ -175,11 +184,28 @@ command count:
 2
 ```
 
-The script does not exist at this baseline. When it exists, it is a canonical
-repository-controlled script, never an improvised or one-off script, and it is
-not exported from `medscale.mesc`, not registered as a `medscale` CLI
-subcommand, not installed as a public console script and not callable through an
-environment-variable activation switch. No third command exists on this surface.
+**Historical as of the remediation-design baseline.** The script does not exist
+at this baseline. When it exists, it is a canonical repository-controlled
+script, never an improvised or one-off script, and it is not exported from
+`medscale.mesc`, not registered as a `medscale` CLI subcommand, not installed as
+a public console script and not callable through an environment-variable
+activation switch. No third command exists on this surface.
+
+**Current truth.** The sentence `The script does not exist at this baseline.`
+describes the remediation-design baseline and is preserved for it. The script
+now exists on canonical main. Its implementation code was adopted by PR #90, and
+PR #91 reconciled the canonical implementation truth; see
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+Every property described in the paragraph above holds of the adopted script: it
+is canonical and repository-controlled, unexported, unregistered, not installed
+as a console script, not environment-activated, and it carries no third command.
+
+Entry is now authorized under the founder decision recorded in
+[`../p01-04d-entry-authorization/founder-authorization.md`](../p01-04d-entry-authorization/founder-authorization.md).
+Execution remains unauthorized. No protected input has been opened, and no
+Generation A or Generation B has occurred. The invocation parameters, validation
+order, artifact inventory, stage separation and execution semantics recorded in
+this protocol are unchanged by this note.
 
 Formal execution uses a separate private formal-execution component. It does not
 reuse the fixture-only execution authority of `FixtureSplitFacade` or
@@ -315,13 +341,19 @@ is not the formal P01-04D generation manifest. The formal P01-04D
 candidate-bundle manifest is `generation-manifest.json`. `compare` never performs
 P01-04E leakage execution.
 
+**Current truth.** The P01-04D status recorded by this protocol is:
+
 ```text
 P01-04D entry:
-NOT AUTHORIZED
+AUTHORIZED
 
 P01-04D implementation:
-NOT AUTHORIZED
+ADOPTED ON CANONICAL MAIN
 
 P01-04D execution:
 NOT AUTHORIZED
 ```
+
+Entry authorization and canonical implementation adoption grant no execution
+authority: no protected input has been opened, and neither Generation A nor
+Generation B has occurred.

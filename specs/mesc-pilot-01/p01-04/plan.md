@@ -49,11 +49,14 @@ ACCEPTED AND CANONICALLY ADOPTED
 P01-04C:
 ACCEPTED AND CANONICALLY CLOSED
 
-P01-04D entry-readiness review:
+P01-04D original entry-readiness review:
 COMPLETE — ORIGINAL VERDICT NOT READY
 
-P01-04D readiness blockers B-1 and B-2:
-RESOLVED AT DESIGN AND CONTRACT LEVEL
+B-1:
+CLOSED AT IMPLEMENTATION LEVEL
+
+B-2:
+CLOSED AT IMPLEMENTATION LEVEL
 
 P01-04D remediation design:
 CANONICALLY ADOPTED
@@ -64,16 +67,28 @@ RATIFIED
 formal operator implementation code:
 CANONICALLY ADOPTED
 
+formal-executor adoption truth:
+CANONICALLY RECONCILED
+
 formal executor correction findings F1 / F2 / F3:
 CLOSED
 
-P01-04D entry-readiness re-evaluation:
-NOT YET AUTHORIZED
+entry-readiness re-evaluation:
+READY FOR FOUNDER P01-04D ENTRY DISPOSITION
+
+founder P01-04D entry authorization:
+ISSUED ON 2026-08-05
 
 P01-04D entry:
-NOT AUTHORIZED
+AUTHORIZED
+
+P01-04D control state:
+ENTERED — PRE-EXECUTION GOVERNANCE ONLY
 
 P01-04D execution:
+NOT AUTHORIZED
+
+P01-04E through P01-04G:
 NOT AUTHORIZED
 
 P01-04 overall:
@@ -82,6 +97,21 @@ NOT COMPLETE
 P01-05:
 NOT UNLOCKED
 ```
+
+The founder entry decision is recorded in
+[`../p01-04d-entry-authorization/founder-authorization.md`](../p01-04d-entry-authorization/founder-authorization.md).
+Entry moves P01-04D into a controlled pre-execution governance state only. It
+grants no execution authority, opens no protected input, creates no generation
+workspace and permits neither `generate` nor `compare` to be invoked. A separate
+founder execution authorization is required before any protected input may be
+opened or any generation command may run. P01-04D is neither executed nor
+complete.
+
+The earlier line `P01-04D readiness blockers B-1 and B-2: RESOLVED AT DESIGN AND
+CONTRACT LEVEL` was true after the remediation design was adopted, and the
+earlier line `P01-04D entry-readiness re-evaluation: NOT YET AUTHORIZED` was
+true before that re-evaluation was authorized. Both are superseded for current
+status by the block above, in which P01-04D execution remains `NOT AUTHORIZED`.
 
 The formal-executor implementation code was adopted on canonical main through
 PR #90, merge `e924027f1c8ea08ac4e5e4281fdcf75e5b419693`, whose tree is
@@ -92,14 +122,22 @@ adoption record is
 [`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
 
 Adoption of executor code is not P01-04D readiness, not entry authorization and
-not execution authorization. The original entry-readiness verdict is unchanged,
-and a separately authorized entry-readiness re-evaluation is required before any
-entry decision.
+not execution authorization. **Historical as of the adoption-truth
+reconciliation.** The original entry-readiness verdict is unchanged, and a
+separately authorized entry-readiness re-evaluation is required before any entry
+decision.
+
+That re-evaluation was subsequently authorized and returned
+`READY FOR FOUNDER P01-04D ENTRY DISPOSITION`, and the founder issued P01-04D entry
+authorization on 2026-08-05; see
+[`../p01-04d-entry-authorization/entry-readiness-re-evaluation.md`](../p01-04d-entry-authorization/entry-readiness-re-evaluation.md).
+The original entry-readiness verdict remains unchanged and historical.
 
 The earlier disposition line `P01-04D: NOT AUTHORIZED` — and the earlier
 `formal operator implementation: NOT AUTHORIZED / NOT IMPLEMENTED` — were true
 before PR #90. They are superseded for current status by the block above, in
-which P01-04D entry and P01-04D execution both remain `NOT AUTHORIZED`.
+which P01-04D entry is `AUTHORIZED` under the founder decision recorded by this
+package, while P01-04D execution remains `NOT AUTHORIZED`.
 
 The remediation design was adopted on canonical main through PR #88, merge
 `c208085dfcdbf8f2cab5e9308f938bcc609260c5`, whose tree is identical to the
