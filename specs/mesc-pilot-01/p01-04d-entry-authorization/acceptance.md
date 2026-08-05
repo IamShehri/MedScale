@@ -120,10 +120,10 @@ publication, model execution, training or fine-tuning has been authorized or has
 occurred, and no added line asserts that P01-04 is finished or that P01-05 is
 open.
 
-### 20. Exact four-commit candidate history and no publication
+### 20. Exact five-commit candidate history and no publication
 
 The entry-authorization candidate passes this criterion only when its history is
-one linear four-commit local chain above the exact canonical parent:
+one linear five-commit local chain above the exact canonical parent:
 
 ```text
 canonical parent:
@@ -141,31 +141,38 @@ candidate commit 3:
 2b0720088859dc9d59411aa76c11d12525984744
 fix(mesc): reconcile entry-authorization acceptance truth
 
-candidate commit 4 subject:
+candidate commit 4:
+b9536c8b945e1ca28ef23ead42b52ac3208c38d6
 fix(mesc): complete entry-authorization history evidence
 
-parent of candidate commit 4:
-2b0720088859dc9d59411aa76c11d12525984744
+candidate commit 5 subject:
+fix(mesc): reconcile execution-protocol current truth
+
+parent of candidate commit 5:
+b9536c8b945e1ca28ef23ead42b52ac3208c38d6
 
 parent count for every candidate commit:
 1
 
 commits above the canonical parent:
-4
+5
 
 cumulative changed paths:
 8
 ```
 
 Candidate commit 1 is the direct child of the canonical parent, commit 2 the
-direct child of commit 1, commit 3 the direct child of commit 2, and commit 4 —
-the present correction — the direct child of commit 3. The order above is exact
-and must not change. The first records the founder entry decision, the second
-closes independent-review finding F-1, the third reconciles the acceptance
-criterion and the exact verdict wording, and the fourth completes this
-candidate-history and clean-room evidence record.
+direct child of commit 1, commit 3 the direct child of commit 2, commit 4 the
+direct child of commit 3, and commit 5 — the present correction — the direct
+child of commit 4. The order above is exact and must not change. The first
+records the founder entry decision, the second closes independent-review finding
+F-1, the third reconciles the acceptance criterion and the exact verdict wording,
+the fourth completes the candidate-history and clean-room evidence record, and
+the fifth reconciles the stale P01-04D status statements in
+`../p01-04/execution-protocol.md` with current governing truth while preserving
+the remediation-design baseline status as explicit historical evidence.
 
-All four candidate commits are local only.
+All five candidate commits are local only.
 
 ```text
 amends:
@@ -196,35 +203,44 @@ pull-request creations or mutations:
 The cumulative candidate still changes exactly eight repository paths, with no
 ninth path and no protected-path change.
 
-The final full hash of candidate commit 4 is intentionally not embedded in this
-document. Repository content is an input to the commit hash, so a commit cannot
-carry its own hash. That hash is recorded instead in the external post-commit
-verification report for this correction. No future pull-request number appears
-here, because none exists.
+The final full hash of candidate commit 5 is intentionally not embedded in this
+document. Repository content participates in that hash, so a commit cannot carry
+its own hash. It must be recorded externally after committing, in the post-commit
+verification report for this correction. No pull-request number appears here,
+because none exists.
 
-No previous review report constitutes certification evidence for this candidate.
-Two review sessions are expressly excluded:
+No previous review, builder or confirmation report constitutes passing
+certification evidence for the corrected candidate. Four events are expressly
+excluded:
 
 ```text
 procedurally contaminated re-review:
 NOT CERTIFICATION EVIDENCE
 
-review attempt that failed the candidate-checkout and clean-worktree identity
-preflight:
+review attempt that failed its candidate-checkout and clean-worktree preflight:
+NOT CERTIFICATION EVIDENCE
+
+clean-room review that correctly returned FAIL because the stale
+execution-protocol status remained:
+NOT CERTIFICATION EVIDENCE
+
+bounded defect-confirmation gate, which confirmed the defect but was not
+certification:
 NOT CERTIFICATION EVIDENCE
 ```
 
-Neither may be cited, relied upon or presented as a passing review of this
+None of them may be cited, relied upon or presented as a passing review of this
 candidate.
 
-The next gate is a fresh independent clean-room review, conducted in an isolated
-clean worktree checked out at the exact candidate branch, HEAD and tree. The
-reviewer must have no exposure to either invalid prior review session or to
-either of their reports.
+The next gate is a new independent clean-room review of the corrected
+five-commit candidate. That reviewer must have no exposure to any prior review
+report, any builder report or the defect-confirmation report. The review must be
+conducted in an isolated clean worktree checked out at the exact candidate
+branch, HEAD and tree.
 
 Every content scan in that review must explicitly name the exact eight candidate
 files recorded in criterion 2. Directory-rooted, repository-wide, recursive and
-broad-scan-then-exclude content searches are forbidden.
+broad-scan-then-exclude content searches remain forbidden.
 
 This criterion records the local build-and-review topology and publication
 boundary at the time of this acceptance gate. A later separately authorized
@@ -234,6 +250,9 @@ authorization for:
 
 ```text
 push:
+NOT AUTHORIZED
+
+remote branch creation:
 NOT AUTHORIZED
 
 pull-request creation or update:

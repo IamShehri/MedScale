@@ -148,9 +148,18 @@ External evidence must not be committed to the repository. It must be stored in 
 
 ## Prospective operator interface
 
+**Historical as of the remediation-design baseline.** The following status was
+true before canonical implementation adoption and before founder P01-04D entry
+authorization:
+
 ```text
 DESIGN RATIFIED / IMPLEMENTATION NOT AUTHORIZED / EXECUTION NOT AUTHORIZED
 ```
+
+That block is preserved unrewritten as historical evidence. It is not the
+current governing status. Current truth is recorded under **Current truth** in
+`Supported operator surface` below, and in the terminal status block under
+`Stage boundary` at the end of this document.
 
 This section records the design ratified by `FD-DREADY-3`, `FD-DREADY-4` and
 `FD-DREADY-5` in
@@ -332,13 +341,19 @@ is not the formal P01-04D generation manifest. The formal P01-04D
 candidate-bundle manifest is `generation-manifest.json`. `compare` never performs
 P01-04E leakage execution.
 
+**Current truth.** The P01-04D status recorded by this protocol is:
+
 ```text
 P01-04D entry:
-NOT AUTHORIZED
+AUTHORIZED
 
 P01-04D implementation:
-NOT AUTHORIZED
+ADOPTED ON CANONICAL MAIN
 
 P01-04D execution:
 NOT AUTHORIZED
 ```
+
+Entry authorization and canonical implementation adoption grant no execution
+authority: no protected input has been opened, and neither Generation A nor
+Generation B has occurred.
