@@ -4211,7 +4211,14 @@ P01-04D readiness, not entry authorization, not execution authorization, not
 protected-input authorization and not Generation A or Generation B
 authorization.
 
---- Current controlling state ---
+--- Historical controlling-state snapshot — SUPERSEDED ---
+
+This block records the post-PR #90 and post-PR #91 state, before the founder
+entry decision.
+
+Its fields are preserved unrewritten as historical evidence.
+
+P01-T03D3 controls current status.
 
 P01-04B:
 ACCEPTED AND CANONICALLY ADOPTED
@@ -4292,6 +4299,213 @@ TRAINING:
 NOT AUTHORIZED
 
 FINE-TUNING:
+NOT AUTHORIZED
+
+P01-04 OVERALL:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+```
+
+```text
+P01-T03D3 — P01-04D founder entry authorization
+
+Founder authorization:
+ISSUED ON 2026-08-05
+
+Prerequisite:
+ENTRY-READINESS RE-EVALUATION — READY FOR FOUNDER P01-04D ENTRY DISPOSITION
+
+Canonical baseline:
+9229fea8c208021d3bbdb3767e71c3e3f790262e
+
+Scope:
+DOCUMENTATION-ONLY ENTRY DECISION RECORD
+
+P01-04D entry:
+AUTHORIZED
+
+P01-04D control state:
+ENTERED — PRE-EXECUTION GOVERNANCE ONLY
+
+P01-04D execution:
+NOT AUTHORIZED
+
+Generation A:
+NOT AUTHORIZED
+
+Generation B:
+NOT AUTHORIZED
+
+Original entry-readiness verdict:
+NOT READY — HISTORICAL AND PRESERVED
+
+Original blocker B-1:
+No controlled formal operator invocation path existed for Generation A and
+Generation B.
+
+Original blocker B-2:
+The P01-04A/E policy artifact inventory was not reconciled with the accepted
+fixture-only implementation inventory.
+
+B-1 implementation-level status:
+CLOSED
+
+B-2 implementation-level status:
+CLOSED
+
+Formal executor findings:
+F1 CLOSED / F2 CLOSED / F3 CLOSED
+
+Canonical implementation identity:
+scripts/mesc_p01_04d_operator.py blob c1010c8ec227312e5b86e2599b1365ae4f2be4f4
+src/medscale/mesc/_formal_generation_v1.py blob cc23fbffbce4ccb87a36136c1cd13ee0b6f42fb4
+src/medscale/mesc/_formal_split_v1.py blob 7b921f915282d4d970af1ad8adff61ef6ca5be7a
+tests/test_mesc_formal_generation_v1.py blob 3db877fb123c895c0bf3c196f39cdb05f8c15ac2
+tests/test_mesc_formal_split_v1.py blob e1c190a965a68c45cb587392447eb6a500bfbd47
+tests/test_mesc_p01_04d_operator.py blob d1045fcf946a78fa4f989c48600116c49cab14c1
+Total 6 files, 4705 insertions, 0 deletions.
+
+PR #90 merge — formal-executor implementation adoption:
+e924027f1c8ea08ac4e5e4281fdcf75e5b419693
+(tree d5b51ee1569c30b0866e24c65fd15a77836787e5; reviewed implementation head
+962a5ef432c14aa74940e018373168f46a299669)
+
+PR #91 merge — formal-executor adoption-truth reconciliation:
+9229fea8c208021d3bbdb3767e71c3e3f790262e
+(tree 14ee0ffa80573b19c70948dd9db3b282ec5634af; ordered parents
+e924027f1c8ea08ac4e5e4281fdcf75e5b419693 THEN
+2e245e7eb06dd80cb2c9187fd55e907f5995743f)
+
+Re-evaluation evidence:
+Verdict READY FOR FOUNDER P01-04D ENTRY DISPOSITION, zero new blocking findings.
+Focused formal tests 157 passed / 1 skipped / 0 failed. Full suite 2091 passed /
+5 skipped / 0 failed / 1 warning. medscale check CLEAN. Protected-data accesses
+0. Manual generate invocations 0. Manual compare invocations 0. PR #91
+post-merge workflows: CI run 30979151170 number 276 SUCCESS with quality
+(py3.11) job 92219644143 and quality (py3.12) job 92219644193; CodeQL run
+30979151111 number 280 SUCCESS with analyze (python) job 92219643876; Optional
+Extras / Backends run 30979151116 number 93 SUCCESS with core-without-backends
+job 92219643906, backends-transformers job 92219643930 and backends-llamacpp
+job 92219643926. Three runs, six jobs, zero non-success, zero reruns.
+
+Exact eight-path documentation scope:
+A specs/mesc-pilot-01/p01-04d-entry-authorization/README.md
+A specs/mesc-pilot-01/p01-04d-entry-authorization/founder-authorization.md
+A specs/mesc-pilot-01/p01-04d-entry-authorization/entry-readiness-re-evaluation.md
+A specs/mesc-pilot-01/p01-04d-entry-authorization/acceptance.md
+M specs/mesc-pilot-01/p01-04/artifact-contracts.md
+M specs/mesc-pilot-01/p01-04/execution-protocol.md
+M specs/mesc-pilot-01/p01-04/plan.md
+M specs/mesc-pilot-01/tasks.md
+No ninth path. No source, test, script, workflow, dependency, lockfile,
+scientific-policy or artifact-schema change.
+
+N-1 correction scope:
+Stale remediation-design-baseline wording in p01-04/artifact-contracts.md and
+p01-04/execution-protocol.md is framed as historical with current truth recorded
+alongside it. No artifact name, schema, descriptor, fingerprint rule, stage
+ownership, invocation parameter, validation order or execution semantic is
+altered, and the exact seven-file candidate inventory is unchanged.
+
+Entry is not execution. This gate opens no protected input, creates no
+generation workspace, invokes neither generate nor compare, performs no
+Generation A or Generation B, creates no partition membership, executes no
+leakage analysis and publishes nothing. A separate founder execution
+authorization is required before any protected input may be opened or any
+generation command may run.
+
+--- Current controlling state ---
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+P01-04D ORIGINAL ENTRY-READINESS VERDICT:
+NOT READY — HISTORICAL AND PRESERVED
+
+P01-04D READINESS BLOCKER B-1:
+CLOSED AT IMPLEMENTATION LEVEL
+
+P01-04D READINESS BLOCKER B-2:
+CLOSED AT IMPLEMENTATION LEVEL
+
+P01-04D REMEDIATION DESIGN:
+CANONICALLY ADOPTED
+
+FORMAL OPERATOR DESIGN:
+RATIFIED
+
+FORMAL OPERATOR IMPLEMENTATION CODE:
+CANONICALLY ADOPTED
+
+FORMAL-EXECUTOR ADOPTION TRUTH:
+CANONICALLY RECONCILED
+
+FORMAL EXECUTOR FINDING F1:
+CLOSED
+
+FORMAL EXECUTOR FINDING F2:
+CLOSED
+
+FORMAL EXECUTOR FINDING F3:
+CLOSED
+
+ENTRY-READINESS RE-EVALUATION:
+READY FOR FOUNDER P01-04D ENTRY DISPOSITION
+
+FOUNDER P01-04D ENTRY AUTHORIZATION:
+ISSUED ON 2026-08-05
+
+P01-04D ENTRY:
+AUTHORIZED
+
+P01-04D CONTROL STATE:
+ENTERED — PRE-EXECUTION GOVERNANCE ONLY
+
+P01-04D EXECUTION:
+NOT AUTHORIZED
+
+P01-03G REGISTRY ACCESS:
+NOT AUTHORIZED
+
+EXTERNAL SOURCE-RECORD ACCESS:
+NOT AUTHORIZED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+REAL SPLIT GENERATION:
+NOT AUTHORIZED
+
+GENERATION A:
+NOT AUTHORIZED
+
+GENERATION B:
+NOT AUTHORIZED
+
+REAL PARTITION MEMBERSHIP:
+NOT AUTHORIZED
+
+CANONICAL LEAKAGE EXECUTION:
+NOT AUTHORIZED
+
+EVIDENCE PUBLICATION:
+NOT AUTHORIZED
+
+MODEL EXECUTION:
+NOT AUTHORIZED
+
+TRAINING:
+NOT AUTHORIZED
+
+FINE-TUNING:
+NOT AUTHORIZED
+
+P01-04E THROUGH P01-04G:
 NOT AUTHORIZED
 
 P01-04 OVERALL:
