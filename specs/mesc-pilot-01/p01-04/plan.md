@@ -136,7 +136,8 @@ The original entry-readiness verdict remains unchanged and historical.
 The earlier disposition line `P01-04D: NOT AUTHORIZED` — and the earlier
 `formal operator implementation: NOT AUTHORIZED / NOT IMPLEMENTED` — were true
 before PR #90. They are superseded for current status by the block above, in
-which P01-04D entry and P01-04D execution both remain `NOT AUTHORIZED`.
+which P01-04D entry is `AUTHORIZED` under the founder decision recorded by this
+package, while P01-04D execution remains `NOT AUTHORIZED`.
 
 The remediation design was adopted on canonical main through PR #88, merge
 `c208085dfcdbf8f2cab5e9308f938bcc609260c5`, whose tree is identical to the
