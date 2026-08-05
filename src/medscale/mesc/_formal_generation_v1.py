@@ -40,6 +40,7 @@ from medscale.mesc._formal_split_v1 import (
     GENERATION_MANIFEST_FILENAME,
     GENERATION_MANIFEST_SCHEMA,
     GROUP_REGISTRY_FILENAME,
+    INPUT_SCHEMA_VERSIONS,
     MANIFEST_DIGESTED_FILENAMES,
     ORDERED_EXAMPLE_REGISTRY_SURFACE,
     REQUIRED_INPUT_SURFACES,
@@ -51,10 +52,13 @@ from medscale.mesc._formal_split_v1 import (
     SPLIT_SUMMARY_IDENTITY_CORE_FILENAME,
     TRANSFORMED_DATASET_IDENTITY_SURFACE,
     FormalArtifactBundle,
+    FormalArtifactEntry,
     FormalByteEqualityError,
     FormalEvidenceConfigurationError,
     FormalFingerprintError,
     FormalGenerationError,
+    FormalGenerationManifest,
+    FormalInputDescriptor,
     FormalInputIdentityError,
     FormalInputSchemaError,
     FormalInventoryError,
@@ -619,6 +623,181 @@ def _rebuild_identity_core(
         ) from error
 
 
+#: The exact top-level key set produced by ``FormalGenerationManifest``. It is
+#: derived from the model rather than restated, so it cannot drift from it.
+_MANIFEST_TOP_LEVEL_KEYS: Final = frozenset(
+    (
+        "algorithm_version",
+        "artifacts",
+        "bundle_filenames",
+        "input_identity",
+        "schema_version",
+        "split_fingerprint",
+    )
+)
+_ARTIFACT_ENTRY_KEYS: Final = frozenset(
+    ("byte_size", "filename", "schema_version", "sha256", "surface")
+)
+
+
+def _exact_object(value: object, *, label: str, keys: frozenset[str]) -> Mapping[str, object]:
+    if not isinstance(value, dict):
+        raise FormalInputSchemaError(f"{label} must be a JSON object")
+    actual = frozenset(value)
+    if actual != keys:
+        missing = sorted(keys - actual)
+        unknown = sorted(actual - keys)
+        raise FormalInputSchemaError(
+            f"{label} must have exactly {sorted(keys)}: missing={missing}, unknown={unknown}"
+        )
+    return value
+
+
+def _exact_text(value: object, *, label: str) -> str:
+    if type(value) is not str or value == "" or value.strip() != value:
+        raise FormalInputSchemaError(f"{label} must be a non-blank untrimmed string")
+    return value
+
+
+def _exact_size(value: object, *, label: str) -> int:
+    # ``type(...) is int`` rejects ``bool`` and every ``int`` subclass; a JSON
+    # float decodes to ``float`` and is rejected by the same test.
+    if type(value) is not int or value < 0:
+        raise FormalInputSchemaError(f"{label} must be a non-negative integer, got {value!r}")
+    return value
+
+
+def _rebuild_input_identity(value: object, *, workspace: Path) -> FormalSplitInputIdentity:
+    """Rebuild the manifest's input identity through the immutable formal type."""
+    label = f"{workspace}: manifest input_identity"
+    if not isinstance(value, list):
+        raise FormalInputSchemaError(f"{label} must be an array")
+    descriptors: list[FormalInputDescriptor] = []
+    for index, entry in enumerate(value):
+        entry_label = f"{label}[{index}]"
+        if not isinstance(entry, dict):
+            raise FormalInputSchemaError(f"{entry_label} must be a JSON object")
+        surface = entry.get("surface")
+        if surface not in REQUIRED_INPUT_SURFACES:
+            raise FormalInputSchemaError(f"{entry_label}.surface is unknown: {surface!r}")
+        expected_keys = {"byte_size", "sha256", "surface"}
+        if surface in INPUT_SCHEMA_VERSIONS:
+            expected_keys.add("schema_version")
+        _exact_object(entry, label=entry_label, keys=frozenset(expected_keys))
+        # The accepted descriptor type reports a bad digest or byte size as an
+        # input-identity failure. Inside manifest validation the defect is a
+        # malformed manifest document, so it is re-typed to the schema identity
+        # the F3 contract assigns to manifest-structure failures.
+        try:
+            descriptors.append(
+                FormalInputDescriptor(
+                    surface=_exact_text(surface, label=f"{entry_label}.surface"),
+                    schema_version=(
+                        _exact_text(
+                            entry.get("schema_version"), label=f"{entry_label}.schema_version"
+                        )
+                        if surface in INPUT_SCHEMA_VERSIONS
+                        else None
+                    ),
+                    sha256=_exact_text(entry.get("sha256"), label=f"{entry_label}.sha256"),
+                    byte_size=_exact_size(entry.get("byte_size"), label=f"{entry_label}.byte_size"),
+                )
+            )
+        except FormalInputSchemaError:
+            raise
+        except Exception as error:  # re-typed, never suppressed
+            raise FormalInputSchemaError(f"{entry_label} is invalid: {error}") from error
+    try:
+        return FormalSplitInputIdentity(descriptors=tuple(descriptors))
+    except FormalInputSchemaError:
+        raise
+    except Exception as error:  # re-typed, never suppressed
+        raise FormalInputSchemaError(
+            f"{label} is not the exact formal input-identity structure: {error}"
+        ) from error
+
+
+def _verify_manifest_contract(
+    manifest: Mapping[str, object], payloads: Mapping[str, bytes], *, workspace: Path
+) -> None:
+    """Reconstruct the manifest and require its canonical bytes to match exactly.
+
+    The pure ``FormalGenerationManifest`` model and the accepted canonical
+    serializer are the single source of truth, so no second hand-maintained
+    schema can drift from the builder.  Because the regenerated bytes must equal
+    the on-disk bytes exactly, an additional innocuous key, a missing key, a
+    different spelling, a changed ``algorithm_version`` or any non-canonical
+    serialization is refused — including when both workspaces carry the same
+    altered bytes.
+    """
+    _exact_object(
+        manifest, label=f"{workspace}: manifest", keys=frozenset(_MANIFEST_TOP_LEVEL_KEYS)
+    )
+    bundle_filenames = manifest.get("bundle_filenames")
+    if not isinstance(bundle_filenames, list) or any(
+        type(name) is not str for name in bundle_filenames
+    ):
+        raise FormalInputSchemaError(f"{workspace}: manifest bundle_filenames must be strings")
+    raw_artifacts = manifest.get("artifacts")
+    if not isinstance(raw_artifacts, list):
+        raise FormalInputSchemaError(f"{workspace}: manifest artifacts must be an array")
+
+    entries: list[FormalArtifactEntry] = []
+    for index, entry in enumerate(raw_artifacts):
+        label = f"{workspace}: manifest artifacts[{index}]"
+        _exact_object(entry, label=label, keys=_ARTIFACT_ENTRY_KEYS)
+        assert isinstance(entry, dict)  # narrowed by _exact_object
+        entries.append(
+            FormalArtifactEntry(
+                filename=_exact_text(entry.get("filename"), label=f"{label}.filename"),
+                surface=_exact_text(entry.get("surface"), label=f"{label}.surface"),
+                schema_version=_exact_text(
+                    entry.get("schema_version"), label=f"{label}.schema_version"
+                ),
+                sha256=_exact_text(entry.get("sha256"), label=f"{label}.sha256"),
+                byte_size=_exact_size(entry.get("byte_size"), label=f"{label}.byte_size"),
+            )
+        )
+
+    identity = _rebuild_input_identity(manifest.get("input_identity"), workspace=workspace)
+    try:
+        rebuilt = FormalGenerationManifest(
+            schema_version=_exact_text(
+                manifest.get("schema_version"), label=f"{workspace}: manifest schema_version"
+            ),
+            algorithm_version=_exact_text(
+                manifest.get("algorithm_version"), label=f"{workspace}: manifest algorithm_version"
+            ),
+            bundle_filenames=tuple(bundle_filenames),
+            artifacts=tuple(entries),
+            input_identity=identity,
+            split_fingerprint=_exact_text(
+                manifest.get("split_fingerprint"), label=f"{workspace}: manifest split_fingerprint"
+            ),
+        )
+    except FormalInventoryError:
+        # An inventory-shaped refusal keeps its own identity: a manifest that
+        # lists the wrong bundle or describes itself is an inventory failure,
+        # not a schema failure.
+        raise
+    except FormalInputSchemaError:
+        raise
+    except Exception as error:  # re-typed, never suppressed
+        raise FormalInputSchemaError(
+            f"{workspace}: manifest does not satisfy the formal manifest contract: {error}"
+        ) from error
+
+    if rebuilt.algorithm_version != ALGORITHM_VERSION:  # pragma: no cover - model enforces this
+        raise FormalInputSchemaError(
+            f"{workspace}: manifest algorithm_version must be {ALGORITHM_VERSION!r}"
+        )
+    if rebuilt.canonical_bytes() != payloads[GENERATION_MANIFEST_FILENAME]:
+        raise FormalInputSchemaError(
+            f"{workspace}: {GENERATION_MANIFEST_FILENAME} is not the canonical serialization of "
+            "the formal manifest it decodes to"
+        )
+
+
 def _verify_manifest_descriptors(
     manifest: Mapping[str, object], payloads: Mapping[str, bytes], *, workspace: Path
 ) -> None:
@@ -718,6 +897,12 @@ def _verify_completed_workspace(workspace: Path) -> _VerifiedWorkspace:
         raise FormalInputSchemaError(f"{resolved}: manifest schema is wrong")
     _reject_metadata(manifest, workspace=resolved, filename=GENERATION_MANIFEST_FILENAME)
 
+    # The complete manifest contract, not merely its non-prohibited fields: the
+    # document is reconstructed through the pure manifest model and its canonical
+    # bytes regenerated, so an altered algorithm version, an unknown key, a
+    # missing key or any non-canonical shape is refused even when A and B carry
+    # identical bytes (review finding F3).
+    _verify_manifest_contract(manifest, payloads, workspace=resolved)
     _verify_manifest_descriptors(manifest, payloads, workspace=resolved)
 
     # The accepted fingerprint layer digests the core it is handed, so the core

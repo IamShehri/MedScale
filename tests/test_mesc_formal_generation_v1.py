@@ -37,15 +37,19 @@ from medscale.mesc._formal_split_v1 import (
     SPLIT_SUMMARY_FILENAME,
     SPLIT_SUMMARY_IDENTITY_CORE_FILENAME,
     TRANSFORMED_DATASET_IDENTITY_SURFACE,
+    FormalArtifactEntry,
     FormalByteEqualityError,
     FormalEvidenceConfigurationError,
     FormalFingerprintError,
     FormalGenerationError,
+    FormalGenerationManifest,
+    FormalInputDescriptor,
     FormalInputIdentityError,
     FormalInputSchemaError,
     FormalInventoryError,
     FormalLabelJoinError,
     FormalMetadataError,
+    FormalSplitInputIdentity,
     FormalWorkspaceSafetyError,
 )
 from medscale.mesc._split_artifacts_v1 import (
@@ -476,8 +480,11 @@ def test_comparison_recomputes_the_fingerprint(
     for workspace in (first.workspace, second.workspace):
         manifest = json.loads((workspace / GENERATION_MANIFEST_FILENAME).read_bytes())
         manifest["split_fingerprint"] = "0" * 64
-        (workspace / GENERATION_MANIFEST_FILENAME).write_text(
-            json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
+        # Written as bytes on purpose: text mode would translate the terminal LF
+        # to CRLF on Windows, and the manifest-contract check would then reject
+        # the non-canonical serialization before the carrier check is reached.
+        (workspace / GENERATION_MANIFEST_FILENAME).write_bytes(
+            (json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
         )
     with pytest.raises(FormalFingerprintError, match="different fingerprints"):
         compare(first.workspace, second.workspace)
@@ -998,3 +1005,381 @@ def test_second_check_supports_every_accepted_repository_shape(tmp_path: Path) -
         f"# pack-refs with: peeled\n{SYNTHETIC_COMMIT} refs/heads/main\n", encoding="utf-8"
     )
     assert resolve_repository_commit(packed.resolve()) == SYNTHETIC_COMMIT
+
+
+# ---------------------------------------------------------------------------
+# F3 — complete manifest-contract validation
+#
+# The targeted re-review showed that two otherwise valid, byte-identical
+# workspaces were accepted when both manifests carried a modified
+# algorithm_version or an extra top-level key: the manifest was validated only
+# against its non-prohibited fields.  Verification now reconstructs the manifest
+# through the pure model and regenerates its canonical bytes, so the whole
+# contract is enforced.
+# ---------------------------------------------------------------------------
+
+
+def read_manifest(workspace: Path) -> dict[str, object]:
+    document = json.loads((workspace / GENERATION_MANIFEST_FILENAME).read_bytes())
+    assert isinstance(document, dict)
+    return document
+
+
+def write_manifest(workspace: Path, document: object) -> None:
+    (workspace / GENERATION_MANIFEST_FILENAME).write_bytes(_canonical_line(document))
+
+
+def corrupt_both_manifests(
+    workspace_a: Path, workspace_b: Path, mutate: Callable[[dict[str, object]], None]
+) -> None:
+    """Apply the same deterministic manifest mutation to both workspaces."""
+    for workspace in (workspace_a, workspace_b):
+        document = read_manifest(workspace)
+        mutate(document)
+        write_manifest(workspace, document)
+    assert (workspace_a / GENERATION_MANIFEST_FILENAME).read_bytes() == (
+        workspace_b / GENERATION_MANIFEST_FILENAME
+    ).read_bytes()
+
+
+def assert_rejected_without_writes(
+    workspace_a: Path, workspace_b: Path, expected: type[Exception]
+) -> None:
+    before = (snapshot_tree(workspace_a), snapshot_tree(workspace_b))
+    with pytest.raises(expected):
+        compare(workspace_a, workspace_b)
+    assert (snapshot_tree(workspace_a), snapshot_tree(workspace_b)) == before
+    assert len(list(workspace_a.iterdir())) == 7
+    assert len(list(workspace_b.iterdir())) == 7
+
+
+def test_f3_1_modified_algorithm_version_in_both_is_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    assert compare(workspace_a, workspace_b).equal is True
+    corrupt_both_manifests(
+        workspace_a,
+        workspace_b,
+        lambda document: document.__setitem__(
+            "algorithm_version", "mesc-pilot-01-split-algorithm/9"
+        ),
+    )
+    assert_rejected_without_writes(workspace_a, workspace_b, FormalInputSchemaError)
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["", "   ", " mesc-pilot-01-split-algorithm/1", "mesc-pilot-01-split-algorithm/1 ", 1, None],
+    ids=["blank", "whitespace", "left-padded", "right-padded", "integer", "null"],
+)
+def test_f3_1_algorithm_version_must_be_the_accepted_value(
+    tmp_path: Path, environment: dict[str, Path], value: object
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    corrupt_both_manifests(
+        workspace_a, workspace_b, lambda document: document.__setitem__("algorithm_version", value)
+    )
+    assert_rejected_without_writes(workspace_a, workspace_b, FormalInputSchemaError)
+
+
+def test_f3_2_extra_top_level_key_in_both_is_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    """The exact probe the targeted re-review demonstrated as accepted."""
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    corrupt_both_manifests(
+        workspace_a, workspace_b, lambda document: document.__setitem__("note", "innocuous")
+    )
+    assert_rejected_without_writes(workspace_a, workspace_b, FormalInputSchemaError)
+
+
+@pytest.mark.parametrize(
+    "key",
+    ["algorithm_version", "input_identity", "artifacts", "bundle_filenames", "split_fingerprint"],
+)
+def test_f3_3_missing_required_top_level_key_is_rejected(
+    tmp_path: Path, environment: dict[str, Path], key: str
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+
+    def drop_key(document: dict[str, object]) -> None:
+        document.pop(key)
+
+    corrupt_both_manifests(workspace_a, workspace_b, drop_key)
+    assert_rejected_without_writes(workspace_a, workspace_b, FormalInputSchemaError)
+
+
+def _identity_drop_surface(document: dict[str, object]) -> None:
+    entries = document["input_identity"]
+    assert isinstance(entries, list)
+    document["input_identity"] = entries[1:]
+
+
+def _identity_add_surface(document: dict[str, object]) -> None:
+    entries = document["input_identity"]
+    assert isinstance(entries, list)
+    extra = dict(entries[0])
+    extra["surface"] = "decision_record"
+    extra.pop("schema_version", None)
+    entries.append(extra)
+
+
+def _identity_duplicate_surface(document: dict[str, object]) -> None:
+    entries = document["input_identity"]
+    assert isinstance(entries, list)
+    entries.append(dict(entries[0]))
+
+
+def _identity_unknown_surface(document: dict[str, object]) -> None:
+    entries = document["input_identity"]
+    assert isinstance(entries, list)
+    entries[0] = {**entries[0], "surface": "not_a_formal_surface"}
+
+
+IDENTITY_SURFACE_CASES: tuple[tuple[str, Callable[[dict[str, object]], None]], ...] = (
+    ("missing-surface", _identity_drop_surface),
+    ("extra-surface", _identity_add_surface),
+    ("duplicate-surface", _identity_duplicate_surface),
+    ("unknown-surface", _identity_unknown_surface),
+)
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"), IDENTITY_SURFACE_CASES, ids=[case[0] for case in IDENTITY_SURFACE_CASES]
+)
+def test_f3_4_input_identity_exact_surfaces(
+    tmp_path: Path,
+    environment: dict[str, Path],
+    label: str,
+    mutate: Callable[[dict[str, object]], None],
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    corrupt_both_manifests(workspace_a, workspace_b, mutate)
+    assert_rejected_without_writes(workspace_a, workspace_b, FormalInputSchemaError)
+
+
+def _schema_bearing_index(entries: list[dict[str, object]]) -> int:
+    """Return an entry that declares a schema version.
+
+    The ratified decision record is governance prose bound by digest alone, so it
+    carries no ``schema_version``; targeting it would make a schema-field probe a
+    silent no-op.
+    """
+    for index, entry in enumerate(entries):
+        if "schema_version" in entry:
+            return index
+    raise AssertionError("no input-identity entry declares a schema version")
+
+
+def _field_mutator(field: str, value: object) -> Callable[[dict[str, object]], None]:
+    def mutate(document: dict[str, object]) -> None:
+        entries = document["input_identity"]
+        assert isinstance(entries, list)
+        index = _schema_bearing_index(entries)
+        entries[index] = {**entries[index], field: value}
+
+    return mutate
+
+
+def _field_remover(field: str) -> Callable[[dict[str, object]], None]:
+    def mutate(document: dict[str, object]) -> None:
+        entries = document["input_identity"]
+        assert isinstance(entries, list)
+        index = _schema_bearing_index(entries)
+        trimmed = dict(entries[index])
+        assert field in trimmed, f"probe would be a no-op: {field!r} is absent"
+        trimmed.pop(field)
+        entries[index] = trimmed
+
+    return mutate
+
+
+IDENTITY_FIELD_CASES: tuple[tuple[str, Callable[[dict[str, object]], None]], ...] = (
+    ("uppercase-digest", _field_mutator("sha256", "A" * 64)),
+    ("digest-63", _field_mutator("sha256", "a" * 63)),
+    ("digest-65", _field_mutator("sha256", "a" * 65)),
+    ("non-hex-digest", _field_mutator("sha256", "z" * 64)),
+    ("negative-byte-size", _field_mutator("byte_size", -1)),
+    ("boolean-byte-size", _field_mutator("byte_size", True)),
+    ("float-byte-size", _field_mutator("byte_size", 1.5)),
+    ("missing-schema-field", _field_remover("schema_version")),
+    ("extra-nested-field", _field_mutator("note", "extra")),
+    ("wrong-primitive-type", _field_mutator("sha256", 12345)),
+    ("padded-schema", _field_mutator("schema_version", " mesc-pilot-01-source-records/1")),
+)
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"), IDENTITY_FIELD_CASES, ids=[case[0] for case in IDENTITY_FIELD_CASES]
+)
+def test_f3_5_input_identity_field_validation(
+    tmp_path: Path,
+    environment: dict[str, Path],
+    label: str,
+    mutate: Callable[[dict[str, object]], None],
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    corrupt_both_manifests(workspace_a, workspace_b, mutate)
+    assert_rejected_without_writes(workspace_a, workspace_b, FormalInputSchemaError)
+
+
+@pytest.mark.parametrize(
+    ("label", "mutate"),
+    (
+        ("extra-artifact-field", _field_mutator("note", "extra")),
+        ("missing-artifact-field", _field_remover("schema_version")),
+    ),
+    ids=["artifact-extra-field", "artifact-missing-field"],
+)
+def test_f3_5_artifact_descriptor_field_validation(
+    tmp_path: Path,
+    environment: dict[str, Path],
+    label: str,
+    mutate: Callable[[dict[str, object]], None],
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+
+    def mutate_artifacts(document: dict[str, object]) -> None:
+        holder: dict[str, object] = {"input_identity": document["artifacts"]}
+        mutate(holder)
+        document["artifacts"] = holder["input_identity"]
+
+    corrupt_both_manifests(workspace_a, workspace_b, mutate_artifacts)
+    assert_rejected_without_writes(workspace_a, workspace_b, FormalInputSchemaError)
+
+
+def test_f3_6_canonical_byte_regeneration_is_exact(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    """Rebuild the manifest through an independent path and match the bytes exactly."""
+    result = generate(make_request(tmp_path, environment))
+    workspace = result.workspace
+    actual = (workspace / GENERATION_MANIFEST_FILENAME).read_bytes()
+    document = json.loads(actual)
+
+    rebuilt = FormalGenerationManifest(
+        schema_version=document["schema_version"],
+        algorithm_version=document["algorithm_version"],
+        bundle_filenames=tuple(document["bundle_filenames"]),
+        artifacts=tuple(
+            FormalArtifactEntry(
+                filename=entry["filename"],
+                surface=entry["surface"],
+                schema_version=entry["schema_version"],
+                sha256=entry["sha256"],
+                byte_size=entry["byte_size"],
+            )
+            for entry in document["artifacts"]
+        ),
+        input_identity=FormalSplitInputIdentity(
+            descriptors=tuple(
+                FormalInputDescriptor(
+                    surface=entry["surface"],
+                    schema_version=entry.get("schema_version"),
+                    sha256=entry["sha256"],
+                    byte_size=entry["byte_size"],
+                )
+                for entry in document["input_identity"]
+            )
+        ),
+        split_fingerprint=document["split_fingerprint"],
+    )
+    assert rebuilt.canonical_bytes() == actual
+
+
+def test_f3_6_non_canonical_formatting_is_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    """The same decoded values, serialized non-canonically, must be refused."""
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    document = read_manifest(workspace_a)
+    variants = (
+        json.dumps(document, sort_keys=True, indent=2) + "\n",
+        json.dumps(document, sort_keys=True, separators=(", ", ": ")) + "\n",
+        json.dumps(document, sort_keys=True, separators=(",", ":")),
+        json.dumps(document, sort_keys=True, separators=(",", ":")) + "\n\n",
+    )
+    for variant in variants:
+        payload = variant.encode("utf-8")
+        for workspace in (workspace_a, workspace_b):
+            (workspace / GENERATION_MANIFEST_FILENAME).write_bytes(payload)
+        assert json.loads(payload) == document
+        with pytest.raises(FormalInputSchemaError):
+            compare(workspace_a, workspace_b)
+
+
+def test_f3_6_duplicate_manifest_keys_are_rejected(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    text = (workspace_a / GENERATION_MANIFEST_FILENAME).read_text(encoding="utf-8")
+    duplicated = text.replace('"schema_version":', '"schema_version":"x","schema_version":', 1)
+    for workspace in (workspace_a, workspace_b):
+        (workspace / GENERATION_MANIFEST_FILENAME).write_text(duplicated, encoding="utf-8")
+    with pytest.raises(FormalInputSchemaError, match="duplicate JSON object key"):
+        compare(workspace_a, workspace_b)
+
+
+def test_f3_7_exact_valid_manifest_is_accepted(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    workspace_a, workspace_b = make_pair(tmp_path, environment)
+    document = read_manifest(workspace_a)
+
+    assert sorted(document) == [
+        "algorithm_version",
+        "artifacts",
+        "bundle_filenames",
+        "input_identity",
+        "schema_version",
+        "split_fingerprint",
+    ]
+    bundle_filenames = document["bundle_filenames"]
+    artifacts = document["artifacts"]
+    identity = document["input_identity"]
+    fingerprint = document["split_fingerprint"]
+    assert isinstance(bundle_filenames, list)
+    assert isinstance(artifacts, list)
+    assert isinstance(identity, list)
+    assert isinstance(fingerprint, str)
+
+    assert document["schema_version"] == "mesc-pilot-01-formal-generation-manifest/1"
+    assert document["algorithm_version"] == ALGORITHM_VERSION
+    assert bundle_filenames == list(ARTIFACT_FILENAMES)
+    assert len(bundle_filenames) == 7
+    assert len(artifacts) == 6
+    assert GENERATION_MANIFEST_FILENAME not in {entry["filename"] for entry in artifacts}
+    assert len(identity) == 5
+    assert {entry["surface"] for entry in identity} == {
+        "ordered_example_registry",
+        "source_document_registry",
+        "transformed_dataset_identity",
+        "source_records",
+        "decision_record",
+    }
+    assert len(fingerprint) == 64
+    assert fingerprint == fingerprint.lower()
+    summary = json.loads((workspace_a / SPLIT_SUMMARY_FILENAME).read_bytes())
+    assert summary["split_fingerprint"] == fingerprint
+
+    result = compare(workspace_a, workspace_b)
+    assert result.equal is True
+    assert result.split_fingerprint == fingerprint
+
+
+def test_f3_manifest_still_carries_no_self_descriptor(
+    tmp_path: Path, environment: dict[str, Path]
+) -> None:
+    """Closing F3 must not introduce a self-hash, self-size or eighth artifact."""
+    result = generate(make_request(tmp_path, environment))
+    workspace = result.workspace
+    payload = (workspace / GENERATION_MANIFEST_FILENAME).read_bytes()
+    document = json.loads(payload)
+    assert GENERATION_MANIFEST_FILENAME not in {
+        entry["filename"] for entry in document["artifacts"]
+    }
+    assert hashlib.sha256(payload).hexdigest() not in payload.decode("utf-8")
+    assert str(len(payload)) not in {str(entry["byte_size"]) for entry in document["artifacts"]}
+    assert sorted(entry.name for entry in workspace.iterdir()) == sorted(ARTIFACT_FILENAMES)
+    assert "split-fingerprint.json" not in {entry.name for entry in workspace.iterdir()}
