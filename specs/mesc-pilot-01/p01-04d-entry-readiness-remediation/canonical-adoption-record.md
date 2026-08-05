@@ -1,5 +1,31 @@
 # MESC Pilot-01 — P01-04D Remediation-Design Canonical Adoption Record
 
+```text
+POST-PR #90 STATUS NOTE:
+
+This record controls the historical adoption of the remediation design through
+PR #88.
+
+Its statements that the formal executor was prospective, absent, unauthorized
+or not implemented describe the canonical state at the time of PR #88.
+
+They are superseded for current implementation-status purposes by:
+../p01-04d-formal-executor/canonical-adoption-record.md
+
+PR #90 canonically adopted the executor implementation code.
+
+This supersession grants no P01-04D entry or execution authority.
+```
+
+The current implementation-status record is
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+
+Nothing else in this document is rewritten. The PR #88 identity, the
+design-adoption identity, `FD-DREADY-1` through `FD-DREADY-12`, the B-1 and B-2
+design resolution, the artifact inventory, the stage separation, the scientific
+decisions and the authorization state that existed at PR #88 are all preserved
+exactly as recorded.
+
 This document reconciles post-merge canonical truth for the P01-04D
 entry-readiness remediation design.
 
@@ -164,12 +190,25 @@ Resolution at design and contract level does not authorize implementation,
 entry, execution or data access.
 ```
 
-`scripts/mesc_p01_04d_operator.py` remains prospective and absent from the
-repository. The seven-file inventory, the artifact-name supersession map and the
-P01-04D/E/F/G stage separation remain contracts only; no artifact has been
-produced under them.
+**Historical as of PR #88.** `scripts/mesc_p01_04d_operator.py` remains
+prospective and absent from the repository. The seven-file inventory, the
+artifact-name supersession map and the P01-04D/E/F/G stage separation remain
+contracts only; no artifact has been produced under them.
+
+That paragraph describes the canonical state at PR #88. PR #90 subsequently
+adopted the executor implementation code, so the operator script and the two
+private formal modules are now present in the repository. The inventory,
+supersession map and stage separation remain contracts under which no artifact
+has been produced, because entry and execution remain unauthorized. The current
+implementation-status record is
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
 
 ## Authorization boundary
+
+Historical as of PR #88. The `formal operator implementation` line below was
+true at PR #88 and is superseded for current implementation status by
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md);
+every other prohibition in this block remains in force unchanged.
 
 ```text
 formal operator implementation:
@@ -257,6 +296,8 @@ The identity of the commit that introduces this record is recorded externally �
 in the build report and in the independent review request — and never written
 inside the content it would have to hash.
 
+Historical as of PR #88:
+
 ```text
 P01-04D remediation design:
 CANONICALLY ADOPTED
@@ -264,3 +305,8 @@ CANONICALLY ADOPTED
 formal operator implementation:
 NOT AUTHORIZED / NOT IMPLEMENTED
 ```
+
+The `formal operator implementation` line above was true at PR #88. PR #90
+canonically adopted the executor implementation code; see
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+`P01-04D remediation design: CANONICALLY ADOPTED` remains current.
