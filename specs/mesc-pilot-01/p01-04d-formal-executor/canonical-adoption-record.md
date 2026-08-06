@@ -288,6 +288,11 @@ This proves that the formal executor exists as repository code.
 
 It does not prove that protected inputs are authorized for use.
 
+**Historical as of the PR #90 canonical-adoption baseline.** The three
+statements below were true immediately after PR #90. They are preserved
+unrewritten as historical evidence of that baseline and are not the current
+governing status; current truth is recorded immediately after them.
+
 It does not authorize P01-04D entry or execution.
 
 It does not retroactively change the original entry-readiness verdict.
@@ -295,11 +300,39 @@ It does not retroactively change the original entry-readiness verdict.
 A separately authorized entry-readiness re-evaluation is required before any
 entry decision.
 
+**Current truth.** That entry-readiness re-evaluation was subsequently
+authorized and completed. Its disposition was
+`READY FOR FOUNDER P01-04D ENTRY DISPOSITION`, with `B-1` and `B-2` closed at
+the implementation level, `F1`, `F2` and `F3` closed, and zero new blocking
+findings. On that basis the founder issued P01-04D entry authorization on
+2026-08-05, and the entry-authorization package was canonically adopted through
+PR #92 at merge `693c900bbe5e0f752ca915b527c89d1d9aaa43ad`. P01-04D entry is
+therefore authorized, and the P01-04D control state is
+`ENTERED — PRE-EXECUTION GOVERNANCE ONLY`. The founder entry decision is
+recorded in
+[`../p01-04d-entry-authorization/founder-authorization.md`](../p01-04d-entry-authorization/founder-authorization.md).
+
+Entry authorization is not execution authorization. P01-04D execution remains
+`NOT AUTHORIZED`. No protected input has been opened, no generation workspace
+has been created, neither `generate` nor `compare` has been invoked, and
+neither Generation A nor Generation B has occurred. The original
+entry-readiness verdict remains unchanged and historical.
+
 The executor has been exercised only against freshly generated synthetic
 fixtures under temporary directories. No P01-03G registry content, no external
 real source-record file and no real dataset artifact has been read by it.
 
 ## 10. Authorization boundary
+
+**Historical as of the PR #90 canonical-adoption baseline.** The block below
+records the authorization state immediately after PR #90. It is preserved
+unrewritten as historical evidence and is not the current governing status. Two
+of its lines have since been superseded: `P01-04D entry` by the founder entry
+authorization canonically adopted through PR #92, and
+`P01-04D entry-readiness re-evaluation` by that re-evaluation, which was
+authorized, completed and returned `READY`. Every other prohibition in the
+block remains in force, and the current boundary is recorded in the current
+block that follows.
 
 ```text
 P01-04D entry:
@@ -360,9 +393,66 @@ NOT UNLOCKED
 Canonical adoption of executor code is not P01-04D readiness, not P01-04D entry
 authorization, not P01-04D execution authorization, not protected-input
 authorization, not Generation A authorization and not Generation B
-authorization.
+authorization. That statement remains true of PR #90 itself: entry was
+authorized by the separate founder decision recorded in the entry-authorization
+package, never by this adoption.
 
-## 11. Current next gate
+**Current authorization boundary.**
+
+```text
+founder P01-04D entry authorization:
+ISSUED AND CANONICALLY ADOPTED THROUGH PR #92
+
+canonical entry-authorization merge:
+693c900bbe5e0f752ca915b527c89d1d9aaa43ad
+
+P01-04D implementation:
+ADOPTED ON CANONICAL MAIN
+
+P01-04D entry:
+AUTHORIZED
+
+P01-04D control state:
+ENTERED — PRE-EXECUTION GOVERNANCE ONLY
+
+P01-04D execution:
+NOT AUTHORIZED
+
+P01-03G registry content access:
+NOT AUTHORIZED
+
+external real source-record access:
+NOT AUTHORIZED
+
+real dataset access:
+NOT AUTHORIZED
+
+Generation A:
+NOT AUTHORIZED
+
+Generation B:
+NOT AUTHORIZED
+
+compare:
+NOT AUTHORIZED
+
+P01-04E through P01-04G execution:
+NOT AUTHORIZED
+
+P01-04 overall:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+```
+
+## 11. Historical next gate immediately after PR #90
+
+**Historical as of the PR #90 canonical-adoption baseline.** The gate below was
+the next gate immediately after PR #90. It is preserved unrewritten as
+historical evidence. That gate has since been reached: the re-evaluation was
+authorized, completed and returned `READY`, and the founder entry decision
+followed. It is therefore no longer the current next gate.
 
 ```text
 NEXT GATE:
@@ -378,7 +468,40 @@ This record does not itself authorize that re-evaluation. It records only that
 the implementation code is now canonical, which is one input a later
 re-evaluation may consider.
 
-## 12. Scope and non-authority
+## 12. Current next gate
+
+```text
+Current next gate:
+
+P01-04D EXECUTION-AUTHORIZATION READINESS RE-EVALUATION
+
+NOT EXECUTION
+NOT DATA ACCESS
+NOT WORKSPACE CREATION
+```
+
+The most recent independent P01-04D execution-authorization readiness review
+returned:
+
+```text
+NOT READY FOR FOUNDER P01-04D EXECUTION-AUTHORIZATION DISPOSITION
+```
+
+That disposition rested solely on four canonical governance records that still
+presented historical P01-04D implementation, entry and next-gate states as
+current truth. It identified no defect in the canonical implementation, the
+tests, the execution contract, the operator parameters, the seven-file artifact
+inventory, the validation order, the stop conditions, the invalidation rules or
+the authority separation. This record is one of those four, and the present
+reconciliation corrects it.
+
+The readiness disposition remains
+`NOT READY FOR FOUNDER P01-04D EXECUTION-AUTHORIZATION DISPOSITION` until this
+reconciliation is independently reviewed, canonically adopted and the readiness
+gate is rerun. Nothing in this record predicts, presumes or asserts the outcome
+of that rerun, and nothing in it authorizes execution.
+
+## 13. Scope and non-authority
 
 ```text
 reconciles canonical truth only
@@ -399,7 +522,7 @@ artifact inventory, the artifact-name supersession map, the P01-04D/E/F/G stage
 separation or the ratified scientific decisions D1 through D10. On any conflict,
 D1 through D10 control.
 
-## 13. Reconciliation commit identity
+## 14. Reconciliation commit identity
 
 The identity of the commit that introduces this record is reported externally —
 in its build report and in its independent review record — and is never written

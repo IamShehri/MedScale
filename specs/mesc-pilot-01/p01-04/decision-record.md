@@ -484,6 +484,14 @@ verified through `split-summary.json` and `generation-manifest.json`. The 16-hex
 
 ### This appendix authorizes nothing
 
+At the FD-DREADY design-only baseline of 2026-08-04, the state was as recorded
+below. The block is preserved unrewritten as historical evidence of what this
+appendix issued and withheld; it is not the current governing status. Its
+`P01-04D entry` and `P01-04D implementation` lines have since been superseded
+by later, separate founder and adoption decisions, and current status is
+recorded in **Current controlling status — P01-04D pre-execution governance**
+at the end of this document. Every other line in the block remains in force.
+
 ```text
 P01-04D entry:
 NOT AUTHORIZED
@@ -519,8 +527,93 @@ P01-05:
 NOT UNLOCKED
 ```
 
-No formal executor was implemented, no operator script was created, no
-generation workspace was created, no split artifact was generated, no partition
-membership was calculated, no leakage check was executed, no P01-03G registry
-content was accessed and no real dataset was accessed. Every one of the six
-prospective implementation paths remains absent or unchanged.
+At the FD-DREADY design-only baseline: no formal executor was implemented, no
+operator script was created, no generation workspace was created, no split
+artifact was generated, no partition membership was calculated, no leakage
+check was executed, no P01-03G registry content was accessed and no real
+dataset was accessed. Every one of the six prospective implementation paths was
+absent or unchanged at that baseline.
+
+That paragraph describes the FD-DREADY design-only baseline and is preserved
+for it. The six implementation paths were subsequently authorized, implemented
+and canonically adopted through PR #90. No protected input has been opened, no
+generation workspace has been created and no artifact has been generated at any
+point since.
+
+---
+
+### Current controlling status — P01-04D pre-execution governance
+
+This section is the current controlling status of the P01-04D appendices above.
+It supersedes their `P01-04D entry` and `P01-04D implementation` lines for
+current status only, and preserves every historical statement for the baseline
+it describes.
+
+```text
+formal executor implementation:
+CANONICALLY ADOPTED THROUGH PR #90
+
+formal-executor adoption truth:
+CANONICALLY RECONCILED THROUGH PR #91
+
+founder P01-04D entry authorization:
+ISSUED AND CANONICALLY ADOPTED THROUGH PR #92
+
+P01-04D entry:
+AUTHORIZED
+
+P01-04D control state:
+ENTERED — PRE-EXECUTION GOVERNANCE ONLY
+
+P01-04D execution:
+NOT AUTHORIZED
+
+P01-03G registry content access:
+NOT AUTHORIZED
+
+external real source-record access:
+NOT AUTHORIZED
+
+real dataset access:
+NOT AUTHORIZED
+
+Generation A:
+NOT AUTHORIZED
+
+Generation B:
+NOT AUTHORIZED
+
+compare:
+NOT AUTHORIZED
+
+P01-04E through P01-04G:
+NOT AUTHORIZED
+
+P01-04 overall:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+
+current next gate:
+P01-04D EXECUTION-AUTHORIZATION READINESS RE-EVALUATION
+```
+
+The current readiness disposition is
+`NOT READY FOR FOUNDER P01-04D EXECUTION-AUTHORIZATION DISPOSITION`, and it
+remains so until the present current-truth reconciliation is independently
+reviewed, canonically adopted and the readiness gate is rerun.
+
+Entry is not execution. No protected input has been opened, no generation
+workspace has been created, neither `generate` nor `compare` has been invoked,
+neither Generation A nor Generation B has occurred, no partition membership
+exists, no canonical leakage execution has been performed and no evidence has
+been published.
+
+**This section does not amend D1 through D10.** It records implementation,
+adoption and authorization status only. It alters no partition set, target
+count, grouping key, stratification field, apportionment rule, ranking
+contract, minimum size, holdout policy, repository-content boundary or
+split-version policy, and it does not amend `FD-DREADY-1` through
+`FD-DREADY-12`. On any conflict between this section and D1–D10, D1–D10
+control.

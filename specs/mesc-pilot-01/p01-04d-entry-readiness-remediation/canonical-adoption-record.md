@@ -205,10 +205,35 @@ implementation-status record is
 
 ## Authorization boundary
 
-Historical as of PR #88. The `formal operator implementation` line below was
-true at PR #88 and is superseded for current implementation status by
-[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md);
-every other prohibition in this block remains in force unchanged.
+**Historical as of PR #88.** The entire block below records the authorization
+state at PR #88. It is preserved unrewritten as historical evidence and is not
+the current governing status. Two of its lines have since been superseded:
+
+```text
+formal operator implementation:
+superseded by PR #90, which canonically adopted the implementation code
+
+P01-04D entry:
+superseded by the founder P01-04D entry authorization of 2026-08-05,
+canonically adopted through PR #92
+```
+
+The current implementation-status record is
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md),
+and the founder entry decision is recorded in
+[`../p01-04d-entry-authorization/founder-authorization.md`](../p01-04d-entry-authorization/founder-authorization.md).
+
+Every other prohibition in the block below remains in force: P01-04D execution,
+P01-03G registry access, external source-record access, real dataset access,
+real split generation, Generation A, Generation B, real partition membership,
+canonical leakage execution, evidence publication, model execution, training
+and fine-tuning all remain unauthorized, P01-04 remains incomplete and P01-05
+remains locked. The current boundary is recorded in the current-truth block
+that follows this one.
+
+Neither supersession expands the authority issued by the PR #88 package. That
+package issued design and contract authority only; implementation and entry
+were authorized by later, separate decisions.
 
 ```text
 formal operator implementation:
@@ -270,6 +295,70 @@ Canonical adoption of a design-and-contract package is not authority. It records
 that the contracts are now canonical text; it grants nothing beyond what
 `FD-DREADY-1` through `FD-DREADY-12` already state, and those decisions issue
 neither implementation authority nor execution authority.
+
+## Current authorization boundary
+
+This block records the current governing state. It is recorded here so that the
+historical PR #88 block above cannot be read as current truth. It grants no
+authority of its own and expands nothing issued by the PR #88 package.
+
+```text
+founder P01-04D entry authorization:
+ISSUED AND CANONICALLY ADOPTED THROUGH PR #92
+
+canonical entry-authorization merge:
+693c900bbe5e0f752ca915b527c89d1d9aaa43ad
+
+P01-04D implementation:
+ADOPTED ON CANONICAL MAIN
+
+P01-04D entry:
+AUTHORIZED
+
+P01-04D control state:
+ENTERED — PRE-EXECUTION GOVERNANCE ONLY
+
+P01-04D execution:
+NOT AUTHORIZED
+
+P01-03G registry content access:
+NOT AUTHORIZED
+
+external real source-record access:
+NOT AUTHORIZED
+
+real dataset access:
+NOT AUTHORIZED
+
+Generation A:
+NOT AUTHORIZED
+
+Generation B:
+NOT AUTHORIZED
+
+compare:
+NOT AUTHORIZED
+
+P01-04E through P01-04G execution:
+NOT AUTHORIZED
+
+P01-04 overall:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+
+current next gate:
+P01-04D EXECUTION-AUTHORIZATION READINESS RE-EVALUATION
+```
+
+The current readiness disposition is
+`NOT READY FOR FOUNDER P01-04D EXECUTION-AUTHORIZATION DISPOSITION`, and it
+remains so until the present current-truth reconciliation is independently
+reviewed, canonically adopted and the readiness gate is rerun. No protected
+input has been opened, no generation workspace has been created, neither
+`generate` nor `compare` has been invoked, and neither Generation A nor
+Generation B has occurred.
 
 ## Scope of this record
 

@@ -1,5 +1,43 @@
 # P01-04D Entry-Readiness Remediation — Founder Authorization
 
+## Current-truth reconciliation note
+
+This document is the controlling record of the PR #88 design-and-contract
+decision, and of nothing else. Every state line it carries — including the
+header block immediately below and section 17 — describes the FD-DREADY
+issuance baseline of 2026-08-04.
+
+```text
+authority issued by this document:
+DESIGN AND CONTRACT AUTHORITY ONLY — UNCHANGED
+
+P01-04D implementation:
+ADOPTED ON CANONICAL MAIN through PR #90; adoption truth reconciled
+through PR #91
+
+P01-04D entry:
+AUTHORIZED by the separate founder decision of 2026-08-05, canonically
+adopted through PR #92
+
+P01-04D execution:
+NOT AUTHORIZED
+```
+
+Those later decisions are separate and independent. They do not retroactively
+expand, reinterpret or enlarge the authority issued by this document, and this
+document did not grant them. Current implementation and entry status are
+controlled by the later canonical records:
+
+- [`canonical-adoption-record.md`](canonical-adoption-record.md) — PR #88
+  design adoption;
+- [`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md)
+  — PR #90 implementation adoption, reconciled through PR #91;
+- [`../p01-04d-entry-authorization/founder-authorization.md`](../p01-04d-entry-authorization/founder-authorization.md)
+  — the founder entry decision adopted through PR #92.
+
+Execution remains unauthorized. `FD-DREADY-1` through `FD-DREADY-12` are
+unchanged in text and in meaning, and no line below has been rewritten.
+
 ```text
 Package status:
 CANONICALLY ADOPTED
@@ -591,7 +629,14 @@ On any conflict between this package and D1–D10, **D1–D10 control**.
 
 ---
 
-## 17. Current controlling state
+## 17. Historical controlling state at FD-DREADY issuance — superseded for current implementation and entry status
+
+**Historical as of the FD-DREADY issuance baseline of 2026-08-04.** The block
+below is preserved unrewritten. It was the controlling state when
+`FD-DREADY-1` through `FD-DREADY-12` were issued, and it is not the current
+governing status. Three of its lines have since been superseded —
+`FORMAL OPERATOR SCRIPT`, `P01-04D IMPLEMENTATION` and `P01-04D ENTRY` — and
+current truth is recorded in the block that follows it.
 
 ```text
 P01-04D READINESS BLOCKERS B-1 AND B-2:
@@ -662,7 +707,91 @@ P01-05:
 NOT UNLOCKED
 ```
 
+### 17A. Current controlling state
+
+This block records current governing truth. It issues no authority and expands
+nothing granted by this package.
+
+```text
+FORMAL OPERATOR SCRIPT:
+scripts/mesc_p01_04d_operator.py — PRESENT AND CANONICALLY ADOPTED
+
+P01-04D IMPLEMENTATION:
+ADOPTED ON CANONICAL MAIN THROUGH PR #90
+
+FORMAL-EXECUTOR ADOPTION TRUTH:
+CANONICALLY RECONCILED THROUGH PR #91
+
+FOUNDER P01-04D ENTRY AUTHORIZATION:
+ISSUED ON 2026-08-05 AND CANONICALLY ADOPTED THROUGH PR #92
+
+CANONICAL ENTRY-AUTHORIZATION MERGE:
+693c900bbe5e0f752ca915b527c89d1d9aaa43ad
+
+P01-04D ENTRY:
+AUTHORIZED
+
+P01-04D CONTROL STATE:
+ENTERED — PRE-EXECUTION GOVERNANCE ONLY
+
+P01-04D EXECUTION:
+NOT AUTHORIZED
+
+P01-03G REGISTRY CONTENT ACCESS:
+NOT AUTHORIZED
+
+EXTERNAL REAL SOURCE-RECORD ACCESS:
+NOT AUTHORIZED
+
+REAL DATASET ACCESS:
+NOT AUTHORIZED
+
+GENERATION A:
+NOT AUTHORIZED
+
+GENERATION B:
+NOT AUTHORIZED
+
+COMPARE:
+NOT AUTHORIZED
+
+P01-04E THROUGH P01-04G EXECUTION:
+NOT AUTHORIZED
+
+P01-04 OVERALL:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+
+CURRENT NEXT GATE:
+P01-04D EXECUTION-AUTHORIZATION READINESS RE-EVALUATION
+```
+
+The operator-contract lines in the historical block above — operator commands,
+candidate artifact count, standalone fingerprint file, P01-04E and P01-04F
+filenames, fixture publication manifest and formal generation manifest — are
+unchanged and remain current.
+
 ## 18. Continuing prohibitions
+
+The list below is the scope of authority issued by the PR #88 package: none of
+these actions was authorized by this document, and this document authorized
+neither P01-04D entry nor P01-04D execution.
+
+**Superseded within this list.** `P01-04D entry` was subsequently authorized by
+a separate founder decision of 2026-08-05, canonically adopted through PR #92.
+That later decision is not an authority of this package. `P01-04D entry` is
+therefore no longer currently prohibited, and it is preserved in the list only
+as a record of what this package withheld.
+
+Every other item in the list remains prohibited as current truth, including
+implementation execution, formal executor invocation, P01-03G registry access,
+external source-record access, real-data access, real split generation, real
+partition membership, canonical leakage execution, generation workspace
+creation, split artifact generation, evidence and repository promotion,
+publication, model or weight access, inference, training, fine-tuning, and
+P01-04D execution through P01-04G.
 
 ```text
 source changes                     test changes
@@ -689,7 +818,12 @@ P01-04D entry                      P01-04D through P01-04G
 P01-05 or later
 ```
 
-## 19. Non-execution record
+## 19. Historical non-execution record at the FD-DREADY baseline
+
+**Historical as of the FD-DREADY issuance baseline of 2026-08-04.** The record
+below is preserved unrewritten with its original values. It describes what the
+PR #88 package itself did, and it is not the current status. Current truth
+follows it.
 
 ```text
 formal executor implemented:            NO
@@ -713,3 +847,43 @@ consideration.
 ```text
 ELIGIBILITY IS NEVER AUTHORITY.
 ```
+
+### 19A. Current non-execution record
+
+```text
+formal executor implemented:
+YES — CANONICALLY ADOPTED THROUGH PR #90
+
+operator script created:
+YES — CANONICALLY ADOPTED THROUGH PR #90
+
+protected input opened:
+NO
+
+generation workspace created:
+NO
+
+Generation A executed:
+NO
+
+Generation B executed:
+NO
+
+compare executed:
+NO
+
+split artifact generated:
+NO
+
+partition membership calculated:
+NO
+
+P01-04E leakage execution:
+NO
+```
+
+The adopted executor exists as canonical repository code and has been exercised
+only against freshly generated synthetic fixtures under temporary directories.
+It has never been run against a protected P01-03G input, the external real
+`source-records.jsonl` or any real dataset, and P01-04D execution remains
+unauthorized.
