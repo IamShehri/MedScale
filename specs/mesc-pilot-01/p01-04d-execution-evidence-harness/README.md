@@ -30,6 +30,12 @@ MODEL E2′
 Package class:
 DOCUMENTATION AND CONTRACT ONLY
 
+Implementation clarification:
+PIC-1 .. PIC-9 RECORDED
+
+Implementation corrections:
+PIC-CORR-1 .. PIC-CORR-15 RECORDED
+
 P-A2 implementation:
 NOT AUTHORIZED BY THIS PACKAGE
 
@@ -59,11 +65,87 @@ P01-04D control state:
 ENTERED — PRE-EXECUTION GOVERNANCE ONLY
 ```
 
+The P-A1 contract package was canonically adopted at that baseline. The
+implementation clarification `PIC-1` .. `PIC-9` was recorded on top of it at:
+
+```text
+Canonical main:
+ddd9766e7362a43e79cd8b0728b0eb0d00830441
+
+Canonical tree:
+bc3b1a1db5dbca3daf09c13f46631d290de0e692
+
+Clarification class:
+DOCUMENTATION CORRECTION ONLY
+
+P-A2 implementation:
+STILL NOT AUTHORIZED
+
+XD-EXEC-1:
+STILL DECIDED / OPEN
+```
+
+The implementation corrections `PIC-CORR-1` .. `PIC-CORR-6` were recorded on the
+same clarification candidate, after an independent full-content review returned
+`CHANGES REQUIRED`. They fix the exact `STAGE_REFUSED` / `STAGE_FAILED`
+boundary, the deterministic `failure_class` → `root_cause_class` →
+`remediation_disposition` mapping, the `CHILD_NONZERO_EXIT` derivation, the
+post-failed-stage `finalize` progression, the historical scope of acceptance
+criteria `A-1` and `A-2`, and several deterministic safety details.
+
+The final implementation corrections `PIC-CORR-7` .. `PIC-CORR-13` were recorded
+on the same candidate after a second independent full-content review again
+returned `CHANGES REQUIRED`. They close the destination-unwritable case in which
+an opened stage's journal bytes remain well formed but a required append can no
+longer be durably written — the stage is then structurally unsealed, nothing is
+fabricated, continuation stops, and terminal finalization selects
+`EPISODE_EVIDENCE_CORRUPT`. They also fix the exact stderr logical-line
+algorithm so LF and CRLF classify identically, the `CHILD_LAUNCH_FAILURE`
+lifecycle, the separation of semantic derivation from durable destination, the
+completeness of the controlling `CHILD_NONZERO_EXIT` table, the historical scope
+of `PA1-FD-18`, and the literal canonical exception-module anchor.
+
+The closing implementation corrections `PIC-CORR-14` and `PIC-CORR-15` were
+recorded on the same candidate after a third independent full-content review
+returned `CHANGES REQUIRED` on one blocking finding, `PIC-FFR1`: partial
+terminal-manifest creation was undefined. `PIC-CORR-14` records one deterministic
+three-state model for `episode-manifest.json` — `TM-0` absent, `TM-1` present but
+invalid or incomplete, `TM-2` complete valid canonical — separates the physical
+path state from manifest validity, ties terminal identity and the durable
+terminal disposition to `TM-2` alone, preserves the exact bytes of a partial
+manifest while prohibiting every retry, repair and overwrite, and closes the
+crash-after-valid-write case as still sealed. `PIC-CORR-15` corrects wording that
+could have been read as granting additional formal test imports;
+`resolve_repository_commit` remains the sole formal test-scope import.
+
+```text
+Correction class:
+DOCUMENTATION CORRECTION ONLY
+
+New enumerations or enumeration values:
+NONE
+
+New evidence record class or manifest field:
+NONE
+
+New terminal-disposition value:
+NONE
+
+Recovery sidecar, repair marker or retry marker:
+NONE
+
+P-A2 implementation:
+STILL NOT AUTHORIZED
+
+XD-EXEC-1:
+STILL DECIDED / OPEN
+```
+
 ## 3. Documents in this package
 
 | Document | Role |
 |----------|------|
-| [`founder-authorization.md`](founder-authorization.md) | **Controlling document.** Records the founder disposition `PA1-FD-1` .. `PA1-FD-20`, amendments `A1`–`A5`, reconciliations `R1`–`R5` and corrections `PA1-C1`–`PA1-C5`. |
+| [`founder-authorization.md`](founder-authorization.md) | **Controlling document.** Records the founder disposition `PA1-FD-1` .. `PA1-FD-20`, amendments `A1`–`A5`, reconciliations `R1`–`R5`, corrections `PA1-C1`–`PA1-C5`, implementation clarifications `PIC-1`–`PIC-9` with the associated deterministic implementation decisions, implementation corrections `PIC-CORR-1`–`PIC-CORR-6`, final implementation corrections `PIC-CORR-7`–`PIC-CORR-13`, and closing implementation corrections `PIC-CORR-14`–`PIC-CORR-15`. |
 | [`evidence-contract.md`](evidence-contract.md) | The normative technical contract: architecture, obligations, inventory, schemas, lifecycle, closed vocabularies, serialization, path safety and minimization. |
 | [`acceptance.md`](acceptance.md) | Acceptance criteria for **this documentation package**, and the deferral of implementation acceptance to P-A2. |
 
