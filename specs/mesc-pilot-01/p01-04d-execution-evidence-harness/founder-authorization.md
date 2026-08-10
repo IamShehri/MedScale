@@ -37,6 +37,18 @@ NOT AUTHORIZED
 
 P-A2 implementation:
 NOT AUTHORIZED BY THIS DECISION
+
+P-A1 implementation clarification:
+PIC-1 .. PIC-9 RECORDED — SEE §8
+
+P-A1 implementation corrections:
+PIC-CORR-1 .. PIC-CORR-6 RECORDED — SEE §8A
+
+P-A1 final implementation corrections:
+PIC-CORR-7 .. PIC-CORR-13 RECORDED — SEE §8B
+
+P-A1 closing implementation corrections:
+PIC-CORR-14 .. PIC-CORR-15 RECORDED — SEE §8C
 ```
 
 This decision defines the contract a future execution-evidence harness must
@@ -267,6 +279,12 @@ The terminal episode identity is the SHA-256 and byte size of
 `episode-manifest.json`. The manifest binds every evidence record present at
 seal.
 
+That formula is unchanged, but it is not unconditional: by `PIC-CORR-14` a
+terminal episode identity exists if and only if `episode-manifest.json` is
+`TM-2` — a complete valid canonical manifest. An absent path (`TM-0`) and a
+physically present but invalid or incomplete one (`TM-1`) have no terminal
+identity and no durably established terminal disposition.
+
 A later stage that discovers a new invalidation must not mutate the sealed P-A
 episode. That later evidence requires its own separately governed immutable
 record referencing the prior terminal episode identity.
@@ -279,7 +297,9 @@ executed must not be represented by fabricated execution evidence.
 A successful episode requires completed records for Generation A, Generation B,
 compare and verify. A failed or refused episode requires only the stages actually
 opened or started. Every failed or refused episode that can safely reach finalize
-still receives a stable terminal identity.
+still receives a stable terminal identity, which by `PIC-CORR-14` means exactly
+that `finalize` durably created a `TM-2` terminal manifest; where creation
+reaches only `TM-0` or `TM-1`, no terminal identity exists.
 
 ### PA1-FD-14 — Partial writes
 
@@ -331,6 +351,23 @@ documents under `specs/mesc-pilot-01/p01-04d-execution-evidence-harness/`:
 `acceptance.md`.
 
 P-A1 changes no implementation path.
+
+**Historical scope of "four additive documents" (`PIC-CORR-12`).** That phrase
+describes the **original** P-A1 documentation package as built and canonically
+adopted through PR #95, where all four paths were additions. It remains an
+accurate statement of that package and is not rewritten.
+
+```text
+original P-A1 package, adopted through PR #95:
+added 4, modified 0
+
+current implementation-clarification candidate:
+modified 4, added 0, deleted 0, renamed 0
+```
+
+The current candidate modifies those same four existing documents and adds no
+documentation path. The package still consists of exactly those four documents,
+and still changes no implementation path.
 
 ### PA1-FD-19 — Future P-A2 package direction
 
@@ -533,7 +570,1059 @@ This is consistent with the state-dependent inventory, with the prohibition on
 fabricating a record for an unexecuted stage, and with evidence containment,
 which applies only to an already-open episode.
 
-## 8. Blocker state
+## 8. Founder implementation clarifications
+
+These nine clarifications were issued against the canonically adopted P-A1
+contract after an independent P-A2 implementation-readiness review. They resolve
+implementation-level contradictions and ambiguities so that a future P-A2 can be
+built exactly, without inventing an evidence file, a schema field, an
+enumeration, a lifecycle rule, a command, an execution authority or a
+protected-data access.
+
+```text
+Clarification baseline:
+ddd9766e7362a43e79cd8b0728b0eb0d00830441
+
+Clarification tree:
+bc3b1a1db5dbca3daf09c13f46631d290de0e692
+
+Clarification class:
+DOCUMENTATION CORRECTION ONLY
+
+P-A2 implementation:
+NOT AUTHORIZED BY THESE CLARIFICATIONS
+
+XD-EXEC-1:
+DECIDED / OPEN — NOT CLOSED BY THESE CLARIFICATIONS
+```
+
+They create no new authority and alter no already-approved semantics.
+`ARCHITECTURE A`, `MODEL E2′`, the six-command surface, the absence of
+`record-freeze`, the seven scientific artifacts, the terminal-manifest identity,
+the P01-04F boundary, the MODEL A′ boundary, post-seal immutability, the
+five-field runtime identity, raw stdout and stderr non-persistence, the six
+frozen formal-executor paths and the expected three-path P-A2 scope are all
+unchanged.
+
+### PIC-1 — Evidence inventory remains exact and closed
+
+The evidence inventory recorded in `evidence-contract.md` §12 is **exact and
+closed**, not a minimum. No new evidence file is authorized for P-A2.
+
+```text
+episode-control.jsonl:        PROHIBITED
+repository-observation.jsonl: PROHIBITED
+preflight.jsonl:              PROHIBITED
+failure.jsonl:                PROHIBITED
+any eighth evidence record class: PROHIBITED
+```
+
+State dependence governs which of the seven records must exist, never whether an
+eighth may be created.
+
+### PIC-2 — Open repository identity
+
+Before `open`, the canonical repository identity observation is **mandatory**,
+and it produces **no durable `repository_identity_observed` event**.
+
+```text
+observation before open:                MANDATORY
+durable repository_identity_observed:   NOT CREATED
+```
+
+On `observed_canonical_commit != expected_canonical_commit`, `open` refuses and
+creates nothing.
+
+```text
+episode directory:  NOT CREATED
+episode-core.json:  NOT CREATED
+any evidence:       NOT CREATED
+```
+
+On equality, `open` may continue. `episode-core.json` continues to carry
+`expected_canonical_commit` only.
+
+```text
+observed_canonical_commit in episode-core: PROHIBITED
+identity_match in episode-core:            PROHIBITED
+```
+
+Every prior unqualified statement that every command persists a
+`repository_identity_observed` event is amended by this clarification.
+
+### PIC-3 — Finalize repository identity
+
+Before `finalize`, the observation is **mandatory**. A matching observation is
+**non-durable**.
+
+On `observed == expected`, `finalize` may continue.
+
+On `observed != expected`, `finalize` must not silently append invalidation
+evidence and must not seal unless a prior explicit `invalidate` has already
+recorded canonical-main movement for the same episode and the exact
+expected/observed pair.
+
+```text
+required mismatch sequence:
+invalidate
+-> durable canonical_main_movement record
+-> finalize retry
+-> re-observe repository identity
+-> confirm the current observed movement equals the recorded movement
+-> seal in containment mode
+```
+
+If canonical main moves again after `invalidate`, `finalize` refuses, and a new
+explicit `invalidate` is required before another `finalize` attempt.
+
+```text
+repository-observation field in episode-manifest.json: PROHIBITED
+```
+
+### PIC-4 — Invalidate repository identity
+
+Repository identity is **material** to `invalidate` exactly when:
+
+```text
+root_cause_class == CANONICAL_MAIN_MOVEMENT
+or
+failure_class == CANONICAL_MAIN_MISMATCH
+```
+
+For that case the observation is mandatory, `expected != observed` is mandatory,
+and both values persist under `canonical_main_movement`:
+
+```text
+expected_canonical_commit
+observed_canonical_commit
+```
+
+For every other invalidation cause the observation is not required for
+invalidation evidence, and a matching observation is never persisted.
+
+```text
+identity_match in episode-invalidation.jsonl:          PROHIBITED
+stage-event structure in episode-invalidation.jsonl:   PROHIBITED
+```
+
+### PIC-5 — Pre-stage versus opened-stage lifecycle
+
+For `generate`, `compare` and `verify` the ambiguous single lifecycle is replaced
+by an explicit two-phase lifecycle with the evidence boundary at `stage_opened`.
+The normative ordering is recorded in `evidence-contract.md` §21.
+
+A PRE-STAGE failure is a harness or process refusal. It creates no stage
+journal, fabricates no stage and implies no automatic invalidation.
+
+The old claim that evidence exists before the child unconditionally is corrected
+to:
+
+```text
+Evidence exists before the child once stage_opened has been durably appended.
+```
+
+Failures before stage creation are not stage evidence and must not be described
+as such.
+
+### PIC-6 — `stage_failed` event and invalidation ownership
+
+One stage-event type is added:
+
+```text
+stage_failed
+
+additional fields, exactly:
+failure_class
+root_cause_class
+remediation_disposition
+```
+
+Every value comes from an existing closed vocabulary. No free-form text is
+permitted.
+
+A stage failure event is technical stage evidence. It is **not** an episode
+invalidation.
+
+```text
+create or append episode-invalidation.jsonl:
+EXPLICIT invalidate ONLY
+
+automatic append by generate, compare, verify or finalize:
+PROHIBITED
+```
+
+When an opened stage ends `STAGE_REFUSED` or `STAGE_FAILED`, further
+`generate`, `compare` or `verify` continuation in that episode is prohibited.
+
+```text
+permitted evidence progression:
+explicit invalidate, then finalize
+
+retry of the failed or refused scientific stage in the same episode:
+PROHIBITED
+```
+
+The progression line above is **superseded by `PIC-CORR-4`** (§8A): explicit
+`invalidate` is not universally mandatory before `finalize`, and where no
+separate pre-seal invalidation fact exists `finalize` may seal directly. The
+prohibition on continuation and on retrying the same scientific stage, and the
+invalidation-ownership rule of `PIC-6`, are unchanged.
+
+### PIC-7 — `stage_disposition`
+
+A ninth closed enumeration is added, recorded normatively in
+`evidence-contract.md` §20.9:
+
+```text
+STAGE_COMPLETE
+STAGE_REFUSED
+STAGE_FAILED
+```
+
+`stage_sealed.stage_disposition` carries exactly one value from this set.
+
+### PIC-8 — `path_role`
+
+A tenth closed enumeration is added, recorded normatively in
+`evidence-contract.md` §20.10:
+
+```text
+FORMAL_INPUT_ORDERED_EXAMPLE_REGISTRY
+FORMAL_INPUT_SOURCE_DOCUMENT_REGISTRY
+FORMAL_INPUT_TRANSFORMED_DATASET_IDENTITY
+FORMAL_INPUT_SOURCE_RECORDS
+FORMAL_INPUT_DECISION_RECORD
+```
+
+`path_role` carries semantic role only. It must never carry an absolute path, a
+relative path, a filename derived from a local location, a username, a hostname
+or a protected identifier.
+
+The closed-vocabulary totals become:
+
+```text
+closed enumerations:
+10
+
+total closed enumeration values:
+77
+```
+
+Every stale statement asserting eight enumerations or sixty-nine values is
+withdrawn.
+
+### PIC-9 — Operator exception mapping
+
+The allowlisted exception-class tokens and their durable mappings are exactly:
+
+| Allowlisted token | `operator_error_class` |
+|-------------------|------------------------|
+| `FormalInputIdentityError` | `INPUT_IDENTITY_ERROR` |
+| `FormalInputSchemaError` | `INPUT_SCHEMA_ERROR` |
+| `FormalLabelJoinError` | `INPUT_SCHEMA_ERROR` |
+| `FormalWorkspaceSafetyError` | `WORKSPACE_SAFETY_ERROR` |
+| `FormalGenerationError` | `GENERATION_ERROR` |
+| `FormalInventoryError` | `INVENTORY_ERROR` |
+| `FormalByteEqualityError` | `BYTE_EQUALITY_ERROR` |
+| `FormalFingerprintError` | `FINGERPRINT_ERROR` |
+| `FormalMetadataError` | `METADATA_ERROR` |
+| `FormalEvidenceConfigurationError` | `EVIDENCE_CONFIGURATION_ERROR` |
+
+No other token is allowlisted.
+
+```text
+unmatched nonzero child failure:  UNCLASSIFIED
+argparse or usage exit code 2:    UNCLASSIFIED
+exit code 0:                      NO_ERROR
+```
+
+The extraction mechanism is fixed and recorded normatively in
+`evidence-contract.md` §20.8. Production must not import the formal split or
+formal generation modules to perform this mapping.
+
+This tightens `PA1-C4` on one point and contradicts it on none: `PA1-C4` said
+raw exception class text *need not* be durable, and `PIC-9` makes it prohibited.
+The mapping target, the closed enumeration, the `NO_ERROR` and `UNCLASSIFIED`
+rules and the prohibition on raw exception messages are unchanged.
+
+### Deterministic implementation decisions
+
+These decisions are controlling. They fix the value domains and derivations that
+would otherwise permit incompatible P-A2 implementations, and they are recorded
+normatively in `evidence-contract.md`.
+
+```text
+stage:
+GENERATE_A, GENERATE_B, COMPARE, VERIFY
+
+generation_identity:
+A, B — present only where applicable
+
+schema_version, episode-core:
+mesc-p01-04d-execution-evidence/episode-core/v1
+
+schema_version, stage events:
+mesc-p01-04d-execution-evidence/stage-event/v1
+
+schema_version, invalidation events:
+mesc-p01-04d-execution-evidence/invalidation-event/v1
+
+schema_version, episode manifest:
+mesc-p01-04d-execution-evidence/episode-manifest/v1
+
+event_ordinal:
+starts at 1; scoped independently to each physical JSONL file; increases by
+exactly one per successfully appended complete canonical event; never invented
+after malformed bytes
+
+timestamps:
+UTC RFC3339, exact form YYYY-MM-DDTHH:MM:SS.ffffffZ
+
+byte_equality:
+EQUAL, UNEQUAL
+
+comparison_derived:
+NOT EMITTED when a complete seven-file equality ledger cannot be derived; the
+stage records stage_failed and seals failed or refused as applicable
+
+repository resolver differential testing:
+exact equality with resolve_repository_commit for every supported non-reparse
+shape; the harness refuses symlink, junction and reparse-point shapes even where
+the oracle resolves them, and that stricter refusal is the only authorized
+divergence
+
+split_fingerprint_observed:
+never derived from persisted stdout; Generation A and B read
+generation-manifest.json read-only after successful child completion; compare
+and verify read both manifests read-only and require agreement before one
+observed value is recorded
+
+harness self-identity:
+the exact bytes of <repository-root>/scripts/mesc_p01_04d_evidence_harness.py,
+whose resolved target must equal the running script's resolved __file__ path
+
+operator_relative_path:
+scripts/mesc_p01_04d_operator.py — POSIX "/" separators regardless of host OS
+
+production input-surface literals:
+ordered_example_registry, source_document_registry,
+transformed_dataset_identity, source_records, decision_record — hardcoded, never
+obtained by importing the formal split or formal generation modules
+
+test-scope formal import permission:
+resolve_repository_commit ONLY; not broadened to make_environment,
+SYNTHETIC_COMMIT or any other helper from a frozen formal test
+```
+
+## 8A. Founder implementation corrections
+
+An independent full-content review of the `PIC-1` .. `PIC-9` clarification
+candidate returned `CHANGES REQUIRED` on three blocking implementation
+ambiguities: `root_cause_class` and `remediation_disposition` had no derivation
+rule, and the `STAGE_REFUSED` / `STAGE_FAILED` boundary overlapped for post-open
+pre-child harness failures. These six corrections resolve them. A later
+independent review of the corrected candidate found one further blocking gap,
+resolved by `PIC-CORR-7` .. `PIC-CORR-13` in §8B.
+
+```text
+Correction class:
+DOCUMENTATION CORRECTION ONLY
+
+New enumeration or enumeration value:
+NONE
+
+P-A2 implementation:
+NOT AUTHORIZED BY THESE CORRECTIONS
+
+XD-EXEC-1:
+DECIDED / OPEN — NOT CLOSED BY THESE CORRECTIONS
+```
+
+`PIC-1` through `PIC-9` are preserved in full. `ARCHITECTURE A`, `MODEL E2′`,
+the six-command surface, the absence of `record-freeze`, the seven scientific
+artifacts, the terminal-manifest identity, the P01-04F boundary, the MODEL A′
+boundary, post-seal immutability, the five-field runtime identity, raw stdout
+and stderr non-persistence, the six frozen formal-executor paths and the
+expected three-path P-A2 scope are all unchanged.
+
+### PIC-CORR-1 — Exact stage-disposition boundary
+
+`stage_disposition` is decided by an exact test, recorded normatively in
+`evidence-contract.md` §20.9.
+
+```text
+STAGE_COMPLETE
+the opened stage completed every required operation successfully.
+
+STAGE_REFUSED
+ALL THREE conditions hold:
+1. stage_opened was durably appended;
+2. child_started does NOT exist;
+3. failure_class is exactly one of:
+       CANONICAL_MAIN_MISMATCH
+       HARNESS_IDENTITY_MISMATCH
+       OPERATOR_IDENTITY_MISMATCH
+       RUNTIME_IDENTITY_MISMATCH
+       INPUT_IDENTITY_MISMATCH
+
+STAGE_FAILED
+every other safely recordable failure after stage_opened.
+```
+
+No other `failure_class` may produce `STAGE_REFUSED`. In particular
+`INPUT_HASH_FAILURE`, a clean pre-child `EVIDENCE_WRITE_FAILURE`,
+`CHILD_LAUNCH_FAILURE`, `CHILD_NONZERO_EXIT`, `OUTPUT_INVENTORY_MISMATCH`,
+`OUTPUT_HASH_FAILURE`, `BYTE_INEQUALITY`, `COMPARE_CONTRADICTION`,
+`FINGERPRINT_MISMATCH`, `VERIFY_FAILURE` and `UNCLASSIFIED` are all
+`STAGE_FAILED`.
+
+The phrase "before child execution or completion" is withdrawn as a definition
+of `STAGE_REFUSED`.
+
+Where a failed append leaves malformed bytes, the `MALFORMED_PRESERVED` rules
+control: no `stage_failed` and no `stage_sealed` may be fabricated after
+malformed bytes merely to complete the lifecycle.
+
+### PIC-CORR-2 — Exact universal failure mapping
+
+`failure_class` is observed; `root_cause_class` and `remediation_disposition`
+are derived from it. The mapping is recorded normatively in
+`evidence-contract.md` §19.1 and is total over the twenty `failure_class`
+values. Unless `CHILD_NONZERO_EXIT` applies, it is exactly:
+
+| `failure_class` | `root_cause_class` | `remediation_disposition` |
+|---|---|---|
+| `ARGUMENT_REFUSAL` | `EVIDENCE_CONFIGURATION_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `CANONICAL_MAIN_MISMATCH` | `CANONICAL_MAIN_MOVEMENT` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `PATH_SEPARATION_REFUSAL` | `PATH_SAFETY_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `REPARSE_POINT_REFUSAL` | `PATH_SAFETY_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `HARNESS_IDENTITY_MISMATCH` | `HARNESS_IDENTITY_MISMATCH` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `OPERATOR_IDENTITY_MISMATCH` | `OPERATOR_IDENTITY_MISMATCH` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `RUNTIME_IDENTITY_MISMATCH` | `RUNTIME_IDENTITY_MISMATCH` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `INPUT_HASH_FAILURE` | `INPUT_IDENTITY_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `INPUT_IDENTITY_MISMATCH` | `INPUT_IDENTITY_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `CHILD_LAUNCH_FAILURE` | `CHILD_PROCESS_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `CHILD_NONZERO_EXIT` | see `PIC-CORR-3` | see `PIC-CORR-3` |
+| `OUTPUT_INVENTORY_MISMATCH` | `OUTPUT_INVENTORY_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `OUTPUT_HASH_FAILURE` | `EVIDENCE_INTEGRITY_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `BYTE_INEQUALITY` | `BYTE_INEQUALITY` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `COMPARE_CONTRADICTION` | `EVIDENCE_INTEGRITY_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `FINGERPRINT_MISMATCH` | `FINGERPRINT_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `EVIDENCE_WRITE_FAILURE` | `EVIDENCE_INTEGRITY_FAILURE` | `NO_REMEDIATION_AUTHORIZED` |
+| `EVIDENCE_MALFORMED_PRESERVED` | `EVIDENCE_INTEGRITY_FAILURE` | `NO_REMEDIATION_AUTHORIZED` |
+| `VERIFY_FAILURE` | `EVIDENCE_INTEGRITY_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `UNCLASSIFIED` | `UNDETERMINED` | `FOUNDER_DISPOSITION_REQUIRED` |
+
+These mappings apply wherever the corresponding closed fields coexist, including
+`stage_failed` and episode invalidation evidence. No implementation may
+substitute another root cause or remediation value.
+
+`LATER_STAGE_GOVERNANCE_REQUIRED` is not emitted by a P-A2 `stage_failed`. It
+remains reserved for a separately governed later stage discovering a fact after
+the P-A episode is sealed.
+
+### PIC-CORR-3 — `CHILD_NONZERO_EXIT` mapping
+
+For `failure_class` `CHILD_NONZERO_EXIT`, the other two values derive exactly
+from the `operator_error_class` already recorded on `child_exited`, recorded
+normatively in `evidence-contract.md` §19.2:
+
+| `operator_error_class` | `root_cause_class` | `remediation_disposition` |
+|---|---|---|
+| `INPUT_IDENTITY_ERROR` | `INPUT_IDENTITY_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `INPUT_SCHEMA_ERROR` | `INPUT_SCHEMA_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `WORKSPACE_SAFETY_ERROR` | `WORKSPACE_STATE_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `GENERATION_ERROR` | `CHILD_PROCESS_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `INVENTORY_ERROR` | `OUTPUT_INVENTORY_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `BYTE_EQUALITY_ERROR` | `BYTE_INEQUALITY` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `FINGERPRINT_ERROR` | `FINGERPRINT_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `METADATA_ERROR` | `EVIDENCE_INTEGRITY_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `EVIDENCE_CONFIGURATION_ERROR` | `EVIDENCE_CONFIGURATION_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `UNCLASSIFIED` | `UNDETERMINED` | `FOUNDER_DISPOSITION_REQUIRED` |
+| `NO_ERROR` | `UNDETERMINED` | `FOUNDER_DISPOSITION_REQUIRED` — CONTRACT CONTRADICTION / FAIL CLOSED |
+
+The table is total over all eleven `operator_error_class` values
+(`PIC-CORR-11`). The eleventh row is stated in the controlling table itself and
+not left table-external.
+
+The combination `CHILD_NONZERO_EXIT` with `operator_error_class` `NO_ERROR` is a
+contract contradiction, not a normal outcome: `NO_ERROR` is reserved for exit
+code zero. If encountered, derive `UNDETERMINED` and
+`FOUNDER_DISPOSITION_REQUIRED`, and fail closed. No mapping value changes.
+
+### PIC-CORR-4 — Post-failed-stage progression
+
+After `STAGE_REFUSED` or `STAGE_FAILED`, `generate`, `compare`, `verify` and
+retry of the same scientific stage in that episode all remain prohibited, and a
+fresh scientific attempt requires a new episode.
+
+Explicit `invalidate` is **not** universally mandatory before `finalize`. The
+prior wording that could imply it is corrected in `evidence-contract.md` §17.2.
+
+```text
+no separate pre-seal invalidation fact:
+finalize MAY seal directly
+
+terminal disposition then reachable as:
+EPISODE_REFUSED or EPISODE_FAILED, by the existing precedence
+
+explicit invalidation recorded:
+EPISODE_INVALIDATED, unless evidence corruption has higher precedence
+
+canonical-main movement:
+the PIC-3 explicit invalidate-before-finalize containment sequence REMAINS
+MANDATORY and is not weakened
+```
+
+### PIC-CORR-5 — Acceptance historical scoping
+
+`acceptance.md` criteria `A-1` and `A-2` describe the **original** P-A1 package
+that was canonically adopted through PR #95. They must not describe the current
+clarification commit as though its four paths were additions.
+
+```text
+current clarification candidate truth:
+modified 4, added 0, deleted 0, renamed 0
+```
+
+### PIC-CORR-6 — Explicit deterministic safety details
+
+Three details are made explicit, recorded normatively in `evidence-contract.md`
+§20.8.2, §20 and §15.3.2.
+
+Operator error-class extraction operates on stderr bytes in memory. The full
+stderr need not be successfully decoded, only the final non-empty line is
+inspected, and only an exact ASCII form matching the canonical formal exception
+module plus an exact allowlisted class token is accepted. Empty stderr,
+non-ASCII or non-UTF-8 bytes, a malformed final line, an unexpected exception
+module, a non-allowlisted token, and message text that merely contains an
+allowlisted token all resolve to `UNCLASSIFIED`. No raw class text and no raw
+message is persisted.
+
+The §20 count of ten named closed enumerations and seventy-seven values is the
+**named closed-enumeration ledger**. Other fixed inline domains — `mode`,
+`stage`, `generation_identity` and `byte_equality` — remain fixed closed domains
+but are not included in that 10 / 77 arithmetic.
+
+Where a non-main stage failure and canonical-main movement coexist, the stage
+failure is preserved in `stage_failed`, the canonical-main movement requires its
+own explicit `invalidate` record, and containment `finalize` may proceed only
+after that movement record satisfies `PIC-3`.
+
+### Stage failure event ordering
+
+For any safely recordable opened-stage refusal or failure, `stage_failed` must
+precede `stage_sealed`. Recorded normatively in `evidence-contract.md` §21.2.1.
+
+```text
+child nonzero:
+child_started -> child_exited -> stage_failed -> stage_sealed
+
+post-child integrity failure:
+child_exited -> any fully derivable outputs_hashed / comparison_derived
+-> stage_failed -> stage_sealed
+
+outputs or comparison not fully derivable:
+omit those events -> stage_failed -> stage_sealed
+
+journal bytes malformed:
+preserve exact malformed bytes; fabricate no later event; fabricate no
+stage_sealed
+```
+
+## 8B. Final founder implementation corrections
+
+A second independent full-content review of the corrected clarification
+candidate returned `CHANGES REQUIRED` on one blocking gap: the case where an
+opened stage's journal bytes remain well formed but a required append can no
+longer be durably written had no fail-closed treatment, while
+`evidence-contract.md` §21.2 asserted without qualification that every
+post-`stage_opened` failure was durably representable. These seven corrections
+close that gap and six smaller determinism items.
+
+```text
+Correction class:
+DOCUMENTATION CORRECTION ONLY
+
+New enumeration or enumeration value:
+NONE
+
+New evidence file:
+NONE
+
+New manifest field:
+NONE
+
+P-A2 implementation:
+NOT AUTHORIZED BY THESE CORRECTIONS
+
+XD-EXEC-1:
+DECIDED / OPEN — NOT CLOSED BY THESE CORRECTIONS
+```
+
+`PIC-1` through `PIC-9` and `PIC-CORR-1` through `PIC-CORR-6` are preserved in
+full. `ARCHITECTURE A`, `MODEL E2′`, the six-command surface, the absence of
+`record-freeze`, the seven evidence record classes with no eighth, the seven
+scientific artifacts, the twenty-value failure mapping, the eleven-value
+`CHILD_NONZERO_EXIT` derivation, the 10 / 77 named vocabulary ledger, the
+terminal-manifest identity, the P01-04F boundary, the MODEL A′ boundary,
+post-seal immutability, the five-field runtime identity, raw stdout and stderr
+non-persistence, the canonical JSON contract, the authorized resolver
+divergence, `path_role`, terminal precedence and the expected three-path P-A2
+scope are all unchanged.
+
+### PIC-CORR-7 — Destination-unwritable and structurally unsealed stages
+
+Recorded normatively in `evidence-contract.md` §18, §13.1, §20.7 and §21.2.
+
+**Three evidence-write outcomes.** For an opened stage whose journal already
+exists, an attempted required append has exactly three disjoint outcomes.
+
+```text
+CASE A — ZERO-BYTE WRITE FAILURE, LATER SAFE APPEND POSSIBLE
+the append fails, no byte was added or changed, the journal remains
+syntactically WELL_FORMED, and a subsequent append can still be safely and
+durably completed.
+
+failure_class:            EVIDENCE_WRITE_FAILURE
+root_cause_class:         EVIDENCE_INTEGRITY_FAILURE
+remediation_disposition:  NO_REMEDIATION_AUTHORIZED
+
+durable recording still possible:
+stage_failed -> stage_sealed, stage_disposition STAGE_FAILED
+
+CASE B — PARTIAL OR MALFORMED BYTES REMAIN
+preserve exact bytes; record_integrity MALFORMED_PRESERVED; do not truncate,
+repair or seek-and-patch; append no fabricated stage_failed; append no
+fabricated stage_sealed; fabricate no stage_disposition.
+Terminal precedence selects EPISODE_EVIDENCE_CORRUPT.
+The existing partial-write rules remain controlling.
+
+CASE C — BYTES WELL FORMED BUT FURTHER APPEND NOT SAFELY POSSIBLE
+examples: the evidence destination becomes unwritable; storage denies a
+subsequent append; a required event cannot be durably appended even though
+prior bytes remain intact.
+
+do NOT fabricate stage_failed
+do NOT fabricate stage_sealed
+do NOT repair or backfill the journal later
+```
+
+**Structural unseal.** In case C the stage is `STRUCTURALLY UNSEALED`. That
+phrase is a structural condition, not a new enumeration and not a new durable
+field. A stage is structurally unsealed when `stage_opened` exists and the
+journal does not end in exactly one valid `stage_sealed` event.
+
+At `finalize`, a structurally unsealed opened stage is by definition an
+unresolved evidence-integrity corruption condition, regardless of whether its
+existing JSONL bytes are syntactically well formed. Terminal precedence rank 1
+therefore selects `EPISODE_EVIDENCE_CORRUPT`, and it must not fall through to
+`EPISODE_INVALIDATED`, `EPISODE_REFUSED`, `EPISODE_FAILED` or
+`EPISODE_COMPLETE_EQUAL` solely because the existing bytes parse correctly.
+
+**Continuation.** Immediately on detecting that required stage evidence can no
+longer be safely appended, `generate`, `compare`, `verify`, same-stage retry,
+any new scientific stage, child launch, new protected-input access, new
+protected-input hashing, generation-workspace mutation, automatic re-pin,
+journal repair and journal backfill after storage recovery are all prohibited.
+The episode enters evidence-preserving containment only, and no new enumeration
+or record represents that fact.
+
+**Finalize.** If `episode-manifest.json` does not yet exist and the evidence
+root later permits it to be written, `finalize` may be invoked or retried only
+as an evidence-preserving containment operation. It must not append to or repair
+the structurally unsealed journal; it reads and binds the exact existing bytes,
+computes their SHA-256 and byte size, records `record_integrity` `WELL_FORMED`
+where those bytes are syntactically canonical and countable, records the actual
+`event_count` where countable, independently treats the absent terminal
+`stage_sealed` event as unresolved evidence-integrity corruption, and selects
+`EPISODE_EVIDENCE_CORRUPT`.
+
+The structural corruption condition is not encoded by falsely changing
+`record_integrity` to `MALFORMED_PRESERVED`. Syntactic record integrity and
+lifecycle completeness are separate properties.
+
+If `finalize` itself cannot durably create the manifest, no valid manifest and no
+terminal identity exist, no success or adoption claim is permitted, and no
+scientific continuation is permitted. A later `finalize` retry is permitted only
+after storage becomes writable and only while no `episode-manifest.json` exists.
+After successful manifest creation, post-seal immutability applies absolutely.
+
+The retry condition in the preceding paragraph is qualified exactly by
+`PIC-CORR-14` below: "while no `episode-manifest.json` exists" means the TM-0
+state, in which the path is physically absent. A path that physically exists but
+whose bytes are not a complete valid canonical manifest is TM-1, and no retry of
+any kind is permitted there. No other part of `PIC-CORR-7` is changed.
+
+**General abrupt-stop rule.** At `finalize`, any opened stage journal that does
+not end in exactly one valid `stage_sealed` event is an unresolved
+evidence-integrity corruption condition — whether caused by evidence destination
+failure, process termination, harness crash or abrupt host interruption. No
+causal event that was never durably recorded may be invented. The observable
+structural incompleteness alone prevents scientific success and selects
+`EPISODE_EVIDENCE_CORRUPT`.
+
+**Success prerequisite.** `EPISODE_COMPLETE_EQUAL` requires every required
+opened stage journal to end in exactly one valid `stage_sealed` event, and that
+event must carry `STAGE_COMPLETE` for every scientifically successful required
+stage. An opened but structurally unsealed stage can never satisfy the
+successful-episode prerequisites.
+
+**The §21.2 absolute claim is corrected.** The unqualified statement that every
+subsequent failure is durably representable is withdrawn and replaced by: after
+`stage_opened`, every subsequent failure that remains safely recordable is
+represented by `stage_failed` followed by `stage_sealed`; if durable append is
+no longer safely possible, `PIC-CORR-7` controls — no event is fabricated, the
+stage remains structurally unsealed, scientific continuation stops, and terminal
+finalization selects `EPISODE_EVIDENCE_CORRUPT`.
+
+`safely recordable` is defined exactly, in `evidence-contract.md` §18.0, as: the
+required canonical event can be appended atomically and durably, without
+altering prior bytes and without leaving malformed or partial bytes. It is never
+an undefined escape clause.
+
+### PIC-CORR-8 — Exact stderr logical-line algorithm
+
+Recorded normatively in `evidence-contract.md` §20.8.2.1. stderr remains exact
+bytes in memory and no full Unicode decode is required.
+
+```text
+1. split the exact stderr bytes ONLY on b"\n"
+2. from each segment remove exactly ONE trailing b"\r", if and only if it is
+   the final byte of that segment
+3. a bare b"\r" not immediately before a b"\n" is NOT a line separator
+4. after that one-byte CR normalization, discard zero-length logical lines when
+   selecting the final non-empty line
+5. inspect the final non-empty normalized segment only
+```
+
+The recognized prefix, required at byte offset 0 of the inspected line, is
+exactly `b"medscale.mesc._formal_split_v1."`. Immediately after it there must
+appear exactly one allowlisted ASCII formal exception class token, and
+immediately after the token either the end of the logical line or one ASCII
+colon byte `b":"`. Where the colon is present, all following bytes are untrusted
+exception-message bytes: ignored for classification, never required to decode,
+never persisted.
+
+Everything else resolves to `UNCLASSIFIED`: empty stderr, no final non-empty
+logical line, a nonmatching module prefix, an unexpected module, a token that is
+not exactly allowlisted, non-ASCII bytes inside the required module/token
+syntax, malformed required syntax, message text that merely contains an
+allowlisted token away from byte offset zero, and any bare-CR layout that does
+not satisfy the exact syntax after the defined scan.
+
+This rule must produce the same classification for LF and CRLF traceback output.
+Raw stderr, raw exception class text and raw exception messages remain
+prohibited from durable evidence.
+
+### PIC-CORR-9 — Explicit `CHILD_LAUNCH_FAILURE` lifecycle
+
+Recorded normatively in `evidence-contract.md` §21.2.1.1. If process creation
+itself fails:
+
+```text
+child process:  DOES NOT EXIST
+child_started:  MUST BE ABSENT
+child_exited:   MUST BE ABSENT
+pid:            MUST NOT BE FABRICATED
+started_at:     MUST NOT BE FABRICATED
+ended_at:       MUST NOT BE FABRICATED AS CHILD EVIDENCE
+
+failure_class:            CHILD_LAUNCH_FAILURE
+root_cause_class:         CHILD_PROCESS_FAILURE
+remediation_disposition:  NEW_EPISODE_REQUIRED
+
+journal safely recordable:
+stage_failed -> stage_sealed, stage_disposition STAGE_FAILED
+
+evidence cannot safely be appended:
+PIC-CORR-7 controls
+```
+
+### PIC-CORR-10 — Semantic derivation versus durable destination
+
+Recorded normatively in `evidence-contract.md` §19.3. Derivation and durability
+are separate obligations. The contract may deterministically derive
+`failure_class`, `root_cause_class` and `remediation_disposition` without
+thereby authorizing or requiring a fabricated durable record.
+
+A triad is persisted only when an authorized record schema contains those
+fields, the authorized destination exists, and the event is safely recordable.
+
+```text
+PRE-STAGE:
+the triad may be semantically known, but no stage journal is fabricated
+
+MALFORMED_PRESERVED:
+no later triad event is fabricated into malformed bytes
+
+PIC-CORR-7 case C:
+the triad may be semantically EVIDENCE_WRITE_FAILURE /
+EVIDENCE_INTEGRITY_FAILURE / NO_REMEDIATION_AUTHORIZED, but if the journal
+cannot accept an event, no stage_failed is fabricated
+```
+
+The terminal structural-corruption rule still applies in every such case.
+
+### PIC-CORR-11 — Controlling `CHILD_NONZERO_EXIT` table completeness
+
+The controlling `CHILD_NONZERO_EXIT` table in `PIC-CORR-3` above now contains
+all eleven `operator_error_class` values, with `NO_ERROR` present as an actual
+eleventh row deriving `UNDETERMINED` and `FOUNDER_DISPOSITION_REQUIRED` and
+marked `CONTRACT CONTRADICTION / FAIL CLOSED`. The eleventh branch is no longer
+table-external. No mapping value changes.
+
+### PIC-CORR-12 — `PA1-FD-18` historical scope
+
+Recorded in `PA1-FD-18` above. The phrase "four additive documents" describes
+the original P-A1 documentation package canonically adopted through PR #95,
+where all four paths were additions. The current implementation-clarification
+candidate modifies those same four existing documents and adds zero
+documentation paths. History is not rewritten, and nothing here implies the
+original package was not additive.
+
+### PIC-CORR-13 — Exact exception-module anchor
+
+The literal canonical formal exception module is exactly:
+
+```text
+medscale.mesc._formal_split_v1
+```
+
+Recorded normatively in `evidence-contract.md` §20.8.2.2 and §27. It is the only
+accepted module prefix for the `PIC-9` / `PIC-CORR-8` traceback class-token
+extraction mechanism. Production must still not import the formal module to
+perform classification; the string is a classification constant only.
+
+## 8C. Closing founder implementation corrections
+
+A third independent full-content review of the corrected clarification candidate
+returned `CHANGES REQUIRED` on one blocking finding, `PIC-FFR1`: partial
+terminal-manifest creation was undefined. The contract stated that a `finalize`
+retry was permitted "while no `episode-manifest.json` exists" and that terminal
+identity was the SHA-256 and byte size of `episode-manifest.json`, without ever
+deciding what governs when that path physically exists but its bytes are not a
+complete valid canonical manifest. `PIC-CORR-14` closes that gap.
+`PIC-CORR-15` is a non-blocking wording correction issued with it.
+
+```text
+Correction class:
+DOCUMENTATION CORRECTION ONLY
+
+New enumeration or enumeration value:
+NONE
+
+New evidence file:
+NONE
+
+New manifest field:
+NONE
+
+New terminal-disposition value:
+NONE
+
+Recovery sidecar, repair marker or retry marker:
+NONE
+
+P-A2 implementation:
+NOT AUTHORIZED BY THESE CORRECTIONS
+
+XD-EXEC-1:
+DECIDED / OPEN — NOT CLOSED BY THESE CORRECTIONS
+```
+
+`PIC-1` through `PIC-9` and `PIC-CORR-1` through `PIC-CORR-13` are preserved in
+full. `ARCHITECTURE A`, `MODEL E2′`, the seven evidence record classes, the
+six-command surface, the absence of `record-freeze`, the failure mappings, the
+stage dispositions, terminal precedence for valid TM-2 manifests, the
+structural-unseal semantics, the stderr parser, `path_role`, the 10 / 77 named
+vocabulary ledger, post-seal immutability, the P01-04F boundary, the MODEL A′
+boundary, the five-field runtime identity and the expected three-path P-A2 scope
+are all unchanged.
+
+The terminal-manifest identity **formula** is also unchanged: it remains the
+SHA-256 and byte size of the terminal manifest's exact bytes. What `PIC-CORR-14`
+changes is only the condition under which that identity exists at all, which was
+previously stated without qualification. Earlier statements in §8 and §8B that
+the terminal-manifest identity is unchanged remain true of the corrections they
+describe and are correctly scoped to them.
+
+### PIC-CORR-14 — Terminal-manifest creation semantics
+
+Recorded normatively in `evidence-contract.md` §18.8, and reflected in §5.2.1,
+§13.2, §15.4, §17, §18.6, §20.7 and §22.
+
+**The physical path state and manifest validity are distinct.** Terminal
+authority follows validity, never mere existence. `episode-manifest.json` has
+exactly three creation states, which are mutually exclusive, exhaustive,
+observable and deterministic. There is no fourth state.
+
+```text
+TM-0   the path does not exist
+TM-1   the path exists, but its exact bytes are NOT exactly one complete,
+       canonical, schema-valid episode manifest
+TM-2   the path exists, and its exact bytes ARE exactly one complete,
+       canonical, schema-valid episode manifest
+```
+
+`TM-0`, `TM-1` and `TM-2` are structural states: not an enumeration, not
+enumeration values, not a durable field. Nothing is written to record which state
+holds.
+
+**TM-0 — ABSENT.** No directory entry exists at the path, including where
+`finalize` failed before creating it.
+
+```text
+valid manifest:                           NO
+canonical seal:                           NO
+terminal identity:                        NO
+terminal disposition durably established: NO
+```
+
+A later `finalize` retry MAY occur if storage becomes usable, but only while
+`episode-manifest.json` is still physically absent, no successful seal previously
+occurred, the retry remains evidence-preserving containment, no scientific
+continuation occurs, no stage journal is repaired or backfilled, and all existing
+pre-finalize evidence is read-only.
+
+**TM-1 — PRESENT BUT INVALID OR INCOMPLETE.** The path exists and its exact bytes
+are not exactly one complete canonical schema-valid manifest. This includes a
+zero-byte file, truncated bytes, partial JSON, malformed JSON, syntactically
+valid JSON missing mandatory fields, syntactically valid but noncanonical JSON, a
+wrong `schema_version`, an incomplete `records[]` binding, an absent
+`terminal_disposition`, and any bytes failing exact canonical-manifest
+validation. A zero-byte file that physically exists is TM-1, never TM-0.
+
+The exact existing bytes are preserved. Truncation, deletion, overwrite,
+replacement, rename, repair, seek-and-patch, appending to complete it, re-running
+manifest creation and creating a second terminal manifest are all prohibited.
+
+```text
+finalize retry:            PROHIBITED
+canonical seal:            FAILED / NOT ESTABLISHED
+terminal identity:         NOT ESTABLISHED
+terminal_disposition:      NOT DURABLY ESTABLISHED
+scientific success:        PROHIBITED
+scientific continuation:   PROHIBITED
+generate:                  PROHIBITED
+compare:                   PROHIBITED
+verify:                    PROHIBITED
+protected-input access:    PROHIBITED
+protected-input hashing:   PROHIBITED
+workspace mutation:        PROHIBITED
+```
+
+The episode is an irrecoverably failed terminalization attempt. That phrase is a
+governance condition only; no enumeration, value, field, evidence record, marker
+or sidecar is created for it. Any fresh scientific attempt requires a separate
+new episode, which remains subject to every existing execution and governance
+authorization and is neither created nor authorized here.
+
+**The corruption distinction is mandatory.** Under TM-1 the episode must be
+treated as unusable and evidence-corrupt for any scientific or adoption claim,
+but it must not be claimed that `EPISODE_EVIDENCE_CORRUPT` was durably recorded
+as `terminal_disposition`. That value exists only inside a complete valid
+canonical terminal manifest, so under TM-1 the durable terminal disposition, the
+terminal identity and the canonical seal are all absent.
+
+**TM-2 — COMPLETE VALID CANONICAL MANIFEST.** The exact bytes satisfy all of:
+complete file; UTF-8; canonical JSON; exact episode-manifest `schema_version`;
+all mandatory fields; complete required record binding; valid record metadata;
+exactly one valid `terminal_disposition`; no extra prohibited fields; and
+canonical serializer round-trip and exact-byte validation as the contract
+requires.
+
+```text
+canonical seal:            ESTABLISHED
+terminal identity:         ESTABLISHED
+post-seal immutability:    ABSOLUTE
+finalize retry:            PROHIBITED
+rewrite:                   PROHIBITED
+```
+
+Terminal identity is exactly the SHA-256 of the complete valid exact manifest
+bytes together with the byte size of those same exact bytes.
+
+**Path existence is not terminal identity.** Every unqualified rule equivalent to
+"terminal identity = SHA-256 plus size of `episode-manifest.json`" is replaced
+by: terminal identity exists if and only if `episode-manifest.json` is TM-2.
+TM-0 and TM-1 have no terminal identity. Computing or reporting a terminal
+identity over invalid, partial or incomplete bytes is prohibited.
+
+**Crash after a complete valid write.** If the complete valid canonical TM-2
+bytes were durably created and the harness then crashed or terminated before
+reporting the terminal identity, the episode is still canonically sealed.
+Terminal identity is a deterministic derived property of the exact valid manifest
+bytes and may be recomputed read-only from them. Rewriting the manifest,
+rerunning `finalize` as a mutation, changing the terminal disposition and
+creating another manifest all remain prohibited. A process failing to report the
+identity does not undo an already-valid terminal seal.
+
+**Crash before a complete valid write.** If a directory entry exists but the
+bytes are not TM-2, the TM-1 rules control. Intent is never inferred from how
+many bytes the harness expected to write; the observed exact bytes and their
+schema and canonical validity control.
+
+**Exclusive creation is preserved.** The implementation must attempt creation so
+that an existing path is never silently replaced. On entry to `finalize`, an
+existing `episode-manifest.json` is validated read-only: TM-2 means the episode
+is already sealed and mutation is prohibited; TM-1 means terminalization has
+irrecoverably failed and mutation is prohibited. Neither branch is a permitted
+`finalize` retry — both are fail-closed recognition of existing state.
+
+**Finalize remains the last P-A mutation.** Under TM-1 the partial or invalid
+durable creation attempt is itself the last mutation to that episode and no
+cleanup mutation follows. Under TM-2 successful manifest creation is the last
+mutation.
+
+**Structural-unseal interaction.** `PIC-CORR-7` is preserved. A structurally
+unsealed stage ordinarily causes a valid TM-2 manifest, where creation succeeds,
+to carry `EPISODE_EVIDENCE_CORRUPT`. But if terminal-manifest creation itself
+reaches TM-1, no `terminal_disposition` is durably established at all,
+`EPISODE_EVIDENCE_CORRUPT` must not be claimed to have been written, and the
+episode remains unusable and unsealed.
+
+**Canonical-main-movement interaction.** Where canonical-main movement requires an
+explicit `invalidate` before `finalize`, that requirement remains. If the
+movement record was validly persisted and terminal-manifest creation then reaches
+TM-1, the invalidation evidence remains preserved, but no canonical terminal
+disposition and no terminal identity exist, and `EPISODE_INVALIDATED` must not be
+claimed without a valid TM-2 manifest carrying it.
+
+**No `record_integrity` invention for the manifest.** `WELL_FORMED` and
+`MALFORMED_PRESERVED` are not applied as a manifest field. `record_integrity`
+remains defined only for the already authorized bound evidence records. Manifest
+validity is determined by the TM-0 / TM-1 / TM-2 semantics alone, without adding
+a persisted field or enumeration.
+
+### PIC-CORR-15 — Test-authority wording
+
+Recorded normatively in `evidence-contract.md` §27. The sentence that could be
+read as granting additional formal test imports is removed and replaced.
+
+```text
+the ONLY formal execution-module import permitted at test scope:
+resolve_repository_commit
+
+any other formal module import:
+NOT AUTHORIZED
+```
+
+The P-A2 test must not import `medscale.mesc._formal_split_v1` or
+`medscale.mesc._formal_generation_v1` to discover or validate exception class
+names, the exception module literal, input-surface literals or any other contract
+constant. The harness owns those exact contract literals locally, as authorized
+by the documentation contract.
+
+P-A2 tests validate them using literal expected values taken from the P-A1
+contract, synthetic stderr byte fixtures, synthetic repository fixtures and
+subprocess behaviour where authorized, without broadening the formal import
+exception. This changes no earlier permission: `resolve_repository_commit` was
+and remains the sole formal test-scope import, and it is still not broadened to
+`make_environment`, `SYNTHETIC_COMMIT` or any other helper from a frozen formal
+test.
+
+## 9. Blocker state
 
 ```text
 XD-EXEC-1   external execution-evidence recording
@@ -555,7 +1644,7 @@ XD-EXEC-2 or XD-EXEC-3 and does not reduce, reframe or defer either of them.
 Execution readiness requires every blocker to be closed. Recording a contract
 does not make the remaining blockers smaller.
 
-## 9. No authority expansion
+## 10. No authority expansion
 
 This decision does not:
 
@@ -576,7 +1665,7 @@ close XD-EXEC-3
 authorize P01-04F
 ```
 
-## 10. Prohibition boundary
+## 11. Prohibition boundary
 
 Every line below remains in force after this decision.
 
@@ -639,7 +1728,7 @@ P01-05:
 NOT UNLOCKED
 ```
 
-## 11. Scope and non-authority
+## 12. Scope and non-authority
 
 ```text
 records an execution-evidence contract decision only
