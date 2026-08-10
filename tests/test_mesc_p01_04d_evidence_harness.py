@@ -27,6 +27,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
@@ -2732,3 +2733,317 @@ def test_derive_failure_triad_closed_table_is_not_weakened(harness: ModuleType) 
         harness.derive_failure_triad("CHILD_NONZERO_EXIT")
     with pytest.raises(ValueError, match="outside enumeration"):
         harness.derive_failure_triad("CHILD_NONZERO_EXIT", "NOT_AN_OPERATOR_ERROR_CLASS")
+
+
+# ===========================================================================
+# BB. Greptile P1 security regressions — G1 / G2 / G3
+# ===========================================================================
+
+#: A syntactically valid commit that must never become repository identity.
+EXTERNAL_COMMIT = "dead" * 10
+
+
+def try_reparse_dir(link: Path, target: Path) -> bool:
+    """Create a directory reparse point, reporting whether the host permitted it.
+
+    A Windows junction needs no elevation, so the reparse contract is exercised
+    for real on hosts that refuse unprivileged symlinks.
+    """
+    if os.name == "nt":
+        completed = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(link), str(target)],
+            capture_output=True,
+            check=False,
+        )
+        return completed.returncode == 0 and link.exists()
+    return try_symlink(link, target)
+
+
+def require_reparse_dir(link: Path, target: Path) -> None:
+    """Create a directory reparse point or skip when the host genuinely cannot."""
+    if not try_reparse_dir(link, target):
+        pytest.skip("this host cannot create a directory reparse point")
+
+
+# --- GREPTILE-G1: symbolic ref must not escape the metadata base ------------
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "refs/heads/main",
+        "refs/tags/v1",
+        "refs/remotes/origin/main",
+    ],
+)
+def test_safe_metadata_reference_accepts_ordinary_refs(harness: ModuleType, reference: str) -> None:
+    assert harness.require_safe_metadata_reference(reference) == Path(*reference.split("/"))
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "C:/attacker/ref",
+        "C:\\attacker\\ref",
+        "/etc/attacker-ref",
+        "\\\\server\\share\\ref",
+        "C:ref",
+        "../../../attacker/ref",
+        "refs/../../../attacker/ref",
+        "refs/heads/../../../../attacker",
+    ],
+)
+def test_safe_metadata_reference_refuses_escapes(harness: ModuleType, reference: str) -> None:
+    with pytest.raises(harness.PathSeparationRefusalError):
+        harness.require_safe_metadata_reference(reference)
+
+
+def test_g1_absolute_symbolic_ref_is_refused(harness: ModuleType, tmp_path: Path) -> None:
+    external = tmp_path / "outside"
+    external.mkdir()
+    planted = external / "attacker-ref"
+    planted.write_text(f"{EXTERNAL_COMMIT}\n", encoding="utf-8")
+
+    root = tmp_path / "repo"
+    write_synthetic_git(root)
+    (root / ".git" / "HEAD").write_text(f"ref: {planted}\n", encoding="utf-8")
+
+    with pytest.raises(harness.PathSeparationRefusalError):
+        harness.resolve_canonical_commit(root)
+    # The planted external file is never accepted as repository identity.
+    assert planted.read_text(encoding="utf-8").strip() == EXTERNAL_COMMIT
+
+
+def test_g1_parent_traversal_symbolic_ref_is_refused(harness: ModuleType, tmp_path: Path) -> None:
+    external = tmp_path / "outside"
+    external.mkdir()
+    (external / "attacker-ref").write_text(f"{EXTERNAL_COMMIT}\n", encoding="utf-8")
+
+    root = tmp_path / "repo"
+    write_synthetic_git(root)
+    (root / ".git" / "HEAD").write_text("ref: ../../outside/attacker-ref\n", encoding="utf-8")
+
+    with pytest.raises(harness.PathSeparationRefusalError):
+        harness.resolve_canonical_commit(root)
+
+
+def test_g1_escaped_reference_never_becomes_repository_identity(
+    harness: ModuleType, tmp_path: Path
+) -> None:
+    """No escape shape may yield the external commit, whatever the refusal class."""
+    external = tmp_path / "outside"
+    external.mkdir()
+    planted = external / "attacker-ref"
+    planted.write_text(f"{EXTERNAL_COMMIT}\n", encoding="utf-8")
+
+    for index, reference in enumerate(
+        [str(planted), "../../outside/attacker-ref", "refs/../../../outside/attacker-ref"]
+    ):
+        root = tmp_path / f"repo-{index}"
+        write_synthetic_git(root)
+        (root / ".git" / "HEAD").write_text(f"ref: {reference}\n", encoding="utf-8")
+        with pytest.raises(harness.HarnessError) as caught:
+            harness.resolve_canonical_commit(root)
+        assert EXTERNAL_COMMIT not in str(caught.value)
+
+
+def test_g1_ordinary_loose_ref_still_resolves(harness: ModuleType, tmp_path: Path) -> None:
+    write_synthetic_git(tmp_path)
+    assert harness.resolve_canonical_commit(tmp_path) == SYNTHETIC_COMMIT
+    assert harness.resolve_canonical_commit(tmp_path) == resolve_repository_commit(tmp_path)
+
+
+def test_g1_packed_refs_still_resolves(harness: ModuleType, tmp_path: Path) -> None:
+    git = tmp_path / ".git"
+    git.mkdir()
+    (git / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+    (git / "packed-refs").write_text(
+        f"# pack-refs with: peeled\n{SYNTHETIC_COMMIT} refs/heads/main\n", encoding="utf-8"
+    )
+    assert harness.resolve_canonical_commit(tmp_path) == SYNTHETIC_COMMIT
+    assert harness.resolve_canonical_commit(tmp_path) == resolve_repository_commit(tmp_path)
+
+
+# --- GREPTILE-G2: reparse components must not be resolved away --------------
+
+
+def test_g2_relative_gitdir_through_a_reparse_component_is_refused(
+    harness: ModuleType, tmp_path: Path
+) -> None:
+    real = tmp_path / "real-meta"
+    (real / "refs" / "heads").mkdir(parents=True)
+    (real / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+    (real / "refs" / "heads" / "main").write_text(f"{SYNTHETIC_COMMIT}\n", encoding="utf-8")
+
+    root = tmp_path / "repo"
+    root.mkdir()
+    require_reparse_dir(root / "linked-meta", real)
+    (root / ".git").write_text("gitdir: linked-meta\n", encoding="utf-8")
+
+    with pytest.raises(harness.ReparsePointRefusalError):
+        harness.resolve_canonical_commit(root)
+
+
+def test_g2_relative_commondir_through_a_reparse_component_is_refused(
+    harness: ModuleType, tmp_path: Path
+) -> None:
+    common = tmp_path / "real-common"
+    (common / "refs" / "heads").mkdir(parents=True)
+    (common / "refs" / "heads" / "main").write_text(f"{SYNTHETIC_COMMIT}\n", encoding="utf-8")
+
+    git_dir = tmp_path / "repo" / ".git"
+    git_dir.mkdir(parents=True)
+    (git_dir / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+    require_reparse_dir(git_dir / "linked-common", common)
+    (git_dir / "commondir").write_text("linked-common\n", encoding="utf-8")
+
+    with pytest.raises(harness.ReparsePointRefusalError):
+        harness.resolve_canonical_commit(tmp_path / "repo")
+
+
+def test_g2_reparse_git_metadata_entry_is_refused(harness: ModuleType, tmp_path: Path) -> None:
+    real = tmp_path / "real-git"
+    (real / "refs" / "heads").mkdir(parents=True)
+    (real / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+    (real / "refs" / "heads" / "main").write_text(f"{SYNTHETIC_COMMIT}\n", encoding="utf-8")
+
+    root = tmp_path / "repo"
+    root.mkdir()
+    require_reparse_dir(root / ".git", real)
+
+    with pytest.raises(harness.ReparsePointRefusalError):
+        harness.resolve_canonical_commit(root)
+
+
+def test_g2_reparse_ref_component_is_refused(harness: ModuleType, tmp_path: Path) -> None:
+    external = tmp_path / "outside-refs"
+    (external / "heads").mkdir(parents=True)
+    (external / "heads" / "main").write_text(f"{EXTERNAL_COMMIT}\n", encoding="utf-8")
+
+    root = tmp_path / "repo"
+    git = root / ".git"
+    git.mkdir(parents=True)
+    (git / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+    require_reparse_dir(git / "refs", external)
+
+    with pytest.raises(harness.ReparsePointRefusalError):
+        harness.resolve_canonical_commit(root)
+
+
+def test_g2_normal_git_directory_still_passes(harness: ModuleType, tmp_path: Path) -> None:
+    write_synthetic_git(tmp_path)
+    assert harness.resolve_canonical_commit(tmp_path) == SYNTHETIC_COMMIT
+
+
+def test_g2_worktree_relative_commondir_is_preserved(harness: ModuleType, tmp_path: Path) -> None:
+    """A legitimate worktree ``commondir`` of ``../..`` must not be rejected."""
+    repo = tmp_path / "repo"
+    git = repo / ".git"
+    (git / "refs" / "heads").mkdir(parents=True)
+    (git / "refs" / "heads" / "main").write_text(f"{SYNTHETIC_COMMIT}\n", encoding="utf-8")
+    worktree_meta = git / "worktrees" / "wt"
+    worktree_meta.mkdir(parents=True)
+    (worktree_meta / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+    (worktree_meta / "commondir").write_text("../..\n", encoding="utf-8")
+
+    checkout = tmp_path / "checkout"
+    checkout.mkdir()
+    (checkout / ".git").write_text(f"gitdir: {worktree_meta}\n", encoding="utf-8")
+
+    assert harness.resolve_canonical_commit(checkout) == SYNTHETIC_COMMIT
+
+
+def test_g2_lexical_dot_segments_are_honoured(harness: ModuleType, tmp_path: Path) -> None:
+    write_synthetic_git(tmp_path)
+    walked = harness.resolve_metadata_path(tmp_path / ".git", Path("refs/./heads/../heads/main"))
+    assert walked == tmp_path / ".git" / "refs" / "heads" / "main"
+
+
+# --- GREPTILE-G3: episode directory redirect --------------------------------
+
+
+def _redirect_episode_directory(lab: Lab, tmp_path: Path) -> Path:
+    """Move a valid episode outside the evidence root and redirect to it."""
+    external = tmp_path / "outside-evidence"
+    external.mkdir(exist_ok=True)
+    target = external / lab.episode_id
+    shutil.move(str(lab.directory), str(target))
+    require_reparse_dir(lab.directory, target)
+    return target
+
+
+def test_g3_redirected_episode_directory_refuses_every_command(
+    lab: Lab, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    lab.open_episode()
+    target = _redirect_episode_directory(lab, tmp_path)
+    before = digest_tree(target)
+
+    spy, runner = install_spy(lab, monkeypatch)
+    for argv in (lab.generate_argv("A"), lab.compare_argv(), lab.verify_argv()):
+        with pytest.raises(lab.module.ReparsePointRefusalError):
+            lab.run(argv, runner=runner)
+    assert spy.input_hashes == 0
+    assert spy.child_launches == 0
+    assert not lab.workspace_a.exists()
+
+    with pytest.raises(lab.module.ReparsePointRefusalError):
+        lab.run(lab.invalidate_argv(failure_class="UNCLASSIFIED", causal_stage="OPEN"))
+    assert not (target / "episode-invalidation.jsonl").exists()
+
+    with pytest.raises(lab.module.ReparsePointRefusalError):
+        lab.run(lab.finalize_argv())
+    assert not (target / "episode-manifest.json").exists()
+
+    # The redirect target is never read from, written to or repaired.
+    assert digest_tree(target) == before
+
+
+def test_g3_redirected_episode_directory_writes_nothing_outside_the_root(
+    lab: Lab, tmp_path: Path
+) -> None:
+    lab.open_episode()
+    target = _redirect_episode_directory(lab, tmp_path)
+    before = digest_tree(target)
+    for argv in (
+        lab.finalize_argv(),
+        lab.invalidate_argv(failure_class="UNCLASSIFIED", causal_stage="FINALIZE"),
+    ):
+        with pytest.raises(lab.module.ReparsePointRefusalError):
+            lab.run(argv)
+    assert digest_tree(target) == before
+    assert sorted(entry.name for entry in target.iterdir()) == ["episode-core.json"]
+
+
+def test_g3_normal_episode_directory_remains_functional(lab: Lab) -> None:
+    """The G3 guard is narrowly targeted: an ordinary episode still completes."""
+    lab.complete_success()
+    assert lab.run(lab.finalize_argv()) == 0
+    assert lab.manifest()["terminal_disposition"] == "EPISODE_COMPLETE_EQUAL"
+
+
+def test_g3_episode_directory_guard_requires_containment(lab: Lab, tmp_path: Path) -> None:
+    outside = tmp_path / "elsewhere"
+    outside.mkdir()
+    with pytest.raises(lab.module.PathSeparationRefusalError):
+        lab.module.require_safe_episode_directory(outside, lab.evidence_root)
+    assert (
+        lab.module.require_safe_episode_directory(lab.evidence_root / "ep", lab.evidence_root)
+        == lab.evidence_root / "ep"
+    )
+
+
+def test_g3_redirected_evidence_file_is_never_appended(lab: Lab, tmp_path: Path) -> None:
+    lab.open_episode()
+    external = tmp_path / "outside-file"
+    external.mkdir()
+    planted = external / "stolen.jsonl"
+    planted.write_bytes(b"")
+    journal = lab.directory / "stage-generate-a.jsonl"
+    if not try_symlink(journal, planted, directory=False):
+        pytest.skip("this host cannot create a file reparse point")
+    with pytest.raises(lab.module.ReparsePointRefusalError):
+        lab.module.append_canonical_event(
+            lab.module.EvidenceStore(), journal, {"schema_version": "x", "event": "y"}
+        )
+    assert planted.read_bytes() == b""

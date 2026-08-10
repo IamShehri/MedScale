@@ -150,6 +150,65 @@ code 2. `derive_failure_triad`'s closed tables are **not** weakened: the functio
 still raises on an absent or non-enumerated `operator_error_class`, and that
 internal contract is asserted directly by test.
 
+### 1.3 Greptile supplemental security review and correction
+
+The `2f1fb05f` candidate of §1.1 was published as Draft PR #97 and then received
+Greptile supplemental review at that exact head.
+
+```text
+reviewed PR:              97
+reviewed head:            2f1fb05f8d10dc0f23a63942665fbd416b1fc25b
+Greptile P1 findings:     3
+independent validation:   ALL THREE CONFIRMED BLOCKING
+published 2f1fb05f:       NOT READY FOR READY-TRANSITION OR ADOPTION
+```
+
+The three findings are path-safety defects in the harness, all of which allowed
+a redirect or an escape to be honoured rather than refused:
+
+```text
+GREPTILE-G1  a symbolic HEAD reference was joined to the metadata base with
+             ordinary Path semantics, so an absolute reference replaced that
+             base and a parent-traversing reference escaped it
+
+GREPTILE-G2  a relative gitdir or commondir path was resolved before it was
+             inspected, so Path.resolve erased the very reparse components the
+             harness is required to refuse
+
+GREPTILE-G3  only the external evidence root was validated, so an episode
+             directory that had become a reparse redirect was followed for
+             evidence reads and writes
+```
+
+Independent validation reproduced all three against the unchanged published
+parent. Each yielded a concrete compromise, not a theoretical one:
+
+```text
+G1  the harness returned an attacker-controlled commit, read from a file
+    outside the repository, as canonical repository identity
+G2  a junctioned gitdir produced the same attacker-controlled identity
+G3  finalize completed and wrote episode-manifest.json outside the validated
+    external evidence root
+```
+
+Against the corrected candidate the same three probes are refused —
+`PathSeparationRefusalError`, `ReparsePointRefusalError` and
+`ReparsePointRefusalError` respectively — and nothing is written outside the
+evidence root. The exact implemented behaviour is recorded in §15.1.
+
+```text
+correction class:                     SECURITY CORRECTION
+new evidence record / field / enum:   NONE
+new command:                          NONE
+new terminal disposition:             NONE
+canonical adoption:                   NONE
+execution authorization:              NONE
+```
+
+This correction changes no governance state. The published `2f1fb05f` candidate
+and its review history are not rewritten; they remain the truthful record of what
+was published and what review then found.
+
 ## 2. Baseline commit and tree
 
 ```text
@@ -471,6 +530,48 @@ resolves them; that stricter refusal is the only authorized divergence, and it i
 asserted directly against the oracle. The harness never pre-creates a generation
 workspace, which is asserted after a child-launch failure.
 
+### 15.1 Greptile G1 / G2 / G3 hardening
+
+**G1 — symbolic references are metadata-relative or refused.** A symbolic `HEAD`
+reference is validated by `require_safe_metadata_reference` before any candidate
+path is built or read. Absolute, drive-rooted, UNC-rooted and parent-traversing
+references are refused with `PathSeparationRefusalError`, and the resulting
+candidate is additionally required to be contained by the metadata base it was
+joined to. `PureWindowsPath` performs the validation on every host because it is
+the stricter parser: it recognizes both separators and both root forms, where a
+POSIX parser would accept `C:/attacker/ref` as an ordinary relative name. A file
+outside the metadata base is never read, even when it holds a syntactically valid
+forty-character commit.
+
+**G2 — reparse components are inspected before anything is followed.**
+`resolve_metadata_path` walks a gitdir or commondir path one real component at a
+time and refuses the moment a symlink, junction or other reparse point appears,
+before descending through it. `Path.resolve` is no longer called first, because
+resolving erases exactly the components that must be inspected. Lexical `.` and
+`..` are honoured rather than rejected, so a legitimate worktree `commondir` of
+`../..` still resolves — that case is asserted directly. The `.git` metadata
+entry, the `commondir` file and `packed-refs` are each inspected before being
+read.
+
+**G3 — the episode directory is validated at every operation.**
+`require_safe_episode_directory` refuses a redirected or escaped episode
+directory, and is applied on entry to every episode command, before every journal
+scan, before the terminal-manifest state is classified, and before each durable
+write. `require_safe_evidence_path` additionally refuses a redirected durable
+evidence file before it is read or appended. A redirected episode directory
+therefore refuses `generate`, `compare`, `verify`, `invalidate` and `finalize`
+without hashing an input, launching a child, appending an invalidation record or
+creating a manifest, and the redirect target is left byte-identical.
+
+```text
+race guarantee claimed:  NONE BEYOND RE-VALIDATION AT EACH OPERATION
+```
+
+The checks are re-applied per operation rather than cached, which narrows the
+window between validation and use. It does not eliminate it: a redirect
+introduced between a check and the immediately following open is not prevented,
+and no stronger guarantee is claimed here.
+
 ## 16. Sensitive-data minimization coverage
 
 ```text
@@ -547,10 +648,10 @@ The environment was prepared with `uv sync --frozen`, matching `.github/workflow
 ```text
 focused P-A2 gate
 tests/test_mesc_p01_04d_evidence_harness.py
-passed:    310
+passed:    337
 failed:    0
-skipped:   2
-duration:  18.52s
+skipped:   3
+duration:  29.47s
 
 frozen regression gate
 tests/test_mesc_p01_04d_operator.py
@@ -559,19 +660,29 @@ tests/test_mesc_formal_split_v1.py
 passed:    157
 failed:    0
 skipped:   1
-duration:  25.70s
+duration:  31.55s
 frozen test files modified: 0
 ```
 
-The focused count rose from the historical candidate's 282 to 310 because the
-corrections added 28 regression cases. The frozen gate is unchanged.
+The focused count rose 282 → 310 for the review corrections and 310 → 337 for the
+Greptile security corrections, which added 27 further regression cases. The
+frozen gate is unchanged throughout.
 
-The two focused skips and the one frozen skip are the same pre-existing
+The third focused skip is new and is a genuine host limitation: this Windows host
+permits unprivileged **junction** creation but not unprivileged file symlinks, so
+the file-level reparse case skips while every directory-level reparse case runs
+for real.
+
+The other two focused skips and the one frozen skip are the same pre-existing
 environment condition: this Windows host does not permit unprivileged symlink
 creation. Three other repository test files skip for the identical reason. The
 reparse-refusal contract is additionally covered by three
 privilege-independent tests that exercise the component walk, the resolver
 refusal and the `open` refusal without creating a symlink.
+
+`PA2C-F2` — the 54 Windows/bash portability failures previously observed in
+`tests/test_mesc_b2a_portability.py` — did **not** reproduce in this correction
+worktree. That file contributed one ordinary skip and no failures.
 
 ### 19.1 Explicit correction regression gate
 
@@ -582,7 +693,20 @@ independently:
 PA2-R1  durable-invalidation continuation barrier      13 passed, 0 failed
 PA2-R2  never-durably-opened stage-journal barrier      5 passed, 0 failed
 PA2-R3  controlled pre-mutation argument refusal       29 passed, 0 failed
+
+GREPTILE-G1  symbolic-ref metadata escape               16 passed, 0 failed
+GREPTILE-G2  reparse component erased by resolve()       7 passed, 0 failed
+GREPTILE-G3  episode-directory redirect                  4 passed, 1 skipped
 ```
+
+The G1/G2/G3 subsets were additionally run as **negative controls** against the
+unchanged published parent `2f1fb05f`, with the corrected test file and the
+parent's production harness. Twenty of them fail there and pass here, so they
+detect the defects rather than merely describing them; the positive controls —
+ordinary loose refs, packed-refs, a normal `.git` directory, a legitimate
+worktree `../..` commondir, and a normal episode reaching
+`EPISODE_COMPLETE_EQUAL` — pass against both builds, so the hardening is
+narrowly targeted.
 
 For `PA2-R1` and `PA2-R2` the refusal is proved by instrumentation, not only by
 the terminal disposition. A spy wraps the real `hash_input_surfaces` function and
@@ -644,16 +768,21 @@ No suppression was added to make a correction defect disappear. The fourth
 `PA2-R2` regression tests, and is the same dynamically-loaded-module pattern as
 the existing three.
 
+The Greptile security correction added **no** suppression of any kind. It removed
+one: a `# noqa: S603` written on the junction fixture was unnecessary, because
+that rule is not enabled in this repository, and `ruff` flagged it as an unused
+directive. Suppression counts are therefore unchanged from §20 above.
+
 ## 21. Full-suite result
 
 ```text
 uv run pytest --cov --cov-report=term-missing -q
 
-passed:    2401
+passed:    2428
 failed:    0
-skipped:   7
+skipped:   8
 warnings:  1
-duration:  170.45s
+duration:  211.13s
 
 repository coverage:  85.55%
 configured gate:      77.0%  (reached)
@@ -761,6 +890,18 @@ evidence-write path.
     journal scan) and `PA2-R10` (TM-2 revalidation re-hashing bound records).
     None was changed. They remain open observations for the founder.
 
+12. **Three P1 security defects were found by Greptile supplemental review of the
+    published `2f1fb05f` candidate and corrected here** — `GREPTILE-G1`,
+    `GREPTILE-G2` and `GREPTILE-G3`, all independently confirmed blocking and all
+    reproduced as concrete compromises against the unchanged parent. Their exact
+    implemented behaviour is in §15.1, their origin in §1.3 and their regression
+    evidence in §19.1.
+
+13. **The G3 guard narrows a race; it does not remove one.** The episode-directory
+    and evidence-path checks are re-applied at every operation rather than cached,
+    but a redirect introduced between a check and the immediately following open
+    is not prevented. No stronger guarantee is claimed.
+
 ## 23. Authority consequence
 
 ```text
@@ -773,8 +914,12 @@ CANONICALLY ADOPTED
 historical P-A2 candidate 94b22c9b:
 REVIEWED — NOT APPROVED FOR PUBLICATION — PRESERVED AS LOCAL REVIEW EVIDENCE
 
-corrected P-A2 implementation:
-LOCAL CANDIDATE BUILT — NOT CANONICALLY ADOPTED
+published P-A2 candidate 2f1fb05f (Draft PR #97):
+PUBLISHED — GREPTILE P1 SECURITY FINDINGS CONFIRMED BLOCKING —
+NOT READY FOR READY-TRANSITION OR ADOPTION
+
+corrected P-A2 security implementation:
+LOCAL CANDIDATE BUILT — NOT PUBLISHED — NOT CANONICALLY ADOPTED
 
 XD-EXEC-1:
 DECIDED / OPEN — NOT CLOSED BY THIS BUILD
@@ -810,30 +955,36 @@ P01-04G, model execution, training or fine-tuning.
 ## 25. Adoption status
 
 ```text
-P-A2 corrected implementation candidate:
-LOCAL ONLY — NOT CANONICALLY ADOPTED
+P-A2 security-correction candidate:
+LOCAL ONLY — NOT PUSHED — NOT CANONICALLY ADOPTED
+
+published Draft PR #97 at 2f1fb05f:
+UNCHANGED — STILL OPEN, STILL DRAFT, STILL NOT MERGED
 
 P01-04D execution:
 NOT AUTHORIZED
 ```
 
-The corrected candidate is one local commit on a local correction branch. It has
-not been pushed, no pull request exists, no review of it has been performed and
-no merge has occurred. GitHub mutations performed by this rebuild: zero.
+The security-correction candidate is one local commit on a local correction
+branch whose parent is the published head `2f1fb05f`. It has not been pushed, PR
+#97 has not been updated, no review of it has been performed and no merge has
+occurred. GitHub mutations performed by this security correction: zero.
 
 The historical candidate `94b22c9b` remains preserved unchanged on its own local
 branch as review evidence. It was not amended, reset, rebased, rewritten, deleted
-or published.
+or published. The published `2f1fb05f` commit is likewise not amended, rewritten
+or force-pushed.
 
 This document does not claim that P-A2 is adopted, that XD-EXEC-1 is closed, that
 P01-04D execution is authorized, that source records were recovered or that any
-real execution was validated. It does not claim that the corrections have been
-independently reviewed — only that they were built and synthetically qualified.
+real execution was validated. It does not claim that these security corrections
+have been independently reviewed — only that they were built, qualified
+synthetically, and validated against the unchanged published parent.
 
 ## 26. Next gate
 
 ```text
-FRESH INDEPENDENT CORRECTED P-A2 IMPLEMENTATION REVIEW REQUIRED
+FRESH INDEPENDENT LOCAL SECURITY-CORRECTION REVIEW REQUIRED
 ```
 
 Publication, review on GitHub, adoption and any execution authorization remain

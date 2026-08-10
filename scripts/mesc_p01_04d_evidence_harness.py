@@ -53,7 +53,7 @@ import time
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import ClassVar, Final
 
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -665,6 +665,95 @@ def validate_evidence_root(evidence_root: Path, repository_root: Path) -> None:
     require_disjoint(evidence_root, "external evidence root", repository_root, "repository root")
 
 
+def require_safe_metadata_reference(reference: str) -> Path:
+    """Return a validated Git-metadata-relative reference (GREPTILE-G1).
+
+    A symbolic ``HEAD`` reference names a ref *inside* the Git metadata base. It
+    is never an absolute filesystem path and never escapes that base, so an
+    absolute, drive-rooted, UNC-rooted or parent-traversing reference is refused
+    before any candidate path is built or read — including when the file it
+    would name happens to contain a syntactically valid commit.
+
+    ``PureWindowsPath`` is used for validation on every host because it is the
+    stricter parser: it treats both separators as separators and recognizes
+    drive and UNC roots that a POSIX parser would silently accept as an ordinary
+    relative name.
+    """
+    if not reference:
+        raise RepositoryShapeError("repository reference is empty")
+    pure = PureWindowsPath(reference)
+    if pure.is_absolute() or pure.drive or pure.root:
+        raise PathSeparationRefusalError(
+            f"repository reference must be metadata-relative, not absolute: {reference!r}"
+        )
+    if any(part == ".." for part in pure.parts):
+        raise PathSeparationRefusalError(
+            f"repository reference must not traverse outside the metadata base: {reference!r}"
+        )
+    if not pure.parts:
+        raise RepositoryShapeError("repository reference is empty")
+    return Path(*pure.parts)
+
+
+def resolve_metadata_path(base: Path, target: Path) -> Path:
+    """Join a Git metadata path without ever following a reparse redirect (GREPTILE-G2).
+
+    ``Path.resolve`` follows symlinks, so calling it first would erase exactly
+    the components that must be inspected. This walks the path one real
+    component at a time and refuses a symlink, junction or other reparse point
+    the moment it appears, before descending through it.
+
+    Lexical ``.`` and ``..`` are honoured rather than rejected, because valid Git
+    worktree metadata uses them — a ``commondir`` of ``../..`` is ordinary — but
+    they are applied lexically and never by following a redirect.
+    """
+    if target.is_absolute():
+        start = Path(target.parts[0])
+        parts = target.parts[1:]
+    else:
+        start = base
+        parts = target.parts
+    require_no_reparse(start)
+    current = start
+    for part in parts:
+        if part == ".":
+            continue
+        if part == "..":
+            current = current.parent
+            continue
+        current = current / part
+        if is_reparse_point(current):
+            raise ReparsePointRefusalError(f"reparse-point redirect is refused: {current}")
+    return current
+
+
+def require_safe_episode_directory(directory: Path, evidence_root: Path) -> Path:
+    """Refuse a redirected or escaped episode directory (GREPTILE-G3).
+
+    Validating the external evidence root alone is insufficient: the episode
+    directory, or a durable evidence path beneath it, can become a symlink,
+    junction or other reparse redirect after that root was validated. The check
+    is therefore re-applied at each episode operation rather than cached.
+
+    This narrows the window; it does not eliminate it. A redirect introduced
+    between this check and a subsequent open is not prevented here, and no
+    stronger race guarantee is claimed.
+    """
+    require_no_reparse(directory)
+    if not is_within(directory, evidence_root):
+        raise PathSeparationRefusalError(
+            f"episode directory is not contained by the evidence root: {directory}"
+        )
+    return directory
+
+
+def require_safe_evidence_path(path: Path) -> Path:
+    """Refuse a redirected durable evidence path before it is read or written."""
+    if is_reparse_point(path):
+        raise ReparsePointRefusalError(f"reparse-point redirect is refused: {path}")
+    return path
+
+
 # ---------------------------------------------------------------------------
 # Independent repository-identity resolver (§5.3, PA1-FD-4)
 # ---------------------------------------------------------------------------
@@ -680,13 +769,13 @@ def resolve_canonical_commit(repository_root: Path) -> str:
     """
     require_no_reparse(repository_root)
     git_entry = repository_root / ".git"
+    # The .git metadata surface is inspected before it is read or followed.
+    require_no_reparse(git_entry)
     if git_entry.is_file():
         pointer = git_entry.read_text(encoding="utf-8").strip()
         if not pointer.startswith("gitdir:"):
             raise RepositoryShapeError("repository .git file is not a gitdir pointer")
-        git_dir = Path(pointer.split(":", 1)[1].strip())
-        if not git_dir.is_absolute():
-            git_dir = (repository_root / git_dir).resolve()
+        git_dir = resolve_metadata_path(repository_root, Path(pointer.split(":", 1)[1].strip()))
     elif git_entry.is_dir():
         git_dir = git_entry
     else:
@@ -694,28 +783,35 @@ def resolve_canonical_commit(repository_root: Path) -> str:
     require_no_reparse(git_dir)
 
     head_file = git_dir / "HEAD"
+    require_no_reparse(head_file)
     if not head_file.is_file():
         raise RepositoryShapeError("repository HEAD is missing")
-    require_no_reparse(head_file)
     head = head_file.read_text(encoding="utf-8").strip()
     if not head.startswith("ref:"):
         return require_commit(head)
 
     reference = head.split(":", 1)[1].strip()
+    relative = require_safe_metadata_reference(reference)
     common_dir = git_dir
     common_file = git_dir / "commondir"
+    # The commondir metadata file is inspected before it is read or followed.
+    require_safe_evidence_path(common_file)
     if common_file.is_file():
         common = Path(common_file.read_text(encoding="utf-8").strip())
-        common_dir = common if common.is_absolute() else (git_dir / common).resolve()
+        common_dir = resolve_metadata_path(git_dir, common)
         require_no_reparse(common_dir)
     for base in (git_dir, common_dir):
-        candidate = base / Path(reference)
+        candidate = resolve_metadata_path(base, relative)
+        if not is_within(candidate, base):
+            raise PathSeparationRefusalError(
+                f"repository reference escapes the metadata base: {reference!r}"
+            )
         if candidate.is_file():
             require_no_reparse(candidate)
             return require_commit(candidate.read_text(encoding="utf-8").strip())
     packed = common_dir / "packed-refs"
+    require_safe_evidence_path(packed)
     if packed.is_file():
-        require_no_reparse(packed)
         for line in packed.read_text(encoding="utf-8").splitlines():
             if line.startswith(("#", "^")) or " " not in line:
                 continue
@@ -848,6 +944,8 @@ def append_canonical_event(store: EvidenceStore, path: Path, record: Mapping[str
     bytes are never truncated, repaired or patched.
     """
     payload = canonical_json_bytes(record)
+    # A durable evidence path that has become a redirect is never appended to.
+    require_safe_evidence_path(path)
     before = _byte_size(path)
     try:
         store.append(path, payload)
@@ -935,7 +1033,7 @@ def build_episode_core(
 
 def load_episode_core(episode_directory: Path) -> EpisodeCore:
     """Read and validate ``episode-core.json``, returning it with its identity."""
-    path = episode_directory / EPISODE_CORE_FILENAME
+    path = require_safe_evidence_path(episode_directory / EPISODE_CORE_FILENAME)
     if not path.is_file():
         raise EpisodeStateError(f"episode core is missing: {path}")
     payload = path.read_bytes()
@@ -1041,6 +1139,7 @@ class JournalScan:
 
 def scan_journal(path: Path) -> JournalScan:
     """Classify one journal's exact bytes. Syntax only — never lifecycle completeness."""
+    require_safe_evidence_path(path)
     payload = path.read_bytes()
     digest = sha256_of_bytes(payload)
     events: list[Mapping[str, object]] = []
@@ -1285,7 +1384,12 @@ class EpisodeContext:
     def invalidation_path(self) -> Path:
         return self.directory / EPISODE_INVALIDATION_FILENAME
 
+    def require_safe_directory(self) -> Path:
+        """Re-validate the episode directory before an evidence read or write."""
+        return require_safe_episode_directory(self.directory, self.evidence_root)
+
     def scans(self) -> dict[str, JournalScan]:
+        self.require_safe_directory()
         found: dict[str, JournalScan] = {}
         for filename in BOUND_RECORD_FILENAMES:
             path = self.directory / filename
@@ -1309,8 +1413,11 @@ def open_episode_context(
     # 1. arguments; 2. evidence location; 3. path separation and reparse safety
     require_episode_id(episode_id)
     validate_evidence_root(evidence_root, repository_root)
-    # 4. the episode exists and episode-core agrees with the supplied location
+    # 4. the episode exists and episode-core agrees with the supplied location.
+    # The episode directory itself is validated before episode-core is read: a
+    # validated evidence root does not imply a non-redirected episode directory.
     directory = evidence_root / episode_id
+    require_safe_episode_directory(directory, evidence_root)
     if not directory.is_dir():
         raise EpisodeStateError(f"episode does not exist: {directory}")
     core = load_episode_core(directory)
@@ -1422,7 +1529,8 @@ def run_stage(
         stage=stage,
         episode_identity=context.core.identity,
     )
-    # 5. exclusively create the stage journal
+    # 5. exclusively create the stage journal, in a re-validated episode directory
+    context.require_safe_directory()
     try:
         context.store.create_exclusive(path, b"")
     except FileExistsError as error:
@@ -1947,9 +2055,12 @@ def command_open(arguments: argparse.Namespace, store: EvidenceStore) -> int:
         directory.mkdir(parents=False, exist_ok=False)
     except FileExistsError as error:
         raise EpisodeStateError(f"episode directory already exists: {directory}") from error
+    # The newly created episode directory is validated before episode-core is written.
+    require_safe_episode_directory(directory, evidence_root)
     payload = canonical_json_bytes(core)
+    core_path = require_safe_evidence_path(directory / EPISODE_CORE_FILENAME)
     try:
-        store.create_exclusive(directory / EPISODE_CORE_FILENAME, payload)
+        store.create_exclusive(core_path, payload)
     except FileExistsError as error:
         raise EpisodeStateError("episode-core.json already exists; write-once") from error
     identity = sha256_of_bytes(payload)
@@ -2151,6 +2262,9 @@ def command_invalidate(arguments: argparse.Namespace, store: EvidenceStore) -> i
             "expected_canonical_commit": expected,
             "observed_canonical_commit": observed,
         }
+    # The episode directory and the invalidation path are re-validated before the append.
+    context.require_safe_directory()
+    require_safe_evidence_path(context.invalidation_path)
     if not context.invalidation_path.exists():
         store.create_exclusive(context.invalidation_path, b"")
     append_canonical_event(store, context.invalidation_path, record)
@@ -2184,6 +2298,10 @@ def command_finalize(arguments: argparse.Namespace, store: EvidenceStore) -> int
         evidence_root=evidence_root,
         store=store,
     )
+    # The episode directory and the manifest path are validated before the
+    # terminal-manifest state is even classified.
+    context.require_safe_directory()
+    require_safe_evidence_path(context.manifest_path)
     state = classify_terminal_manifest(context.directory)
     if state == TM_VALID:
         # Already sealed. The identity is recomputed read-only; nothing is mutated.
@@ -2214,8 +2332,9 @@ def command_finalize(arguments: argparse.Namespace, store: EvidenceStore) -> int
         "manifest_sealed_at": utc_timestamp(),
     }
     payload = canonical_json_bytes(manifest)
+    context.require_safe_directory()
     try:
-        store.create_exclusive(context.manifest_path, payload)
+        store.create_exclusive(require_safe_evidence_path(context.manifest_path), payload)
     except FileExistsError as error:
         raise EpisodeStateError("episode-manifest.json already exists; write-once") from error
     digest, size = terminal_identity(context.directory)
