@@ -104,6 +104,11 @@ SOURCE_DOCUMENT_REGISTRY_SCHEMA: Final = "mesc-pilot-01-source-document-id-regis
 TRANSFORMED_DATASET_IDENTITY_SCHEMA: Final = "mesc-pilot-01-transformed-dataset-identity/1"
 SOURCE_RECORDS_SCHEMA: Final = "mesc-pilot-01-source-records/1"
 
+#: The execution-input manifest schema (P-C1a §5.1). It is deliberately distinct
+#: from every artifact schema, and in particular from ``generation-manifest.json``
+#: of the seven-file candidate bundle, which is a different concept (`F3`).
+EXECUTION_INPUT_MANIFEST_SCHEMA: Final = "mesc-p01-04d-execution-input/manifest/v1"
+
 #: Surfaces that declare a schema version. The ratified decision record is
 #: Markdown governance prose, so it is bound by digest and size alone.
 INPUT_SCHEMA_VERSIONS: Final[Mapping[str, str]] = MappingProxyType(
@@ -326,6 +331,54 @@ class FormalSplitInputIdentity:
 
     def to_canonical_document(self) -> list[dict[str, object]]:
         return [descriptor.to_canonical_document() for descriptor in self.descriptors]
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutionInputManifestIdentity:
+    """The identity MODEL A-prime activation binds (P-C1a section 5.6).
+
+    It is the SHA-256 and byte size of the exact canonical manifest bytes, and
+    nothing else. Because the manifest carries no path, timestamp or repository
+    commit, this identity is a pure function of the five formal input surfaces
+    and is independently recomputable read-only.
+    """
+
+    sha256: str
+    byte_size: int
+
+    def __post_init__(self) -> None:
+        _require_sha256(self.sha256, "execution input manifest sha256")
+        _require_count(self.byte_size, "execution input manifest byte_size")
+
+
+def build_execution_input_manifest(identity: FormalSplitInputIdentity) -> dict[str, object]:
+    """Return the exact and closed two-field execution-input manifest (P-C1a §5.2).
+
+    The per-surface entries come from the executor's own
+    ``build_input_identity`` measurement, already ordered by surface and already
+    omitting an absent ``schema_version`` rather than serializing ``null``.
+    """
+    if not isinstance(identity, FormalSplitInputIdentity):
+        raise FormalInputIdentityError(
+            "execution input manifest requires an exact FormalSplitInputIdentity"
+        )
+    return {
+        "schema_version": EXECUTION_INPUT_MANIFEST_SCHEMA,
+        "input_surfaces": identity.to_canonical_document(),
+    }
+
+
+def execution_input_manifest_bytes(identity: FormalSplitInputIdentity) -> bytes:
+    """Serialize the manifest through the frozen canonical serializer (P-C1a §5.4)."""
+    return canonical_json_bytes(build_execution_input_manifest(identity))
+
+
+def execution_input_manifest_identity(
+    identity: FormalSplitInputIdentity,
+) -> ExecutionInputManifestIdentity:
+    """Derive the execution-input-manifest identity from the five formal inputs."""
+    payload = execution_input_manifest_bytes(identity)
+    return ExecutionInputManifestIdentity(sha256=sha256_of_bytes(payload), byte_size=len(payload))
 
 
 @dataclass(frozen=True, slots=True)
