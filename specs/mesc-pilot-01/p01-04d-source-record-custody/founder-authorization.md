@@ -135,14 +135,30 @@ enforces the evidence-root separation rules of `PA1-FD-17` at that point.
 
 ## 6. Custody durability observation
 
-The artifact is held under a directory whose name denotes quarantine of an
-earlier pipeline run. Its bytes match the accepted attestation exactly, so its
-identity is not in question, and directory naming confers no property on
-content. It is recorded here only because a location named for quarantine may
-be subject to routine cleanup, and the closure asserts custody **at this
-baseline**. If the artifact is later moved or removed, custody must be
-re-established before execution. No remediation is required now and none is
-authorized by this document.
+Corrected by the P-C1a package after the custody search completed. The original
+text described a single held copy under a directory whose name denotes
+quarantine, and was written from a partial search result; it understated
+durability. The corrected observation is recorded here in substance, and the
+closure itself is unaffected and is not reopened.
+
+```text
+observed on the completed custody search:
+multiple byte-identical authentic copies, including a copy held in a stable
+purpose-built data location outside the protected roots
+
+what XD-EXEC-2 binds:
+the accepted source-record identity, NOT a persisted absolute path
+
+if the held artifact has been moved or removed:
+custody must be re-established against that accepted identity before execution
+authorization
+```
+
+No absolute path is persisted here, and no particular physical copy is
+designated canonical — no existing authority designates one, and identity rather
+than location is what this blocker binds. Every copy that measures to the
+accepted identity satisfies custody equally. No remediation is required and none
+is authorized by this document.
 
 ## 7. No authority expansion
 
