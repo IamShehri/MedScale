@@ -2033,7 +2033,8 @@ XD-EXEC-1   external execution-evidence recording
 CLOSED FOR P01-04D EXECUTION READINESS — SEE §8E
 
 XD-EXEC-2   external source-record custody and binding
-OPEN
+CLOSED FOR P01-04D EXECUTION READINESS — SEE
+specs/mesc-pilot-01/p01-04d-source-record-custody/
 
 XD-EXEC-3   independently recorded formal input identities
 OPEN
@@ -2044,11 +2045,12 @@ DECIDED — GOVERNANCE MECHANISM CANONICALLY ADOPTED
 
 This package records the XD-EXEC-1 contract, and by §8E its closure. It makes no
 claim about XD-EXEC-2 or XD-EXEC-3 and does not reduce, reframe or defer either
-of them.
+of them; the XD-EXEC-2 value above is a status recital whose authority is the
+separate source-record-custody package, not this one.
 
-Execution readiness requires every blocker to be closed. Neither recording a
-contract nor closing XD-EXEC-1 makes the remaining blockers smaller: XD-EXEC-2
-and XD-EXEC-3 are open, so P01-04D is not execution-ready.
+Execution readiness requires every blocker to be closed. Closing XD-EXEC-1 and
+XD-EXEC-2 does not make XD-EXEC-3 smaller: XD-EXEC-3 is open, so P01-04D is not
+execution-ready.
 
 ## 10. No authority expansion
 
