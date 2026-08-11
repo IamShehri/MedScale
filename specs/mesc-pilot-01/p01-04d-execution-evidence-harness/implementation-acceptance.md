@@ -277,7 +277,117 @@ at candidate HEAD: 7 / 7 EXACT
 ```
 
 The four governing P-A1 documents were also verified 4 / 4 exact before and
-after; P-A2 modifies none of them.
+after, through the P-A2 candidate `303cc330`; P-A2 modified none of them. Two of
+the four have since changed, by founder amendment rather than by P-A2 — see §4.1.
+
+### 4.1 Governing baseline shift — P-A1 founder amendment
+
+The P-A3 review's findings `F-3` and `F-4` were contract-level and could not be
+closed in code. The founder issued `PA3-AMD-1` and `PA3-AMD-2`
+(`founder-authorization.md` §8D), which amend two of the four governing
+documents. This is a **declared baseline shift**, not drift.
+
+| Governing document | Before | After |
+|---|---|---|
+| `evidence-contract.md` | `522de3b1bfc2cd6015a6983d85f4727799636d27` | **`85598635219bcac1139a654b28041329ca8374a7`** |
+| `founder-authorization.md` | `53d754917dbfbe4c867398e530ff73a88d78fd2f` | **`f83e943e9c0600254cce864478a3dc6184d5dd67`** |
+| `README.md` | `247abcf71c00ae2c8b9b03da216cd359cbbb08bc` | `247abcf71c00ae2c8b9b03da216cd359cbbb08bc` — unchanged |
+| `acceptance.md` | `f642899405f705f78ce3b147296dc2115e67760c` | `f642899405f705f78ce3b147296dc2115e67760c` — unchanged |
+
+```text
+frozen implementation ledger:  7 / 7 EXACT — UNCHANGED
+code changed by the amendment: NONE
+tests changed by the amendment: NONE
+```
+
+Every later gate compares against the **after** column. A gate that still expects
+`522de3b1…` or `53d75491…` is reading a superseded baseline.
+
+The amendment also settled two consequential questions before commit, so that
+neither could surface later as a fresh divergence of the `F-3` shape: the
+`episode-manifest` `schema_version` is **not** bumped and stays
+`…/episode-manifest/v1`, and `acceptance.md`'s `10 / 77` recital is
+**descriptive**, not a live criterion. Both determinations are recorded in
+`founder-authorization.md` §8D.
+
+#### 4.1.1 Working-tree mutation found at S1 preflight — quarantined and excluded
+
+The P-A3 review certified `git status --porcelain -uall` empty at both preflight
+and completion. **It was not empty at S1 preflight.** The worktree carried
+uncommitted modifications to two tracked paths and thirty untracked `.bak` files.
+This is recorded here because the next independent reviewer will re-run
+`git status` against that certification and must not have to discover it alone.
+
+```text
+found at S1 preflight, at HEAD 303cc330:
+ M scripts/mesc_p01_04d_evidence_harness.py      +178 / -29
+ M tests/test_mesc_p01_04d_evidence_harness.py   +186 /  -0
+ ?? 30 .bak files under scripts/ and tests/
+ both tracked files were CRLF in the working copy
+```
+
+**Dating.** The filesystem evidence places the mutation strictly after the commit
+under review:
+
+```text
+03:11:16   .coverage                    builder's gate run
+03:13:22   1 tests .bak                  contemporaneous with the build
+03:13:54   COMMIT 303cc330
+03:35-03:47 test .pyc, pytest, mypy cache   gate-shaped activity on the
+                                            committed state
+           ---- 36 minute gap ----
+04:23:42   .bak cluster begins
+05:06:02   tests/…harness.py last written
+05:09:28   scripts/…harness.py last written, cluster ends
+```
+
+The twenty-nine remaining `.bak` files form one contiguous 46-minute cluster
+beginning 69 minutes after the commit, with monotonically increasing sizes
+(harness 108,125 → 115,480 bytes) — the signature of an incremental
+edit-with-backup session, not a stray checkout or a tooling artifact. No commit
+exists after `303cc330`; the reflog ends there.
+
+```text
+CONCLUSION:
+the mutation was introduced AFTER 303cc330 was committed, and after the
+gate-shaped activity at 03:35-03:47. No figure the P-A3 review reproduced
+could have been affected by it: those runs predate 04:23:42.
+```
+
+The review's certification is therefore consistent with the evidence **if** P-A3
+completed before 04:23:42. What the repository cannot settle is P-A3's own wall
+clock, so this is reported as a bound, not as a finding against the review. A
+mass `cpython-311` bytecode sweep at 04:51:49, mid-cluster, differs from the
+`cpython-312` artifacts of the gate window and indicates a second interpreter
+active during the mutation.
+
+**Disposition: quarantined, not adopted, not deleted.** The `.bak` files were
+moved to the session scratch directory, the two tracked files were restored with
+`git restore`, and `git status --porcelain -uall` then showed only the three
+amendment doc paths. No `git stash` was used — it writes refs into the
+repository. The diff was exported as a patch and the exact working-tree bytes
+preserved before anything was touched.
+
+The abandoned work is **not adopted.** It violates three standing constraints: it
+adds an eighth evidence file (`episode-path-identity.json`, with an
+`EPISODE_PATH_ANCHOR_FIELDS` set) against `EVIDENCE_FILENAMES` = 7; it bumps
+`EPISODE_MANIFEST_SCHEMA_VERSION` to `…/episode-manifest/v2` without
+authorization; and it places the continuity anchor **inside** the episode
+directory. The third is disqualifying on its own — the attacker controls every
+byte inside a swapped directory, so an in-directory anchor is forgeable, which is
+the whole of `F-1`.
+
+That an independent attempt converged on in-directory anchoring is worth
+recording: it is the intuitive design, and it is the wrong one. The standing
+constraints in `founder-authorization.md` §8D exist to stop the next
+implementation from rediscovering it.
+
+```text
+frozen 7 re-verified post-restore:   7 / 7 EXACT
+both restored files vs HEAD blobs:   EXACT
+CR bytes after restore:              0
+patch retained in session scratch:   yes, outside the tree
+```
 
 ## 5. Production import boundary
 
@@ -455,11 +565,13 @@ The totality tests were retargeted in the same commit —
 new count, not silently broken.
 
 ```text
-DIVERGENCE FROM THE IMMUTABLE P-A1 LEDGER
-evidence-contract.md §20 fixes the named ledger at 10 enumerations / 77 values.
-The implementation now carries 10 / 78. The governing document is immutable at
-this gate and was not edited, so reconciling the two requires a founder P-A1
-amendment. This is recorded as an open item, not as a silent divergence.
+DIVERGENCE FROM THE IMMUTABLE P-A1 LEDGER — RECORDED, THEN CLOSED
+As built, evidence-contract.md §20 fixed the named ledger at 10 enumerations /
+77 values while the implementation carried 10 / 78. That divergence was recorded
+here as an open item rather than a silent one. P-A3 raised it as blocking
+finding F-3, and the founder closed it by amendment PA3-AMD-1: §20 now reads
+10 / 78 with failure_class at 21, and the §19.1 triad table carries the matching
+row. Governing document and implementation agree. See §4.1.
 ```
 
 ## 11. Evidence-write A / B / C coverage
@@ -712,6 +824,17 @@ prevention plus fatal-gate design reaches outcome **(A)**: there is no path from
 a swap to a clean sealed stage. Binding therefore remains available as a
 follow-up if the founder amends §15.4, and is recorded here as an open item
 rather than silently skipped.
+
+```text
+STATUS AFTER THE FOUNDER AMENDMENT
+P-A3 raised this as blocking finding F-4. The founder issued PA3-AMD-2:
+evidence-contract.md §15.4 is now exact and closed at seven fields, including
+episode_path_identity. The contract obstacle recorded above is removed, and the
+binding is no longer optional — a conforming manifest must carry the field. The
+paragraph above describes the state at 303cc330 and is superseded from the
+amended baseline onward. Implementation of the binding is not part of the
+amendment; the amendment changed no code. See §4.1.
+```
 
 ## 16. Sensitive-data minimization coverage
 

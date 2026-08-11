@@ -107,6 +107,24 @@ independent verification and does not authorize P01-04F.
 A successful episode therefore intentionally performs canonical compare twice:
 once during `compare` and once during `verify`.
 
+This section fixes the command **set**, each command's child-process relation and
+each command's mutation. It does not fix per-command argument sets, and no other
+section of this contract does (`PA3-DET-1`).
+
+```text
+command set:                 FIXED — exactly the six above
+per-command argument sets:   NOT FIXED BY THIS CONTRACT
+argv recording:              FIXED — §8
+```
+
+§21.1 requires harness arguments to be validated before any stage journal exists,
+and §8 requires complete argv to be recorded as an ordered UTF-8 string array.
+Neither enumerates the arguments a command accepts. An implementation that adds
+an argument to an existing command therefore widens no stated contract, provided
+the command set remains exactly six, the argument is recorded in `argv` under §8,
+and it carries no content §24 prohibits. This is a statement of what the contract
+already does and does not fix. It grants no authority and creates no argument.
+
 Defining these commands creates no authority to invoke any of them over real
 inputs.
 
@@ -921,6 +939,7 @@ that block to the materiality of the record that carries it.
 ```text
 schema_version
 episode_identity
+episode_path_identity
 episode_core              filename, sha256, byte_size, record_integrity
 records[]                 filename, sha256, byte_size, record_integrity,
                           event_count when countable
@@ -938,7 +957,34 @@ schema_version:
 mesc-p01-04d-execution-evidence/episode-manifest/v1
 ```
 
-This field set is exact and closed.
+This field set is exact and closed. It is closed at **seven** fields.
+`episode_path_identity` was added by the P-A3 founder amendment (`PA3-AMD-2`),
+and every earlier statement asserting a six-field manifest set is withdrawn.
+
+```text
+episode_path_identity
+The digest of the episode directory's (st_dev, st_ino) pair, reduced through the
+frozen canonical serializer (§16, §27), as measured at episode open and
+re-confirmed at terminalization.
+```
+
+A verifier that recomputes the identity of the directory in which it found the
+manifest MUST compare the result to this field, and MUST treat a mismatch as
+terminal. The field binds the manifest to the directory object it was sealed in,
+so a manifest read from anywhere else is detectably mislocated.
+
+The `schema_version` literal above is **unchanged** by `PA3-AMD-2` and remains
+`mesc-p01-04d-execution-evidence/episode-manifest/v1`. The seven-field set is
+what that literal now denotes. A manifest carrying only the former six fields
+fails the mandatory-field test of §18.8.3 and is TM-1.
+
+```text
+episode-manifest schema_version:
+UNCHANGED — .../episode-manifest/v1
+
+bumping it to v2 or any other value:
+PROHIBITED WITHOUT A SEPARATE FOUNDER DISPOSITION
+```
 
 ```text
 repository-observation field in episode-manifest.json:
@@ -1608,6 +1654,7 @@ Unless `failure_class` is `CHILD_NONZERO_EXIT`, which is governed by §19.2:
 | `CANONICAL_MAIN_MISMATCH` | `CANONICAL_MAIN_MOVEMENT` | `FOUNDER_DISPOSITION_REQUIRED` |
 | `PATH_SEPARATION_REFUSAL` | `PATH_SAFETY_FAILURE` | `NEW_EPISODE_REQUIRED` |
 | `REPARSE_POINT_REFUSAL` | `PATH_SAFETY_FAILURE` | `NEW_EPISODE_REQUIRED` |
+| `EPISODE_PATH_IDENTITY_DRIFT` | `PATH_SAFETY_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
 | `HARNESS_IDENTITY_MISMATCH` | `HARNESS_IDENTITY_MISMATCH` | `FOUNDER_DISPOSITION_REQUIRED` |
 | `OPERATOR_IDENTITY_MISMATCH` | `OPERATOR_IDENTITY_MISMATCH` | `FOUNDER_DISPOSITION_REQUIRED` |
 | `RUNTIME_IDENTITY_MISMATCH` | `RUNTIME_IDENTITY_MISMATCH` | `FOUNDER_DISPOSITION_REQUIRED` |
@@ -1625,7 +1672,7 @@ Unless `failure_class` is `CHILD_NONZERO_EXIT`, which is governed by §19.2:
 | `VERIFY_FAILURE` | `EVIDENCE_INTEGRITY_FAILURE` | `FOUNDER_DISPOSITION_REQUIRED` |
 | `UNCLASSIFIED` | `UNDETERMINED` | `FOUNDER_DISPOSITION_REQUIRED` |
 
-The table is total over the twenty `failure_class` values of §20.3.
+The table is total over the twenty-one `failure_class` values of §20.3.
 
 ```text
 mapping scope:
@@ -1732,11 +1779,11 @@ closed enumerations:
 10
 
 total closed enumeration values:
-77
+78
 
 root_cause_class           15
 causal_stage                8
-failure_class              20
+failure_class              21
 remediation_disposition     4
 record_integrity            2
 comparison_disposition      4
@@ -1750,12 +1797,17 @@ path_role                   5
 implementation clarification. Every earlier statement asserting eight closed
 enumerations or sixty-nine closed values is withdrawn.
 
+`failure_class` was extended from twenty values to twenty-one by the P-A3 founder
+amendment (`PA3-AMD-1`, §20.3). Every earlier statement asserting seventy-seven
+closed values, or twenty `failure_class` values, is withdrawn. The enumeration
+count is unchanged at ten: no enumeration was added or removed.
+
 This count is the **named closed-enumeration ledger** (`PIC-CORR-6`). It states
 how many enumerations §20 names and how many values they hold. It is not a claim
 that no other constrained field domain exists.
 
 ```text
-the 10 / 77 arithmetic covers:
+the 10 / 78 arithmetic covers:
 the named enumerations of §20.1 through §20.10 only
 
 other fixed inline domains, fixed but NOT counted here:
@@ -1767,7 +1819,7 @@ byte_equality         EQUAL, UNEQUAL
 
 Those inline domains are fixed closed domains, exhaustively specified in §15.2,
 and values outside them are rejected exactly as here. They are excluded from the
-10 / 77 arithmetic solely because that ledger counts §20's named enumerations.
+10 / 78 arithmetic solely because that ledger counts §20's named enumerations.
 
 ### 20.1 `root_cause_class`
 
@@ -1809,6 +1861,7 @@ ARGUMENT_REFUSAL
 CANONICAL_MAIN_MISMATCH
 PATH_SEPARATION_REFUSAL
 REPARSE_POINT_REFUSAL
+EPISODE_PATH_IDENTITY_DRIFT
 HARNESS_IDENTITY_MISMATCH
 OPERATOR_IDENTITY_MISMATCH
 RUNTIME_IDENTITY_MISMATCH
@@ -1826,6 +1879,24 @@ EVIDENCE_MALFORMED_PRESERVED
 VERIFY_FAILURE
 UNCLASSIFIED
 ```
+
+`EPISODE_PATH_IDENTITY_DRIFT` was admitted by the P-A3 founder amendment
+(`PA3-AMD-1`). Its triad is bound normatively here, and identically in the §19.1
+table:
+
+```text
+EPISODE_PATH_IDENTITY_DRIFT -> PATH_SAFETY_FAILURE / FOUNDER_DISPOSITION_REQUIRED
+```
+
+A real-directory-for-real-directory substitution passes both reparse and
+containment, so no existing class describes it, and a detected in-flight
+substitution evidences a host-level adversary, which no fresh episode on the same
+host remediates.
+
+The class is reachable: it is durably recordable through the `invalidate` command
+(§4), whose record carries a `failure_class` value (§15.3), and it is emitted as
+a closed-vocabulary stderr token by the refusing command. Admitting it changes no
+other enumeration.
 
 ### 20.4 `remediation_disposition`
 

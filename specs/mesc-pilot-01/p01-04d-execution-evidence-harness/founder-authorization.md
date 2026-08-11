@@ -49,6 +49,9 @@ PIC-CORR-7 .. PIC-CORR-13 RECORDED — SEE §8B
 
 P-A1 closing implementation corrections:
 PIC-CORR-14 .. PIC-CORR-15 RECORDED — SEE §8C
+
+P-A3 founder amendment:
+PA3-AMD-1 .. PA3-AMD-2 RECORDED — SEE §8D
 ```
 
 This decision defines the contract a future execution-evidence harness must
@@ -1621,6 +1624,282 @@ exception. This changes no earlier permission: `resolve_repository_commit` was
 and remains the sole formal test-scope import, and it is still not broadened to
 `make_environment`, `SYNTHETIC_COMMIT` or any other helper from a frozen formal
 test.
+
+## 8D. P-A3 founder amendment
+
+An independent P-A3 review of the P-A2 implementation candidate returned
+`CHANGES REQUIRED` on four blocking findings. Two of them, `F-3` and `F-4`, are
+not implementation defects. They are contract-level: the implementation carries
+one `failure_class` value and one manifest binding that this package's governing
+contract does not admit, and neither can be reconciled by editing code.
+
+`F-3` — the implementation carries a `failure_class` enumeration of twenty-one
+values against a governing ledger of twenty, because `evidence-contract.md` §20
+permits no extension without a founder disposition and no such disposition had
+been issued.
+
+`F-4` — the manifest binding of episode path identity was left unimplemented
+because §15.4 declares the `episode-manifest.json` field set exact and closed at
+six fields. That closure now blocks a required control rather than protecting
+one.
+
+This section issues the disposition those two findings compel. Unlike §7, §8, §8A,
+§8B and §8C, this is an **amendment**, not a correction: it extends two closed
+sets.
+
+```text
+Decision class:
+FOUNDER AMENDMENT TO THE P-A1 CONTRACT — GOVERNANCE ONLY
+
+New enumeration:
+NONE — the named enumeration count stays 10
+
+New enumeration value:
+EXACTLY ONE — failure_class EPISODE_PATH_IDENTITY_DRIFT
+
+New manifest field:
+EXACTLY ONE — episode_path_identity
+
+New evidence file:
+NONE — EVIDENCE_FILENAMES stays 7
+
+New command:
+NONE — COMMANDS stays 6
+
+New event kind:
+NONE
+
+Record-freeze:
+STILL DOES NOT EXIST
+
+P01-04D execution:
+NOT AUTHORIZED BY THIS AMENDMENT
+
+XD-EXEC-1:
+DECIDED / OPEN — NOT CLOSED BY THIS AMENDMENT
+```
+
+`PA1-FD-1` through `PA1-FD-20`, `A1` through `A5`, `R1` through `R5`, `PA1-C1`
+through `PA1-C5`, `PIC-1` through `PIC-9` and `PIC-CORR-1` through `PIC-CORR-15`
+are preserved in full. `ARCHITECTURE A`, `MODEL E2′`, the seven evidence record
+classes, the six-command surface, the absence of `record-freeze`, the stage
+dispositions, the terminal-manifest creation semantics, the structural-unseal
+semantics, the stderr parser, post-seal immutability, the P01-04F boundary, the
+MODEL A′ boundary and the five-field runtime identity are all unchanged.
+
+Statements elsewhere in this package that recite a `10 / 77` ledger,
+seventy-seven closed values, twenty `failure_class` values or a six-field
+manifest set describe the pre-amendment baseline. They remain true of the items
+they were written to describe and are correctly scoped to them, exactly as
+`PIC-CORR-5` and `PIC-CORR-12` scope their predecessors. The current ledger is
+`10 / 78` and the current manifest set is seven fields.
+
+`acceptance.md` recites the ledger in exactly two places, both **descriptive**:
+criterion `A-18 — Closed vocabularies`, whose count block is a census of the
+contract as it stood at that gate, and the §4 package-disposition census. Neither
+imposes a count on an implementation. `acceptance.md` accepts a documentation
+package and states so itself — "This document records criteria satisfaction, not
+adoption", and §5 "would not accept an implementation". The normative content of
+`A-18` is the *property* it names: exact, case-sensitive closed enumerations,
+values outside them rejected, and **no arbitrary extension permitted without a
+founder disposition**. That property is not weakened by this amendment; it is the
+clause under which this amendment is issued. `A-18`'s further sentence that no
+statement in the package asserts eight enumerations or sixty-nine values is also
+undisturbed — the enumeration count remains ten.
+
+`acceptance.md` and the package `README.md` are therefore **not edited** by this
+amendment, and their bytes stand at `f6428994…` and `247abcf7…`. A later gate
+comparing `A-18`'s census against `evidence-contract.md` §20 will see `77` against
+`78`; that difference is this amendment, is declared here, and is not drift.
+
+### PA3-AMD-1 — `failure_class` extension
+
+Recorded normatively in `evidence-contract.md` §20 and §20.3, and reflected in
+the §19.1 triad table.
+
+```text
+named closed enumerations:
+10 — UNCHANGED
+
+total closed enumeration values:
+77 -> 78
+
+failure_class:
+20 -> 21
+
+admitted value:
+EPISODE_PATH_IDENTITY_DRIFT
+
+triad:
+EPISODE_PATH_IDENTITY_DRIFT -> PATH_SAFETY_FAILURE /
+                               FOUNDER_DISPOSITION_REQUIRED
+
+root_cause_class:            15 — UNCHANGED
+remediation_disposition:      4 — UNCHANGED
+terminal_disposition:         5 — UNCHANGED
+causal_stage:                 8 — UNCHANGED
+record_integrity:             2 — UNCHANGED
+comparison_disposition:       4 — UNCHANGED
+operator_error_class:        11 — UNCHANGED
+stage_disposition:            3 — UNCHANGED
+path_role:                    5 — UNCHANGED
+```
+
+A real-directory-for-real-directory substitution passes both reparse and
+containment, so no existing class describes it, and a detected in-flight
+substitution evidences a host-level adversary, which no fresh episode on the same
+host remediates. The remediation disposition is therefore
+`FOUNDER_DISPOSITION_REQUIRED` and not `NEW_EPISODE_REQUIRED`.
+
+The §19.1 triad table is extended by the same one row, and its totality statement
+now reads twenty-one. A closed enumeration whose derivation table is not total
+over it would be a contradiction, so the table row is part of this amendment and
+not a separate act.
+
+### PA3-AMD-2 — `episode-manifest.json` field-set extension
+
+Recorded normatively in `evidence-contract.md` §15.4.
+
+```text
+episode-manifest.json field set:
+EXACT AND CLOSED AT 6 -> EXACT AND CLOSED AT 7
+
+added field:
+episode_path_identity
+
+definition:
+the digest of the episode directory's (st_dev, st_ino) pair, reduced through
+the frozen canonical serializer, measured at episode open and re-confirmed at
+terminalization
+
+verifier obligation:
+recompute the identity of the directory the manifest was found in, compare it
+to this field, and treat a mismatch as TERMINAL
+
+terminal-identity formula:
+UNCHANGED — SHA-256 and byte size of the terminal manifest's exact bytes
+
+manifest record_integrity field:
+STILL ABSENT — PIC-CORR-14 UNCHANGED
+
+repository-observation field:
+STILL PROHIBITED — PIC-3 UNCHANGED
+```
+
+The set is still closed. It is closed at seven. Closure is the control, and the
+count is not; a closure that excluded the field binding a manifest to the
+directory it was sealed in was protecting the wrong thing.
+
+#### Schema-version determination — consequential to `PA3-AMD-2`
+
+Whether extending the field set forces an `episode-manifest` `schema_version`
+bump was determined before this amendment was committed, because discovering it
+later would reproduce the `F-3` shape. Three questions, answered:
+
+```text
+1. does the contract fix the manifest schema_version string?
+YES — evidence-contract.md §15.4 fixes the exact literal
+      mesc-p01-04d-execution-evidence/episode-manifest/v1
+      recited at founder-authorization.md §8 and at acceptance.md criterion
+      A-36 "Exact schema versions"; §18.8.3 requires the exact literal for TM-2
+      and §18.8.2 makes a wrong schema_version a TM-1 condition
+
+2. is that string a member of any closed enumeration?
+NO — the ten named enumerations are §20.1 through §20.10 and schema_version is
+     not among them, nor among the four uncounted inline domains (mode, stage,
+     generation_identity, byte_equality). A bump would leave the ledger at
+     10 / 78 exactly.
+
+3. do the "exact and closed" set semantics require a version change?
+NO — the contract states no versioning, migration or compatibility policy of
+     any kind. §15.4 and §18.8.3 are internally consistent without a bump: the
+     exact literal remains v1, and "all mandatory fields" now means seven.
+```
+
+```text
+DETERMINATION:
+NO BUMP. schema_version STAYS .../episode-manifest/v1.
+```
+
+No answer forces a bump, so none is authorized. A bump is also affirmatively
+undesirable. P01-04D execution is not authorized and no episode manifest exists
+anywhere, so a bump would version an empty population; the terminal-identity
+formula of §22 is unchanged either way; and changing the literal would falsify
+criterion `A-36` of `acceptance.md`, whose bytes must stand at `f6428994…`. `A-36`
+recites the exact literal as a criterion, not as a census, so unlike `A-18` it
+could not be dispatched as descriptive. Not bumping leaves `A-36` satisfied
+exactly as written. Bumping would manufacture a second `acceptance.md`
+divergence — the harder kind — to solve a problem that does not exist.
+
+Recorded normatively in `evidence-contract.md` §15.4. A conforming manifest
+carrying only the former six fields fails the mandatory-field test of §18.8.3 and
+is TM-1. Bumping the version requires its own founder disposition.
+
+### Standing constraints on the S2 continuity anchor
+
+Recorded here so the implementation cannot drift off them. These constrain; they
+authorize nothing and extend nothing.
+
+The continuity token is **operator-held**. Two prohibitions follow:
+
+```text
+reading an expected token from anything on disk:
+PROHIBITED — argv only, with no fallback of any kind
+
+persisting the next token inside the episode directory:
+PROHIBITED — stdout emission is the whole mechanism
+```
+
+A token the harness can recover from a file is a token the attacker can supply,
+because the attacker controls every byte inside a swapped directory. A fallback
+path returns the anchor to the interior and reinstates `F-1` in full. Writing the
+next token down does the same.
+
+The consumed token will land in `argv` evidence under §8. That is harmless: an
+attacker cannot make a swapped directory hash to a value the operator will
+supply. It must be the **consumed** token only, never the emitted next one.
+
+An in-directory anchor of any shape — a sidecar identity file, an eighth evidence
+record, a field added to `episode-core.json` — is refused. This is not a stylistic
+preference. It is the finding.
+
+### PA3-DET-1 — argument-surface determination, declaratory
+
+Recorded in `evidence-contract.md` §4.
+
+This is **not** an authorization and is not part of the scope granted below. It
+records a fact about what this contract already fixes: §4 fixes the command set,
+each command's child-process relation and each command's mutation; §8 fixes the
+argv recording obligation; §21.1 requires arguments to be validated. Nothing in
+this contract enumerates the arguments a command accepts.
+
+```text
+per-command argument sets:
+NEVER FIXED BY THIS CONTRACT — NO EXTENSION WAS REQUIRED OR GRANTED
+```
+
+Recording the determination prevents a later reviewer from reading an added
+command argument as the widening of a stated contract. It grants nothing, and an
+implementation still remains bound by the six-command surface, by §8 and by §24.
+
+### Scope of this amendment
+
+```text
+authorized:
+the failure_class extension of PA3-AMD-1
+the episode-manifest.json field extension of PA3-AMD-2
+
+authorized for nothing else
+```
+
+This authorization is scoped to those two extensions. It confers no general right
+to extend a closed vocabulary, a closed field set, the evidence inventory, the
+command surface or the event sequence. Any further extension requires its own
+founder disposition, exactly as §20 has required throughout.
+
+It does not authorize P-A2 implementation, P01-04D execution, P01-03G access,
+real dataset access, Generation A, Generation B, compare or verify over real
+inputs, or publication. §9 through §12 are unchanged and remain in force in full.
 
 ## 9. Blocker state
 
