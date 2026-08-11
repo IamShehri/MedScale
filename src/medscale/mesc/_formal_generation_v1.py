@@ -33,6 +33,7 @@ from medscale.mesc._formal_split_v1 import (
     ARTIFACT_FILE_SCHEMAS,
     ARTIFACT_FILENAMES,
     ARTIFACT_SURFACES,
+    CANONICAL_SCHEMA_VERSIONS,
     DECISION_RECORD_SURFACE,
     EXAMPLE_REGISTRY_FILENAME,
     EXCLUDED_LEDGER_FILENAME,
@@ -40,7 +41,6 @@ from medscale.mesc._formal_split_v1 import (
     GENERATION_MANIFEST_FILENAME,
     GENERATION_MANIFEST_SCHEMA,
     GROUP_REGISTRY_FILENAME,
-    INPUT_SCHEMA_VERSIONS,
     MANIFEST_DIGESTED_FILENAMES,
     ORDERED_EXAMPLE_REGISTRY_SURFACE,
     REQUIRED_INPUT_SURFACES,
@@ -694,7 +694,7 @@ def _rebuild_input_identity(value: object, *, workspace: Path) -> FormalSplitInp
         if surface not in REQUIRED_INPUT_SURFACES:
             raise FormalInputSchemaError(f"{entry_label}.surface is unknown: {surface!r}")
         expected_keys = {"byte_size", "sha256", "surface"}
-        if surface in INPUT_SCHEMA_VERSIONS:
+        if surface in CANONICAL_SCHEMA_VERSIONS:
             expected_keys.add("schema_version")
         _exact_object(entry, label=entry_label, keys=frozenset(expected_keys))
         # The accepted descriptor type reports a bad digest or byte size as an
@@ -709,7 +709,7 @@ def _rebuild_input_identity(value: object, *, workspace: Path) -> FormalSplitInp
                         _exact_text(
                             entry.get("schema_version"), label=f"{entry_label}.schema_version"
                         )
-                        if surface in INPUT_SCHEMA_VERSIONS
+                        if surface in CANONICAL_SCHEMA_VERSIONS
                         else None
                     ),
                     sha256=_exact_text(entry.get("sha256"), label=f"{entry_label}.sha256"),
