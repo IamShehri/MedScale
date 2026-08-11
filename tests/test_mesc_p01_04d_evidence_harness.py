@@ -23,6 +23,7 @@ import ast
 import contextlib
 import hashlib
 import importlib.util
+import io
 import itertools
 import json
 import os
@@ -338,6 +339,13 @@ class Lab:
     inputs: dict[str, Path]
     episode_id: str = EPISODE_ID
     _extra: dict[str, Path] = field(default_factory=dict)
+    #: The operator's custody of the continuity token. It lives here, in the
+    #: caller, exactly as it lives in the operator's hands in production — never
+    #: inside the episode directory (founder-authorization.md §8D).
+    continuity: str = ""
+
+    def _continuity_tail(self, continuity: str | None) -> list[str]:
+        return ["--expect-continuity", self.continuity if continuity is None else continuity]
 
     @property
     def directory(self) -> Path:
@@ -361,7 +369,7 @@ class Lab:
             commit,
         ]
 
-    def generate_argv(self, generation: str) -> list[str]:
+    def generate_argv(self, generation: str, *, continuity: str | None = None) -> list[str]:
         workspace = self.workspace_a if generation == "A" else self.workspace_b
         argv = [
             "generate",
@@ -378,11 +386,12 @@ class Lab:
             "--future-evidence-root",
             str(self.future_evidence_root),
         ]
+        argv.extend(self._continuity_tail(continuity))
         for surface in EXPECTED_INPUT_SURFACES:
             argv.extend([f"--{surface.replace('_', '-')}", str(self.inputs[surface])])
         return argv
 
-    def _comparison_argv(self, command: str) -> list[str]:
+    def _comparison_argv(self, command: str, continuity: str | None = None) -> list[str]:
         return [
             command,
             "--episode-id",
@@ -395,13 +404,14 @@ class Lab:
             str(self.workspace_a),
             "--generation-b-workspace",
             str(self.workspace_b),
+            *self._continuity_tail(continuity),
         ]
 
-    def compare_argv(self) -> list[str]:
-        return self._comparison_argv("compare")
+    def compare_argv(self, *, continuity: str | None = None) -> list[str]:
+        return self._comparison_argv("compare", continuity)
 
-    def verify_argv(self) -> list[str]:
-        return self._comparison_argv("verify")
+    def verify_argv(self, *, continuity: str | None = None) -> list[str]:
+        return self._comparison_argv("verify", continuity)
 
     def invalidate_argv(
         self,
@@ -410,6 +420,7 @@ class Lab:
         causal_stage: str,
         operator_error_class: str | None = None,
         workspace: Path | None = None,
+        continuity: str | None = None,
     ) -> list[str]:
         argv = [
             "invalidate",
@@ -423,6 +434,7 @@ class Lab:
             failure_class,
             "--causal-stage",
             causal_stage,
+            *self._continuity_tail(continuity),
         ]
         if operator_error_class is not None:
             argv.extend(["--operator-error-class", operator_error_class])
@@ -430,7 +442,7 @@ class Lab:
             argv.extend(["--affected-candidate-workspace", str(workspace)])
         return argv
 
-    def finalize_argv(self) -> list[str]:
+    def finalize_argv(self, *, continuity: str | None = None) -> list[str]:
         return [
             "finalize",
             "--episode-id",
@@ -439,6 +451,7 @@ class Lab:
             str(self.repository_root),
             "--external-evidence-root",
             str(self.evidence_root),
+            *self._continuity_tail(continuity),
         ]
 
     def run(
@@ -448,13 +461,71 @@ class Lab:
         store: Any = None,
         runner: Any = None,
     ) -> int:
+        """Dispatch one command, taking custody of any continuity token it emits.
+
+        Capturing stdout here is what models the operator: the next token is read
+        off the command's output and held by the caller. Nothing reads it back
+        from the episode directory, because nothing ever writes it there.
+        """
         arguments = self.module.build_parser().parse_args(list(argv))
-        exit_code: int = self.module.dispatch(
-            arguments,
-            store=store if store is not None else self.module.EvidenceStore(),
-            runner=runner if runner is not None else self.module.ChildRunner(),
-        )
+        buffer = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buffer):
+                exit_code: int = self.module.dispatch(
+                    arguments,
+                    store=store if store is not None else self.module.EvidenceStore(),
+                    runner=runner if runner is not None else self.module.ChildRunner(),
+                )
+        finally:
+            reported = buffer.getvalue()
+            sys.stdout.write(reported)
+            self._take_continuity(reported)
         return exit_code
+
+    def resync_continuity(self) -> None:
+        """Re-derive the operator's token from the episode as it now stands.
+
+        Scaffolding for tests whose subject is something *other* than continuity
+        — TM-1 classification, structural barriers, stage-open residue, injected
+        identity drift — which reach their fixture by editing the episode
+        directory out of band. In production the operator would simply be holding
+        the token the last legitimate command emitted for that state.
+
+        It is never used by a test that exercises the continuity control itself:
+        calling it there would hand the attacker the very value the anchor exists
+        to withhold, and the test would prove nothing.
+        """
+        identity = self.module.measure_episode_path_identity(self.directory)
+        self.continuity = self.module.measure_continuity_token(self.directory, identity)
+
+    def _take_continuity(self, reported: str) -> None:
+        # ``getattr`` so the same driver can also run a build that predates the
+        # anchor, which is how the discriminator exercises the vulnerable base.
+        label = getattr(self.module, "CONTINUITY_TOKEN_LABEL", "continuity_token")
+        for line in reported.splitlines():
+            head, _, value = line.partition(" ")
+            if head == label:
+                self.continuity = value.strip()
+
+    def emitted_tokens(self, argv: Sequence[str], **kwargs: Any) -> list[str]:
+        """Run a command and return every continuity token it printed."""
+        buffer = io.StringIO()
+        arguments = self.module.build_parser().parse_args(list(argv))
+        with contextlib.redirect_stdout(buffer):
+            self.module.dispatch(
+                arguments,
+                store=kwargs.get("store") or self.module.EvidenceStore(),
+                runner=kwargs.get("runner") or self.module.ChildRunner(),
+            )
+        label = self.module.CONTINUITY_TOKEN_LABEL
+        found = [
+            line.partition(" ")[2].strip()
+            for line in buffer.getvalue().splitlines()
+            if line.partition(" ")[0] == label
+        ]
+        if found:
+            self.continuity = found[-1]
+        return found
 
     def journal(self, filename: str) -> list[dict[str, object]]:
         payload = (self.directory / filename).read_bytes()
@@ -1036,6 +1107,7 @@ def _rewrite_core(lab: Lab, **changes: object) -> None:
     core = lab.core()
     core.update(changes)
     (lab.directory / "episode-core.json").write_bytes(canonical_json_bytes(core))
+    lab.resync_continuity()
 
 
 @pytest.mark.parametrize(
@@ -2090,6 +2162,7 @@ def test_tm1_classification_and_immutability(lab: Lab, case: str) -> None:
     lab.complete_success()
     payload = _tm1_payloads(lab)[case]
     (lab.directory / "episode-manifest.json").write_bytes(payload)
+    lab.resync_continuity()
     assert lab.module.classify_terminal_manifest(lab.directory) == lab.module.TM_INVALID
     with pytest.raises(lab.module.EpisodeStateError, match="irrecoverably failed"):
         lab.run(lab.finalize_argv())
@@ -2110,6 +2183,7 @@ def test_tm1_prohibits_every_scientific_continuation(lab: Lab) -> None:
     lab.open_episode()
     assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
     (lab.directory / "episode-manifest.json").write_bytes(b"partial")
+    lab.resync_continuity()
     with pytest.raises(lab.module.EpisodeStateError):
         lab.run(lab.generate_argv("B"), runner=lab.producing_runner("B"))
     with pytest.raises(lab.module.EpisodeStateError):
@@ -2147,6 +2221,9 @@ def test_post_seal_immutability_is_absolute(lab: Lab) -> None:
     lab.complete_success()
     assert lab.run(lab.finalize_argv()) == 0
     snapshot = digest_tree(lab.directory)
+    # Even an operator holding a perfectly current token cannot continue a sealed
+    # episode: post-seal immutability is not enforced by token scarcity.
+    lab.resync_continuity()
     with pytest.raises(lab.module.EpisodeStateError, match="already sealed"):
         lab.run(lab.finalize_argv())
     with pytest.raises(lab.module.EpisodeStateError):
@@ -2495,6 +2572,7 @@ def _stage_open_residue(lab: Lab) -> bytes:
     store = make_store(lab.module, clean_failures={"stage_opened"})
     with pytest.raises(lab.module.EvidenceWriteFailureError):
         lab.run(lab.generate_argv("A"), store=store, runner=lab.producing_runner("A"))
+    lab.resync_continuity()
     return (lab.directory / "stage-generate-a.jsonl").read_bytes()
 
 
@@ -2557,6 +2635,7 @@ def test_uninterpretable_invalidation_bytes_bar_continuation(
 ) -> None:
     lab.open_episode()
     (lab.directory / "episode-invalidation.jsonl").write_bytes(residue)
+    lab.resync_continuity()
     spy, runner = install_spy(lab, monkeypatch)
     with pytest.raises(lab.module.EpisodeStateError, match="cannot be safely interpreted"):
         lab.run(lab.generate_argv("A"), runner=runner)
@@ -3241,26 +3320,476 @@ def test_r1_t6_identity_is_recomputable_and_detects_a_swap(lab: Lab) -> None:
 
 
 def test_r1_every_stage_event_is_gated(lab: Lab, monkeypatch: pytest.MonkeyPatch) -> None:
-    """The ordered gate fires before each of the nine stage events, not only at seal."""
+    """The ordered gate fires before each of the nine stage events, not only at seal.
+
+    Instrumented at the *store*, so "gated" means the gate was the last thing to
+    run before the durable write. Hooking ``StageJournal.append`` instead would
+    only show that a gate ran somewhere inside the call, which is the weaker
+    property `F-2` found insufficient.
+    """
     lab.open_episode()
     gated: list[str] = []
-    real_append = lab.module.StageJournal.append
+    inside_gate = [0]
+    real_store_append = lab.module.EvidenceStore.append
     real_guard = lab.module.EpisodeContext.require_safe_directory
 
     def counting_guard(self: Any) -> Any:
         gated.append("gate")
-        return real_guard(self)
+        inside_gate[0] += 1
+        try:
+            return real_guard(self)
+        finally:
+            inside_gate[0] -= 1
 
-    def recording_append(self: Any, event: str, fields: Any = None) -> None:
-        gated.append(event)
-        real_append(self, event, fields)
+    def recording_append(self: Any, path: Path, payload: bytes) -> None:
+        event = _event_of(payload)
+        if event:
+            gated.append(event)
+        real_store_append(self, path, payload)
 
     monkeypatch.setattr(lab.module.EpisodeContext, "require_safe_directory", counting_guard)
-    monkeypatch.setattr(lab.module.StageJournal, "append", recording_append)
+    monkeypatch.setattr(lab.module.EvidenceStore, "append", recording_append)
     assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
     events = [entry for entry in gated if entry != "gate"]
     assert len(events) == 9
-    # Every event is immediately preceded by a gate run.
+    # Every durable event write is immediately preceded by a gate run.
     for index, entry in enumerate(gated):
         if entry != "gate":
-            assert gated[index - 1] == "gate", f"{entry} was not gated"
+            assert index > 0, f"{entry} was written before any gate ran"
+            assert gated[index - 1] == "gate", f"{entry} was not gated immediately"
+
+
+# ===========================================================================
+# AC. PA3-R1 / PA3-R2 — cross-command continuity anchor and seal ordering
+#
+# F-1: episode path identity was measured fresh by every command, so a
+# real-directory-for-real-directory substitution *between* commands passed
+# reparse and containment, presented a copied core, and silently established a
+# fresh trust root.  F-2: the gate authorizing ``stage_sealed`` ran before the
+# record was even built, leaving Python-level work between the check and the
+# write it guarded.
+# ===========================================================================
+
+#: The founder-amended seven-field manifest set, transcribed from
+#: ``evidence-contract.md`` §15.4 as amended by ``PA3-AMD-2``.  It is an expected
+#: value taken from the P-A1 document, never one discovered from the module.
+EXPECTED_MANIFEST_FIELDS = (
+    "schema_version",
+    "episode_identity",
+    "episode_path_identity",
+    "episode_core",
+    "records",
+    "terminal_disposition",
+    "manifest_sealed_at",
+)
+
+EXPECTED_MANIFEST_SCHEMA_VERSION = "mesc-p01-04d-execution-evidence/episode-manifest/v1"
+
+
+def _park_and_substitute_real_directory(lab: Lab) -> Path:
+    """Substitute a *different* real directory carrying byte-identical contents.
+
+    This is the F-1 attacker: not a symlink, not a junction, not an escape from
+    the evidence root.  A genuine directory, inside the root, whose every byte
+    was copied from the real episode — including ``episode-core.json``.  Reparse
+    and containment cannot see it, and neither can any check that reads only what
+    lies inside the directory.
+
+    The parked original keeps its inode, because a same-volume move is a rename.
+    That is deliberate: path identity names the directory *object*, so the
+    returned path is still the authorized episode and the substitute is not.
+    """
+    original = lab.directory
+    parked = lab.evidence_root / f"{lab.episode_id}-parked"
+    shutil.move(str(original), str(parked))
+    shutil.copytree(str(parked), str(original))
+    return parked
+
+
+def test_s2_t1_between_command_directory_replacement_is_refused(lab: Lab) -> None:
+    """S2-T1: a swap between two commands cannot bootstrap itself as the continuation."""
+    lab.open_episode()
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+    held = lab.continuity
+
+    parked = _park_and_substitute_real_directory(lab)
+    # Invisible to every in-directory check: the bytes are identical.
+    assert digest_tree(lab.directory) == digest_tree(parked)
+    assert lab.module.measure_episode_path_identity(lab.directory) != (
+        lab.module.measure_episode_path_identity(parked)
+    )
+
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.generate_argv("B", continuity=held), runner=lab.producing_runner("B"))
+    # No new stage was opened or sealed in the substitute. Its copy of the
+    # Generation A journal is of course still a copy — that is the attack, and
+    # what matters is that it can never be advanced or terminalized.
+    assert not (lab.directory / "stage-generate-b.jsonl").exists()
+    assert digest_tree(lab.directory) == digest_tree(parked)
+
+    # The replacement can never be terminalized either.
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.finalize_argv(continuity=held))
+    assert not (lab.directory / "episode-manifest.json").exists()
+
+
+def test_s2_t2_history_rewind_by_replacement_is_refused(lab: Lab) -> None:
+    """S2-T2: erasing a sealed history by directory replacement does not replay it."""
+    lab.open_episode()
+    failing = make_runner(lab.module, exit_code=3, stderr=b"synthetic operator failure\n")
+    assert lab.run(lab.generate_argv("A"), runner=failing) == 1
+    events = lab.journal("stage-generate-a.jsonl")
+    assert events[-1]["stage_disposition"] == "STAGE_FAILED"
+    held = lab.continuity
+
+    # The attacker rewinds to a fresh directory holding only the copied core.
+    original = lab.directory
+    parked = lab.evidence_root / f"{lab.episode_id}-rewound"
+    shutil.move(str(original), str(parked))
+    original.mkdir()
+    shutil.copy2(parked / "episode-core.json", original / "episode-core.json")
+
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.generate_argv("A", continuity=held), runner=lab.producing_runner("A"))
+    assert not (original / "stage-generate-a.jsonl").exists()
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.finalize_argv(continuity=held))
+    assert not (original / "episode-manifest.json").exists()
+
+
+def test_s2_t2b_in_place_history_rewind_is_refused_by_the_digest_chain(lab: Lab) -> None:
+    """S2-T2b: the rewind identity alone cannot see — same object, deleted history.
+
+    ``st_ino`` is unchanged here, so a continuity anchor built on path identity
+    alone would accept this.  Covering the exact bytes of every record present is
+    what refuses it, which is why the digest chain is not optional.
+    """
+    lab.open_episode()
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+    held = lab.continuity
+    before = lab.module.measure_episode_path_identity(lab.directory)
+
+    (lab.directory / "stage-generate-a.jsonl").unlink()
+    assert lab.module.measure_episode_path_identity(lab.directory) == before
+
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.generate_argv("A", continuity=held), runner=lab.producing_runner("A"))
+    assert not (lab.directory / "stage-generate-a.jsonl").exists()
+
+
+def _write_call_trace(lab: Lab, monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """Record gate runs, preparation steps and durable writes in real order.
+
+    Instrumenting the *store* is what makes this discriminating.  A gate that
+    merely ran somewhere earlier still appears before the write; only the
+    preparation steps showing up between the two reveal that the check was
+    authorizing a write in its own future.
+
+    Work performed *inside* the gate is not work between the gate and the write,
+    so nested calls are suppressed while the guard is on the stack — the gate
+    itself serializes a ``(st_dev, st_ino)`` pair to measure identity.
+    """
+    trace: list[str] = []
+    inside_gate = [0]
+    real_guard = lab.module.EpisodeContext.require_safe_directory
+    real_serialize = lab.module.canonical_json_bytes
+    real_safe_path = lab.module.require_safe_evidence_path
+    real_size = lab.module._byte_size
+    real_append = lab.module.EvidenceStore.append
+
+    def record_step(name: str) -> None:
+        if not inside_gate[0]:
+            trace.append(name)
+
+    def guard(self: Any) -> Any:
+        trace.append("GATE")
+        inside_gate[0] += 1
+        try:
+            return real_guard(self)
+        finally:
+            inside_gate[0] -= 1
+
+    def serialize(record: Any) -> Any:
+        record_step("SERIALIZE")
+        return real_serialize(record)
+
+    def safe_path(path: Path) -> Any:
+        record_step("PATH")
+        return real_safe_path(path)
+
+    def size(path: Path) -> Any:
+        record_step("SIZE")
+        return real_size(path)
+
+    def append(self: Any, path: Path, payload: bytes) -> None:
+        trace.append(f"WRITE:{_event_of(payload)}")
+        real_append(self, path, payload)
+
+    monkeypatch.setattr(lab.module.EpisodeContext, "require_safe_directory", guard)
+    monkeypatch.setattr(lab.module, "canonical_json_bytes", serialize)
+    monkeypatch.setattr(lab.module, "require_safe_evidence_path", safe_path)
+    monkeypatch.setattr(lab.module, "_byte_size", size)
+    monkeypatch.setattr(lab.module.EvidenceStore, "append", append)
+    return trace
+
+
+def test_s2_t3_the_gate_is_the_last_step_before_every_durable_write(
+    lab: Lab, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """S2-T3: nothing runs between the authorizing gate and the write it guards."""
+    lab.open_episode()
+    trace = _write_call_trace(lab, monkeypatch)
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+
+    seal = trace.index("WRITE:stage_sealed")
+    assert trace[seal - 1] == "GATE", trace[max(0, seal - 6) : seal + 1]
+    for position, entry in enumerate(trace):
+        if entry.startswith("WRITE:"):
+            assert trace[position - 1] == "GATE", f"{entry} was not gated immediately"
+
+
+def test_s2_t4_the_post_write_gate_is_defence_in_depth_only(
+    lab: Lab, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """S2-T4: security does not rest on noticing drift after the bytes landed.
+
+    The seal keeps a gate after the write, but it is a reporter.  What must hold
+    is that the authorizing gate already ran with no preparation between it and
+    the write, so deleting the post-write gate could not make an unauthorized
+    seal durable.
+    """
+    lab.open_episode()
+    trace = _write_call_trace(lab, monkeypatch)
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+
+    seal = trace.index("WRITE:stage_sealed")
+    before_seal = trace[:seal]
+    last_gate = len(before_seal) - 1 - before_seal[::-1].index("GATE")
+    # Preparation completes before the authorizing gate, never after it.
+    assert not any(step in trace[last_gate + 1 : seal] for step in ("SERIALIZE", "PATH", "SIZE"))
+    # A gate does follow the write, and it is not what authorized it.
+    assert "GATE" in trace[seal + 1 :]
+
+
+def test_s2_t5_the_expected_token_comes_from_argv_and_nowhere_else(lab: Lab) -> None:
+    """S2-T5: no episode-local file carries a value that could stand in for the token."""
+    lab.complete_success()
+    held = lab.continuity
+    assert len(held) == 64
+
+    for path in sorted(lab.directory.iterdir()):
+        payload = path.read_bytes()
+        assert held.encode() not in payload, f"{path.name} carries the continuity token"
+        assert b"expect-continuity" not in payload
+        assert b"continuity_token" not in payload
+
+    assert lab.run(lab.finalize_argv()) == 0
+    for path in sorted(lab.directory.iterdir()):
+        assert held.encode() not in path.read_bytes()
+
+
+def test_s2_t5b_a_missing_token_is_refused_and_never_defaulted(lab: Lab) -> None:
+    """S2-T5b: the argument is required, so no command can fall back to a default."""
+    lab.open_episode()
+    for argv in (
+        lab.generate_argv("A"),
+        lab.compare_argv(),
+        lab.verify_argv(),
+        lab.invalidate_argv(failure_class="UNCLASSIFIED", causal_stage="OPEN"),
+        lab.finalize_argv(),
+    ):
+        stripped = list(argv)
+        position = stripped.index("--expect-continuity")
+        del stripped[position : position + 2]
+        with pytest.raises(SystemExit) as refusal:
+            lab.module.build_parser().parse_args(stripped)
+        assert refusal.value.code == 2
+    # ``open`` is the one command with no predecessor, so it accepts no token.
+    with pytest.raises(SystemExit):
+        lab.module.build_parser().parse_args([*lab.open_argv(), "--expect-continuity", "0" * 64])
+
+
+@pytest.mark.parametrize("case", ["wrong", "stale", "foreign", "pre-swap"])
+def test_s2_t6_token_substitution_and_replay_are_refused(lab: Lab, case: str) -> None:
+    """S2-T6: wrong, stale, foreign and pre-swap tokens each fail closed."""
+    lab.open_episode()
+    genesis = lab.continuity
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+    current = lab.continuity
+
+    if case == "wrong":
+        supplied = "0" * 64
+    elif case == "stale":
+        # token_0 replayed at step 1: the state has advanced past it.
+        supplied = genesis
+        assert supplied != current
+    elif case == "foreign":
+        other = Lab(
+            module=lab.module,
+            repository_root=lab.repository_root,
+            evidence_root=lab.evidence_root,
+            workspace_a=lab.workspace_a,
+            workspace_b=lab.workspace_b,
+            future_evidence_root=lab.future_evidence_root,
+            inputs=lab.inputs,
+            episode_id="episode-foreign",
+        )
+        other.open_episode()
+        supplied = other.continuity
+    else:
+        # The token derived from the genuine directory, offered against a copy.
+        _park_and_substitute_real_directory(lab)
+        supplied = current
+
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.generate_argv("B", continuity=supplied), runner=lab.producing_runner("B"))
+    assert not (lab.directory / "stage-generate-b.jsonl").exists()
+
+
+def test_s2_t7_negative_control_ordinary_continuation_seals_normally(lab: Lab) -> None:
+    """S2-T7: the honest sequence advances a token at every step and seals EQUAL."""
+    tokens: list[str] = []
+    lab.open_episode()
+    tokens.append(lab.continuity)
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+    tokens.append(lab.continuity)
+    assert lab.run(lab.generate_argv("B"), runner=lab.producing_runner("B")) == 0
+    tokens.append(lab.continuity)
+    assert lab.run(lab.compare_argv(), runner=make_runner(lab.module)) == 0
+    tokens.append(lab.continuity)
+    assert lab.run(lab.verify_argv(), runner=make_runner(lab.module)) == 0
+    tokens.append(lab.continuity)
+
+    assert len(set(tokens)) == len(tokens), "the token must advance at every step"
+    assert all(len(token) == 64 for token in tokens)
+    assert lab.run(lab.finalize_argv()) == 0
+    assert lab.manifest()["terminal_disposition"] == "EPISODE_COMPLETE_EQUAL"
+
+
+def test_s2_t8_manifest_binds_path_identity_at_seven_fields_on_v1(lab: Lab) -> None:
+    """S2-T8: the founder-authorized seven-field manifest, still on the v1 literal."""
+    lab.complete_success()
+    assert lab.run(lab.finalize_argv()) == 0
+    manifest = lab.manifest()
+
+    assert len(EXPECTED_MANIFEST_FIELDS) == 7
+    assert tuple(sorted(manifest)) == tuple(sorted(EXPECTED_MANIFEST_FIELDS))
+    assert lab.module.EPISODE_MANIFEST_FIELDS == EXPECTED_MANIFEST_FIELDS
+    assert manifest["schema_version"] == EXPECTED_MANIFEST_SCHEMA_VERSION
+    assert lab.module.EPISODE_MANIFEST_SCHEMA_VERSION == EXPECTED_MANIFEST_SCHEMA_VERSION
+    assert "v2" not in str(manifest["schema_version"])
+    assert manifest["episode_path_identity"] == (
+        lab.module.measure_episode_path_identity(lab.directory)
+    )
+
+
+def test_s2_t8b_a_relocated_manifest_has_no_terminal_identity(lab: Lab) -> None:
+    """S2-T8b: §15.4's verifier obligation — a copied manifest is TM-1 where it sits."""
+    lab.complete_success()
+    assert lab.run(lab.finalize_argv()) == 0
+    assert lab.module.classify_terminal_manifest(lab.directory) == lab.module.TM_VALID
+
+    parked = _park_and_substitute_real_directory(lab)
+    assert (parked / "episode-manifest.json").read_bytes() == (
+        (lab.directory / "episode-manifest.json").read_bytes()
+    )
+    # The substitute holds identical bytes and has no terminal identity at all.
+    assert lab.module.classify_terminal_manifest(lab.directory) == lab.module.TM_INVALID
+    with pytest.raises(lab.module.EpisodeStateError):
+        lab.module.terminal_identity(lab.directory)
+    # The binding follows the directory object, not the path: the renamed
+    # original is still the sealed episode.
+    assert lab.module.classify_terminal_manifest(parked) == lab.module.TM_VALID
+
+
+def test_s2_t9_an_in_directory_anchor_never_becomes_a_trust_source(lab: Lab) -> None:
+    """S2-T9: planting the token inside the episode does not let a command use it."""
+    lab.open_episode()
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+    held = lab.continuity
+
+    _park_and_substitute_real_directory(lab)
+    # The attacker plants the anchor the abandoned design would have trusted.
+    for name in ("episode-path-identity.json", ".continuity", "episode-continuity.json"):
+        (lab.directory / name).write_text(
+            json.dumps({"episode_path_identity": held, "continuity_token": held}),
+            encoding="utf-8",
+        )
+
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.generate_argv("B", continuity=held), runner=lab.producing_runner("B"))
+    assert "episode-path-identity.json" not in EXPECTED_EVIDENCE_FILENAMES
+    assert len(EXPECTED_EVIDENCE_FILENAMES) == 7
+
+
+def test_s2_t9b_the_token_covers_only_the_closed_inventory(lab: Lab) -> None:
+    """S2-T9b: a planted non-evidence file cannot perturb the anchor either way."""
+    lab.open_episode()
+    before = lab.continuity
+    (lab.directory / "episode-path-identity.json").write_text("{}", encoding="utf-8")
+    identity = lab.module.measure_episode_path_identity(lab.directory)
+    assert lab.module.measure_continuity_token(lab.directory, identity) == before
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+
+
+def _fresh_context(lab: Lab) -> Any:
+    return lab.module.open_episode_context(
+        episode_id=lab.episode_id,
+        repository_root=lab.repository_root,
+        evidence_root=lab.evidence_root,
+        store=lab.module.EvidenceStore(),
+        expected_continuity=lab.continuity,
+    )
+
+
+def test_s2_pin_failure_on_a_capable_platform_is_terminal(
+    lab: Lab, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """F-5: acquisition failure where pinning works is a refusal, never a silent yield."""
+    lab.open_episode()
+    context = _fresh_context(lab)
+    monkeypatch.setattr(lab.module, "_PIN_CAPABLE_PLATFORM", True)
+    (lab.directory / "episode-core.json").unlink()
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError), context.pinned():
+        pytest.fail("the write-bearing span must not run unpinned on a capable platform")
+
+
+def test_s2_pin_incapable_platform_is_an_explicit_documented_branch(
+    lab: Lab, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """F-5: the incapable branch is chosen by capability, not by catching OSError."""
+    lab.open_episode()
+    context = _fresh_context(lab)
+    monkeypatch.setattr(lab.module, "_PIN_CAPABLE_PLATFORM", False)
+    (lab.directory / "episode-core.json").unlink()
+    entered = False
+    with context.pinned():
+        entered = True
+    assert entered, "the incapable platform proceeds detection-only"
+
+    source = HARNESS_PATH.read_text(encoding="utf-8")
+    pinned = source.split("    def pinned(")[1].split("\n    def ")[0]
+    assert "_PIN_CAPABLE_PLATFORM" in pinned
+    assert "raise EpisodePathIdentityDriftError" in pinned
+    # No bare swallow: the only OSError handler re-raises.
+    assert "except OSError:" not in pinned
+
+
+def test_s2_continuity_token_is_derived_through_the_frozen_serializer(lab: Lab) -> None:
+    """The token is a pure function of the directory object and its exact bytes."""
+    from medscale.mesc._canonical_json_v1 import canonical_json_bytes, sha256_of_bytes
+
+    lab.open_episode()
+    identity = lab.module.measure_episode_path_identity(lab.directory)
+    evidence = lab.module.evidence_state_digests(lab.directory)
+    expected = sha256_of_bytes(
+        canonical_json_bytes(
+            {
+                "schema": lab.module.CONTINUITY_TOKEN_SCHEMA,
+                "episode_path_identity": identity,
+                "evidence": list(evidence),
+            }
+        )
+    )
+    assert lab.module.measure_continuity_token(lab.directory, identity) == expected
+    assert lab.continuity == expected

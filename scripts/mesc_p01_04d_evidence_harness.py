@@ -570,6 +570,12 @@ _O_BINARY: Final[int] = getattr(os, "O_BINARY", 0)
 _EXCLUSIVE_FLAGS: Final[int] = os.O_CREAT | os.O_EXCL | os.O_WRONLY | _O_BINARY
 _REPARSE_ATTRIBUTE: Final[int] = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
 
+#: Whether this platform makes an open handle inside a directory prevent that
+#: directory from being renamed or deleted.  Windows does; POSIX does not, where
+#: an open descriptor keeps the *inode* alive but never blocks the rename.  The
+#: capability decides which ``EpisodeContext.pinned`` branch is correct (F-5).
+_PIN_CAPABLE_PLATFORM: Final[bool] = os.name == "nt"
+
 _HEX_DIGITS: Final = frozenset("0123456789abcdef")
 _COMMIT_LENGTH: Final = 40
 _EPISODE_ID_MINIMUM: Final = 3
@@ -813,6 +819,90 @@ def require_safe_evidence_path(path: Path) -> Path:
 
 
 # ---------------------------------------------------------------------------
+# Cross-command continuity anchor (PA3-R1, founder-authorization.md §8D)
+# ---------------------------------------------------------------------------
+
+#: Domain separator for the continuity digest, so a token can never collide with
+#: any other digest this harness derives.
+CONTINUITY_TOKEN_SCHEMA: Final = "mesc-p01-04d-execution-evidence/continuity-token/v1"
+
+#: The exact stdout label the operator reads the next token from.  The token is
+#: emitted and never persisted: it exists on stdout and in operator custody only.
+CONTINUITY_TOKEN_LABEL: Final = "continuity_token"
+
+
+def evidence_state_digests(episode_directory: Path) -> tuple[Mapping[str, object], ...]:
+    """Digest every evidence file currently present, in the fixed inventory order.
+
+    Identity alone cannot see a history rewind performed *in place* — the same
+    directory object with journals deleted or replaced keeps its ``st_ino``.
+    Covering the exact bytes of every present record is what closes that variant,
+    and because the inventory is append-only the digest set advances by
+    construction at every successful command.
+    """
+    present: list[Mapping[str, object]] = []
+    for filename in EVIDENCE_FILENAMES:
+        path = episode_directory / filename
+        if not path.is_file():
+            continue
+        digest, size = sha256_of_file(path)
+        present.append({"filename": filename, "sha256": digest, "byte_size": size})
+    return tuple(present)
+
+
+def derive_continuity_token(
+    *, episode_path_identity: str, evidence: Sequence[Mapping[str, object]]
+) -> str:
+    """Reduce one episode state to the operator-held continuity token.
+
+    The reduction runs through the frozen canonical serializer, which is called
+    and never modified, so the token is a deterministic function of the episode
+    directory *object* and of the exact bytes of every record inside it.
+    """
+    return sha256_of_bytes(
+        canonical_json_bytes(
+            {
+                "schema": CONTINUITY_TOKEN_SCHEMA,
+                "episode_path_identity": episode_path_identity,
+                "evidence": list(evidence),
+            }
+        )
+    )
+
+
+def measure_continuity_token(episode_directory: Path, episode_path_identity: str) -> str:
+    """Return the continuity token of the episode state as it exists right now."""
+    return derive_continuity_token(
+        episode_path_identity=episode_path_identity,
+        evidence=evidence_state_digests(episode_directory),
+    )
+
+
+def require_episode_continuity(
+    episode_directory: Path, episode_path_identity: str, expected: str
+) -> None:
+    """Refuse unless the live episode state is the one the operator is continuing.
+
+    ``expected`` arrives from argv and from nowhere else.  There is deliberately
+    no fallback that reads it from the episode directory, because an attacker who
+    can substitute the directory controls every byte inside it: a token the
+    harness could recover from disk is a token the attacker could supply, and the
+    anchor would be back inside the attacker's own object.
+
+    The measured identity is therefore never trusted on its own authority.  It is
+    admitted only when the operator-held token confirms it, which is what makes a
+    real-directory-for-real-directory substitution between two commands fail
+    closed instead of silently establishing a fresh trust root.
+    """
+    observed = measure_continuity_token(episode_directory, episode_path_identity)
+    if observed != expected:
+        raise EpisodePathIdentityDriftError(
+            "the episode state does not match the supplied continuity token; this "
+            "episode directory is not provably the authorized continuation"
+        )
+
+
+# ---------------------------------------------------------------------------
 # Independent repository-identity resolver (§5.3, PA1-FD-4)
 # ---------------------------------------------------------------------------
 
@@ -993,18 +1083,34 @@ def _byte_size(path: Path) -> int:
         return 0
 
 
-def append_canonical_event(store: EvidenceStore, path: Path, record: Mapping[str, object]) -> None:
+def append_canonical_event(
+    store: EvidenceStore,
+    path: Path,
+    record: Mapping[str, object],
+    *,
+    gate: Callable[[], object] | None = None,
+) -> None:
     """Append one canonical event, classifying a failure as case A or case B (§18.1).
 
     A failure that added or changed no byte leaves the journal well formed and
     raises ``EvidenceWriteFailureError``.  A failure that left partial bytes
     preserves them exactly and raises ``EvidenceMalformedPreservedError``: the
     bytes are never truncated, repaired or patched.
+
+    **Ordering is a security property (PA3-R2, F-2).**  Every piece of work that
+    could otherwise sit between the authorization gate and the write it guards —
+    record construction, canonical serialization, reparse re-derivation and the
+    pre-write size observation — is completed *first*.  ``gate`` then runs as the
+    immediately preceding statement, so nothing but the write syscall itself
+    follows it.  A gate that ran before that preparation would be authorizing a
+    write several hundred microseconds to several milliseconds in its future.
     """
     payload = canonical_json_bytes(record)
     # A durable evidence path that has become a redirect is never appended to.
     require_safe_evidence_path(path)
     before = _byte_size(path)
+    if gate is not None:
+        gate()
     try:
         store.append(path, payload)
     except OSError as error:
@@ -1132,11 +1238,11 @@ class StageJournal:
     def append(self, event: str, fields: Mapping[str, object] | None = None) -> None:
         """Append one complete canonical event, advancing the ordinal only on success.
 
-        The ordered episode-path gate runs first, so no stage event is written
-        to a directory that is no longer provably the authorized one.
+        The ordered episode-path gate is handed to ``append_canonical_event`` so
+        that it runs as the last statement before the write syscall rather than
+        before the record is even built, and no stage event is written to a
+        directory that is no longer provably the authorized one.
         """
-        if self.guard is not None:
-            self.guard()
         record: dict[str, object] = {
             "schema_version": STAGE_EVENT_SCHEMA_VERSION,
             "episode_identity": self.episode_identity,
@@ -1146,7 +1252,7 @@ class StageJournal:
         }
         if fields:
             record.update(fields)
-        append_canonical_event(self.store, self.path, record)
+        append_canonical_event(self.store, self.path, record, gate=self.guard)
         self.ordinal += 1
 
     def observe_repository(self, expected: str, observed: str, mode: str) -> None:
@@ -1161,11 +1267,16 @@ class StageJournal:
         )
 
     def seal(self, disposition: str) -> None:
-        """Emit ``stage_sealed`` between two runs of the ordered gate (PA2G-R1 D3).
+        """Emit ``stage_sealed`` with the authorizing gate strictly before the write.
 
-        The gate runs before the seal is written and again immediately after,
-        so a swap in the residual window is still refused rather than yielding
-        a clean sealed stage.
+        ``append`` prepares the record, serializes it and re-derives the path
+        first, then runs the ordered episode-path gate as the last statement
+        before the write syscall.  That gate — not the one below — is what
+        authorizes these bytes to become durable (PA3-R2, F-2).
+
+        The second gate is **defence in depth and nothing more**.  It reports a
+        substitution that happened after the bytes landed; it cannot unwrite
+        them, and no security claim here rests on it.
         """
         self.append("stage_sealed", {"stage_disposition": disposition})
         if self.guard is not None:
@@ -1473,14 +1584,32 @@ class EpisodeContext:
         An open handle on a file inside the directory makes the directory
         undeletable and unrenamable on Windows, so the swap the gate would
         otherwise only detect cannot be performed at all while the span runs.
-        Where the platform does not offer that guarantee the span is unaffected
-        and the ordered gate remains the protection.
+
+        The two reasons a pin may be absent are **not** interchangeable, and
+        collapsing them is what `F-5` found (PA3-R2):
+
+        * the platform does not offer the guarantee at all — an explicit,
+          documented branch that proceeds detection-only, because the ordered
+          gate is the protection there and always was;
+        * the platform does offer it and acquisition *failed* — a terminal
+          refusal, because an attacker who can make ``episode-core.json``
+          unopenable would otherwise silently convert prevention into
+          detection-only at exactly the moment prevention matters.
+
+        The branch is selected by a platform capability check, never by catching
+        the exception, so a real acquisition failure can never be mistaken for an
+        incapable platform.
         """
-        try:
-            handle = (self.directory / EPISODE_CORE_FILENAME).open("rb")
-        except OSError:
+        if not _PIN_CAPABLE_PLATFORM:
             yield
             return
+        try:
+            handle = (self.directory / EPISODE_CORE_FILENAME).open("rb")
+        except OSError as error:
+            raise EpisodePathIdentityDriftError(
+                "the episode directory could not be pinned on a platform that "
+                "supports pinning; the write-bearing span is refused"
+            ) from error
         try:
             yield
         finally:
@@ -1502,11 +1631,17 @@ def open_episode_context(
     repository_root: Path,
     evidence_root: Path,
     store: EvidenceStore,
+    expected_continuity: str,
 ) -> EpisodeContext:
     """Run the PRE-STAGE gates in their exact fixed order (§21.1).
 
     A failure here is a harness or process refusal: it creates no stage journal,
     fabricates no stage and implies no automatic invalidation.
+
+    Every command except ``open`` reaches the episode through this function, so
+    ``expected_continuity`` is required rather than optional: there is no code
+    path on which a post-``open`` command establishes a trust root without the
+    operator-held token confirming it (PA3-R1, F-1).
     """
     # 1. arguments; 2. evidence location; 3. path separation and reparse safety
     require_episode_id(episode_id)
@@ -1518,6 +1653,10 @@ def open_episode_context(
     episode_path_identity = require_safe_episode_directory(directory, evidence_root)
     if not directory.is_dir():
         raise EpisodeStateError(f"episode does not exist: {directory}")
+    # The freshly measured identity is not yet authorized. The external token is
+    # checked before episode-core is even parsed, so a substituted directory is
+    # refused before any byte inside it is interpreted.
+    require_episode_continuity(directory, episode_path_identity, expected_continuity)
     core = load_episode_core(directory)
     if core.fields["episode_id"] != episode_id:
         raise EpisodeStateError("episode-core episode_id disagrees with the supplied identifier")
@@ -1904,9 +2043,13 @@ def require_input_agreement(
 # ---------------------------------------------------------------------------
 
 #: The exact and closed ``episode-manifest.json`` field set (§15.4).
+#: Exact and closed at seven fields. ``episode_path_identity`` was admitted by the
+#: P-A3 founder amendment (PA3-AMD-2, §15.4); the schema version is deliberately
+#: unchanged, and the seven-field set is what the v1 literal now denotes.
 EPISODE_MANIFEST_FIELDS: Final[tuple[str, ...]] = (
     "schema_version",
     "episode_identity",
+    "episode_path_identity",
     "episode_core",
     "records",
     "terminal_disposition",
@@ -1951,6 +2094,18 @@ def _is_valid_terminal_manifest(episode_directory: Path, path: Path) -> bool:
     if decoded["schema_version"] != EPISODE_MANIFEST_SCHEMA_VERSION:
         return False
     if decoded["terminal_disposition"] not in TERMINAL_DISPOSITIONS:
+        return False
+    # §15.4: a verifier recomputing the identity of the directory it found the
+    # manifest in MUST compare it to this field and MUST treat a mismatch as
+    # terminal. A manifest that escaped its episode directory therefore has no
+    # terminal identity wherever it is read from.
+    bound_identity = decoded["episode_path_identity"]
+    if not isinstance(bound_identity, str):
+        return False
+    try:
+        if measure_episode_path_identity(episode_directory) != bound_identity:
+            return False
+    except EpisodePathIdentityDriftError:
         return False
     core = decoded["episode_core"]
     if not _is_valid_binding(core, countable=False):
@@ -2173,9 +2328,12 @@ def command_open(arguments: argparse.Namespace, store: EvidenceStore) -> int:
     except FileExistsError as error:
         raise EpisodeStateError("episode-core.json already exists; write-once") from error
     identity = sha256_of_bytes(payload)
+    # token_0. Every later command must be handed this value on argv.
+    path_identity = require_safe_episode_directory(directory, evidence_root)
     _report(
         f"episode {episode_id} opened",
         f"episode_identity {identity}",
+        f"{CONTINUITY_TOKEN_LABEL} {measure_continuity_token(directory, path_identity)}",
     )
     return 0
 
@@ -2200,6 +2358,7 @@ def command_generate(
         repository_root=repository_root,
         evidence_root=evidence_root,
         store=store,
+        expected_continuity=arguments.expect_continuity,
     )
     require_scientific_continuation(context)
     inputs = {surface: resolve_safe_path(getattr(arguments, surface)) for surface in INPUT_SURFACES}
@@ -2232,7 +2391,9 @@ def command_generate(
             body=body,
             runner=runner,
         )
-    return _report_stage(outcome)
+    exit_code = _report_stage(outcome)
+    _report_continuity(context)
+    return exit_code
 
 
 def _compare_context(
@@ -2249,6 +2410,7 @@ def _compare_context(
         repository_root=repository_root,
         evidence_root=evidence_root,
         store=store,
+        expected_continuity=arguments.expect_continuity,
     )
     require_scientific_continuation(context)
     runtime = resolve_runtime_identity()
@@ -2284,7 +2446,9 @@ def command_compare(
             body=body,
             runner=runner,
         )
-    return _report_stage(outcome)
+    exit_code = _report_stage(outcome)
+    _report_continuity(context)
+    return exit_code
 
 
 def command_verify(arguments: argparse.Namespace, store: EvidenceStore, runner: ChildRunner) -> int:
@@ -2314,7 +2478,9 @@ def command_verify(arguments: argparse.Namespace, store: EvidenceStore, runner: 
             body=body,
             runner=runner,
         )
-    return _report_stage(outcome)
+    exit_code = _report_stage(outcome)
+    _report_continuity(context)
+    return exit_code
 
 
 def command_invalidate(arguments: argparse.Namespace, store: EvidenceStore) -> int:
@@ -2326,6 +2492,7 @@ def command_invalidate(arguments: argparse.Namespace, store: EvidenceStore) -> i
         repository_root=repository_root,
         evidence_root=evidence_root,
         store=store,
+        expected_continuity=arguments.expect_continuity,
     )
     if context.manifest_path.exists():
         raise EpisodeStateError("the episode is sealed or terminalized; invalidation is pre-seal")
@@ -2374,14 +2541,19 @@ def command_invalidate(arguments: argparse.Namespace, store: EvidenceStore) -> i
             "expected_canonical_commit": expected,
             "observed_canonical_commit": observed,
         }
-    # The episode directory and the invalidation path are re-validated before the append.
+    # The episode directory and the invalidation path are re-validated before the
+    # append, and the gate is handed to the appender so that it runs immediately
+    # before the write syscall rather than before the create-if-absent step.
     with context.pinned():
         context.require_safe_directory()
         require_safe_evidence_path(context.invalidation_path)
         if not context.invalidation_path.exists():
             store.create_exclusive(context.invalidation_path, b"")
-        append_canonical_event(store, context.invalidation_path, record)
+        append_canonical_event(
+            store, context.invalidation_path, record, gate=context.require_safe_directory
+        )
     _report(f"invalidation recorded: {observed_class} / {root_cause} / {remediation}")
+    _report_continuity(context)
     return 0
 
 
@@ -2410,6 +2582,7 @@ def command_finalize(arguments: argparse.Namespace, store: EvidenceStore) -> int
         repository_root=repository_root,
         evidence_root=evidence_root,
         store=store,
+        expected_continuity=arguments.expect_continuity,
     )
     # The episode directory and the manifest path are validated before the
     # terminal-manifest state is even classified.
@@ -2439,6 +2612,11 @@ def command_finalize(arguments: argparse.Namespace, store: EvidenceStore) -> int
     manifest: dict[str, object] = {
         "schema_version": EPISODE_MANIFEST_SCHEMA_VERSION,
         "episode_identity": context.core.identity,
+        # Measured at open and re-confirmed immediately below, before the write
+        # (§15.4, PA3-AMD-2). This is the post-hoc binding: a verifier reading the
+        # manifest anywhere recomputes the identity of the directory it found it
+        # in, and a relocated manifest is TM-1 rather than a clean terminal seal.
+        "episode_path_identity": context.episode_path_identity,
         "episode_core": survey.core_binding,
         "records": survey.record_bindings,
         "terminal_disposition": disposition,
@@ -2495,6 +2673,22 @@ def _report(*lines: str) -> None:
         sys.stdout.write(f"{line}\n")
 
 
+def _report_continuity(context: EpisodeContext) -> None:
+    """Emit the next continuity token, which exists on stdout and nowhere else.
+
+    The token is deliberately **not** written into ``episode-core.json``, into the
+    manifest, into any journal, into a sidecar or into any other file under the
+    episode directory.  Persisting it there would hand the next command's
+    authority to whoever controls that directory, which is the whole of `F-1`.
+    Operator custody of this line is the mechanism, not a convenience.
+
+    The gate runs first, so a directory that drifted during the command emits no
+    token at all and the episode simply cannot be continued.
+    """
+    identity = context.require_safe_directory()
+    _report(f"{CONTINUITY_TOKEN_LABEL} {measure_continuity_token(context.directory, identity)}")
+
+
 def _report_stage(outcome: StageOutcome) -> int:
     if outcome.structurally_unsealed:
         _report(
@@ -2529,6 +2723,19 @@ def _add_episode_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--external-evidence-root", required=True)
 
 
+def _add_continuity_argument(parser: argparse.ArgumentParser) -> None:
+    """Require the operator-held continuity token on every command after ``open``.
+
+    ``required=True`` is the control. An optional token would be a token with a
+    default, and a default is a fallback: the first command that accepted a
+    missing value would re-open exactly the trust-root hole this closes.
+
+    §4 of the contract fixes the command set, not per-command argument sets
+    (`PA3-DET-1`), so adding this argument widens no stated contract.
+    """
+    parser.add_argument("--expect-continuity", required=True)
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Return the six-command harness parser. Every path argument is explicit."""
     parser = argparse.ArgumentParser(
@@ -2548,6 +2755,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     generate_parser = subparsers.add_parser("generate", help="run exactly one operator generate")
     _add_episode_arguments(generate_parser)
+    _add_continuity_argument(generate_parser)
     generate_parser.add_argument("--generation", required=True, choices=list(GENERATION_IDENTITIES))
     generate_parser.add_argument("--workspace", required=True)
     generate_parser.add_argument("--future-evidence-root", required=True)
@@ -2556,11 +2764,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     compare_parser = subparsers.add_parser("compare", help="run exactly one operator compare")
     _add_episode_arguments(compare_parser)
+    _add_continuity_argument(compare_parser)
     compare_parser.add_argument("--generation-a-workspace", required=True)
     compare_parser.add_argument("--generation-b-workspace", required=True)
 
     verify_parser = subparsers.add_parser("verify", help="rerun canonical compare for this episode")
     _add_episode_arguments(verify_parser)
+    _add_continuity_argument(verify_parser)
     verify_parser.add_argument("--generation-a-workspace", required=True)
     verify_parser.add_argument("--generation-b-workspace", required=True)
 
@@ -2568,6 +2778,7 @@ def build_parser() -> argparse.ArgumentParser:
         "invalidate", help="append one pre-seal invalidation record"
     )
     _add_episode_arguments(invalidate_parser)
+    _add_continuity_argument(invalidate_parser)
     invalidate_parser.add_argument("--failure-class", required=True, choices=list(FAILURE_CLASSES))
     invalidate_parser.add_argument("--causal-stage", required=True, choices=list(CAUSAL_STAGES))
     invalidate_parser.add_argument(
@@ -2577,6 +2788,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     finalize_parser = subparsers.add_parser("finalize", help="create the terminal manifest once")
     _add_episode_arguments(finalize_parser)
+    _add_continuity_argument(finalize_parser)
     return parser
 
 

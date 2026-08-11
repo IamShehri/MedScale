@@ -796,19 +796,51 @@ reported or exposed, which `R1-T6` asserts directly.
 
 #### 15.2.1 Residual window, disclosed
 
+**Both claims previously made in this subsection were false, and P-A3 was right
+to reject them.** They are replaced here rather than softened.
+
+The first claim was that the residual window is "the sub-syscall interval between
+the gate and the write it guards". It was not sub-syscall. At `303cc330` the gate
+ran before the record was even constructed, so the interval contained Python-level
+record construction, canonical serialization and path re-derivation. P-A3 measured
+it over the nine gated writes:
+
+```text
+measured gate-to-write interval at 303cc330, n = 9
+min     674.6 µs
+median 2245.7 µs
+max    6385.2 µs
+```
+
+Those are not syscall boundaries. The S2 correction closes the gap by completing
+every preparation step *before* the authorizing gate, so the gate is now the last
+statement executed before `store.append`. The instrumented ordering is asserted
+by `test_s2_t3_the_gate_is_the_last_step_before_every_durable_write`, and the
+discriminator against `303cc330` shows `['SERIALIZE', 'PATH', 'SIZE']` between
+gate and seal write there versus nothing here.
+
+The second claim was that a swap "in either position refuses with `rc=1` and no
+`stage_sealed`". That was wrong in the after-position: the durable bytes had
+already landed, so the run yields `rc=1` **and** a complete nine-event
+`STAGE_COMPLETE` journal outside the root. Both halves hold simultaneously. The
+post-write gate reports the escape; it cannot unwrite it.
+
 ```text
 prevention layer:  removes the swap entirely on hosts that pin an open directory
 detection layer:   refuses at the next gated write on every host
-residual window:   the sub-syscall interval between the gate and the write it
-                   guards, on hosts without the prevention guarantee
+residual window:   the write syscall itself, on hosts without the prevention
+                   guarantee — no Python-level work remains inside it
 ```
 
-A swap landing inside that interval could still place one record outside the
-root. It cannot yield a *clean sealed stage*: the seal is gated immediately
-before and re-verified immediately after, so a swap in either position refuses
-with `rc=1` and no `stage_sealed`. Eliminating the interval itself would require
-handle-relative writes (`dir_fd`), which CPython does not offer on this platform.
-That residual is disclosed rather than claimed closed.
+Eliminating even that would require handle-relative writes. The `dir_fd` claim is
+platform-scoped: CPython does not offer it on Windows, but on POSIX
+`os.open(..., O_DIRECTORY)` with `dir_fd`-relative writes **would** close it. The
+gap is therefore Windows-specific and a portability ticket, not a universal
+limit.
+
+What removes the *consequence* of an escaped stage is not this subsection but the
+cross-command anchor of §15.3: an escaped journal can never be advanced or
+terminalized, because the next command's continuity token will not match.
 
 #### 15.2.2 Manifest binding — not implemented, and why
 
@@ -819,22 +851,159 @@ manifest. **That is not implemented here**, because
 would violate a governing contract in order to satisfy a remediation directive.
 
 The directive makes the binding conditional — it is required only where a
-residual window leaves an escape that would otherwise be invisible. The
-prevention plus fatal-gate design reaches outcome **(A)**: there is no path from
-a swap to a clean sealed stage. Binding therefore remains available as a
-follow-up if the founder amends §15.4, and is recorded here as an open item
-rather than silently skipped.
+residual window leaves an escape that would otherwise be invisible.
+
+**The outcome-(A) assertion previously made here was false.** This subsection
+claimed that "prevention plus fatal-gate design reaches outcome **(A)**: there is
+no path from a swap to a clean sealed stage". P-A3 disproved it, and the S2
+discriminator reproduces the disproof directly: at `303cc330` a
+real-directory-for-real-directory substitution performed *between* two commands
+runs to a clean terminal seal —
 
 ```text
-STATUS AFTER THE FOUNDER AMENDMENT
+attack at 303cc330:  substitute the episode directory between two commands
+result:              ESCAPED -> EPISODE_COMPLETE_EQUAL
+```
+
+The claim was scoped to within-command swaps and stated as though it covered all
+of them. It did not, because nothing anchored identity across a command boundary.
+
+```text
+STATUS AFTER THE FOUNDER AMENDMENT AND S2
 P-A3 raised this as blocking finding F-4. The founder issued PA3-AMD-2:
 evidence-contract.md §15.4 is now exact and closed at seven fields, including
-episode_path_identity. The contract obstacle recorded above is removed, and the
-binding is no longer optional — a conforming manifest must carry the field. The
+episode_path_identity. S2 implements the binding — see §15.4 below. The
 paragraph above describes the state at 303cc330 and is superseded from the
-amended baseline onward. Implementation of the binding is not part of the
-amendment; the amendment changed no code. See §4.1.
+amended baseline onward.
 ```
+
+### 15.3 PA3-R1 — the cross-command continuity anchor (A1 / F-1)
+
+P-A3 found that episode-path identity was measured **fresh by every command**, so
+it anchored nothing across a command boundary. A substitution performed between
+two commands passed reparse, passed containment, presented a byte-identical
+`episode-core.json`, established a new trust root and ran to a clean terminal
+seal. Reproduced against `303cc330`: `ESCAPED -> EPISODE_COMPLETE_EQUAL`.
+
+**The anchor is operator-held and lives outside the episode directory.** The
+attacker controls every byte inside a substituted directory, so any in-directory
+anchor is forgeable — that is the whole of the finding, and it is why an
+`episode-path-identity.json` sidecar is not a fix but a restatement of the bug.
+
+```text
+token_n = SHA-256( canonical_json_v1({
+              schema:                 continuity-token/v1
+              episode_path_identity:  digest of (st_dev, st_ino)
+              evidence:               filename, sha256, byte_size for every
+                                      record present, in inventory order
+          }) )
+```
+
+`_canonical_json_v1` is **called, never modified**; its blob is unchanged at
+`b2d35817…`.
+
+| Property | Mechanism |
+|---|---|
+| expected token source | `--expect-continuity` on argv, `required=True` |
+| disk fallback | none — there is no code path that reads it from a file |
+| next token | printed on stdout as `continuity_token <digest>`, never persisted |
+| required on | `generate`, `compare`, `verify`, `invalidate`, `finalize` |
+| emitted by | `open` (token 0) and every command above except `finalize` |
+| mismatch | terminal `EPISODE_PATH_IDENTITY_DRIFT`, rc=1, nothing written |
+
+Covering the evidence digests — not identity alone — is required. An in-place
+rewind keeps the same `st_ino` while deleting sealed history, so identity alone
+accepts it; at `303cc330` that replayed with `rc=0`. The digest set refuses it.
+
+`finalize` deliberately emits no successor token: there is no authorized
+continuation after the seal, and printing one would imply otherwise.
+
+The token never reaches evidence at all. `stage_opened.argv` records the
+*operator child* command line, not the harness's own argv, so the consumed token
+is not written even where §8 would have permitted it.
+
+### 15.4 PA3-AMD-2 — the manifest binding
+
+`episode-manifest.json` now carries `episode_path_identity`, measured at open and
+re-confirmed immediately before the write. The field set is exact and closed at
+**seven**; the schema literal stays `…/episode-manifest/v1` and no `v2` exists
+anywhere in the implementation.
+
+`_is_valid_terminal_manifest` implements §15.4's verifier obligation: it
+recomputes the identity of the directory the manifest was found in and treats a
+mismatch as terminal. A manifest copied elsewhere is therefore **TM-1** where it
+sits and has no terminal identity. The binding follows the directory *object*, so
+a same-volume rename of the genuine episode keeps its TM-2 status while a
+byte-identical copy does not.
+
+### 15.5 PA3-R2 — seal authorization ordering (A4 / F-2)
+
+`append_canonical_event` now takes the gate as a parameter and runs it as the
+statement immediately preceding `store.append`. Record construction, canonical
+serialization, reparse re-derivation and the pre-write size observation all
+complete first.
+
+```text
+303cc330:  GATE ... SERIALIZE, PATH, SIZE, WRITE:stage_sealed
+S2:        SERIALIZE, PATH, SIZE, GATE, WRITE:stage_sealed
+```
+
+`StageJournal.seal` keeps its post-write gate, now labelled defence-in-depth in
+the code itself. It is a reporter. Nothing in the S2 claim rests on it, which
+`test_s2_t4_the_post_write_gate_is_defence_in_depth_only` asserts by proving the
+authorizing gate already ran with no preparation between it and the write.
+
+#### 15.5.1 Not implemented, and why — the seal-record location commitment
+
+The P-A3 remediation package also proposed writing `episode_path_identity`, the
+episode's location relative to the evidence root and the evidence root's own
+identity **into the `stage_sealed` record**, so that an escaped seal would be
+provably mislocated rather than merely orphaned.
+
+**That is not implemented, and it is not implemented deliberately.**
+
+```text
+evidence-contract.md §15.2 specifies stage_sealed as carrying exactly one
+additional field: stage_disposition.
+
+founder-authorization.md §8D authorizes exactly two extensions — the
+failure_class value and the episode-manifest field — and states that it
+"confers no general right to extend a closed vocabulary, a closed field set,
+the evidence inventory, the command surface or the event sequence".
+```
+
+Adding fields to `stage_sealed` would be a third extension of a governed record
+under an authorization that names two. That is precisely the `F-3` / `F-4` shape:
+an implementation carrying something its governing contract does not admit. It is
+reported here as a scope stop rather than taken.
+
+The consequence is stated plainly: a journal that escapes the evidence root in
+the write-syscall window is still readable, in isolation, as a clean
+`STAGE_COMPLETE`. What S2 removes is its *usefulness* — the escaped episode can
+never be advanced or terminalized, because the next command's continuity token
+will not match the substituted directory, and a relocated manifest is TM-1.
+Closing the isolated-read case requires either a founder disposition extending
+§15.2 or the POSIX `dir_fd` portability work of §15.2.1.
+
+### 15.6 F-5 — the silent pin downgrade
+
+`EpisodeContext.pinned` caught `OSError` and yielded **unpinned with no signal**,
+so an attacker who could make `episode-core.json` unopenable silently converted
+prevention into detection-only. Reproduced at `303cc330`: the write-bearing span
+ran with no pin and no signal.
+
+The two cases are now separated by a **platform capability check**, never by the
+exception type:
+
+```text
+_PIN_CAPABLE_PLATFORM False -> explicit documented branch, detection-only,
+                               the ordered gate is the protection and always was
+_PIN_CAPABLE_PLATFORM True  -> acquisition failure is a terminal refusal, rc=1,
+                               EPISODE_PATH_IDENTITY_DRIFT
+```
+
+There is no bare `except OSError` in the context manager: the only handler
+re-raises. Both branches carry a discriminator.
 
 ## 16. Sensitive-data minimization coverage
 
