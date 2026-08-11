@@ -20,6 +20,7 @@ one discovered by importing a formal module.
 from __future__ import annotations
 
 import ast
+import contextlib
 import hashlib
 import importlib.util
 import itertools
@@ -108,7 +109,7 @@ EXPECTED_PATH_ROLES = (
 EXPECTED_VOCABULARY_SIZES = {
     "root_cause_class": 15,
     "causal_stage": 8,
-    "failure_class": 20,
+    "failure_class": 21,
     "remediation_disposition": 4,
     "record_integrity": 2,
     "comparison_disposition": 4,
@@ -148,6 +149,7 @@ EXPECTED_FAILURE_TRIAD = {
     "EVIDENCE_WRITE_FAILURE": ("EVIDENCE_INTEGRITY_FAILURE", "NO_REMEDIATION_AUTHORIZED"),
     "EVIDENCE_MALFORMED_PRESERVED": ("EVIDENCE_INTEGRITY_FAILURE", "NO_REMEDIATION_AUTHORIZED"),
     "VERIFY_FAILURE": ("EVIDENCE_INTEGRITY_FAILURE", "FOUNDER_DISPOSITION_REQUIRED"),
+    "EPISODE_PATH_IDENTITY_DRIFT": ("PATH_SAFETY_FAILURE", "FOUNDER_DISPOSITION_REQUIRED"),
     "UNCLASSIFIED": ("UNDETERMINED", "FOUNDER_DISPOSITION_REQUIRED"),
 }
 
@@ -1286,12 +1288,12 @@ def test_a_started_child_can_never_seal_stage_refused(harness: ModuleType, tmp_p
 
 
 # ===========================================================================
-# K. Complete twenty-value failure mapping
+# K. Complete twenty-one-value failure mapping
 # ===========================================================================
 
 
-def test_failure_class_enumeration_is_exactly_twenty(harness: ModuleType) -> None:
-    assert len(harness.FAILURE_CLASSES) == 20
+def test_failure_class_enumeration_is_exactly_twenty_one(harness: ModuleType) -> None:
+    assert len(harness.FAILURE_CLASSES) == 21
     assert set(harness.FAILURE_CLASSES) == set(EXPECTED_FAILURE_TRIAD) | {"CHILD_NONZERO_EXIT"}
 
 
@@ -1304,7 +1306,7 @@ def test_failure_triad_mapping(
     assert (root_cause, remediation) == expected
 
 
-def test_failure_mapping_is_total_over_twenty(harness: ModuleType) -> None:
+def test_failure_mapping_is_total_over_twenty_one(harness: ModuleType) -> None:
     covered = set()
     for failure_class in harness.FAILURE_CLASSES:
         if failure_class == "CHILD_NONZERO_EXIT":
@@ -2355,7 +2357,7 @@ def test_named_closed_enumeration_ledger(harness: ModuleType) -> None:
     sizes = {name: len(values) for name, values in harness.CLOSED_VOCABULARIES.items()}
     assert sizes == EXPECTED_VOCABULARY_SIZES
     assert len(harness.CLOSED_VOCABULARIES) == 10
-    assert sum(sizes.values()) == 77
+    assert sum(sizes.values()) == 78
 
 
 @pytest.mark.parametrize("name", sorted(EXPECTED_VOCABULARY_SIZES))
@@ -3027,9 +3029,14 @@ def test_g3_episode_directory_guard_requires_containment(lab: Lab, tmp_path: Pat
     outside.mkdir()
     with pytest.raises(lab.module.PathSeparationRefusalError):
         lab.module.require_safe_episode_directory(outside, lab.evidence_root)
+    inside = lab.evidence_root / "ep"
+    inside.mkdir()
+    identity = lab.module.require_safe_episode_directory(inside, lab.evidence_root)
+    assert isinstance(identity, str)
+    assert len(identity) == 64
+    # The gate is stable for an unchanged directory.
     assert (
-        lab.module.require_safe_episode_directory(lab.evidence_root / "ep", lab.evidence_root)
-        == lab.evidence_root / "ep"
+        lab.module.require_safe_episode_directory(inside, lab.evidence_root, identity) == identity
     )
 
 
@@ -3047,3 +3054,213 @@ def test_g3_redirected_evidence_file_is_never_appended(lab: Lab, tmp_path: Path)
             lab.module.EvidenceStore(), journal, {"schema_version": "x", "event": "y"}
         )
     assert planted.read_bytes() == b""
+
+
+# ===========================================================================
+# CC. PA2G-R1 — in-flight episode-path TOCTOU
+# ===========================================================================
+
+
+def _unpinned(lab: Lab, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Disable the OS-level directory pin to exercise the detection layer alone.
+
+    Windows blocks the swap outright while the harness holds the episode
+    directory open, so the ordered gate would otherwise never be reached here.
+    Platforms without that guarantee rely on the gate, and this is how that path
+    is exercised deterministically.
+    """
+    monkeypatch.setattr(lab.module.EpisodeContext, "pinned", lambda self: contextlib.nullcontext())
+
+
+def _swapping_runner(lab: Lab, tmp_path: Path, swapped: dict[str, Any]) -> Any:
+    """A child that, while running, lets the episode directory be swapped."""
+    external = tmp_path / "attacker"
+    external.mkdir(exist_ok=True)
+    stolen = external / lab.episode_id
+    swapped["stolen"] = stolen
+
+    def _swap_while_running(_command: Sequence[str]) -> None:
+        try:
+            shutil.move(str(lab.directory), str(stolen))
+            swapped["ok"] = try_reparse_dir(lab.directory, stolen)
+        except OSError as error:
+            swapped["ok"] = False
+            swapped["blocked"] = type(error).__name__
+        write_workspace(lab.workspace_a)
+
+    return make_runner(lab.module, on_run=_swap_while_running)
+
+
+def _sealed_anywhere(*roots: Path) -> bool:
+    return any(
+        b"stage_sealed" in path.read_bytes()
+        for root in roots
+        if root.exists()
+        for path in root.rglob("*.jsonl")
+    )
+
+
+def test_r1_t1_midflight_swap_refuses_without_sealing(
+    lab: Lab, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """R1-T1: a swap while the child is in flight must not produce a sealed stage."""
+    lab.open_episode()
+    _unpinned(lab, monkeypatch)
+    swapped: dict[str, Any] = {}
+    runner = _swapping_runner(lab, tmp_path, swapped)
+    with pytest.raises(lab.module.HarnessError):
+        lab.run(lab.generate_argv("A"), runner=runner)
+    assert swapped["ok"] is True
+    assert not _sealed_anywhere(lab.evidence_root, swapped["stolen"].parent)
+
+
+def test_r1_t1_midflight_swap_is_prevented_while_pinned(lab: Lab, tmp_path: Path) -> None:
+    """R1-T1 (prevention): the held pin blocks the swap where the OS honours it."""
+    lab.open_episode()
+    swapped: dict[str, Any] = {}
+    runner = _swapping_runner(lab, tmp_path, swapped)
+    exit_code = lab.run(lab.generate_argv("A"), runner=runner)
+    if swapped.get("ok"):
+        pytest.skip("this platform does not pin an open directory against rename")
+    # The swap was refused by the OS, so the stage completes inside the root.
+    assert exit_code == 0
+    events = [event["event"] for event in lab.journal("stage-generate-a.jsonl")]
+    assert events[-1] == "stage_sealed"
+    assert lab.directory.is_dir()
+
+
+def test_r1_t2_swap_after_inputs_hashed_refuses_at_the_next_gate(
+    lab: Lab, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """R1-T2: a swap after inputs_hashed is caught before the next durable write."""
+    lab.open_episode()
+    _unpinned(lab, monkeypatch)
+    external = tmp_path / "attacker-t2"
+    external.mkdir()
+    stolen = external / lab.episode_id
+    real_append = lab.module.StageJournal.append
+    state = {"done": False}
+
+    def swapping_append(self: Any, event: str, fields: Any = None) -> None:
+        real_append(self, event, fields)
+        if event == "inputs_hashed" and not state["done"]:
+            state["done"] = True
+            shutil.move(str(lab.directory), str(stolen))
+            require_reparse_dir(lab.directory, stolen)
+
+    monkeypatch.setattr(lab.module.StageJournal, "append", swapping_append)
+    with pytest.raises(lab.module.HarnessError):
+        lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A"))
+    assert state["done"] is True
+    assert not _sealed_anywhere(lab.evidence_root, external)
+
+
+def test_r1_t3_parent_component_swap_is_refused(lab: Lab, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R1-T3: a reparse introduced at a parent component of the episode path refuses."""
+    lab.open_episode()
+    _unpinned(lab, monkeypatch)
+    directory = lab.directory
+    monkeypatch.setattr(lab.module, "is_reparse_point", lambda path: path == directory.parent)
+    with pytest.raises(lab.module.ReparsePointRefusalError):
+        lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A"))
+    assert not _sealed_anywhere(lab.evidence_root)
+
+
+def test_r1_t4_non_reparse_identity_swap_is_refused(
+    lab: Lab, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """R1-T4: a real-directory-for-real-directory swap inside the root still refuses.
+
+    Reparse and containment both pass here, so the measured path identity is the
+    only thing that can detect it.
+    """
+    lab.open_episode()
+    _unpinned(lab, monkeypatch)
+    original = lab.directory
+    parked = lab.evidence_root / "parked"
+    real_append = lab.module.StageJournal.append
+    state = {"done": False}
+
+    def swapping_append(self: Any, event: str, fields: Any = None) -> None:
+        real_append(self, event, fields)
+        if event == "stage_opened" and not state["done"]:
+            state["done"] = True
+            shutil.move(str(original), str(parked))
+            shutil.copytree(str(parked), str(original))
+
+    monkeypatch.setattr(lab.module.StageJournal, "append", swapping_append)
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A"))
+    assert state["done"] is True
+    assert not _sealed_anywhere(lab.evidence_root)
+
+
+def test_r1_t4_drift_class_maps_to_the_path_safety_triad(harness: ModuleType) -> None:
+    assert harness.EpisodePathIdentityDriftError.failure_class == "EPISODE_PATH_IDENTITY_DRIFT"
+    assert harness.derive_failure_triad("EPISODE_PATH_IDENTITY_DRIFT") == (
+        "EPISODE_PATH_IDENTITY_DRIFT",
+        "PATH_SAFETY_FAILURE",
+        "FOUNDER_DISPOSITION_REQUIRED",
+    )
+    # The drift class is fatal, so it never reaches the stage-sealing helper.
+    assert "EPISODE_PATH_IDENTITY_DRIFT" not in harness.REFUSAL_FAILURE_CLASSES
+
+
+def test_r1_t5_negative_control_ordinary_run_seals_normally(lab: Lab) -> None:
+    """R1-T5: with no swap, the stage seals normally and identity is stable."""
+    lab.open_episode()
+    identity = lab.module.require_safe_episode_directory(lab.directory, lab.evidence_root)
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+    events = [event["event"] for event in lab.journal("stage-generate-a.jsonl")]
+    assert len(events) == 9
+    assert events[-1] == "stage_sealed"
+    after = lab.module.require_safe_episode_directory(lab.directory, lab.evidence_root)
+    assert after == identity
+    assert lab.module.is_within(lab.directory, lab.evidence_root)
+
+
+def test_r1_t6_identity_is_recomputable_and_detects_a_swap(lab: Lab) -> None:
+    """R1-T6: the measured identity is independently recomputable and swap-sensitive."""
+    lab.open_episode()
+    pinned = lab.module.measure_episode_path_identity(lab.directory)
+    assert pinned == lab.module.measure_episode_path_identity(lab.directory)
+    from medscale.mesc._canonical_json_v1 import canonical_json_bytes, sha256_of_bytes
+
+    info = lab.directory.stat(follow_symlinks=False)
+    expected = sha256_of_bytes(
+        canonical_json_bytes({"st_dev": int(info.st_dev), "st_ino": int(info.st_ino)})
+    )
+    assert pinned == expected
+    # No host device or inode number is exposed by the measured value.
+    assert str(info.st_ino) not in pinned
+    replacement = lab.evidence_root / "replacement"
+    replacement.mkdir()
+    assert lab.module.measure_episode_path_identity(replacement) != pinned
+    with pytest.raises(lab.module.EpisodePathIdentityDriftError):
+        lab.module.require_safe_episode_directory(replacement, lab.evidence_root, pinned)
+
+
+def test_r1_every_stage_event_is_gated(lab: Lab, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The ordered gate fires before each of the nine stage events, not only at seal."""
+    lab.open_episode()
+    gated: list[str] = []
+    real_append = lab.module.StageJournal.append
+    real_guard = lab.module.EpisodeContext.require_safe_directory
+
+    def counting_guard(self: Any) -> Any:
+        gated.append("gate")
+        return real_guard(self)
+
+    def recording_append(self: Any, event: str, fields: Any = None) -> None:
+        gated.append(event)
+        real_append(self, event, fields)
+
+    monkeypatch.setattr(lab.module.EpisodeContext, "require_safe_directory", counting_guard)
+    monkeypatch.setattr(lab.module.StageJournal, "append", recording_append)
+    assert lab.run(lab.generate_argv("A"), runner=lab.producing_runner("A")) == 0
+    events = [entry for entry in gated if entry != "gate"]
+    assert len(events) == 9
+    # Every event is immediately preceded by a gate run.
+    for index, entry in enumerate(gated):
+        if entry != "gate":
+            assert gated[index - 1] == "gate", f"{entry} was not gated"

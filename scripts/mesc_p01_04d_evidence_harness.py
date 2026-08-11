@@ -42,6 +42,7 @@ That remains a separate founder decision.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import json
 import os
@@ -50,7 +51,7 @@ import stat
 import subprocess
 import sys
 import time
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path, PureWindowsPath
@@ -223,6 +224,7 @@ FAILURE_CLASSES: Final[tuple[str, ...]] = (
     "EVIDENCE_WRITE_FAILURE",
     "EVIDENCE_MALFORMED_PRESERVED",
     "VERIFY_FAILURE",
+    "EPISODE_PATH_IDENTITY_DRIFT",
     "UNCLASSIFIED",
 )
 
@@ -330,6 +332,8 @@ FAILURE_TRIAD: Final[Mapping[str, tuple[str, str]]] = {
     "EVIDENCE_WRITE_FAILURE": ("EVIDENCE_INTEGRITY_FAILURE", "NO_REMEDIATION_AUTHORIZED"),
     "EVIDENCE_MALFORMED_PRESERVED": ("EVIDENCE_INTEGRITY_FAILURE", "NO_REMEDIATION_AUTHORIZED"),
     "VERIFY_FAILURE": ("EVIDENCE_INTEGRITY_FAILURE", "FOUNDER_DISPOSITION_REQUIRED"),
+    # An in-flight episode-path swap is adversarial, not a configuration mistake.
+    "EPISODE_PATH_IDENTITY_DRIFT": ("PATH_SAFETY_FAILURE", "FOUNDER_DISPOSITION_REQUIRED"),
     "UNCLASSIFIED": ("UNDETERMINED", "FOUNDER_DISPOSITION_REQUIRED"),
 }
 
@@ -531,10 +535,30 @@ class StructurallyUnsealedError(HarnessError):
     failure_class: ClassVar[str] = "EVIDENCE_WRITE_FAILURE"
 
 
+class EpisodePathIdentityDriftError(HarnessError):
+    """The episode directory was replaced while the episode was in flight.
+
+    Reparse and containment both pass when a real directory is swapped for
+    another real directory inside the evidence root, so the measured path
+    identity is what detects it (PA2G-R1, D4).
+    """
+
+    failure_class: ClassVar[str] = "EPISODE_PATH_IDENTITY_DRIFT"
+
+
 class EpisodeStateError(HarnessError):
     """The episode is not in a state that permits the requested command."""
 
     failure_class: ClassVar[str] = "ARGUMENT_REFUSAL"
+
+
+#: Path-safety refusals are fatal: nothing further may be written, because the
+#: destination is no longer provably the authorized episode directory.
+_PATH_SAFETY_ERRORS: Final[tuple[type[HarnessError], ...]] = (
+    ReparsePointRefusalError,
+    PathSeparationRefusalError,
+    EpisodePathIdentityDriftError,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -727,24 +751,58 @@ def resolve_metadata_path(base: Path, target: Path) -> Path:
     return current
 
 
-def require_safe_episode_directory(directory: Path, evidence_root: Path) -> Path:
-    """Refuse a redirected or escaped episode directory (GREPTILE-G3).
+def measure_episode_path_identity(directory: Path) -> str:
+    """Return the measured filesystem identity of the episode directory (PA2G-R1, D1).
 
-    Validating the external evidence root alone is insufficient: the episode
-    directory, or a durable evidence path beneath it, can become a symlink,
-    junction or other reparse redirect after that root was validated. The check
-    is therefore re-applied at each episode operation rather than cached.
+    ``(st_dev, st_ino)`` — the volume serial and file index on Windows — names the
+    directory *object* rather than the path that currently leads to it, so a
+    directory swapped for another real directory at the same path is detectable
+    even when reparse and containment both still pass.
 
-    This narrows the window; it does not eliminate it. A redirect introduced
-    between this check and a subsequent open is not prevented here, and no
-    stronger race guarantee is claimed.
+    The pair is normalized through the frozen canonical serializer and reduced to
+    a digest, so no host device or inode number is ever persisted or reported.
+    """
+    try:
+        info = directory.stat(follow_symlinks=False)
+    except OSError as error:
+        raise EpisodePathIdentityDriftError(
+            f"episode directory identity could not be measured: {directory}"
+        ) from error
+    return sha256_of_bytes(
+        canonical_json_bytes({"st_dev": int(info.st_dev), "st_ino": int(info.st_ino)})
+    )
+
+
+def require_safe_episode_directory(
+    directory: Path, evidence_root: Path, expected_identity: str | None = None
+) -> str:
+    """Run the ordered episode-path gate and return the measured identity.
+
+    The order is fixed and is the single gate every episode operation uses
+    (GREPTILE-G3, PA2G-R1 D2):
+
+    1. no reparse redirect on any component of the episode path;
+    2. containment inside the validated external evidence root;
+    3. equality with the identity pinned when the episode context was opened.
+
+    No durable write may occur before all three pass, and no check may follow a
+    sensitive read or write.
+
+    This narrows the exposure window; it does not eliminate it. A swap performed
+    between this gate and the immediately following write syscall is not
+    prevented by the gate alone, and no stronger race guarantee is claimed here.
     """
     require_no_reparse(directory)
     if not is_within(directory, evidence_root):
         raise PathSeparationRefusalError(
             f"episode directory is not contained by the evidence root: {directory}"
         )
-    return directory
+    observed = measure_episode_path_identity(directory)
+    if expected_identity is not None and observed != expected_identity:
+        raise EpisodePathIdentityDriftError(
+            f"episode directory identity changed while the episode was in flight: {directory}"
+        )
+    return observed
 
 
 def require_safe_evidence_path(path: Path) -> Path:
@@ -1065,12 +1123,20 @@ class StageJournal:
     path: Path
     stage: str
     episode_identity: str
+    #: Ordered episode-path gate, run before every durable append (PA2G-R1 D2/D5).
+    guard: Callable[[], object] | None = None
     ordinal: int = 0
     child_started: bool = False
     sealed: bool = False
 
     def append(self, event: str, fields: Mapping[str, object] | None = None) -> None:
-        """Append one complete canonical event, advancing the ordinal only on success."""
+        """Append one complete canonical event, advancing the ordinal only on success.
+
+        The ordered episode-path gate runs first, so no stage event is written
+        to a directory that is no longer provably the authorized one.
+        """
+        if self.guard is not None:
+            self.guard()
         record: dict[str, object] = {
             "schema_version": STAGE_EVENT_SCHEMA_VERSION,
             "episode_identity": self.episode_identity,
@@ -1095,7 +1161,15 @@ class StageJournal:
         )
 
     def seal(self, disposition: str) -> None:
+        """Emit ``stage_sealed`` between two runs of the ordered gate (PA2G-R1 D3).
+
+        The gate runs before the seal is written and again immediately after,
+        so a swap in the residual window is still refused rather than yielding
+        a clean sealed stage.
+        """
         self.append("stage_sealed", {"stage_disposition": disposition})
+        if self.guard is not None:
+            self.guard()
         self.sealed = True
 
 
@@ -1372,6 +1446,8 @@ class EpisodeContext:
     directory: Path
     core: EpisodeCore
     store: EvidenceStore
+    #: Measured at context open and re-confirmed before every durable write.
+    episode_path_identity: str
 
     def journal_path(self, stage: str) -> Path:
         return self.directory / STAGE_JOURNALS[stage]
@@ -1384,9 +1460,31 @@ class EpisodeContext:
     def invalidation_path(self) -> Path:
         return self.directory / EPISODE_INVALIDATION_FILENAME
 
-    def require_safe_directory(self) -> Path:
-        """Re-validate the episode directory before an evidence read or write."""
-        return require_safe_episode_directory(self.directory, self.evidence_root)
+    def require_safe_directory(self) -> str:
+        """Re-run the ordered episode-path gate before an evidence read or write."""
+        return require_safe_episode_directory(
+            self.directory, self.evidence_root, self.episode_path_identity
+        )
+
+    @contextlib.contextmanager
+    def pinned(self) -> Iterator[None]:
+        """Hold the episode directory open for the duration of a write-bearing span.
+
+        An open handle on a file inside the directory makes the directory
+        undeletable and unrenamable on Windows, so the swap the gate would
+        otherwise only detect cannot be performed at all while the span runs.
+        Where the platform does not offer that guarantee the span is unaffected
+        and the ordered gate remains the protection.
+        """
+        try:
+            handle = (self.directory / EPISODE_CORE_FILENAME).open("rb")
+        except OSError:
+            yield
+            return
+        try:
+            yield
+        finally:
+            handle.close()
 
     def scans(self) -> dict[str, JournalScan]:
         self.require_safe_directory()
@@ -1417,7 +1515,7 @@ def open_episode_context(
     # The episode directory itself is validated before episode-core is read: a
     # validated evidence root does not imply a non-redirected episode directory.
     directory = evidence_root / episode_id
-    require_safe_episode_directory(directory, evidence_root)
+    episode_path_identity = require_safe_episode_directory(directory, evidence_root)
     if not directory.is_dir():
         raise EpisodeStateError(f"episode does not exist: {directory}")
     core = load_episode_core(directory)
@@ -1434,6 +1532,7 @@ def open_episode_context(
         directory=directory,
         core=core,
         store=store,
+        episode_path_identity=episode_path_identity,
     )
 
 
@@ -1528,6 +1627,7 @@ def run_stage(
         path=path,
         stage=stage,
         episode_identity=context.core.identity,
+        guard=context.require_safe_directory,
     )
     # 5. exclusively create the stage journal, in a re-validated episode directory
     context.require_safe_directory()
@@ -1550,6 +1650,11 @@ def run_stage(
 
     try:
         body(context, journal, runner)
+    except _PATH_SAFETY_ERRORS:
+        # The episode path is no longer provably the authorized directory, so no
+        # further byte may be written anywhere — not stage_failed, not
+        # stage_sealed. The refusal is fatal and terminal (PA2G-R1 D3).
+        raise
     except EvidenceMalformedPreservedError:
         # Case B (§18.3): the exact malformed bytes are preserved and no later event —
         # not stage_failed, not stage_sealed — may be fabricated after them.
@@ -1559,6 +1664,8 @@ def run_stage(
         error_class = observed if isinstance(observed, str) else None
         try:
             disposition = seal_after_failure(journal, type(error).failure_class, error_class)
+        except _PATH_SAFETY_ERRORS:
+            raise
         except EvidenceWriteFailureError:
             return StageOutcome(stage, None, type(error).failure_class, structurally_unsealed=True)
         except EvidenceMalformedPreservedError:
@@ -1567,6 +1674,8 @@ def run_stage(
 
     try:
         journal.seal("STAGE_COMPLETE")
+    except _PATH_SAFETY_ERRORS:
+        raise
     except EvidenceWriteFailureError:
         return StageOutcome(stage, None, "EVIDENCE_WRITE_FAILURE", structurally_unsealed=True)
     except EvidenceMalformedPreservedError:
@@ -2114,14 +2223,15 @@ def command_generate(
         inputs=inputs,
         command=command,
     )
-    outcome = run_stage(
-        context,
-        stage=_generate_stage_for(arguments.generation),
-        argv=command,
-        generation_identity=arguments.generation,
-        body=body,
-        runner=runner,
-    )
+    with context.pinned():
+        outcome = run_stage(
+            context,
+            stage=_generate_stage_for(arguments.generation),
+            argv=command,
+            generation_identity=arguments.generation,
+            body=body,
+            runner=runner,
+        )
     return _report_stage(outcome)
 
 
@@ -2165,14 +2275,15 @@ def command_compare(
         command=command,
         observe_before_child=True,
     )
-    outcome = run_stage(
-        context,
-        stage="COMPARE",
-        argv=command,
-        generation_identity=None,
-        body=body,
-        runner=runner,
-    )
+    with context.pinned():
+        outcome = run_stage(
+            context,
+            stage="COMPARE",
+            argv=command,
+            generation_identity=None,
+            body=body,
+            runner=runner,
+        )
     return _report_stage(outcome)
 
 
@@ -2194,14 +2305,15 @@ def command_verify(arguments: argparse.Namespace, store: EvidenceStore, runner: 
         observe_before_child=False,
         expected_disposition=expected,
     )
-    outcome = run_stage(
-        context,
-        stage="VERIFY",
-        argv=command,
-        generation_identity=None,
-        body=body,
-        runner=runner,
-    )
+    with context.pinned():
+        outcome = run_stage(
+            context,
+            stage="VERIFY",
+            argv=command,
+            generation_identity=None,
+            body=body,
+            runner=runner,
+        )
     return _report_stage(outcome)
 
 
@@ -2263,11 +2375,12 @@ def command_invalidate(arguments: argparse.Namespace, store: EvidenceStore) -> i
             "observed_canonical_commit": observed,
         }
     # The episode directory and the invalidation path are re-validated before the append.
-    context.require_safe_directory()
-    require_safe_evidence_path(context.invalidation_path)
-    if not context.invalidation_path.exists():
-        store.create_exclusive(context.invalidation_path, b"")
-    append_canonical_event(store, context.invalidation_path, record)
+    with context.pinned():
+        context.require_safe_directory()
+        require_safe_evidence_path(context.invalidation_path)
+        if not context.invalidation_path.exists():
+            store.create_exclusive(context.invalidation_path, b"")
+        append_canonical_event(store, context.invalidation_path, record)
     _report(f"invalidation recorded: {observed_class} / {root_cause} / {remediation}")
     return 0
 
@@ -2332,12 +2445,15 @@ def command_finalize(arguments: argparse.Namespace, store: EvidenceStore) -> int
         "manifest_sealed_at": utc_timestamp(),
     }
     payload = canonical_json_bytes(manifest)
-    context.require_safe_directory()
-    try:
-        store.create_exclusive(require_safe_evidence_path(context.manifest_path), payload)
-    except FileExistsError as error:
-        raise EpisodeStateError("episode-manifest.json already exists; write-once") from error
-    digest, size = terminal_identity(context.directory)
+    with context.pinned():
+        context.require_safe_directory()
+        try:
+            store.create_exclusive(require_safe_evidence_path(context.manifest_path), payload)
+        except FileExistsError as error:
+            raise EpisodeStateError("episode-manifest.json already exists; write-once") from error
+        # The seal is only reported once the path is re-confirmed after the write.
+        context.require_safe_directory()
+        digest, size = terminal_identity(context.directory)
     _report(
         f"episode sealed: {disposition}",
         f"terminal_identity {digest}",

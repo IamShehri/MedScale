@@ -398,7 +398,7 @@ the §5 observation matrix.
 ## 10. Failure mapping coverage
 
 ```text
-failure_class values implemented:            20 / 20
+failure_class values implemented:            21 / 21
 CHILD_NONZERO_EXIT operator branches:        11 / 11
 root_cause_class values:                     15
 remediation_disposition values:               4
@@ -414,7 +414,53 @@ actual eleventh branch deriving `UNDETERMINED` /
 `FOUNDER_DISPOSITION_REQUIRED`, and the harness fails closed.
 
 Both tables are table-driven in tests against values transcribed from §19.1 and
-§19.2, and a totality test proves every one of the twenty values is reachable.
+§19.2, and a totality test proves every one of the values is reachable.
+
+### 10.1 Ledger delta — `EPISODE_PATH_IDENTITY_DRIFT`
+
+The `PA2G-R1` remediation adds exactly one `failure_class`, under explicit
+founder authorization (`D4`), because a real-directory-for-real-directory swap
+passes both reparse and containment and no existing class describes it.
+
+| Ledger | Before | After |
+|---|---|---|
+| `failure_class` values | 20 | **21** |
+| `FAILURE_TRIAD` rows | 19 | **20** (+ `CHILD_NONZERO_EXIT` special case = 21 / 21) |
+| named closed enumerations | 10 | 10 — unchanged |
+| named closed-enumeration values | 77 | **78** |
+| `root_cause_class` | 15 | 15 — unchanged |
+| `remediation_disposition` | 4 | 4 — unchanged |
+| `terminal_disposition` | 5 | 5 — unchanged |
+| `COMMANDS` | 6 | 6 — unchanged |
+| `EVIDENCE_FILENAMES` | 7 | 7 — unchanged |
+
+```text
+EPISODE_PATH_IDENTITY_DRIFT
+    root_cause_class:         PATH_SAFETY_FAILURE
+    remediation_disposition:  FOUNDER_DISPOSITION_REQUIRED
+```
+
+`FOUNDER_DISPOSITION_REQUIRED` rather than `NEW_EPISODE_REQUIRED`, because a
+detected in-flight swap evidences a host-level adversary; retrying in a fresh
+episode on the same host would not address it.
+
+The class never reaches `seal_after_failure`: a path-safety refusal is fatal and
+writes nothing, so the value is carried by the terminal refusal rather than by a
+`stage_failed` record. It is therefore absent from `REFUSAL_FAILURE_CLASSES` and
+from the `STAGE_FAILED` parametrization, which `R1-T4` asserts.
+
+The totality tests were retargeted in the same commit —
+`test_failure_class_enumeration_is_exactly_twenty_one` and
+`test_failure_mapping_is_total_over_twenty_one` — so totality is enforced at the
+new count, not silently broken.
+
+```text
+DIVERGENCE FROM THE IMMUTABLE P-A1 LEDGER
+evidence-contract.md §20 fixes the named ledger at 10 enumerations / 77 values.
+The implementation now carries 10 / 78. The governing document is immutable at
+this gate and was not edited, so reconciling the two requires a founder P-A1
+amendment. This is recorded as an open item, not as a silent divergence.
+```
 
 ## 11. Evidence-write A / B / C coverage
 
@@ -572,6 +618,101 @@ window between validation and use. It does not eliminate it: a redirect
 introduced between a check and the immediately following open is not prevented,
 and no stronger guarantee is claimed here.
 
+### 15.2 PA2G-R1 — in-flight episode-path TOCTOU closure
+
+Independent review of the G1/G2/G3 correction found that the G3 gates fired only
+at command entry, leaving the whole in-flight span of a running stage unguarded.
+
+**Condition.** A co-resident unprivileged attacker observes the episode path
+after `open`, then swaps the episode directory for a junction while a stage child
+is in flight.
+
+**Reproduced against the pre-fix candidate `5ddf1778`:**
+
+```text
+generate outcome:            rc=0
+episode path:                junction=True
+records written OUTSIDE the evidence root:  9 / 9
+    stage_opened, repository_identity_observed, inputs_hashed,
+    repository_identity_observed, child_started, child_exited,
+    outputs_hashed, split_fingerprint_observed, stage_sealed
+stage_sealed outside the root:  YES — a clean-looking sealed stage
+```
+
+`inputs_hashed` escaped as well, so finalize-only hardening would not have been a
+fix. The next command was refused at entry, which is precisely why the escape was
+silent: the gates fired only after the damage.
+
+**Causal mechanism of the fix.** Two independent layers.
+
+*Prevention.* `EpisodeContext.pinned` holds an open handle on `episode-core.json`
+for the whole write-bearing span of `generate`, `compare`, `verify`, `invalidate`
+and `finalize`. On Windows an open handle inside a directory makes that directory
+unrenamable and undeletable, so the swap fails outright with a sharing violation
+rather than being merely detected. Where a platform does not offer that
+guarantee the span is unaffected and the gate below is the protection.
+
+*Detection.* `measure_episode_path_identity` reduces
+`(st_dev, st_ino)` — the volume serial and file index on Windows — through the
+frozen canonical serializer to a digest. It names the directory *object*, not the
+path that currently leads to it. The identity is pinned when the episode context
+opens, and `require_safe_episode_directory` runs one ordered gate before every
+durable write:
+
+```text
+1. no reparse redirect on any component of the episode path
+2. containment inside the validated external evidence root
+3. equality with the pinned episode_path_identity
+```
+
+`StageJournal` runs that gate before **each of the nine stage events**, and again
+immediately after `stage_sealed` is written. A path-safety refusal is fatal: it
+propagates out of `run_stage` without writing `stage_failed` or `stage_sealed`,
+because the destination is no longer provably the authorized directory.
+
+**Observed against the fixed candidate:**
+
+```text
+with the OS pin active:      swap BLOCKED (PermissionError / sharing violation);
+                             stage completes normally inside the evidence root
+with the OS pin disabled:    swap succeeds; generate REFUSES
+                             (ReparsePointRefusalError); NO stage_sealed anywhere
+```
+
+Only the digest is used anywhere; no host device or inode number is persisted,
+reported or exposed, which `R1-T6` asserts directly.
+
+#### 15.2.1 Residual window, disclosed
+
+```text
+prevention layer:  removes the swap entirely on hosts that pin an open directory
+detection layer:   refuses at the next gated write on every host
+residual window:   the sub-syscall interval between the gate and the write it
+                   guards, on hosts without the prevention guarantee
+```
+
+A swap landing inside that interval could still place one record outside the
+root. It cannot yield a *clean sealed stage*: the seal is gated immediately
+before and re-verified immediately after, so a swap in either position refuses
+with `rc=1` and no `stage_sealed`. Eliminating the interval itself would require
+handle-relative writes (`dir_fd`), which CPython does not offer on this platform.
+That residual is disclosed rather than claimed closed.
+
+#### 15.2.2 Manifest binding — not implemented, and why
+
+Directive `D3` also asked for `episode_path_identity` to be bound into the sealed
+manifest. **That is not implemented here**, because
+`evidence-contract.md` §15.4 fixes the `episode-manifest.json` field set as
+*exact and closed*, and that document is immutable at this gate. Adding the field
+would violate a governing contract in order to satisfy a remediation directive.
+
+The directive makes the binding conditional — it is required only where a
+residual window leaves an escape that would otherwise be invisible. The
+prevention plus fatal-gate design reaches outcome **(A)**: there is no path from
+a swap to a clean sealed stage. Binding therefore remains available as a
+follow-up if the founder amends §15.4, and is recorded here as an open item
+rather than silently skipped.
+
 ## 16. Sensitive-data minimization coverage
 
 ```text
@@ -648,10 +789,10 @@ The environment was prepared with `uv sync --frozen`, matching `.github/workflow
 ```text
 focused P-A2 gate
 tests/test_mesc_p01_04d_evidence_harness.py
-passed:    337
+passed:    347
 failed:    0
 skipped:   3
-duration:  29.47s
+duration:  20.10s
 
 frozen regression gate
 tests/test_mesc_p01_04d_operator.py
@@ -660,13 +801,14 @@ tests/test_mesc_formal_split_v1.py
 passed:    157
 failed:    0
 skipped:   1
-duration:  31.55s
+duration:  26.98s
 frozen test files modified: 0
 ```
 
-The focused count rose 282 → 310 for the review corrections and 310 → 337 for the
-Greptile security corrections, which added 27 further regression cases. The
-frozen gate is unchanged throughout.
+The focused count rose 282 → 310 for the review corrections, 310 → 337 for the
+Greptile G1/G2/G3 corrections, and 337 → 347 for the `PA2G-R1` TOCTOU
+remediation, which added ten further cases. The frozen gate is unchanged
+throughout at 157 passed / 1 skipped.
 
 The third focused skip is new and is a genuine host limitation: this Windows host
 permits unprivileged **junction** creation but not unprivileged file symlinks, so
@@ -680,9 +822,23 @@ reparse-refusal contract is additionally covered by three
 privilege-independent tests that exercise the component walk, the resolver
 refusal and the `open` refusal without creating a symlink.
 
-`PA2C-F2` — the 54 Windows/bash portability failures previously observed in
-`tests/test_mesc_b2a_portability.py` — did **not** reproduce in this correction
-worktree. That file contributed one ordinary skip and no failures.
+**`PA2C-F2` is an environmental-conditions caveat, not a candidate claim.** The
+failures previously reported in `tests/test_mesc_b2a_portability.py` are
+host-dependent bash-portability failures, and that file is not touched by any
+P-A2 candidate.
+
+Observed in this correction worktree, in the full-suite run recorded in §21:
+
+```text
+tests/test_mesc_b2a_portability.py:  0 failed, 1 skipped
+```
+
+The previously reported figure of 54 failures did **not** reproduce here. This
+session performed no fetch and no `origin/main` clone, so the comparison against
+`origin/main` asserted in the remediation brief is carried forward as the
+brief's finding and is *not* independently re-verified here. Either way the file
+is untouched by this candidate and the condition is out of scope for this
+ticket.
 
 ### 19.1 Explicit correction regression gate
 
@@ -697,7 +853,31 @@ PA2-R3  controlled pre-mutation argument refusal       29 passed, 0 failed
 GREPTILE-G1  symbolic-ref metadata escape               16 passed, 0 failed
 GREPTILE-G2  reparse component erased by resolve()       7 passed, 0 failed
 GREPTILE-G3  episode-directory redirect                  4 passed, 1 skipped
+
+PA2G-R1      in-flight episode-path TOCTOU               9 passed, 0 failed
 ```
+
+The ten new cases added for `PA2G-R1` (nine test functions plus one new
+parametrized `failure_class` case) are:
+
+```text
+R1-T1  test_r1_t1_midflight_swap_refuses_without_sealing
+R1-T1  test_r1_t1_midflight_swap_is_prevented_while_pinned
+R1-T2  test_r1_t2_swap_after_inputs_hashed_refuses_at_the_next_gate
+R1-T3  test_r1_t3_parent_component_swap_is_refused
+R1-T4  test_r1_t4_non_reparse_identity_swap_is_refused
+R1-T4  test_r1_t4_drift_class_maps_to_the_path_safety_triad
+R1-T5  test_r1_t5_negative_control_ordinary_run_seals_normally
+R1-T6  test_r1_t6_identity_is_recomputable_and_detects_a_swap
+       test_r1_every_stage_event_is_gated
+       test_failure_triad_mapping[EPISODE_PATH_IDENTITY_DRIFT]
+```
+
+**Discriminator against the pre-fix base `5ddf1778`**, with the corrected test
+file and the base production harness: **7 failed, 1 passed, 1 skipped.** The one
+pass is `R1-T5`, the negative control, which must pass on both builds; the one
+skip is the prevention test, which correctly skips at base because the pin does
+not exist there. All nine pass at HEAD.
 
 The G1/G2/G3 subsets were additionally run as **negative controls** against the
 unchanged published parent `2f1fb05f`, with the corrected test file and the
@@ -771,18 +951,24 @@ the existing three.
 The Greptile security correction added **no** suppression of any kind. It removed
 one: a `# noqa: S603` written on the junction fixture was unnecessary, because
 that rule is not enabled in this repository, and `ruff` flagged it as an unused
-directive. Suppression counts are therefore unchanged from §20 above.
+directive. It was dropped **before** the commit, so no such directive ever
+entered the tree; the counts above are the committed state.
+
+The `PA2G-R1` correction likewise added no suppression. `ruff` asked for
+`Path.stat` in place of `os.stat` on the new identity primitive; that was
+satisfied by using `Path.stat(follow_symlinks=False)`, which is equivalent, not
+by silencing the rule.
 
 ## 21. Full-suite result
 
 ```text
 uv run pytest --cov --cov-report=term-missing -q
 
-passed:    2428
+passed:    2438
 failed:    0
 skipped:   8
 warnings:  1
-duration:  211.13s
+duration:  160.87s
 
 repository coverage:  85.55%
 configured gate:      77.0%  (reached)
