@@ -259,7 +259,8 @@ DECIDED — CLOSED FOR P01-04D EXECUTION READINESS
 (founder-authorization.md §8E, at canonical main 13add97d)
 
 XD-EXEC-2:
-OPEN
+CLOSED FOR P01-04D EXECUTION READINESS
+(specs/mesc-pilot-01/p01-04d-source-record-custody/)
 
 XD-EXEC-3:
 OPEN
