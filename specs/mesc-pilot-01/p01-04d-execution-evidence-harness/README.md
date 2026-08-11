@@ -19,7 +19,7 @@ Blocker:
 XD-EXEC-1 — external execution-evidence recording
 
 Blocker state:
-DECIDED / OPEN
+DECIDED — CLOSED FOR P01-04D EXECUTION READINESS (§8E)
 
 Selected architecture:
 ARCHITECTURE A
@@ -230,8 +230,11 @@ command count:
 ```
 
 Defining these commands creates no authority to invoke any of them over real
-inputs. Their implementation is P-A2, which requires a separate founder
-authorization that has not been issued.
+inputs. Their implementation is P-A2, which required a separate founder
+authorization; that authorization was issued and recorded in
+`founder-authorization.md` §8E, and P-A2 was canonically adopted at `13add97d`.
+Adoption of the implementation still confers no authority to invoke any command
+over real inputs — that remains a separate founder execution authorization.
 
 ## 8. What this package is not
 
@@ -252,7 +255,8 @@ P01-04D execution:
 NOT AUTHORIZED
 
 XD-EXEC-1:
-DECIDED / OPEN
+DECIDED — CLOSED FOR P01-04D EXECUTION READINESS
+(founder-authorization.md §8E, at canonical main 13add97d)
 
 XD-EXEC-2:
 OPEN
@@ -264,7 +268,7 @@ XD-EXEC-4 governance mechanism:
 CANONICALLY ADOPTED
 
 P-A2 implementation:
-NOT AUTHORIZED
+AUTHORIZED AND CANONICALLY ADOPTED — PR #97, merge 13add97d
 
 P01-04E through P01-04G:
 NOT AUTHORIZED

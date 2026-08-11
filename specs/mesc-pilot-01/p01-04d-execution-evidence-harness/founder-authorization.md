@@ -24,7 +24,7 @@ Canonical tree:
 ee409f9dbb57492514b384e2332487a923bf01f9
 
 XD-EXEC-1:
-DECIDED / OPEN
+DECIDED — CLOSED FOR P01-04D EXECUTION READINESS BY §8E
 
 P01-04D entry:
 AUTHORIZED
@@ -52,6 +52,12 @@ PIC-CORR-14 .. PIC-CORR-15 RECORDED — SEE §8C
 
 P-A3 founder amendment:
 PA3-AMD-1 .. PA3-AMD-2 RECORDED — SEE §8D
+
+XD-EXEC-1 closure disposition:
+RECORDED AT CANONICAL MAIN 13add97d — SEE §8E
+
+PA2-R7:
+CLOSED — SEE §8E
 ```
 
 This decision defines the contract a future execution-evidence harness must
@@ -1901,11 +1907,130 @@ It does not authorize P-A2 implementation, P01-04D execution, P01-03G access,
 real dataset access, Generation A, Generation B, compare or verify over real
 inputs, or publication. §9 through §12 are unchanged and remain in force in full.
 
+## 8E. XD-EXEC-1 closure disposition
+
+P-A2 was canonically adopted through PR #97. Every `PA1-FD-20` closure condition
+is therefore satisfied, and the founder issues the disposition those satisfied
+conditions permit. Unlike §8D this is not an amendment: it extends nothing,
+changes no contract term and adds no value to any closed set. It marks a blocker
+closed and records one previously unrecorded authorization.
+
+```text
+Decision class:
+BLOCKER CLOSURE DISPOSITION — GOVERNANCE ONLY
+
+Canonical baseline:
+13add97d7f5dde97ea1835d444f5cef31e5d1d2c
+
+Canonical tree:
+ed5654a94bf948043da34cd09603f923c648b91f
+
+XD-EXEC-1:
+CLOSED FOR P01-04D EXECUTION READINESS
+
+PA2-R7:
+CLOSED — THE P-A2 FOUNDER AUTHORIZATION IS RECORDED BY THIS SECTION
+
+XD-EXEC-2:
+OPEN — UNCHANGED
+
+XD-EXEC-3:
+OPEN — UNCHANGED
+
+P01-04D execution:
+NOT AUTHORIZED
+
+New enumeration, enumeration value, evidence file, manifest field or command:
+NONE
+```
+
+### PA1-FD-20 criteria satisfaction
+
+Verified read-only at canonical main `13add97d`. The ten criteria themselves are
+**unchanged**; this table records only that each is now met.
+
+| # | `PA1-FD-20` criterion | Basis at `13add97d` |
+|---|---|---|
+| 1 | Architecture A recorded | §3 of this document |
+| 2 | P-A1 independently reviewed | PR #95 independent review |
+| 3 | P-A1 canonically adopted | PR #95, then PR #96 for §8 |
+| 4 | separate founder authorization for P-A2 issued | recorded below — closes `PA2-R7` |
+| 5 | P-A2 implementation independently reviewed | P-A3 review, then the S2 closure review |
+| 6 | P-A2 canonically adopted | PR #97 merge `13add97d`, ordered parents `c75df5bc` then `f199a43` |
+| 7 | fixture-only synthetic tests green on canonical main | main CI run `31510889281`: 2465 collected, 2463 passed, 2 skipped, py3.11 and py3.12 |
+| 8 | all required commands including `verify` implemented and tested | `implementation-acceptance.md` §7 |
+| 9 | the six frozen formal-executor paths still byte-identical | 7 / 7 EXACT at `13add97d`, including `_canonical_json_v1.py` |
+| 10 | the seven-file deterministic artifact contract unchanged | `evidence-contract.md`, unmodified by P-A2 |
+
+### PA2-R7 — the P-A2 authorization is now recorded
+
+`implementation-acceptance.md` §22 item 11 recorded `PA2-R7`: the founder P-A2
+authorization existed but was never written into the repository, so criterion 4
+could not be verified from canonical main alone. The founder records here that
+the separate authorization for P-A2 implementation **was issued**, before the
+P-A2 build began, and that it covered exactly the three additive paths named in
+`PA1-FD-19`.
+
+```text
+PA2-R7:
+CLOSED BY THIS RECORD
+```
+
+That §22 item 11 sentence is **historical and remains true as written**: those
+six observations were not authorized for correction *at that gate*. `PA2-R4`,
+`PA2-R5`, `PA2-R8`, `PA2-R9` and `PA2-R10` remain open observations for the
+founder and are not disposed of here.
+
+### Declared divergences
+
+Recorded explicitly, in the manner §8D used for its own `10 / 77` divergence, so
+a later gate reads them as declared rather than as drift.
+
+```text
+README.md §1 "Blocker state", §9 "Authority boundary", and the P-A2 sentence
+under the six-command surface:
+UPDATED BY THIS DISPOSITION — XD-EXEC-1 and P-A2 status only.
+Its bytes no longer stand at 247abcf7…, which §8D correctly stated of ITSELF.
+§8D did not edit README.md; this disposition does, and says so here.
+
+evidence-contract.md §29 "Authority boundary":
+UPDATED BY THIS DISPOSITION — the same two status lines only. No normative
+technical term, schema, enumeration, inventory or lifecycle rule is touched.
+
+acceptance.md:
+NOT EDITED — its bytes still stand at f6428994…, and criteria A-18 and A-36
+are undisturbed.
+
+acceptance.md §6, activation-rule acceptance.md §12, activation-rule
+founder-authorization.md §9, and implementation-acceptance.md §22/§23:
+NOT EDITED — each correctly described XD-EXEC-1 as open at its own gate and is
+preserved as historical truth. The current canonical status is this section and
+§9 below.
+```
+
+### Scope of this disposition
+
+```text
+authorized:
+marking XD-EXEC-1 CLOSED FOR P01-04D EXECUTION READINESS
+recording the P-A2 authorization, closing PA2-R7
+
+authorized for nothing else
+```
+
+Closing XD-EXEC-1 concerns the execution-evidence mechanism only. It does not
+close XD-EXEC-2 or XD-EXEC-3, does not alter their closure conditions, and does
+not authorize P01-04D execution, P01-03G access, real dataset access, Generation
+A, Generation B, compare or verify over real inputs, workspace creation,
+publication, model execution, training, fine-tuning or P01-04E through P01-04G.
+Execution additionally requires a separate founder execution authorization,
+canonically adopted, whose MODEL A′ post-merge activation verification passes.
+
 ## 9. Blocker state
 
 ```text
 XD-EXEC-1   external execution-evidence recording
-DECIDED / OPEN — CONTRACT RECORDED BY THIS PACKAGE
+CLOSED FOR P01-04D EXECUTION READINESS — SEE §8E
 
 XD-EXEC-2   external source-record custody and binding
 OPEN
@@ -1917,13 +2042,33 @@ XD-EXEC-4   execution-authorization activation baseline
 DECIDED — GOVERNANCE MECHANISM CANONICALLY ADOPTED
 ```
 
-This package records the XD-EXEC-1 contract only. It makes no claim about
-XD-EXEC-2 or XD-EXEC-3 and does not reduce, reframe or defer either of them.
+This package records the XD-EXEC-1 contract, and by §8E its closure. It makes no
+claim about XD-EXEC-2 or XD-EXEC-3 and does not reduce, reframe or defer either
+of them.
 
-Execution readiness requires every blocker to be closed. Recording a contract
-does not make the remaining blockers smaller.
+Execution readiness requires every blocker to be closed. Neither recording a
+contract nor closing XD-EXEC-1 makes the remaining blockers smaller: XD-EXEC-2
+and XD-EXEC-3 are open, so P01-04D is not execution-ready.
 
 ## 10. No authority expansion
+
+This section states what the **original contract decision** of §1 through §7 did
+not do. It is preserved as written, and `close XD-EXEC-1` was true of it: that
+decision recorded the contract and closed nothing. Closure arrived later, only
+once every `PA1-FD-20` condition was independently satisfied, and is recorded in
+§8E. `PA1-FD-20` always contemplated a later closure, so §8E is the mechanism
+this list anticipated rather than an exception to it.
+
+```text
+scope of the list below:
+THE ORIGINAL §1–§7 CONTRACT DECISION
+
+superseded for XD-EXEC-1 only, by §8E:
+close XD-EXEC-1
+
+every other line:
+IN FORCE, UNCHANGED
+```
 
 This decision does not:
 
@@ -1946,7 +2091,19 @@ authorize P01-04F
 
 ## 11. Prohibition boundary
 
-Every line below remains in force after this decision.
+Every line below remained in force after the original §1–§7 decision, and every
+line except the first remains in force now. The `P-A2 implementation` line is
+superseded as current state: P-A2 was separately authorized — recorded in §8E,
+closing `PA2-R7` — and canonically adopted at `13add97d`. The line is preserved
+because it correctly stated the boundary at the gate that wrote it.
+
+```text
+superseded as current state, by §8E:
+P-A2 implementation
+
+every other line:
+IN FORCE, UNCHANGED
+```
 
 ```text
 P-A2 implementation:

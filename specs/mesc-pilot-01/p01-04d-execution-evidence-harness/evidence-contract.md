@@ -2779,9 +2779,15 @@ fixtures only.
 
 ## 29. Authority boundary
 
+The `P-A2 implementation` and `XD-EXEC-1` lines below are superseded as current
+state by `founder-authorization.md` §8E: P-A2 was separately authorized and
+canonically adopted at `13add97d`, and XD-EXEC-1 is closed for P01-04D execution
+readiness. Every other line is in force, unchanged. Nothing in that closure
+authorizes execution, input access or any later stage.
+
 ```text
 P-A2 implementation:
-NOT AUTHORIZED
+AUTHORIZED AND CANONICALLY ADOPTED — PR #97, merge 13add97d
 
 P01-04D execution:
 NOT AUTHORIZED
@@ -2802,7 +2808,7 @@ P01-04E through P01-04G:
 NOT AUTHORIZED
 
 XD-EXEC-1:
-DECIDED / OPEN
+DECIDED — CLOSED FOR P01-04D EXECUTION READINESS (§8E)
 
 P01-04:
 NOT COMPLETE
