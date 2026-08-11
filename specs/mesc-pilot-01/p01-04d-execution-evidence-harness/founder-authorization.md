@@ -1932,10 +1932,12 @@ PA2-R7:
 CLOSED — THE P-A2 FOUNDER AUTHORIZATION IS RECORDED BY THIS SECTION
 
 XD-EXEC-2:
-OPEN — UNCHANGED
+CLOSED FOR P01-04D EXECUTION READINESS
+(specs/mesc-pilot-01/p01-04d-source-record-custody/)
 
 XD-EXEC-3:
-OPEN — UNCHANGED
+CLOSED FOR P01-04D EXECUTION READINESS
+(specs/mesc-pilot-01/p01-04d-execution-input-identity/)
 
 P01-04D execution:
 NOT AUTHORIZED
@@ -2037,7 +2039,8 @@ CLOSED FOR P01-04D EXECUTION READINESS — SEE
 specs/mesc-pilot-01/p01-04d-source-record-custody/
 
 XD-EXEC-3   independently recorded formal input identities
-OPEN
+CLOSED FOR P01-04D EXECUTION READINESS — SEE
+specs/mesc-pilot-01/p01-04d-execution-input-identity/
 
 XD-EXEC-4   execution-authorization activation baseline
 DECIDED — GOVERNANCE MECHANISM CANONICALLY ADOPTED
@@ -2045,12 +2048,15 @@ DECIDED — GOVERNANCE MECHANISM CANONICALLY ADOPTED
 
 This package records the XD-EXEC-1 contract, and by §8E its closure. It makes no
 claim about XD-EXEC-2 or XD-EXEC-3 and does not reduce, reframe or defer either
-of them; the XD-EXEC-2 value above is a status recital whose authority is the
-separate source-record-custody package, not this one.
+of them; the XD-EXEC-2 and XD-EXEC-3 values above are status recitals whose
+authority is the separate source-record-custody and execution-input-identity
+packages, not this one.
 
-Execution readiness requires every blocker to be closed. Closing XD-EXEC-1 and
-XD-EXEC-2 does not make XD-EXEC-3 smaller: XD-EXEC-3 is open, so P01-04D is not
-execution-ready.
+Execution readiness requires every blocker to be closed. XD-EXEC-1, XD-EXEC-2
+and XD-EXEC-3 are closed, so the last execution-readiness blocker on this
+package's own contract surface is gone; P01-04D execution nevertheless remains
+not authorized pending a separate founder execution authorization canonically
+adopted and a passing MODEL A′ post-merge activation verification.
 
 ## 10. No authority expansion
 

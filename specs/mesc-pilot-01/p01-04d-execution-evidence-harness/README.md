@@ -263,7 +263,8 @@ CLOSED FOR P01-04D EXECUTION READINESS
 (specs/mesc-pilot-01/p01-04d-source-record-custody/)
 
 XD-EXEC-3:
-OPEN
+CLOSED FOR P01-04D EXECUTION READINESS
+(specs/mesc-pilot-01/p01-04d-execution-input-identity/)
 
 XD-EXEC-4 governance mechanism:
 CANONICALLY ADOPTED
