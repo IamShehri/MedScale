@@ -3198,7 +3198,18 @@ def test_r1_t1_midflight_swap_is_prevented_while_pinned(lab: Lab, tmp_path: Path
     lab.open_episode()
     swapped: dict[str, Any] = {}
     runner = _swapping_runner(lab, tmp_path, swapped)
-    exit_code = lab.run(lab.generate_argv("A"), runner=runner)
+    try:
+        exit_code = lab.run(lab.generate_argv("A"), runner=runner)
+    except lab.module.ReparsePointRefusalError:
+        # Prevention is only observable where the OS pins an open directory. Where
+        # the move was permitted instead, the swap left a reparse redirect and the
+        # harness refused it at the next gate — the unpinned contract, asserted by
+        # test_r1_t1_midflight_swap_refuses_without_sealing. Exactly that outcome
+        # routes to the skip below; every other refusal stays a failure, and so
+        # does this one if the swap did not actually happen.
+        if not swapped.get("ok"):
+            raise
+        pytest.skip("this platform does not pin an open directory against rename")
     if swapped.get("ok"):
         pytest.skip("this platform does not pin an open directory against rename")
     # The swap was refused by the OS, so the stage completes inside the root.
