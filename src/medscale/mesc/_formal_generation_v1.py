@@ -68,6 +68,7 @@ from medscale.mesc._formal_split_v1 import (
     allocate_formal_groups,
     build_formal_bundle,
     build_input_identity,
+    execution_input_manifest_identity,
     join_formal_examples,
     parse_ordered_example_registry,
     parse_source_document_registry,
@@ -146,6 +147,11 @@ class FormalGenerationResult:
     digests: Mapping[str, str]
     byte_sizes: Mapping[str, int]
     split_fingerprint: str
+    #: The execution-input-manifest identity (P-C1a §5.6, XD-EXEC-3). It is
+    #: derived from this executor's own input measurement, never from P-A2
+    #: evidence, and it names no path, time or commit.
+    execution_input_manifest_sha256: str
+    execution_input_manifest_byte_size: int
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "digests", MappingProxyType(dict(self.digests)))
@@ -444,6 +450,11 @@ def generate(request: FormalSplitRequest) -> FormalGenerationResult:
         byte_sizes[filename] = len(written)
 
     verify_bundle(bundle)
+    # Derived here, after the protected mutation boundary, and deliberately not
+    # between _reverify_repository_identity and the first mkdir: no manifest
+    # construction, serialization, digest or output work may widen that window
+    # (review finding F2, P-C1a §8).
+    manifest_identity = execution_input_manifest_identity(request.input_identity)
     return FormalGenerationResult(
         generation_identity=request.generation_identity,
         workspace=workspace,
@@ -451,6 +462,8 @@ def generate(request: FormalSplitRequest) -> FormalGenerationResult:
         digests=digests,
         byte_sizes=byte_sizes,
         split_fingerprint=bundle.split_fingerprint,
+        execution_input_manifest_sha256=manifest_identity.sha256,
+        execution_input_manifest_byte_size=manifest_identity.byte_size,
     )
 
 

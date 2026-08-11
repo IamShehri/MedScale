@@ -1383,3 +1383,163 @@ def test_f3_manifest_still_carries_no_self_descriptor(
     assert str(len(payload)) not in {str(entry["byte_size"]) for entry in document["artifacts"]}
     assert sorted(entry.name for entry in workspace.iterdir()) == sorted(ARTIFACT_FILENAMES)
     assert "split-fingerprint.json" not in {entry.name for entry in workspace.iterdir()}
+
+
+# ---------------------------------------------------------------------------
+# XD-EXEC-3 / P-C1b — execution-input manifest identity, and the five
+# preservation requirements the activation rule demands after this change.
+# ---------------------------------------------------------------------------
+
+
+def test_generation_result_carries_the_execution_input_manifest_identity(
+    tmp_path: Path, environment: Mapping[str, Path]
+) -> None:
+    from medscale.mesc._formal_split_v1 import execution_input_manifest_identity
+
+    request = make_request(tmp_path, environment)
+    result = generate(request)
+
+    expected = execution_input_manifest_identity(request.input_identity)
+    assert result.execution_input_manifest_sha256 == expected.sha256
+    assert result.execution_input_manifest_byte_size == expected.byte_size
+    assert len(result.execution_input_manifest_sha256) == 64
+
+
+def test_manifest_identity_derives_from_the_executor_own_measurement(
+    tmp_path: Path, environment: Mapping[str, Path]
+) -> None:
+    """The formal executor measures the inputs directly; nothing else is consulted."""
+    from medscale.mesc._formal_split_v1 import (
+        build_input_identity,
+        execution_input_manifest_identity,
+    )
+
+    request = make_request(tmp_path, environment)
+    result = generate(request)
+
+    payloads = {
+        surface: location.read_bytes() for surface, location in input_locations(environment).items()
+    }
+    recomputed = execution_input_manifest_identity(build_input_identity(payloads))
+    assert result.execution_input_manifest_sha256 == recomputed.sha256
+    assert result.execution_input_manifest_byte_size == recomputed.byte_size
+
+
+def test_b2_manifest_creates_no_eighth_workspace_artifact(
+    tmp_path: Path, environment: Mapping[str, Path]
+) -> None:
+    """B-2: the closed seven-file candidate inventory is unchanged."""
+    result = generate(make_request(tmp_path, environment))
+    present = sorted(entry.name for entry in result.workspace.iterdir())
+
+    assert present == sorted(ARTIFACT_FILENAMES)
+    assert len(present) == 7
+    for forbidden in (
+        "execution-input-manifest.json",
+        "input-manifest.json",
+        "execution-inputs.json",
+    ):
+        assert forbidden not in present
+
+
+def test_f2_no_manifest_work_between_reverification_and_first_mutation(
+    tmp_path: Path, environment: Mapping[str, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """F2: the repository re-verification stays the last step before mutation.
+
+    Manifest construction, canonical serialization and digest work must not sit
+    in that window. This records the real call order and asserts the window is
+    empty of manifest work, rather than trusting the source to read correctly.
+    """
+    from medscale.mesc import _formal_generation_v1 as generation
+    from medscale.mesc import _formal_split_v1 as split
+
+    trace: list[str] = []
+    real_reverify = generation._reverify_repository_identity
+    real_manifest = split.execution_input_manifest_identity
+    real_mkdir = Path.mkdir
+
+    def reverify(request: object) -> None:
+        trace.append("REVERIFY")
+        return real_reverify(request)  # type: ignore[arg-type]
+
+    def manifest(identity: object) -> object:
+        trace.append("MANIFEST")
+        return real_manifest(identity)  # type: ignore[arg-type]
+
+    def mkdir(self: Path, *args: object, **kwargs: object) -> None:
+        trace.append("MKDIR")
+        return real_mkdir(self, *args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(generation, "_reverify_repository_identity", reverify)
+    monkeypatch.setattr(generation, "execution_input_manifest_identity", manifest)
+    monkeypatch.setattr(Path, "mkdir", mkdir)
+
+    generate(make_request(tmp_path, environment))
+
+    assert "REVERIFY" in trace and "MKDIR" in trace and "MANIFEST" in trace
+    reverify_at = trace.index("REVERIFY")
+    mkdir_at = trace.index("MKDIR", reverify_at)
+    assert trace[reverify_at + 1 : mkdir_at] == [], trace[reverify_at : mkdir_at + 1]
+    # And the manifest is derived only after the mutation boundary.
+    assert trace.index("MANIFEST") > mkdir_at
+
+
+def test_f1_identically_corrupted_workspaces_are_still_refused(
+    tmp_path: Path, environment: Mapping[str, Path]
+) -> None:
+    """F1: independent recomputation is not replaced by a cached or emitted value."""
+    first = generate(make_request(tmp_path, environment))
+    second = generate(
+        make_request(tmp_path, environment, generation="B", workspace_name="workspace-b")
+    )
+    for workspace in (first.workspace, second.workspace):
+        target = workspace / SPLIT_POLICY_FILENAME
+        target.write_bytes(target.read_bytes() + b"\n")
+
+    # Independent descriptor recomputation is what catches this, exactly as it
+    # did before P-C1b: the corruption is not masked by any emitted value.
+    with pytest.raises(FormalFingerprintError, match="descriptor digest"):
+        compare(first.workspace, second.workspace)
+
+
+def test_independence_formal_executor_imports_no_p_a2_harness() -> None:
+    """Independence: the executor never consumes the P-A2 harness or its evidence."""
+    import inspect
+
+    from medscale.mesc import _formal_generation_v1 as generation
+    from medscale.mesc import _formal_split_v1 as split
+
+    for module in (generation, split):
+        source = inspect.getsource(module)
+        assert "mesc_p01_04d_evidence_harness" not in source
+        assert "inputs_hashed" not in source
+        assert "episode-core" not in source
+
+
+def test_independence_manifest_needs_no_harness_and_no_evidence_root(
+    tmp_path: Path, environment: Mapping[str, Path]
+) -> None:
+    """The manifest derives from the inputs alone — no harness, no evidence root.
+
+    ``sys.modules`` is deliberately not inspected: in a full-suite run the
+    harness test module has been imported by unrelated tests, so that would
+    assert something about the session rather than about the executor. What
+    matters is that the derivation consults nothing but the input bytes.
+    """
+    from medscale.mesc._formal_split_v1 import (
+        build_input_identity,
+        execution_input_manifest_identity,
+    )
+
+    payloads = {
+        surface: location.read_bytes() for surface, location in input_locations(environment).items()
+    }
+    isolated = tmp_path / "no-evidence-root-here"
+    assert not isolated.exists()
+
+    identity = execution_input_manifest_identity(build_input_identity(payloads))
+    assert len(identity.sha256) == 64
+    assert identity.byte_size > 0
+    # Deriving the manifest wrote nothing anywhere.
+    assert not isolated.exists()

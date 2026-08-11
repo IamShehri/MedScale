@@ -29,7 +29,7 @@ from medscale.mesc._formal_split_v1 import (
     FormalWorkspaceSafetyError,
 )
 from test_mesc_formal_generation_v1 import SYNTHETIC_COMMIT, make_environment
-from test_mesc_formal_split_v1 import write_synthetic_inputs  # noqa: F401 - shared fixture helper
+from test_mesc_formal_split_v1 import write_synthetic_inputs
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 OPERATOR_PATH = REPOSITORY_ROOT / "scripts" / "mesc_p01_04d_operator.py"
@@ -403,3 +403,42 @@ def test_subprocess_failure_is_non_zero_and_leaves_no_workspace(tmp_path: Path) 
     assert completed.returncode != 0
     assert "FormalInputIdentityError" in completed.stderr
     assert not workspace.exists()
+
+
+# ---------------------------------------------------------------------------
+# XD-EXEC-3 / P-C1b — the recording surface.
+#
+# B-1 preservation is already asserted by
+# ``test_exactly_two_subcommands_and_no_third`` above; it is not duplicated here.
+# ---------------------------------------------------------------------------
+
+
+def test_execution_input_manifest_identity_is_recorded_on_stdout(
+    tmp_path: Path, operator: ModuleType, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """P-C1a section 5.8: the existing stdout surface is the recording mechanism."""
+    from medscale.mesc._formal_split_v1 import (
+        build_input_identity,
+        execution_input_manifest_identity,
+    )
+
+    environment = make_environment(tmp_path)
+    workspace = tmp_path / "manifest-a"
+    assert operator.main(generate_argv(environment, generation="A", workspace=workspace)) == 0
+    reported = capsys.readouterr().out
+
+    lines = [line for line in reported.splitlines() if line.startswith("execution_input_manifest ")]
+    assert len(lines) == 1, reported
+    _label, digest, byte_size = lines[0].split()
+
+    payloads = {
+        surface: location.read_bytes()
+        for surface, location in write_synthetic_inputs(tmp_path / "recheck").items()
+    }
+    expected = execution_input_manifest_identity(build_input_identity(payloads))
+    assert digest == expected.sha256
+    assert int(byte_size) == expected.byte_size
+    assert len(digest) == 64
+
+    # Recorded on stdout only: no eighth workspace artifact was written for it.
+    assert len(sorted(workspace.iterdir())) == 7

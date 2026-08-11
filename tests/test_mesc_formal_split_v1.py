@@ -22,6 +22,7 @@ from medscale.mesc._formal_split_v1 import (
     DECISION_RECORD_SURFACE,
     EXAMPLE_REGISTRY_FILENAME,
     EXCLUDED_LEDGER_FILENAME,
+    EXECUTION_INPUT_MANIFEST_SCHEMA,
     GENERATION_MANIFEST_FILENAME,
     GROUP_REGISTRY_FILENAME,
     MINIMUM_PARTITION_SIZES,
@@ -46,10 +47,13 @@ from medscale.mesc._formal_split_v1 import (
     FormalLabelJoinError,
     FormalSplitInputIdentity,
     allocate_formal_groups,
+    build_execution_input_manifest,
     build_formal_bundle,
     build_input_identity,
     build_split_policy_bytes,
     build_split_policy_document,
+    execution_input_manifest_bytes,
+    execution_input_manifest_identity,
     join_formal_examples,
     parse_ordered_example_registry,
     parse_source_document_registry,
@@ -669,3 +673,138 @@ def test_synthetic_plan_shape() -> None:
     assert len({source_document_id for _, source_document_id, _ in plan}) == len(plan)
     assert {decision for decision, _, _ in plan} == {"yes", "no", "maybe"}
     assert sum(1 for _, _, size in plan if size > 1) == 5
+
+
+# ---------------------------------------------------------------------------
+# XD-EXEC-3 / P-C1b — the execution-input manifest
+#
+# The contract is `p01-04d-execution-input-identity/founder-authorization.md`.
+# Every literal below is an expected value taken from that adopted contract,
+# never one discovered by reading the implementation back.
+# ---------------------------------------------------------------------------
+
+EXPECTED_MANIFEST_SCHEMA = "mesc-p01-04d-execution-input/manifest/v1"
+EXPECTED_MANIFEST_TOP_LEVEL = ("input_surfaces", "schema_version")
+EXPECTED_SURFACE_REQUIRED = ("byte_size", "sha256", "surface")
+
+
+def manifest_entries(manifest: Mapping[str, object]) -> list[Mapping[str, object]]:
+    """Return the manifest entries with a concrete type for static checking."""
+    entries = manifest["input_surfaces"]
+    assert isinstance(entries, list)
+    for entry in entries:
+        assert isinstance(entry, dict)
+    return list(entries)
+
+
+def test_execution_input_manifest_covers_exactly_the_five_surfaces() -> None:
+    identity = build_input_identity(synthetic_payloads())
+    manifest = build_execution_input_manifest(identity)
+    surfaces = [str(entry["surface"]) for entry in manifest_entries(manifest)]
+
+    assert len(surfaces) == 5
+    assert sorted(surfaces) == sorted(REQUIRED_INPUT_SURFACES)
+    assert surfaces == sorted(surfaces), "entries must be ordered by surface"
+
+
+def test_execution_input_manifest_field_set_is_exact_and_closed() -> None:
+    identity = build_input_identity(synthetic_payloads())
+    manifest = build_execution_input_manifest(identity)
+
+    assert tuple(sorted(manifest)) == EXPECTED_MANIFEST_TOP_LEVEL
+    assert manifest["schema_version"] == EXPECTED_MANIFEST_SCHEMA
+    assert EXECUTION_INPUT_MANIFEST_SCHEMA == EXPECTED_MANIFEST_SCHEMA
+
+    for entry in manifest_entries(manifest):
+        required = set(EXPECTED_SURFACE_REQUIRED)
+        permitted = required | {"schema_version"}
+        assert required <= set(entry) <= permitted, entry
+
+
+def test_absent_schema_version_is_omitted_and_never_null() -> None:
+    """The decision record is Markdown governance prose and declares no schema."""
+    identity = build_input_identity(synthetic_payloads())
+    manifest = build_execution_input_manifest(identity)
+    entries = {entry["surface"]: entry for entry in manifest_entries(manifest)}
+
+    assert "schema_version" not in entries[DECISION_RECORD_SURFACE]
+    assert "schema_version" in entries[SOURCE_RECORDS_SURFACE]
+    assert b"null" not in execution_input_manifest_bytes(identity)
+
+
+def test_execution_input_manifest_bytes_are_deterministic_and_canonical() -> None:
+    payloads = synthetic_payloads()
+    first = execution_input_manifest_bytes(build_input_identity(payloads))
+    second = execution_input_manifest_bytes(build_input_identity(dict(payloads)))
+
+    assert first == second
+    assert first.endswith(b"\n")
+    assert first.count(b"\n") == 1
+    assert b", " not in first and b": " not in first
+    decoded = json.loads(first.decode("utf-8"))
+    assert list(decoded) == sorted(decoded), "object keys must be sorted"
+
+
+def test_execution_input_manifest_identity_is_deterministic() -> None:
+    payloads = synthetic_payloads()
+    identity = build_input_identity(payloads)
+    payload = execution_input_manifest_bytes(identity)
+    first = execution_input_manifest_identity(identity)
+    second = execution_input_manifest_identity(build_input_identity(dict(payloads)))
+
+    assert first == second
+    assert first.sha256 == sha256_of_bytes(payload)
+    assert first.byte_size == len(payload)
+    assert len(first.sha256) == 64
+
+
+def test_a_changed_input_changes_the_manifest_identity() -> None:
+    payloads = synthetic_payloads()
+    before = execution_input_manifest_identity(build_input_identity(payloads))
+    mutated = dict(payloads)
+    mutated[DECISION_RECORD_SURFACE] = payloads[DECISION_RECORD_SURFACE] + b"\n"
+
+    after = execution_input_manifest_identity(build_input_identity(mutated))
+    assert after != before
+
+
+def test_execution_input_manifest_leaks_no_path_time_commit_or_content() -> None:
+    payloads = synthetic_payloads()
+    text = execution_input_manifest_bytes(build_input_identity(payloads)).decode("utf-8")
+
+    for prohibited in (
+        "path",
+        "location",
+        "workspace",
+        "timestamp",
+        "recorded_at",
+        "commit",
+        "partition",
+        "question",
+        "context",
+        "answer",
+        "annotation",
+        "final_decision",
+        "label",
+    ):
+        assert prohibited not in text, prohibited
+    # No input payload byte may appear in the manifest.
+    for payload in payloads.values():
+        assert payload[:64].decode("utf-8", "ignore") not in text
+
+
+def test_execution_input_manifest_is_distinct_from_the_generation_manifest() -> None:
+    """F3: the seven-file bundle's generation manifest is a different concept."""
+    from medscale.mesc._formal_split_v1 import GENERATION_MANIFEST_SCHEMA
+
+    execution_schema: str = EXECUTION_INPUT_MANIFEST_SCHEMA
+    generation_schema: str = GENERATION_MANIFEST_SCHEMA
+    assert execution_schema != generation_schema
+    assert "execution-input" in EXECUTION_INPUT_MANIFEST_SCHEMA
+    assert GENERATION_MANIFEST_FILENAME not in EXECUTION_INPUT_MANIFEST_SCHEMA
+    assert GENERATION_MANIFEST_FILENAME in ARTIFACT_FILENAMES
+
+
+def test_execution_input_manifest_requires_an_exact_identity_object() -> None:
+    with pytest.raises(FormalInputIdentityError):
+        build_execution_input_manifest({"not": "an identity"})  # type: ignore[arg-type]

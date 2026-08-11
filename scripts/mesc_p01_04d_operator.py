@@ -110,6 +110,13 @@ def _run_generate(arguments: argparse.Namespace) -> int:
         f"generation {result.generation_identity} complete: "
         f"{len(result.filenames)} artifacts, fingerprint {result.split_fingerprint}\n"
     )
+    # The execution-input-manifest identity is recorded on the existing stdout
+    # surface and written to no file: no repository evidence record, no eighth
+    # workspace artifact, neither seven-file inventory widened (P-C1a §5.8).
+    sys.stdout.write(
+        f"execution_input_manifest {result.execution_input_manifest_sha256} "
+        f"{result.execution_input_manifest_byte_size}\n"
+    )
     return 0
 
 
