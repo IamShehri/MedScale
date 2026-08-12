@@ -415,6 +415,9 @@ P01-04E acceptance requires a separate founder authorization.
 ### Current implementation status
 
 ```text
+P01-04D:
+ACCEPTED / CLOSED
+
 P01-04E:
 ACCEPTED / CLOSED
 
@@ -422,6 +425,12 @@ P01-04F:
 ACCEPTED / CLOSED
 
 P01-04G:
+ACCEPTED / CLOSED
+
+P01-04:
+COMPLETE / CLOSED
+
+P01-05:
 NOT STARTED / NOT AUTHORIZED
 ```
 
