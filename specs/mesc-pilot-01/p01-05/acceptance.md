@@ -64,16 +64,17 @@ against the existing adopted code rather than duplicated.
 
 **Existing B0 implementation blob identities (reconciled):**
 
-- B0 orchestration: `src/medscale/mesc/_b0.py` — adopted at
-  `ce1272235cb48dbacdb18f20e1ae8db695b01328`
-- B0 CLI: `src/medscale/cli/mesc_eval.py` — adopted at
-  `ce1272235cb48dbacdb18f20e1ae8db695b01328`
-- B0 loader: `src/medscale/mesc/_pilot_loader.py` — adopted at
-  `ce1272235cb48dbacdb18f20e1ae8db695b01328`
-- B0 validation:
-  `src/medscale/backends/transformers/validation.py` — APPROVED_B0_MODELS =
-  frozenset({"google/medgemma-1.5-4b-it", "meta-llama/Llama-3.2-3B-Instruct"})
-- B0 tests: `tests/test_mesc_b0.py`
+| surface | repository_path | current_blob_sha | historical_adoption_commit | status |
+|---|---|---|---|---|
+| B0 orchestration | `src/medscale/mesc/_b0.py` | `27c36f7fad8224c89ab8403b7abb94482d8cbbf2` | `ce1272235cb48dbacdb18f20e1ae8db695b01328` | RECONCILED |
+| B0 CLI | `src/medscale/cli/mesc_eval.py` | `84cff1a093f0daff30f4b7f7f58eb718513bff0e` | `ce1272235cb48dbacdb18f20e1ae8db695b01328` | RECONCILED |
+| B0 loader | `src/medscale/mesc/_pilot_loader.py` | `05ad43a4aa4be778de52ab2fafc283d41956d755` | `ce1272235cb48dbacdb18f20e1ae8db695b01328` | RECONCILED |
+| B0 validation | `src/medscale/backends/transformers/validation.py` | `74e421cbb42d348eca6183a6b208090f8139d971` | `ce1272235cb48dbacdb18f20e1ae8db695b01328` | RECONCILED |
+| B0 backend | `src/medscale/backends/transformers/backend.py` | `d4097fb1943ed41a9deacd0d6b09f1a6cc3cb127` | `ce1272235cb48dbacdb18f20e1ae8db695b01328` | RECONCILED |
+| B0 tests | `tests/test_mesc_b0.py` | `84ab4270228a662e4e1d7900ebfd34fc577bb4f8` | `ce1272235cb48dbacdb18f20e1ae8db695b01328` | RECONCILED |
+| CLI verification tests | `tests/test_cli_ux.py` | `2aa3b344457ab124a7c0e15af30f8c219d8003a5` | `ce1272235cb48dbacdb18f20e1ae8db695b01328` | RECONCILED |
+
+Historical adoption commit `ce1272235cb48dbacdb18f20e1ae8db695b01328` is retained as provenance only. Current blob identities above are actual `HEAD` Git blob identities verified with both `git rev-parse 'HEAD:<path>'` and `git ls-tree HEAD -- <path>`.
 
 **Verification checklist status:**
 
