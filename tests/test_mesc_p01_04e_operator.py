@@ -76,8 +76,9 @@ class Environment:
         (self.repository / "scripts").mkdir(parents=True)  # anchor for scripts layout
         (self.repository / ".git" / "refs" / "heads").mkdir(parents=True)
         (self.repository / ".git" / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+        self.repo_commit = "4" * 40
         (self.repository / ".git" / "refs" / "heads" / "main").write_text(
-            operator._EXPECTED_CANONICAL_MAIN + "\n", encoding="utf-8"
+            self.repo_commit + "\n", encoding="utf-8"
         )
 
         self.dws.mkdir()
@@ -157,6 +158,7 @@ class Environment:
         self,
         *,
         workspace: Path,
+        expected_commit: str | None = None,
         episode_identity: str = EPISODE_IDENTITY,
         expected_fingerprint: str = SPLIT_FINGERPRINT,
         ledger: Path | None = None,
@@ -173,9 +175,10 @@ class Environment:
         """Build an argv that is identity-consistent with the on-disk inputs.
 
         Expected manifest/registry/source-record identities default to the true
-        digest and byte size of the actual bytes consumed, so a test can focus a
-        single deliberately wrong expected value while every other identity stays
-        correct.
+        digest and byte size of the actual bytes consumed, and the expected
+        canonical commit defaults to the synthetic repository's pinned HEAD, so
+        a test can focus a single deliberately wrong expected value while every
+        other identity stays correct.
         """
         registry_path = registry or self.registry
         manifest_path = manifest or self.manifest
@@ -187,6 +190,8 @@ class Environment:
             "audit",
             "--repository-root",
             str(self.repository),
+            "--expected-canonical-commit",
+            expected_commit or self.repo_commit,
             "--episode-identity",
             episode_identity,
             "--expected-split-fingerprint",
@@ -547,7 +552,111 @@ def test_wrong_expected_repository_commit_refused(
     workspace = tmp_path / "ws"
     code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
     assert_refused(code, out, err, workspace=workspace)
-    assert "not the expected" in err
+    assert "not the expected commit" in err
+
+
+def test_expected_canonical_commit_arg_mismatch_refused(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The runtime-supplied expected commit, not repository HEAD, is authoritative."""
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records()
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(
+        operator,
+        env.audit_argv(workspace=workspace, expected_commit="9" * 40),
+        capsys,
+    )
+    assert_refused(code, out, err, workspace=workspace)
+    assert "not the expected commit" in err
+
+
+def test_missing_expected_canonical_commit_refused(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records()
+    argv = env.audit_argv(workspace=tmp_path / "ws")
+    argv = [item for item in argv if item != "--expected-canonical-commit"]
+    argv.remove(env.repo_commit)
+    with pytest.raises(SystemExit) as exit_info:
+        operator.main(argv)
+    assert exit_info.value.code != 0
+
+
+def test_malformed_expected_canonical_commit_refused(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records()
+    workspace = tmp_path / "ws"
+    for bad in ("not-a-commit", "GGGG" * 10, "abc"):
+        code, out, err = run_operator(
+            operator,
+            env.audit_argv(workspace=workspace / "ws", expected_commit=bad),
+            capsys,
+        )
+        assert_refused(code, out, err, workspace=workspace / "ws")
+        assert "hex" in err or "chars" in err
+        assert "audit complete" not in out
+
+
+def test_no_compile_time_canonical_main_constant(operator: ModuleType) -> None:
+    assert not hasattr(operator, "_EXPECTED_CANONICAL_MAIN")
+    assert operator._COMMIT_LEN == 40
+    assert operator._require_commit("a" * 40) == "a" * 40
+    with pytest.raises(operator.OperatorError):
+        operator._require_commit("z" * 40)
+
+
+def test_second_repository_verification_before_first_mutation(
+    operator: ModuleType,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A repository HEAD movement detected only by the second verification is a
+    refusal, and no audit workspace or leakage-audit.json may be created."""
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records()
+    real_resolve = operator._resolve_repository_commit
+    calls: list[str] = []
+
+    def moving_head(repository_root: Path) -> str:
+        value = real_resolve(repository_root) if len(calls) == 0 else "8" * 40
+        calls.append(value)
+        return value
+
+    monkeypatch.setattr(operator, "_resolve_repository_commit", moving_head)
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert len(calls) == 2
+    assert calls[0] == env.repo_commit
+    assert_refused(code, out, err, workspace=workspace)
+    assert "not the expected commit" in err
+    assert not workspace.exists()
+
+
+def test_second_verification_passes_and_audit_written(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records()
+    workspace = tmp_path / "ws"
+    code, _out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert code == 0
+    assert err == ""
+    assert (workspace / AUDIT_FILENAME).is_file()
 
 
 def test_wrong_split_fingerprint_refused(
