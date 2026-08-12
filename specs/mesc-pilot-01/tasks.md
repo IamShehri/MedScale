@@ -4416,7 +4416,14 @@ leakage analysis and publishes nothing. A separate founder execution
 authorization is required before any protected input may be opened or any
 generation command may run.
 
---- Current controlling state ---
+--- Historical controlling-state snapshot — SUPERSEDED ---
+
+This block records the post-entry-authorization state, before P01-04D execution
+was authorized, executed and accepted.
+
+Its fields are preserved unrewritten as historical evidence.
+
+P01-T03D4 controls current status.
 
 P01-04B:
 ACCEPTED AND CANONICALLY ADOPTED
@@ -4506,6 +4513,139 @@ FINE-TUNING:
 NOT AUTHORIZED
 
 P01-04E THROUGH P01-04G:
+NOT AUTHORIZED
+
+P01-04 OVERALL:
+NOT COMPLETE
+
+P01-05:
+NOT UNLOCKED
+```
+
+```text
+P01-T03D4 — P01-04D formal split execution acceptance and closeout
+
+Founder disposition:
+P01-04D ACCEPTED
+
+Execution canonical main:
+d76d35664af4ae9e7fd567ffb44dbc624e7036fe
+
+Governing authorization:
+specs/mesc-pilot-01/p01-04d-execution-authorization-supersession/founder-authorization.md
+— exactly one fresh episode, now spent
+
+Activation:
+MODEL A-prime post-merge activation verification PASS
+Episode #1 custody reconciliation PASS
+
+Acceptance record:
+specs/mesc-pilot-01/p01-04d-execution-acceptance/
+
+Canonical acceptance criteria:
+10 of 10 SATISFIED — mapped individually, unchanged after the result was known
+
+Authoritative result:
+Episode #2
+
+Episode #2 identity:
+731ec4d6cb879eec935ce70667648a9acae656fbb36c791689fa615df04d385a
+
+Episode #2 terminal manifest:
+b1c377f8886f1b5aa9c6c1589a9da654152e3aff6bfbdf3f2f180d283b8c0e3b / 1247
+
+Episode #2 terminal disposition:
+EPISODE_COMPLETE_EQUAL
+
+Execution-input manifest:
+b0447a7ab59d0d2537a3aa247ab35a423642904148f808fb5a80648682046004 / 820
+
+Accepted source-record identity:
+22495853cf8a395f962f9d2a2f9023ecb277f2b10cd875f69aa4b592d5b00dce / 2770193
+
+Authoritative split fingerprint:
+43bd2b2f1777139927960df72d6f540525d216a239048f596e35d8befb58fb91
+
+Canonical compare disposition:
+EQUAL_VERIFIED
+
+Episode #1:
+HISTORICAL FAILED ATTEMPT — EPISODE_FAILED — IMMUTABLE
+SUPERSEDED BY EPISODE #2 FOR P01-04D RESULT PURPOSES
+
+Episode #1 identity:
+86dde167ce6a6c66d1792e4a84bf36627a090955e1cf27b2514e17c14a34c11d
+
+Episode #1 terminal manifest:
+66fc12b6f6e372448b68cd0eee104be589d78eb3011f112f2b9e07fceaf758a4 / 706
+
+Durable founder-controlled external custody:
+ESTABLISHED — Episode #1 and Episode #2 both durably preserved by
+byte-preserving archival copy, complete inventories, every record verified
+byte-identical to the original; identities only, no path persisted
+
+Scope note:
+P01-04D establishes a deterministic formally verified independently reproduced
+split. It establishes no model quality, clinical validity, benchmark
+superiority or training effectiveness claim.
+
+--- Current controlling state ---
+
+P01-04B:
+ACCEPTED AND CANONICALLY ADOPTED
+
+P01-04C:
+ACCEPTED AND CANONICALLY CLOSED
+
+P01-04D ENTRY:
+AUTHORIZED
+
+P01-04D EXECUTION:
+AUTHORIZED, PERFORMED AND COMPLETE
+
+P01-04D:
+ACCEPTED AND CANONICALLY CLOSED
+
+FORMAL SPLIT GENERATION:
+COMPLETE
+
+AUTHORITATIVE EPISODE:
+Episode #2
+
+AUTHORITATIVE SPLIT FINGERPRINT:
+43bd2b2f1777139927960df72d6f540525d216a239048f596e35d8befb58fb91
+
+FORMAL EXECUTOR FINDINGS F1, F2, F3:
+PRESERVED AT EXECUTION
+
+READINESS BLOCKERS B-1, B-2:
+PRESERVED AT EXECUTION
+
+XD-EXEC-1, XD-EXEC-2, XD-EXEC-3, XD-EXEC-4:
+CLOSED
+
+A FURTHER P01-04D EXECUTION EPISODE:
+NOT AUTHORIZED
+
+RE-EXECUTION, REPAIR OR AMENDMENT OF EITHER EPISODE:
+PROHIBITED
+
+P01-04E:
+NOT STARTED — NOT AUTHORIZED
+
+P01-04F:
+NOT AUTHORIZED
+
+P01-04G:
+NOT AUTHORIZED
+
+MODEL EXECUTION:
+NOT AUTHORIZED
+
+TRAINING:
+NOT AUTHORIZED
+
+FINE-TUNING:
 NOT AUTHORIZED
 
 P01-04 OVERALL:
