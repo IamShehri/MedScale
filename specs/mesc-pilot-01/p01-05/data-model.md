@@ -228,7 +228,7 @@ The gold/final decision must remain structurally separate from the prompt-facing
 
 ## Input identity
 
-The input dataset contract is defined by `B0InputDataset` and `B0InputRecord` in `src/medscale/mesc/_pilot_loader.py`. B1 reuses the same frozen split and example identities. The input SHA-256 and input size are recorded in the runtime manifest and report for reproducibility.
+The input dataset contract is defined by `B0InputDataset` and `B0InputRecord` in `src/medscale/mesc/_pilot_loader.py`. The input SHA-256 and input size are recorded on `B0InputDataset` and propagated through `B0Report`; they are NOT fields on `B0RuntimeManifest`. B1 reuses the same frozen split and example identities.
 
 ---
 

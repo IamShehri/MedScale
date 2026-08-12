@@ -42,6 +42,16 @@ MULTILINGUAL AND ARABIC FUTURE COMPARATOR: CohereLabs/aya-expanse-8b
 
 Model selection authority is recorded in `model-selection.md`. Hermes authority is repository implementation and verification only.
 
+**P01-05 current-authority note:**
+
+The frozen architecture boundaries above are a historical record. The controlling
+current execution authority for MESC Pilot-01 is recorded in
+`model-selection.md` (P01-05 entry contract section) and the supersession section
+of `model-landscape.md`. Chinese model families are NOT permitted for MESC
+execution: Qwen, DeepSeek, Yi, GLM, InternLM. Historical external baseline and
+retrieval selections for Qwen, DeepSeek, and BAAI/bge-m3 are SUPERSEDED FOR
+EXECUTION under the current founder constraint. The historical records are
+preserved; they are not removed.
 ---
 
 ## Dataset boundaries
