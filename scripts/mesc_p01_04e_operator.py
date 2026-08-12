@@ -289,9 +289,46 @@ def _load_source_records(path: Path) -> tuple[tuple[AuditSourceRecord, ...], int
         context_segments = record.get("context_segments")
         if not isinstance(context_segments, list) or not context_segments:
             raise OperatorError(f"{surface}.context_segments must be a non-empty list")
+        if len(context_segments) > 9:
+            raise OperatorError(
+                f"{surface}.context_segments has {len(context_segments)} segments; "
+                f"the canonical source contract permits 1..9"
+            )
+
+        projected_segments: list[str] = []
         for si, seg in enumerate(context_segments):
-            if type(seg) is not str:
-                raise OperatorError(f"{surface}.context_segments[{si}] must be a string")
+            seg_surface = f"{surface}.context_segments[{si}]"
+            if type(seg) is not dict:
+                raise OperatorError(
+                    f"{seg_surface} must be a JSON object with ordinal/text/section_label"
+                )
+            if set(seg.keys()) != {"ordinal", "text", "section_label"}:
+                raise OperatorError(
+                    f"{seg_surface} must have exactly ordinal/text/section_label keys"
+                )
+            ordinal = seg["ordinal"]
+            # bool is an int subclass; reject it explicitly.
+            if type(ordinal) is bool or type(ordinal) is not int:
+                raise OperatorError(f"{seg_surface}.ordinal must be an integer")
+            if ordinal < 0:
+                raise OperatorError(f"{seg_surface}.ordinal must be non-negative")
+            if ordinal != si:
+                raise OperatorError(
+                    f"{seg_surface}.ordinal must equal the segment index {si}, got {ordinal}"
+                )
+            seg_text = seg["text"]
+            if type(seg_text) is not str:
+                raise OperatorError(f"{seg_surface}.text must be a string")
+            if seg_text.strip() == "":
+                raise OperatorError(f"{seg_surface}.text must be non-blank")
+            section_label = seg["section_label"]
+            if type(section_label) is not str:
+                raise OperatorError(f"{seg_surface}.section_label must be a string")
+            if section_label.strip() == "":
+                raise OperatorError(f"{seg_surface}.section_label must be non-blank")
+            # Only the segment text is needed for P01-04E leakage detection.
+            # section_label is validated then discarded immediately.
+            projected_segments.append(seg_text)
 
         records.append(
             AuditSourceRecord(
@@ -300,7 +337,7 @@ def _load_source_records(path: Path) -> tuple[tuple[AuditSourceRecord, ...], int
                 source_document_id=source_document_id,
                 partition="",
                 question=question,
-                context_segments=tuple(context_segments),
+                context_segments=tuple(projected_segments),
             )
         )
 

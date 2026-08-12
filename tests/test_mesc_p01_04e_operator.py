@@ -150,7 +150,19 @@ class Environment:
             ]
         lines = []
         for record in records:
-            envelope = {"record": {"schema_version": "mesc-pubmedqa-source/1", **dict(record)}}
+            # Wrap any plain-string context segments into the canonical
+            # NativeContextSegment object shape expected by the operator.
+            # Pre-built dict segments are passed through unchanged so poison
+            # tests can assert exact fail-closed refusal on malformed objects.
+            segs_out: list[object] = []
+            segs_in: object = record.get("context_segments", [])
+            for si, seg in enumerate(cast(Sequence[object], segs_in)):
+                if isinstance(seg, str):
+                    segs_out.append({"ordinal": si, "text": seg, "section_label": "synthetic"})
+                else:
+                    segs_out.append(seg)
+            record_out = {**dict(record), "context_segments": segs_out}
+            envelope = {"record": {"schema_version": "mesc-pubmedqa-source/1", **record_out}}
             lines.append(json.dumps(envelope, sort_keys=True).encode())
         self.source_records.write_bytes(b"\n".join(lines) + b"\n")
 
@@ -961,6 +973,329 @@ def test_registry_duplicate_source_document_id_refused(
     code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
     assert_refused(code, out, err, workspace=workspace)
     assert "duplicate source_document_id" in err
+
+
+# ---------------------------------------------------------------------------
+# NativeContextSegment canonical shape parsing (ordinal/text/section_label)
+# ---------------------------------------------------------------------------
+
+
+def _canonical_records(segments: tuple[str, ...]) -> list[Mapping[str, object]]:
+    """One synthetic record with the given plain-string segments wrapped as the
+    canonical NativeContextSegment object shape (ordinal == segment index)."""
+    return [
+        {
+            "original_example_id": "ex-001",
+            "source_document_id": "sd-aaa",
+            "question": "Synthetic detection question unique?",
+            "context_segments": list(segments),
+        }
+    ]
+
+
+def test_canonical_single_segment_object_accepted(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(_canonical_records(("Alpha unique segment.",)))
+    workspace = tmp_path / "ws"
+    code, _, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert code == 0
+    assert err == ""
+    assert (workspace / AUDIT_FILENAME).is_file()
+
+
+def test_canonical_multiple_segments_in_ordinal_order_accepted(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(
+        _canonical_records(("Alpha unique segment.", "Beta unique segment.", "Gamma segment."))
+    )
+    workspace = tmp_path / "ws"
+    code, _, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert code == 0
+    assert err == ""
+
+
+def test_projection_preserves_exact_source_order_and_retains_only_text(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The operator writes exactly the segment strings, in source order; the
+    canonical object scaffolding (ordinal/section_label) never reaches the audit
+    artifact."""
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(
+        _canonical_records(("First ordered unique segment.", "Second ordered unique segment."))
+    )
+    workspace = tmp_path / "ws"
+    code, _, _ = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert code == 0
+    report = (workspace / AUDIT_FILENAME).read_bytes()
+    assert b"synthetic" not in report  # the fixed section_label scaffold never leaks
+    assert b"section_label" not in report
+    assert b"ordinal" not in report
+
+
+@pytest.mark.parametrize("bad_kind", ["not_a_list", "empty_list", "more_than_nine"])
+def test_context_segments_container_refused(
+    operator: ModuleType,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    bad_kind: str,
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    if bad_kind == "not_a_list":
+        raw = (
+            b'{"record": {"schema_version": "mesc-pubmedqa-source/1", '
+            b'"original_example_id": "ex-001", "source_document_id": "sd-aaa", '
+            b'"question": "Q?", "context_segments": "not-a-list"}}\n'
+        )
+        env.source_records.write_bytes(raw)
+        expect = "must be a non-empty list"
+    elif bad_kind == "empty_list":
+        env.write_source_records(
+            [
+                {
+                    "original_example_id": "ex-001",
+                    "source_document_id": "sd-aaa",
+                    "question": "Q?",
+                    "context_segments": [],
+                }
+            ]
+        )
+        expect = "must be a non-empty list"
+    else:
+        env.write_source_records(
+            [
+                {
+                    "original_example_id": "ex-001",
+                    "source_document_id": "sd-aaa",
+                    "question": "Q?",
+                    "context_segments": [f"s{i} unique." for i in range(10)],
+                }
+            ]
+        )
+        expect = "1..9"
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert_refused(code, out, err, workspace=workspace)
+    assert expect in err
+
+
+@pytest.mark.parametrize(
+    "bad_segment",
+    [
+        "just-a-string",
+        None,
+        ["nested"],
+        {"text": "x", "section_label": "y"},  # missing ordinal
+        {"ordinal": 0, "section_label": "y"},  # missing text
+        {"ordinal": 0, "text": "x"},  # missing section_label
+        {"ordinal": 0, "text": "x", "section_label": "y", "extra": "Z"},  # unknown key
+    ],
+)
+def test_segment_object_shape_refused(
+    operator: ModuleType,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    bad_segment: object,
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    # When the poison value is a plain string, write raw bytes so the test
+    # fixture helper does not auto-wrap it into a valid canonical segment.
+    if isinstance(bad_segment, str):
+        payload = {
+            "record": {
+                "schema_version": "mesc-pubmedqa-source/1",
+                "original_example_id": "ex-001",
+                "source_document_id": "sd-aaa",
+                "question": "Q?",
+                "context_segments": [bad_segment],
+            }
+        }
+        env.source_records.write_bytes((json.dumps(payload, sort_keys=True) + "\n").encode())
+    else:
+        env.write_source_records(
+            [
+                {
+                    "original_example_id": "ex-001",
+                    "source_document_id": "sd-aaa",
+                    "question": "Q?",
+                    "context_segments": [bad_segment],
+                }
+            ]
+        )
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert_refused(code, out, err, workspace=workspace)
+    # The error must never echo the offending segment content.
+    assert "x" + "Z" not in err
+    assert "just-a-string" not in err
+
+
+@pytest.mark.parametrize(
+    ("ordinal", "expect"),
+    [
+        (True, "ordinal must be an integer"),
+        ("0", "ordinal must be an integer"),
+        (1.0, "ordinal must be an integer"),
+        (-1, "non-negative"),
+        (1, "must equal the segment index 0"),
+    ],
+)
+def test_ordinal_contract_refused(
+    operator: ModuleType,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    ordinal: object,
+    expect: str,
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(
+        [
+            {
+                "original_example_id": "ex-001",
+                "source_document_id": "sd-aaa",
+                "question": "Q?",
+                "context_segments": [
+                    {"ordinal": ordinal, "text": "Unique text.", "section_label": "background"}
+                ],
+            }
+        ]
+    )
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert_refused(code, out, err, workspace=workspace)
+    assert expect in err
+
+
+def test_ordinal_gap_refused(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(
+        [
+            {
+                "original_example_id": "ex-001",
+                "source_document_id": "sd-aaa",
+                "question": "Q?",
+                "context_segments": [
+                    {"ordinal": 0, "text": "Alpha unique.", "section_label": "background"},
+                    {"ordinal": 2, "text": "Beta unique.", "section_label": "methods"},
+                ],
+            }
+        ]
+    )
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert_refused(code, out, err, workspace=workspace)
+    assert "must equal the segment index 1" in err
+
+
+def test_ordinal_duplicate_refused(
+    operator: ModuleType, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(
+        [
+            {
+                "original_example_id": "ex-001",
+                "source_document_id": "sd-aaa",
+                "question": "Q?",
+                "context_segments": [
+                    {"ordinal": 0, "text": "Alpha unique.", "section_label": "background"},
+                    {"ordinal": 0, "text": "Beta unique.", "section_label": "methods"},
+                ],
+            }
+        ]
+    )
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert_refused(code, out, err, workspace=workspace)
+    assert "must equal the segment index 1" in err
+
+
+@pytest.mark.parametrize(
+    ("text", "expect"),
+    [
+        (123, "text must be a string"),
+        ("   ", "text must be non-blank"),
+        ("\t\n", "text must be non-blank"),
+    ],
+)
+def test_text_contract_refused(
+    operator: ModuleType,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    text: object,
+    expect: str,
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(
+        [
+            {
+                "original_example_id": "ex-001",
+                "source_document_id": "sd-aaa",
+                "question": "Q?",
+                "context_segments": [{"ordinal": 0, "text": text, "section_label": "background"}],
+            }
+        ]
+    )
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert_refused(code, out, err, workspace=workspace)
+    assert expect in err
+
+
+@pytest.mark.parametrize(
+    ("label", "expect"),
+    [(123, "section_label must be a string"), ("", "section_label must be non-blank")],
+)
+def test_section_label_contract_refused(
+    operator: ModuleType,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    label: object,
+    expect: str,
+) -> None:
+    env = Environment(tmp_path, operator)
+    env.write_registry()
+    env.write_manifest()
+    env.write_source_records(
+        [
+            {
+                "original_example_id": "ex-001",
+                "source_document_id": "sd-aaa",
+                "question": "Q?",
+                "context_segments": [
+                    {"ordinal": 0, "text": "Unique text.", "section_label": label}
+                ],
+            }
+        ]
+    )
+    workspace = tmp_path / "ws"
+    code, out, err = run_operator(operator, env.audit_argv(workspace=workspace), capsys)
+    assert_refused(code, out, err, workspace=workspace)
+    assert expect in err
 
 
 # ---------------------------------------------------------------------------
