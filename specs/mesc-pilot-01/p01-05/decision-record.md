@@ -98,11 +98,16 @@ A minimal supplied-evidence object suitable for B1 is a versioned private contra
 
 **Decision:**
 
-B1 EVIDENCE SOURCE: UNRESOLVED
+B1 EVIDENCE SOURCE: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES
+
+Ratified by founder decision FD-P01-05-B1-EVIDENCE-1
+(`specs/mesc-pilot-01/p01-05-b1-evidence-source-ratification/founder-decision.md`).
 
 **Determination:**
 
-Existing canonical Pilot-01 contracts define PubMedQA PQA-L as the primary dataset, with native abstract/context as the task input. The existing B0 loader accepts question and context only, and the gold decision is structurally separate for scoring only. No separate, rights-cleared, non-gold, non-retrieval evidence channel is currently defined in the canonical Pilot-01 package.
+Existing canonical Pilot-01 contracts define PubMedQA PQA-L as the primary dataset, with native abstract/context as the task input. The existing B0 loader accepts question and context only, and the gold decision is structurally separate for scoring only.
+
+The ratified B1 supplied-evidence source is manual, label-blind, deterministic evidence-cue annotations over the native PubMedQA context. Every B1 evidence cue resolves to one or more existing ordered context segments belonging to the SAME scientific example/source document (accepted local PilotPubMedQASourceRecord + native ordered context segments + manual evidence-selection annotation). B1 does NOT use an external evidence corpus, retrieval, RAG, a teacher model, or LLM-generated evidence. Evidence records are identity/hash bound (`source_document_id` + context segment index + SHA-256) under the versioned contract `mesc-pilot-01-b1-evidence-cue/1`; raw scientific text remains outside Git.
 
 **Constraints the evidence source must satisfy:**
 
@@ -114,12 +119,22 @@ Existing canonical Pilot-01 contracts define PubMedQA PQA-L as the primary datas
 - source rights preserved
 - evidence identity reproducible
 - evidence is available equally under the frozen split
+- `long_answer` is NOT a B1 evidence source and remains outside the B1 input condition
+- annotation is strictly label-blind; evidence selection only, no rewriting/summarizing/answering
+- B1 evidence-cue ledger is INPUT CONDITION DATA, logically separate from any Layer-2 gold claim-support ledger
+- no external document, additional PubMed article, guideline, or retrieved document enters B1
 
 **Result:**
 
-B1 IMPLEMENTATION: BLOCKED PENDING EVIDENCE-SOURCE RATIFICATION
+B1 EVIDENCE SOURCE: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES
 
-This does not block B0 documentation entry. It blocks B1 runner wiring until a canonical evidence source is separately ratified.
+B1 IMPLEMENTATION: NOT AUTHORIZED
+
+B1 DEVELOPMENT EVIDENCE PACK: NOT PRODUCED (100 frozen validation examples, domain-separated SHA-256 selection per annotation protocol)
+
+B1 EXECUTION: NOT AUTHORIZED
+
+This does not block B0 documentation entry. It unblocks the B1 evidence-source blocker for future B1 implementation, which remains separately gated and unauthorized by this decision.
 
 ---
 
@@ -180,9 +195,9 @@ Future comparator/retrieval replacement selection requires a separate evidence-b
 | B0 CLI | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
 | transformers runtime | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
 | B0 tests | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
-| B1 orchestration | MISSING | MISSING | BLOCKED | B1 evidence source must be ratified |
+| B1 orchestration | MISSING | MISSING | BLOCKED | B1 implementation must be authorized |
 | B1 evidence contract | PARTIAL | PRESENT | DOCUMENTATION | P01-05 entry adoption |
-| B1 runner wiring | MISSING | MISSING | BLOCKED | B1 evidence source must be ratified |
+| B1 runner wiring | MISSING | MISSING | BLOCKED | B1 implementation must be authorized |
 | B1 tests | MISSING | MISSING | BLOCKED | B1 implementation must be authorized |
 | run manifest | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
 | baseline report | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
@@ -193,7 +208,7 @@ Future comparator/retrieval replacement selection requires a separate evidence-b
 
 - B0 core: PRESENT
 - B0 real-execution authority: MISSING / NOT AUTHORIZED
-- B1: BLOCKED PENDING EVIDENCE-SOURCE RATIFICATION
+- B1: BLOCKED PENDING B1 IMPLEMENTATION AUTHORIZATION (evidence source ratified)
 - model-selection authority: CONFLICT requiring this reconciliation — RECONCILED
 
 ---
@@ -254,7 +269,10 @@ All real model execution requires a later founder authorization after implementa
 - P01-05 ENTRY CONTRACT: CANONICALLY DEFINED
 - B0 IMPLEMENTATION: EXISTING / RECONCILED
 - B0 EXECUTION: NOT AUTHORIZED
+- B1 EVIDENCE SOURCE: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES (FD-P01-05-B1-EVIDENCE-1)
+- B1 DEVELOPMENT EVIDENCE PACK: NOT PRODUCED
 - B1 IMPLEMENTATION: NOT AUTHORIZED
 - B1 EXECUTION: NOT AUTHORIZED
+- TEST EVIDENCE PACK: NOT AUTHORIZED
 - P01-06: NOT AUTHORIZED
 - vNext Stage 1 implementation: NOT AUTHORIZED

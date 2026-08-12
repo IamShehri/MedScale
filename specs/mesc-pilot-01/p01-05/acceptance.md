@@ -81,7 +81,7 @@ Historical adoption commit `ce1272235cb48dbacdb18f20e1ae8db695b01328` is retaine
 - [x] `specs/mesc-pilot-01/p01-05/` package present with all seven documents
 - [x] B0 definition reconciled with existing implementation
 - [x] B1 definition explicit and bounded
-- [x] B1 evidence source status explicitly recorded (UNRESOLVED)
+- [x] B1 evidence source status explicitly recorded (RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES)
 - [x] Model authority supersession present without erasing historical records
 - [x] Implementation delta table present and accurate
 - [x] No implementation source files added
@@ -92,10 +92,14 @@ Historical adoption commit `ce1272235cb48dbacdb18f20e1ae8db695b01328` is retaine
 
 Blocking findings: NONE
 
-B1 evidence source: UNRESOLVED
+B1 evidence source: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES
 
-B1 implementation: BLOCKED PENDING EVIDENCE-SOURCE RATIFICATION
+B1 implementation: NOT AUTHORIZED
 
 B0 execution: NOT AUTHORIZED
 
 B1 execution: NOT AUTHORIZED
+
+B1 development evidence pack: NOT PRODUCED
+
+Test evidence pack: NOT AUTHORIZED
