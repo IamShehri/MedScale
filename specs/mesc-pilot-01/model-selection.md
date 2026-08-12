@@ -62,3 +62,30 @@ HERMES AUTHORITY: REPOSITORY IMPLEMENTATION AND VERIFICATION ONLY
 - Do not substitute the low-memory fallback without a separately authorized feasibility test.
 - Do not narrow the architecture to a single model.
 - Do not hard-code any named model into stable scientific data contracts.
+
+## P01-05 entry contract — current model authority
+
+The controlling current execution authority for MESC Pilot-01 is recorded in
+`specs/mesc-pilot-01/p01-05/decision-record.md` and the supersession section of
+`model-landscape.md`.
+
+Chinese model families are NOT permitted for MESC execution:
+Qwen, DeepSeek, Yi, GLM, InternLM.
+
+Historical external baseline selections for Qwen and DeepSeek, and the
+historical retrieval selection for BAAI/bge-m3, are SUPERSEDED FOR EXECUTION
+under the current founder constraint. The historical records are preserved;
+they are not removed.
+
+Current permitted execution targets:
+
+- `meta-llama/Llama-3.2-3B-Instruct`: PERMITTED PRIMARY PILOT TARGET —
+  execution still separately gated.
+- `meta-llama/Llama-3.2-1B-Instruct`: PERMITTED LOW-MEMORY FALLBACK —
+  substitution separately gated.
+- `google/medgemma-1.5-4b-it`: PERMITTED FUTURE CLINICAL SPECIALIST /
+  COMPARATOR — separate authorization required.
+- `BioMistral/BioMistral-7B`: PERMITTED FUTURE BIOMEDICAL SPECIALIST —
+  separate authorization required.
+- `CohereLabs/aya-expanse-8b`: FUTURE COMPARATOR ONLY — license/non-commercial
+  constraints remain — separate authorization required.
