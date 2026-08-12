@@ -19,6 +19,9 @@ import pytest
 from medscale.mesc._canonical_json_v1 import sha256_of_bytes
 from medscale.mesc._formal_split_v1 import (
     ARTIFACT_FILENAMES,
+    CANONICAL_SOURCE_RECORD_MEMBERS,
+    CANONICAL_SOURCE_RECORD_SCHEMA,
+    CANONICAL_TRANSFORMED_DATASET_IDENTITY_SCHEMA,
     DECISION_RECORD_SURFACE,
     EXAMPLE_REGISTRY_FILENAME,
     EXCLUDED_LEDGER_FILENAME,
@@ -26,18 +29,14 @@ from medscale.mesc._formal_split_v1 import (
     GENERATION_MANIFEST_FILENAME,
     GROUP_REGISTRY_FILENAME,
     MINIMUM_PARTITION_SIZES,
-    ORDERED_EXAMPLE_REGISTRY_SCHEMA,
     ORDERED_EXAMPLE_REGISTRY_SURFACE,
     REQUIRED_INPUT_SURFACES,
-    SOURCE_DOCUMENT_REGISTRY_SCHEMA,
     SOURCE_DOCUMENT_REGISTRY_SURFACE,
-    SOURCE_RECORDS_SCHEMA,
     SOURCE_RECORDS_SURFACE,
     SPLIT_POLICY_FILENAME,
     SPLIT_SUMMARY_FILENAME,
     SPLIT_SUMMARY_IDENTITY_CORE_FILENAME,
     TARGET_PARTITION_TOTALS,
-    TRANSFORMED_DATASET_IDENTITY_SCHEMA,
     TRANSFORMED_DATASET_IDENTITY_SURFACE,
     FormalArtifactBundle,
     FormalGenerationManifest,
@@ -65,7 +64,8 @@ from medscale.mesc._formal_split_v1 import (
 DATASET_ID = "mesc-synthetic-formal-dataset"
 DATASET_REVISION = "synthetic-revision-0001"
 CONFIGURATION = "synthetic-configuration"
-TRANSFORMATION_VERSION = "mesc-synthetic-transform/1"
+TRANSFORMATION_VERSION = CANONICAL_TRANSFORMED_DATASET_IDENTITY_SCHEMA
+_SYNTHETIC_SOURCE_HASH = "0" * 64  # placeholder — source_record_hash is per-record in real data
 
 #: The ratified decision distribution, reproduced with wholly synthetic rows.
 SYNTHETIC_LABEL_TOTALS: Mapping[str, int] = {"yes": 552, "no": 338, "maybe": 110}
@@ -95,31 +95,33 @@ def synthetic_group_plan() -> tuple[tuple[str, str, int], ...]:
 
 
 def synthetic_payloads() -> dict[str, bytes]:
-    """Build the five synthetic formal input payloads deterministically."""
+    """Build the five synthetic formal input payloads in canonical P01-03G/E shape."""
     ordered_lines: list[str] = []
     document_lines: list[str] = []
     record_lines: list[str] = []
     ordinal = 0
     for decision, source_document_id, size in synthetic_group_plan():
+        row_ordinals = list(range(ordinal, ordinal + size))
         document_lines.append(
             json.dumps(
                 {
-                    "schema_version": SOURCE_DOCUMENT_REGISTRY_SCHEMA,
-                    "source_document_id": source_document_id,
                     "example_count": size,
+                    "row_ordinals": row_ordinals,
+                    "source_document_id": source_document_id,
                 },
                 sort_keys=True,
             )
         )
         for member in range(size):
             original_example_id = f"mesc-syn-ex-{ordinal:04d}"
+            sr_hash = _synthetic_hash(f"{original_example_id}:{member}")
             ordered_lines.append(
                 json.dumps(
                     {
-                        "schema_version": ORDERED_EXAMPLE_REGISTRY_SCHEMA,
                         "original_example_id": original_example_id,
                         "row_ordinal": ordinal,
                         "source_document_id": source_document_id,
+                        "source_record_hash": sr_hash,
                     },
                     sort_keys=True,
                 )
@@ -127,15 +129,29 @@ def synthetic_payloads() -> dict[str, bytes]:
             record_lines.append(
                 json.dumps(
                     {
-                        "schema_version": SOURCE_RECORDS_SCHEMA,
-                        "source_record_hash": _synthetic_hash(f"{original_example_id}:{member}"),
+                        "source_record_hash": sr_hash,
                         "record": {
+                            "schema_version": CANONICAL_SOURCE_RECORD_SCHEMA,
                             "dataset_id": DATASET_ID,
                             "dataset_revision": DATASET_REVISION,
                             "configuration": CONFIGURATION,
                             "original_example_id": original_example_id,
                             "source_document_id": source_document_id,
+                            "pubid": str(10000000 + ordinal),
+                            "question": f"Synthetic question text for example {ordinal}?",
+                            "context_segments": [
+                                {
+                                    "ordinal": 0,
+                                    "text": "Synthetic context.",
+                                    "section_label": "background",
+                                }
+                            ],
+                            "mesh_terms": ["Synthetic MeSH Term"],
+                            "long_answer": "Synthetic long answer text.",
                             "final_decision": decision,
+                            "reasoning_required_pred": ["synthetic_pred"],
+                            "reasoning_free_pred": ["synthetic_pred"],
+                            "license_id": "synthetic-license",
                         },
                     },
                     sort_keys=True,
@@ -149,13 +165,33 @@ def synthetic_payloads() -> dict[str, bytes]:
     identity_bytes = (
         json.dumps(
             {
-                "schema_version": TRANSFORMED_DATASET_IDENTITY_SCHEMA,
-                "dataset_id": DATASET_ID,
-                "dataset_revision": DATASET_REVISION,
-                "configuration": CONFIGURATION,
-                "transformation_version": TRANSFORMATION_VERSION,
-                "source_records_sha256": sha256_of_bytes(records_bytes),
-                "source_records_byte_size": len(records_bytes),
+                "canonical_main": "a" * 40,
+                "decision_counts": {"yes": 552, "no": 338, "maybe": 110, "unexpected": 0},
+                "fingerprint": {
+                    "fingerprint_payload_sha256": _synthetic_hash("fingerprint"),
+                    "fingerprint_payload_size": 568,
+                    "fingerprint_schema": "mesc-pubmedqa-dataset-fingerprint/2",
+                },
+                "p01_03e_output": {
+                    "local_file": "output/transformation-run.local.json",
+                    "output_files": {
+                        "source-records.jsonl": {
+                            "byte_size": len(records_bytes),
+                            "filename": "source-records.jsonl",
+                            "sha256": sha256_of_bytes(records_bytes),
+                        }
+                    },
+                    "record_count": ordinal,
+                },
+                "p01_03f_formal_validation": {},
+                "p01_03g_authorization": "synthetic-auth",
+                "record_count": ordinal,
+                "schema_version": CANONICAL_TRANSFORMED_DATASET_IDENTITY_SCHEMA,
+                "source_artifact": {
+                    "byte_size": 1075513,
+                    "repository_path": "train-00000-of-00001.parquet",
+                    "sha256": "c" * 64,
+                },
             },
             sort_keys=True,
         )
@@ -251,11 +287,11 @@ def test_input_identity_rejects_duplicate_and_missing_surfaces() -> None:
         FormalSplitInputIdentity(descriptors=identity.descriptors[:-1])
 
 
-def test_input_descriptor_rejects_wrong_schema_and_digest() -> None:
-    with pytest.raises(FormalInputSchemaError):
+def test_input_descriptor_rejects_wrong_surface_and_digest() -> None:
+    with pytest.raises(FormalInputIdentityError):
         FormalInputDescriptor(
-            surface=ORDERED_EXAMPLE_REGISTRY_SURFACE,
-            schema_version="wrong/1",
+            surface="not_a_surface",
+            schema_version=None,
             sha256="0" * 64,
             byte_size=1,
         )
@@ -307,46 +343,44 @@ def test_jsonl_parser_rejects_blank_record_and_missing_terminator() -> None:
 
 def test_parser_rejects_duplicate_json_keys_and_boolean_integers() -> None:
     duplicated = (
-        f'{{"schema_version":"{ORDERED_EXAMPLE_REGISTRY_SCHEMA}",'
-        '"original_example_id":"a","original_example_id":"b",'
-        '"row_ordinal":0,"source_document_id":"d"}\n'
+        '{"original_example_id":"a","original_example_id":"b",'
+        '"row_ordinal":0,"source_document_id":"d","source_record_hash":"' + "0" * 64 + '"}\n'
     )
     with pytest.raises(FormalInputSchemaError):
         parse_ordered_example_registry(duplicated.encode("utf-8"))
     boolean = json.dumps(
         {
-            "schema_version": ORDERED_EXAMPLE_REGISTRY_SCHEMA,
             "original_example_id": "a",
             "row_ordinal": True,
             "source_document_id": "d",
+            "source_record_hash": "0" * 64,
         }
     )
     with pytest.raises(FormalInputSchemaError):
         parse_ordered_example_registry((boolean + "\n").encode("utf-8"))
 
 
-def test_parser_rejects_unknown_member_and_wrong_schema() -> None:
+def test_parser_rejects_unknown_member_and_missing_key() -> None:
     extra = json.dumps(
         {
-            "schema_version": ORDERED_EXAMPLE_REGISTRY_SCHEMA,
             "original_example_id": "a",
             "row_ordinal": 0,
             "source_document_id": "d",
+            "source_record_hash": "0" * 64,
             "note": "x",
         }
     )
     with pytest.raises(FormalInputSchemaError):
         parse_ordered_example_registry((extra + "\n").encode("utf-8"))
-    wrong = json.dumps(
+    missing = json.dumps(
         {
-            "schema_version": "mesc-pilot-01-other/1",
             "original_example_id": "a",
             "row_ordinal": 0,
             "source_document_id": "d",
         }
     )
     with pytest.raises(FormalInputSchemaError):
-        parse_ordered_example_registry((wrong + "\n").encode("utf-8"))
+        parse_ordered_example_registry((missing + "\n").encode("utf-8"))
 
 
 def test_parser_rejects_duplicate_identity_and_non_contiguous_ordinals() -> None:
@@ -362,13 +396,103 @@ def test_parser_rejects_duplicate_identity_and_non_contiguous_ordinals() -> None
         parse_ordered_example_registry(gapped.encode("utf-8"))
 
 
-def test_source_records_reject_free_text_members() -> None:
+def test_source_records_accept_canonical_scientific_shape() -> None:
+    """The canonical P01-03E shape with question/context/long_answer is accepted and reduced."""
+    payloads = synthetic_payloads()
+    labels = parse_source_records(payloads[SOURCE_RECORDS_SURFACE])
+    assert len(labels) == sum(TARGET_PARTITION_TOTALS.values())
+    fields = {field.name for field in dataclasses.fields(labels[0])}
+    assert fields == {
+        "dataset_id",
+        "dataset_revision",
+        "configuration",
+        "original_example_id",
+        "source_document_id",
+        "decision",
+        "source_record_hash",
+    }
+    # Prove scientific text is not retained in the output type.
+    for label in labels:
+        data = dataclasses.asdict(label)
+        for prohibited in ("question", "context_segments", "long_answer"):
+            assert prohibited not in data
+
+
+def test_source_records_reject_missing_schema_in_record() -> None:
+    """The nested record must carry schema_version == mesc-pubmedqa-source/1."""
     payloads = synthetic_payloads()
     lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
     envelope = json.loads(lines[0])
-    envelope["record"]["question"] = "synthetic prohibited text"
+    del envelope["record"]["schema_version"]
     poisoned = "\n".join([json.dumps(envelope, sort_keys=True), *lines[1:]]) + "\n"
-    with pytest.raises(FormalInputSchemaError, match="free-text"):
+    with pytest.raises(FormalInputSchemaError):
+        parse_source_records(poisoned.encode("utf-8"))
+
+
+def test_source_records_reject_wrong_schema_in_record() -> None:
+    """The nested record must have the exact canonical schema."""
+    payloads = synthetic_payloads()
+    lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
+    envelope = json.loads(lines[0])
+    envelope["record"]["schema_version"] = "wrong/1"
+    poisoned = "\n".join([json.dumps(envelope, sort_keys=True), *lines[1:]]) + "\n"
+    with pytest.raises(FormalInputSchemaError):
+        parse_source_records(poisoned.encode("utf-8"))
+
+
+@pytest.mark.parametrize("member", CANONICAL_SOURCE_RECORD_MEMBERS)
+def test_source_records_reject_missing_canonical_member(member: str) -> None:
+    """Every one of the exact 15 canonical nested members is individually required."""
+    payloads = synthetic_payloads()
+    lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
+    envelope = json.loads(lines[0])
+    del envelope["record"][member]
+    poisoned = "\n".join([json.dumps(envelope, sort_keys=True), *lines[1:]]) + "\n"
+    with pytest.raises(FormalInputSchemaError):
+        parse_source_records(poisoned.encode("utf-8"))
+
+
+def test_source_records_reject_unknown_nested_member() -> None:
+    """An unknown extra nested field is refused — the canonical set is closed."""
+    payloads = synthetic_payloads()
+    lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
+    envelope = json.loads(lines[0])
+    envelope["record"]["unknown_field"] = "x"
+    poisoned = "\n".join([json.dumps(envelope, sort_keys=True), *lines[1:]]) + "\n"
+    with pytest.raises(FormalInputSchemaError):
+        parse_source_records(poisoned.encode("utf-8"))
+
+
+def test_source_records_reject_extra_envelope_member() -> None:
+    """The envelope is closed to exactly record + source_record_hash."""
+    payloads = synthetic_payloads()
+    lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
+    envelope = json.loads(lines[0])
+    envelope["schema_version"] = CANONICAL_SOURCE_RECORD_SCHEMA
+    poisoned = "\n".join([json.dumps(envelope, sort_keys=True), *lines[1:]]) + "\n"
+    with pytest.raises(FormalInputSchemaError):
+        parse_source_records(poisoned.encode("utf-8"))
+
+
+def test_source_records_reject_envelope_missing_record() -> None:
+    """An envelope without the nested record is refused."""
+    payloads = synthetic_payloads()
+    lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
+    envelope = json.loads(lines[0])
+    del envelope["record"]
+    poisoned = "\n".join([json.dumps(envelope, sort_keys=True), *lines[1:]]) + "\n"
+    with pytest.raises(FormalInputSchemaError):
+        parse_source_records(poisoned.encode("utf-8"))
+
+
+def test_source_records_reject_envelope_missing_hash() -> None:
+    """An envelope without source_record_hash is refused."""
+    payloads = synthetic_payloads()
+    lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
+    envelope = json.loads(lines[0])
+    del envelope["source_record_hash"]
+    poisoned = "\n".join([json.dumps(envelope, sort_keys=True), *lines[1:]]) + "\n"
+    with pytest.raises(FormalInputSchemaError):
         parse_source_records(poisoned.encode("utf-8"))
 
 
@@ -387,13 +511,15 @@ def test_source_records_reduce_to_identity_and_label_only() -> None:
     }
 
 
-def test_source_document_registry_disagreement_is_rejected() -> None:
+def test_source_document_registry_unknown_document_is_rejected() -> None:
+    """A document in the registry that has no examples in the ordered registry is refused."""
     payloads = synthetic_payloads()
     lines = payloads[SOURCE_DOCUMENT_REGISTRY_SURFACE].decode("utf-8").splitlines()
-    record = json.loads(lines[0])
-    record["example_count"] += 1
-    broken = "\n".join([json.dumps(record, sort_keys=True), *lines[1:]]) + "\n"
-    payloads[SOURCE_DOCUMENT_REGISTRY_SURFACE] = broken.encode("utf-8")
+    extra = json.dumps(
+        {"example_count": 1, "row_ordinals": [99999], "source_document_id": "pmid:nonexistent"},
+        sort_keys=True,
+    )
+    payloads[SOURCE_DOCUMENT_REGISTRY_SURFACE] = ("\n".join([*lines, extra]) + "\n").encode("utf-8")
     with pytest.raises(FormalInputIdentityError, match="source-document registry"):
         build_synthetic_bundle(payloads)
 
@@ -403,8 +529,12 @@ def test_orphan_and_unexpected_label_records_are_rejected() -> None:
     lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
     payloads[SOURCE_RECORDS_SURFACE] = ("\n".join(lines[:-1]) + "\n").encode("utf-8")
     identity = json.loads(payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE])
-    identity["source_records_sha256"] = sha256_of_bytes(payloads[SOURCE_RECORDS_SURFACE])
-    identity["source_records_byte_size"] = len(payloads[SOURCE_RECORDS_SURFACE])
+    identity["p01_03e_output"]["output_files"]["source-records.jsonl"]["sha256"] = sha256_of_bytes(
+        payloads[SOURCE_RECORDS_SURFACE]
+    )
+    identity["p01_03e_output"]["output_files"]["source-records.jsonl"]["byte_size"] = len(
+        payloads[SOURCE_RECORDS_SURFACE]
+    )
     payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE] = (
         json.dumps(identity, sort_keys=True) + "\n"
     ).encode("utf-8")
@@ -412,23 +542,24 @@ def test_orphan_and_unexpected_label_records_are_rejected() -> None:
         build_synthetic_bundle(payloads)
 
 
-def test_dataset_identity_disagreement_is_rejected() -> None:
+def test_dataset_identity_record_count_disagreement_is_rejected() -> None:
+    """The two record_counts in the canonical identity must agree."""
     payloads = synthetic_payloads()
     identity = json.loads(payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE])
-    identity["dataset_revision"] = "synthetic-revision-9999"
+    identity["record_count"] = 999  # wrong count — disagrees with p01_03e_output.record_count
     payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE] = (
         json.dumps(identity, sort_keys=True) + "\n"
     ).encode("utf-8")
-    with pytest.raises(FormalInputIdentityError, match="dataset identity"):
+    with pytest.raises(FormalInputSchemaError, match="record_count"):
         build_synthetic_bundle(payloads)
 
 
 def test_transformed_dataset_identity_round_trip() -> None:
     payloads = synthetic_payloads()
     parsed = parse_transformed_dataset_identity(payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE])
-    assert parsed.dataset_id == DATASET_ID
-    assert parsed.transformation_version == TRANSFORMATION_VERSION
+    assert parsed.transformation_version == CANONICAL_TRANSFORMED_DATASET_IDENTITY_SCHEMA
     assert parsed.source_records_sha256 == sha256_of_bytes(payloads[SOURCE_RECORDS_SURFACE])
+    assert parsed.record_count == sum(TARGET_PARTITION_TOTALS.values())
 
 
 # ---------------------------------------------------------------------------
@@ -494,8 +625,10 @@ def test_label_source_order_does_not_change_bytes() -> None:
     lines = payloads[SOURCE_RECORDS_SURFACE].decode("utf-8").splitlines()
     reordered = ("\n".join(reversed(lines)) + "\n").encode("utf-8")
     identity = json.loads(payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE])
-    identity["source_records_sha256"] = sha256_of_bytes(reordered)
-    identity["source_records_byte_size"] = len(reordered)
+    identity["p01_03e_output"]["output_files"]["source-records.jsonl"]["sha256"] = sha256_of_bytes(
+        reordered
+    )
+    identity["p01_03e_output"]["output_files"]["source-records.jsonl"]["byte_size"] = len(reordered)
     payloads[SOURCE_RECORDS_SURFACE] = reordered
     payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE] = (
         json.dumps(identity, sort_keys=True) + "\n"

@@ -99,24 +99,45 @@ REQUIRED_INPUT_SURFACES: Final[tuple[str, ...]] = (
     TRANSFORMED_DATASET_IDENTITY_SURFACE,
 )
 
-ORDERED_EXAMPLE_REGISTRY_SCHEMA: Final = "mesc-pilot-01-ordered-example-id-registry/1"
-SOURCE_DOCUMENT_REGISTRY_SCHEMA: Final = "mesc-pilot-01-source-document-id-registry/1"
-TRANSFORMED_DATASET_IDENTITY_SCHEMA: Final = "mesc-pilot-01-transformed-dataset-identity/1"
-SOURCE_RECORDS_SCHEMA: Final = "mesc-pilot-01-source-records/1"
+#: Canonical upstream schemas from accepted P01-03G / P01-03E artifacts.
+CANONICAL_TRANSFORMED_DATASET_IDENTITY_SCHEMA: Final = "mesc-pubmedqa-transform/1"
+CANONICAL_SOURCE_RECORD_SCHEMA: Final = "mesc-pubmedqa-source/1"
+
+#: The exact closed member set of the accepted canonical P01-03E nested
+#: scientific record, from the canonical producer implementation.  Every
+#: member is required; nothing else is accepted (subset and superset are
+#: both refused).
+CANONICAL_SOURCE_RECORD_MEMBERS: Final[tuple[str, ...]] = (
+    "schema_version",
+    "dataset_id",
+    "dataset_revision",
+    "configuration",
+    "original_example_id",
+    "source_document_id",
+    "pubid",
+    "question",
+    "context_segments",
+    "mesh_terms",
+    "long_answer",
+    "final_decision",
+    "reasoning_required_pred",
+    "reasoning_free_pred",
+    "license_id",
+)
 
 #: The execution-input manifest schema (P-C1a §5.1). It is deliberately distinct
 #: from every artifact schema, and in particular from ``generation-manifest.json``
 #: of the seven-file candidate bundle, which is a different concept (`F3`).
 EXECUTION_INPUT_MANIFEST_SCHEMA: Final = "mesc-p01-04d-execution-input/manifest/v1"
 
-#: Surfaces that declare a schema version. The ratified decision record is
-#: Markdown governance prose, so it is bound by digest and size alone.
-INPUT_SCHEMA_VERSIONS: Final[Mapping[str, str]] = MappingProxyType(
+#: Surfaces that carry a canonical schema version.  ``ordered_example_registry``
+#: and ``source_document_registry`` have no per-row schema in the accepted
+#: P01-03G artifacts, and ``decision_record`` is governance prose bound by
+#: digest alone.
+CANONICAL_SCHEMA_VERSIONS: Final[Mapping[str, str]] = MappingProxyType(
     {
-        ORDERED_EXAMPLE_REGISTRY_SURFACE: ORDERED_EXAMPLE_REGISTRY_SCHEMA,
-        SOURCE_DOCUMENT_REGISTRY_SURFACE: SOURCE_DOCUMENT_REGISTRY_SCHEMA,
-        SOURCE_RECORDS_SURFACE: SOURCE_RECORDS_SCHEMA,
-        TRANSFORMED_DATASET_IDENTITY_SURFACE: TRANSFORMED_DATASET_IDENTITY_SCHEMA,
+        SOURCE_RECORDS_SURFACE: CANONICAL_SOURCE_RECORD_SCHEMA,
+        TRANSFORMED_DATASET_IDENTITY_SURFACE: CANONICAL_TRANSFORMED_DATASET_IDENTITY_SCHEMA,
     }
 )
 
@@ -189,15 +210,20 @@ GENERATION_IDENTITIES: Final[tuple[str, ...]] = ("A", "B")
 _SHA256_LENGTH: Final = 64
 _HEX_DIGITS: Final = frozenset("0123456789abcdef")
 
-#: Envelope members whose presence signals retained free text. A formal input is
-#: refused outright rather than silently reduced, so no such value can survive.
-_PROHIBITED_RECORD_FIELDS: Final[tuple[str, ...]] = (
-    "answer",
-    "context",
-    "final_answer",
+#: Fields the accepted canonical P01-03E source record carries that must never
+#: reach a split artifact.  The formal executor accepts the full canonical
+#: record, validates it, then immediately reduces it to identity + final_decision
+#: via ``source_label_from_envelope``; no entry below survives into memory beyond
+#: the single line being reduced.
+_CANONICAL_RECORD_SCIENTIFIC_FIELDS: Final[tuple[str, ...]] = (
+    "context_segments",
+    "license_id",
     "long_answer",
+    "mesh_terms",
+    "pubid",
     "question",
-    "rationale",
+    "reasoning_free_pred",
+    "reasoning_required_pred",
 )
 
 
@@ -272,12 +298,6 @@ class FormalInputDescriptor:
     def __post_init__(self) -> None:
         if self.surface not in REQUIRED_INPUT_SURFACES:
             raise FormalInputIdentityError(f"unknown formal input surface: {self.surface!r}")
-        expected = INPUT_SCHEMA_VERSIONS.get(self.surface)
-        if self.schema_version != expected:
-            raise FormalInputSchemaError(
-                f"surface {self.surface!r} requires schema {expected!r}, "
-                f"got {self.schema_version!r}"
-            )
         _require_sha256(self.sha256, f"{self.surface} sha256")
         _require_count(self.byte_size, f"{self.surface} byte_size")
 
@@ -383,14 +403,17 @@ def execution_input_manifest_identity(
 
 @dataclass(frozen=True, slots=True)
 class FormalDatasetIdentity:
-    """The transformed-dataset identity that binds derivation and the label source."""
+    """The canonical P01-03G transformed-dataset identity fields needed downstream.
 
-    dataset_id: str
-    dataset_revision: str
-    configuration: str
+    ``dataset_id``, ``dataset_revision`` and ``configuration`` are not carried
+    by the canonical ``transformed-dataset-identity.json``; they are attested
+    inside the accepted source records and enforced during the join.
+    """
+
     transformation_version: str
     source_records_sha256: str
     source_records_byte_size: int
+    record_count: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -592,6 +615,13 @@ def _require_sha256(value: object, field: str) -> str:
     return value
 
 
+def _require_sha256_or_empty(value: object, field: str) -> str:
+    """Require either a 64-hex sha256 or an empty string."""
+    if value == "":
+        return ""
+    return _require_sha256(value, field)
+
+
 def _require_count(value: object, field: str) -> int:
     if type(value) is not int or value < 0:
         raise FormalInputIdentityError(f"{field} must be a non-negative integer, got {value!r}")
@@ -612,7 +642,12 @@ def _reject_metadata(document: object) -> None:
 
 
 def parse_ordered_example_registry(payload: bytes) -> tuple[OrderedExampleRow, ...]:
-    """Parse the ordered example registry into identity-only rows."""
+    """Parse the canonical P01-03G ordered example registry into identity-only rows.
+
+    Canonical rows carry ``original_example_id``, ``row_ordinal``,
+    ``source_document_id`` and ``source_record_hash``.  There is no per-row
+    ``schema_version`` in the accepted artifact.
+    """
     surface = ORDERED_EXAMPLE_REGISTRY_SURFACE
     text = decode_utf8(payload, surface=surface)
     rows: list[OrderedExampleRow] = []
@@ -622,13 +657,13 @@ def parse_ordered_example_registry(payload: bytes) -> tuple[OrderedExampleRow, .
         location = f"{surface}[{index}]"
         _exact_keys(
             record,
-            ("schema_version", "original_example_id", "row_ordinal", "source_document_id"),
+            ("original_example_id", "row_ordinal", "source_document_id", "source_record_hash"),
             surface=location,
         )
-        _require_schema(record, ORDERED_EXAMPLE_REGISTRY_SCHEMA, surface=location)
         original_example_id = _exact_str(record, "original_example_id", surface=location)
         source_document_id = _exact_str(record, "source_document_id", surface=location)
         row_ordinal = _exact_int(record, "row_ordinal", surface=location)
+        _require_sha256_or_empty(record.get("source_record_hash"), f"{location}.source_record_hash")
         if original_example_id in seen_ids:
             raise FormalInputSchemaError(f"duplicate original_example_id: {original_example_id!r}")
         if row_ordinal in seen_ordinals:
@@ -648,20 +683,39 @@ def parse_ordered_example_registry(payload: bytes) -> tuple[OrderedExampleRow, .
 
 
 def parse_source_document_registry(payload: bytes) -> Mapping[str, int]:
-    """Parse the source-document registry into an exact document-to-count mapping."""
+    """Parse the canonical P01-03G source-document registry.
+
+    Canonical rows carry ``source_document_id``, ``example_count`` and
+    ``row_ordinals``.  There is no per-row ``schema_version``.
+    """
     surface = SOURCE_DOCUMENT_REGISTRY_SURFACE
     text = decode_utf8(payload, surface=surface)
     counts: dict[str, int] = {}
     for index, record in enumerate(_strict_jsonl_objects(text, surface=surface)):
         location = f"{surface}[{index}]"
         _exact_keys(
-            record, ("schema_version", "source_document_id", "example_count"), surface=location
+            record, ("example_count", "row_ordinals", "source_document_id"), surface=location
         )
-        _require_schema(record, SOURCE_DOCUMENT_REGISTRY_SCHEMA, surface=location)
         source_document_id = _exact_str(record, "source_document_id", surface=location)
         example_count = _exact_int(record, "example_count", surface=location)
         if example_count == 0:
             raise FormalInputSchemaError(f"{location}.example_count must be positive")
+        row_ordinals = record.get("row_ordinals")
+        if not isinstance(row_ordinals, list) or len(row_ordinals) != example_count:
+            raise FormalInputSchemaError(
+                f"{location}.row_ordinals must be a list of exactly {example_count} integers"
+            )
+        seen_ordinals: set[int] = set()
+        for ordinal in row_ordinals:
+            if type(ordinal) is not int or ordinal < 0:
+                raise FormalInputSchemaError(
+                    f"{location}.row_ordinals must contain only non-negative integers"
+                )
+            if ordinal in seen_ordinals:
+                raise FormalInputSchemaError(
+                    f"{location}.row_ordinals contains duplicate ordinal {ordinal}"
+                )
+            seen_ordinals.add(ordinal)
         if source_document_id in counts:
             raise FormalInputSchemaError(f"duplicate source_document_id: {source_document_id!r}")
         counts[source_document_id] = example_count
@@ -669,70 +723,87 @@ def parse_source_document_registry(payload: bytes) -> Mapping[str, int]:
 
 
 def parse_transformed_dataset_identity(payload: bytes) -> FormalDatasetIdentity:
-    """Parse the transformed-dataset identity, including the label-source attestation."""
+    """Parse the canonical P01-03G transformed-dataset identity."""
     surface = TRANSFORMED_DATASET_IDENTITY_SURFACE
     text = decode_utf8(payload, surface=surface)
     record = _strict_json_object(text, surface=surface)
     _exact_keys(
         record,
         (
+            "canonical_main",
+            "decision_counts",
+            "fingerprint",
+            "p01_03e_output",
+            "p01_03f_formal_validation",
+            "p01_03g_authorization",
+            "record_count",
             "schema_version",
-            "dataset_id",
-            "dataset_revision",
-            "configuration",
-            "transformation_version",
-            "source_records_sha256",
-            "source_records_byte_size",
+            "source_artifact",
         ),
         surface=surface,
     )
-    _require_schema(record, TRANSFORMED_DATASET_IDENTITY_SCHEMA, surface=surface)
+    _require_schema(record, CANONICAL_TRANSFORMED_DATASET_IDENTITY_SCHEMA, surface=surface)
+    p01_03e_output = record.get("p01_03e_output")
+    if not isinstance(p01_03e_output, dict):
+        raise FormalInputSchemaError(f"{surface}.p01_03e_output must be an object")
+    output_files = p01_03e_output.get("output_files")
+    if not isinstance(output_files, dict):
+        raise FormalInputSchemaError(f"{surface}.p01_03e_output.output_files must be an object")
+    sr_entry = output_files.get("source-records.jsonl")
+    if not isinstance(sr_entry, dict):
+        raise FormalInputSchemaError(
+            f"{surface}.p01_03e_output.output_files['source-records.jsonl'] must be an object"
+        )
+    source_records_sha256 = _require_sha256(
+        sr_entry.get("sha256"), f"{surface}.source_records_sha256"
+    )
+    source_records_byte_size = _exact_int(sr_entry, "byte_size", surface=surface)
+    e_record_count = _exact_int(p01_03e_output, "record_count", surface=surface)
+    t_record_count = _exact_int(record, "record_count", surface=surface)
+    if e_record_count != t_record_count:
+        raise FormalInputSchemaError(
+            f"{surface}: p01_03e_output.record_count ({e_record_count}) "
+            f"disagrees with top-level record_count ({t_record_count})"
+        )
+    transformation_version = _exact_str(record, "schema_version", surface=surface)
     return FormalDatasetIdentity(
-        dataset_id=_exact_str(record, "dataset_id", surface=surface),
-        dataset_revision=_exact_str(record, "dataset_revision", surface=surface),
-        configuration=_exact_str(record, "configuration", surface=surface),
-        transformation_version=_exact_str(record, "transformation_version", surface=surface),
-        source_records_sha256=_require_sha256(
-            record.get("source_records_sha256"), f"{surface}.source_records_sha256"
-        ),
-        source_records_byte_size=_exact_int(record, "source_records_byte_size", surface=surface),
+        transformation_version=transformation_version,
+        source_records_sha256=source_records_sha256,
+        source_records_byte_size=source_records_byte_size,
+        record_count=t_record_count,
     )
 
 
 def parse_source_records(payload: bytes) -> tuple[SourceLabelRow, ...]:
-    """Reduce every source-record envelope to identity and label immediately.
+    """Accept the canonical P01-03E source-record envelope and reduce immediately.
 
-    Each envelope is refused outright if it carries a free-text member, so no
-    question, context, answer or rationale value is ever held in memory beyond the
-    single line being validated, and none can reach an artifact.
+    The canonical envelope has no top-level ``schema_version``.  It carries
+    ``record`` (a full scientific record including question, context, and
+    annotation fields) and ``source_record_hash``.  The P01-04 rule is: accept
+    the canonical input, validate it, immediately reduce to identity +
+    ``final_decision`` via the accepted ``source_label_from_envelope``
+    projection, and ensure no scientific text reaches any split artifact.
+
+    The nested scientific record must carry the exact closed 15-member
+    canonical field set and ``schema_version == mesc-pubmedqa-source/1``
+    uniformly across all rows.
     """
     surface = SOURCE_RECORDS_SURFACE
     text = decode_utf8(payload, surface=surface)
     labels: list[SourceLabelRow] = []
+    expected_schema = CANONICAL_SOURCE_RECORD_SCHEMA
     for index, envelope in enumerate(_strict_jsonl_objects(text, surface=surface)):
         location = f"{surface}[{index}]"
-        _exact_keys(envelope, ("schema_version", "source_record_hash", "record"), surface=location)
-        _require_schema(envelope, SOURCE_RECORDS_SCHEMA, surface=location)
+        _exact_keys(envelope, ("record", "source_record_hash"), surface=location)
         record = envelope.get("record")
         if not isinstance(record, dict):
             raise FormalInputSchemaError(f"{location}.record must be a JSON object")
-        present = sorted(field for field in _PROHIBITED_RECORD_FIELDS if field in record)
-        if present:
+        _exact_keys(record, CANONICAL_SOURCE_RECORD_MEMBERS, surface=f"{location}.record")
+        actual_schema = _exact_str(record, "schema_version", surface=f"{location}.record")
+        if actual_schema != expected_schema:
             raise FormalInputSchemaError(
-                f"{location}.record carries prohibited free-text members: {present}"
+                f"{location}.record requires schema {expected_schema!r}, got {actual_schema!r}"
             )
-        _exact_keys(
-            record,
-            (
-                "dataset_id",
-                "dataset_revision",
-                "configuration",
-                "original_example_id",
-                "source_document_id",
-                "final_decision",
-            ),
-            surface=f"{location}.record",
-        )
         try:
             labels.append(source_label_from_envelope(envelope))
         except Exception as error:
@@ -755,24 +826,81 @@ def verify_input_digest(payload: bytes, descriptor: FormalInputDescriptor) -> No
         )
 
 
+def _read_schema_from_json_object(payload: bytes, *, surface: str) -> str:
+    """Lightweight extraction of ``schema_version`` from a canonical JSON object.
+
+    This performs a shallow parse of the first JSON object in *payload* to read
+    the ``schema_version`` field without a full structural parse.  It is used
+    only inside ``build_input_identity`` to validate that a surface truly
+    carries the canonical schema it claims.
+    """
+    text = decode_utf8(payload, surface=surface)
+    record = _strict_json_object(text, surface=surface)
+    return _exact_str(record, "schema_version", surface=surface)
+
+
+def _read_source_record_schema(payload: bytes) -> str:
+    """Read the schema from the first source-record envelope's nested record.
+
+    The canonical P01-03E envelope is ``{"record": {...}, "source_record_hash":
+    "..."}`` with no top-level ``schema_version``.
+    ``record.schema_version`` must be ``mesc-pubmedqa-source/1`` uniformly
+    across all rows.
+    """
+    surface = SOURCE_RECORDS_SURFACE
+    text = decode_utf8(payload, surface=surface)
+    envelopes = _strict_jsonl_objects(text, surface=surface)
+    if not envelopes:
+        raise FormalInputSchemaError(f"{surface} must contain at least one record")
+    record = envelopes[0].get("record")
+    if not isinstance(record, dict):
+        raise FormalInputSchemaError(f"{surface}[0].record must be a JSON object")
+    return _exact_str(record, "schema_version", surface=f"{surface}[0].record")
+
+
 def build_input_identity(payloads: Mapping[str, bytes]) -> FormalSplitInputIdentity:
-    """Bind identity for exactly the five formal input surfaces."""
+    """Bind identity for exactly the five formal input surfaces.
+
+    Schema version is derived from the actual canonical content — not from
+    internal constants — and is only recorded for surfaces where a canonical
+    schema genuinely exists.
+    """
     supplied = sorted(payloads)
     if supplied != sorted(REQUIRED_INPUT_SURFACES):
         raise FormalInputIdentityError(
             f"formal inputs must be exactly {sorted(REQUIRED_INPUT_SURFACES)}, got {supplied}"
         )
-    return FormalSplitInputIdentity(
-        descriptors=tuple(
+    descriptors: list[FormalInputDescriptor] = []
+    for surface in sorted(REQUIRED_INPUT_SURFACES):
+        payload = payloads[surface]
+        sha = sha256_of_bytes(payload)
+        size = len(payload)
+
+        if surface in CANONICAL_SCHEMA_VERSIONS:
+            expected = CANONICAL_SCHEMA_VERSIONS[surface]
+            if surface == TRANSFORMED_DATASET_IDENTITY_SURFACE:
+                actual = _read_schema_from_json_object(payload, surface=surface)
+            elif surface == SOURCE_RECORDS_SURFACE:
+                actual = _read_source_record_schema(payload)
+            else:
+                actual = ""
+            if actual != expected:
+                raise FormalInputSchemaError(
+                    f"surface {surface!r} requires canonical schema {expected!r}, got {actual!r}"
+                )
+            schema: str | None = expected
+        else:
+            schema = None
+
+        descriptors.append(
             FormalInputDescriptor(
                 surface=surface,
-                schema_version=INPUT_SCHEMA_VERSIONS.get(surface),
-                sha256=sha256_of_bytes(payloads[surface]),
-                byte_size=len(payloads[surface]),
+                schema_version=schema,
+                sha256=sha,
+                byte_size=size,
             )
-            for surface in sorted(REQUIRED_INPUT_SURFACES)
         )
-    )
+    return FormalSplitInputIdentity(descriptors=tuple(descriptors))
 
 
 # ---------------------------------------------------------------------------
@@ -786,16 +914,13 @@ def join_formal_examples(
     dataset_identity: FormalDatasetIdentity,
     source_document_counts: Mapping[str, int],
 ) -> tuple[LabeledExample, ...]:
-    """Perform the exact fail-closed join and every cross-input agreement check."""
-    for label in source_labels:
-        if (
-            label.dataset_id != dataset_identity.dataset_id
-            or label.dataset_revision != dataset_identity.dataset_revision
-            or label.configuration != dataset_identity.configuration
-        ):
-            raise FormalInputIdentityError(
-                "source-record dataset identity disagrees with the transformed-dataset identity"
-            )
+    """Perform the exact fail-closed join and every cross-input agreement check.
+
+    Dataset identity (``dataset_id``, ``dataset_revision``, ``configuration``)
+    is enforced inside ``join_labels`` which requires a single consistent
+    identity across all source-label rows; it is not duplicated from the
+    transformed-dataset identity, which does not carry those fields.
+    """
     try:
         joined = join_labels(
             ordered_rows,
@@ -804,6 +929,12 @@ def join_formal_examples(
         )
     except Exception as error:
         raise FormalLabelJoinError(str(error)) from error
+
+    if len(joined) != dataset_identity.record_count:
+        raise FormalInputIdentityError(
+            f"joined record count ({len(joined)}) disagrees with "
+            f"transformed-dataset identity record_count ({dataset_identity.record_count})"
+        )
 
     observed: dict[str, int] = {}
     for example in joined:

@@ -858,9 +858,12 @@ def make_variant_environment(tmp_path: Path, revision: str) -> dict[str, Path]:
         rebuilt.append(json.dumps(envelope, sort_keys=True))
     payloads[SOURCE_RECORDS_SURFACE] = ("\n".join(rebuilt) + "\n").encode("utf-8")
     identity = json.loads(payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE])
-    identity["dataset_revision"] = revision
-    identity["source_records_sha256"] = hashlib.sha256(payloads[SOURCE_RECORDS_SURFACE]).hexdigest()
-    identity["source_records_byte_size"] = len(payloads[SOURCE_RECORDS_SURFACE])
+    identity["p01_03e_output"]["output_files"]["source-records.jsonl"]["sha256"] = hashlib.sha256(
+        payloads[SOURCE_RECORDS_SURFACE]
+    ).hexdigest()
+    identity["p01_03e_output"]["output_files"]["source-records.jsonl"]["byte_size"] = len(
+        payloads[SOURCE_RECORDS_SURFACE]
+    )
     payloads[TRANSFORMED_DATASET_IDENTITY_SURFACE] = (
         json.dumps(identity, sort_keys=True) + "\n"
     ).encode("utf-8")
