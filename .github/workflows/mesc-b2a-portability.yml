@@ -1,0 +1,493 @@
+name: MESC B2A Portability
+
+# Synthetic cross-platform portability validation for the private P01-04B2A
+# canonical-serialization increment (FD-PV-1..10, FC-PV-1..8).
+#
+# A pull_request run is INFRASTRUCTURE VALIDATION ONLY. It proves the harness
+# and the cross-runner comparison work. It is NOT admissible portability
+# evidence, it does not close the Windows or macOS obligation, it does not
+# accept B2A, and it does not authorize B2B.
+#
+# Only a separately authorized workflow_dispatch run against an exact canonical
+# main SHA may produce evidence admissible for a B2A acceptance decision.
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/mesc-b2a-portability.yml'
+      - 'tests/_mesc_b2a_portability.py'
+      - 'tests/test_mesc_b2a_portability.py'
+      - 'src/medscale/mesc/_canonical_json_v1.py'
+      - 'src/medscale/mesc/_split_artifacts_v1.py'
+      - 'tests/test_mesc_canonical_json_v1.py'
+      - 'tests/test_mesc_split_artifacts_v1.py'
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: 'Exact canonical main commit SHA this run must execute against'
+        required: true
+        type: string
+
+# FD-PV-13: contents: read is narrowly amended to add actions: read, authorized
+# solely to enumerate the artifacts belonging to this exact workflow run, read
+# their metadata including archive byte size, and download the six exact
+# expected artifacts through the documented GitHub Actions API. It authorizes no
+# workflow mutation, rerun, cancellation, dispatch, artifact deletion, write
+# scope, secret, OIDC, package, release, cache, or access to artifacts from
+# another repository or an unrelated run.
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: mesc-b2a-portability-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: portability (${{ matrix.cell }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python-version: '3.11'
+            cell: linux-py3.11
+          - os: ubuntu-latest
+            python-version: '3.12'
+            cell: linux-py3.12
+          - os: windows-latest
+            python-version: '3.11'
+            cell: windows-py3.11
+          - os: windows-latest
+            python-version: '3.12'
+            cell: windows-py3.12
+          - os: macos-latest
+            python-version: '3.11'
+            cell: macos-py3.11
+          - os: macos-latest
+            python-version: '3.12'
+            cell: macos-py3.12
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Guard canonical-main dispatch
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Every dispatch refusal is an evidence-generation refusal and emits
+          # that exact ratified category in machine-verifiable form.
+          fail_with() {
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' "$1" >&2
+            shift
+            printf '%s\n' "$@" >&2
+            exit 1
+          }
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            fail_with evidence_generation_failure \
+              "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"
+          fi
+          # FD-PV-14: validate the dispatch input's exact form here, before it is
+          # threaded anywhere. Exactly forty lowercase hexadecimal characters.
+          case "${EXPECTED_SHA}" in
+            *[!0-9a-f]* | "")
+              fail_with evidence_generation_failure \
+                "dispatch rejected: expected_sha is not lowercase hexadecimal" ;;
+          esac
+          if [ "${#EXPECTED_SHA}" -ne 40 ]; then
+            fail_with evidence_generation_failure \
+              "dispatch rejected: expected_sha is not exactly 40 characters"
+          fi
+          head="$(git rev-parse HEAD)"
+          if [ "${head}" != "${EXPECTED_SHA}" ]; then
+            fail_with evidence_generation_failure \
+              "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"
+          fi
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+
+      - name: Install uv
+        id: setup-uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: '0.11.14'
+          python-version: ${{ matrix.python-version }}
+          enable-cache: false
+
+      - name: Verify uv runtime identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          # uv prints "uv <version> (<target>)"; the target suffix is expected
+          # and platform-specific. Compare the semantic version exactly, and
+          # require the action output to match exactly as well. Both checks run
+          # before any dependency synchronization and fail closed.
+          actual="$(uv --version)"
+          printf '%s\n' "${actual}"
+          actual_version="$(printf '%s\n' "${actual}" | awk '{print $2}')"
+          if [ "${actual_version}" != "0.11.14" ]; then
+            echo "unexpected uv runtime version: ${actual}" >&2
+            exit 1
+          fi
+          if [ "${UV_VERSION_OUTPUT}" != "0.11.14" ]; then
+            echo "setup-uv reported unexpected version: ${UV_VERSION_OUTPUT}" >&2
+            exit 1
+          fi
+          echo "action-reported uv-version: ${UV_VERSION_OUTPUT}"
+        env:
+          UV_VERSION_OUTPUT: ${{ steps.setup-uv.outputs.uv-version }}
+
+      - name: Sync (locked)
+        shell: bash
+        run: uv sync --frozen
+
+      - name: Generate canonical artifacts
+        shell: bash
+        run: uv run python tests/_mesc_b2a_portability.py generate --out artifact
+
+      - name: Verify exactly three files exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in canonical.json canonical.jsonl manifest.json; do
+            test -f "artifact/${name}" || { echo "missing artifact/${name}"; exit 1; }
+          done
+          count="$(ls -1 artifact | wc -l | tr -d '[:space:]')"
+          if [ "${count}" != "3" ]; then echo "expected 3 files, found ${count}"; exit 1; fi
+
+      - name: Upload cell artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: b2a-portability-${{ matrix.cell }}
+          path: artifact/
+          retention-days: 14
+          if-no-files-found: error
+
+  aggregate:
+    name: aggregate verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: generate
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Guard canonical-main dispatch
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Every dispatch refusal is an evidence-generation refusal and emits
+          # that exact ratified category in machine-verifiable form.
+          fail_with() {
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' "$1" >&2
+            shift
+            printf '%s\n' "$@" >&2
+            exit 1
+          }
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            fail_with evidence_generation_failure \
+              "dispatch rejected: ref ${GITHUB_REF} is not refs/heads/main"
+          fi
+          # FD-PV-14: validate the dispatch input's exact form here, before it is
+          # threaded anywhere. Exactly forty lowercase hexadecimal characters.
+          case "${EXPECTED_SHA}" in
+            *[!0-9a-f]* | "")
+              fail_with evidence_generation_failure \
+                "dispatch rejected: expected_sha is not lowercase hexadecimal" ;;
+          esac
+          if [ "${#EXPECTED_SHA}" -ne 40 ]; then
+            fail_with evidence_generation_failure \
+              "dispatch rejected: expected_sha is not exactly 40 characters"
+          fi
+          head="$(git rev-parse HEAD)"
+          if [ "${head}" != "${EXPECTED_SHA}" ]; then
+            fail_with evidence_generation_failure \
+              "dispatch rejected: HEAD ${head} != expected_sha ${EXPECTED_SHA}"
+          fi
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+
+      - name: Install uv
+        id: setup-uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: '0.11.14'
+          python-version: '3.12'
+          enable-cache: false
+
+      - name: Verify uv runtime identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          # uv prints "uv <version> (<target>)"; the target suffix is expected
+          # and platform-specific. Compare the semantic version exactly, and
+          # require the action output to match exactly as well. Both checks run
+          # before any dependency synchronization and fail closed.
+          actual="$(uv --version)"
+          printf '%s\n' "${actual}"
+          actual_version="$(printf '%s\n' "${actual}" | awk '{print $2}')"
+          if [ "${actual_version}" != "0.11.14" ]; then
+            echo "unexpected uv runtime version: ${actual}" >&2
+            exit 1
+          fi
+          if [ "${UV_VERSION_OUTPUT}" != "0.11.14" ]; then
+            echo "setup-uv reported unexpected version: ${UV_VERSION_OUTPUT}" >&2
+            exit 1
+          fi
+          echo "action-reported uv-version: ${UV_VERSION_OUTPUT}"
+        env:
+          UV_VERSION_OUTPUT: ${{ steps.setup-uv.outputs.uv-version }}
+
+      - name: Sync (locked)
+        shell: bash
+        run: uv sync --frozen
+
+      # FD-PV-12/FD-PV-13 bounded transport, with FD-PV-16 corrections.
+      #
+      # B2: the COMPLETE current-run artifact response is evaluated before any
+      # filtering. Expired entries are never discarded ahead of total-set
+      # equality, so an unexpected artifact cannot hide behind expiry.
+      #
+      # B3: every fail-closed guard emits one exact ratified taxonomy category in
+      # the fixed machine-verifiable form
+      # MESC_PORTABILITY_FAILURE_CATEGORY=<category>, followed by human-readable
+      # prose. Prose never replaces the category.
+      - name: Validate the current-run artifact set and download within caps
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAX_COMPRESSED_ARTIFACT_BYTES: '1048576'
+          MAX_AGGREGATE_COMPRESSED_BYTES: '6291456'
+        run: |
+          set -euo pipefail
+          # Never trace this step: a trace would echo the authorization
+          # environment into the log.
+          set +x
+
+          # One deterministic failure emits one deterministic ratified category.
+          # No twenty-second category is introduced by this function.
+          fail_with() {
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' "$1" >&2
+            shift
+            printf '%s\n' "$@" >&2
+            exit 1
+          }
+
+          mkdir -p archives
+
+          printf '%s\n' \
+            'b2a-portability-linux-py3.11' \
+            'b2a-portability-linux-py3.12' \
+            'b2a-portability-macos-py3.11' \
+            'b2a-portability-macos-py3.12' \
+            'b2a-portability-windows-py3.11' \
+            'b2a-portability-windows-py3.12' \
+            | sort > expected-names.txt
+
+          # Current exact run only. The endpoint is bound to this repository and
+          # this run id, so no artifact from another run or repository can enter.
+          gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" \
+            --jq '.artifacts[] | [.name, (.size_in_bytes|tostring), (.expired|tostring), (.id|tostring)] | @tsv' \
+            > artifacts.tsv
+
+          # ---- B2: complete-response validation, before any download --------
+          # Every artifact the run exposes is considered, expired or not.
+          awk -F'\t' '{ print $1 }' artifacts.tsv | sort > all-names.txt
+          awk -F'\t' '{ print $1 }' artifacts.tsv | sort -u > unique-names.txt
+          total_count="$(wc -l < all-names.txt | tr -d '[:space:]')"
+          unique_count="$(wc -l < unique-names.txt | tr -d '[:space:]')"
+
+          # Duplicates first, so a repeated name is never reported as a count or
+          # membership problem.
+          if [ "${total_count}" != "${unique_count}" ]; then
+            fail_with duplicate_matrix_cell \
+              "current run exposes a duplicated artifact name" \
+              "observed: $(tr '\n' ' ' < all-names.txt)"
+          fi
+
+          # Unexpected artifacts, expired or non-expired alike.
+          #
+          # The comparison output is materialized and tested with -s rather than
+          # piped into an early-exit consumer. Under `set -o pipefail` a consumer
+          # such as `grep -q` can exit on its first match, leave `comm` holding a
+          # closed pipe, and turn the whole pipeline into status 141 - which an
+          # `if` reads as false and silently skips the guard on a large response.
+          comm -23 unique-names.txt expected-names.txt > unexpected-names.txt
+          if [ -s unexpected-names.txt ]; then
+            fail_with unexpected_matrix_cell \
+              "current run exposes an artifact outside the six ratified names" \
+              "unexpected: $(tr '\n' ' ' < unexpected-names.txt)"
+          fi
+
+          # Missing expected artifacts, materialized for the same reason.
+          comm -13 unique-names.txt expected-names.txt > missing-names.txt
+          if [ -s missing-names.txt ]; then
+            fail_with missing_matrix_cell \
+              "current run is missing an expected artifact" \
+              "missing: $(tr '\n' ' ' < missing-names.txt)"
+          fi
+
+          # Both comparisons passed; the bounded scratch files are no longer
+          # needed and are removed before any download begins.
+          rm -f unexpected-names.txt missing-names.txt
+
+          # Exactly six total. Reached only when the set is already exactly the
+          # six ratified names with no duplicate, so any other count is an
+          # internal inconsistency in this validation.
+          if [ "${total_count}" != "6" ]; then
+            fail_with aggregate_verifier_internal_error \
+              "artifact-set validation reached an inconsistent state: ${total_count} entries"
+          fi
+
+          # Every one of the six must be non-expired. An expired expected
+          # artifact makes that matrix cell unavailable.
+          awk -F'\t' '$3 != "false" { print $1 }' artifacts.tsv | sort > expired-names.txt
+          if [ -s expired-names.txt ]; then
+            fail_with missing_matrix_cell \
+              "an artifact required by the matrix has expired and is unavailable" \
+              "expired: $(tr '\n' ' ' < expired-names.txt)"
+          fi
+
+          # ---- capped transport ---------------------------------------------
+          # The sink accepts at most limit + 1 bytes. Reaching limit + 1 proves
+          # the response is oversized, and closing the pipe terminates the
+          # producer, so runner storage never holds more than limit + 1 bytes of
+          # any single artifact.
+          transport_cap="$(( MAX_COMPRESSED_ARTIFACT_BYTES + 1 ))"
+          total=0
+          : > declared-sizes.tsv
+          while IFS="$(printf '\t')" read -r name size expired id; do
+            if [ "${size}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
+              fail_with artifact_size_limit_exceeded \
+                "artifact ${name} declares ${size} compressed bytes, over the per-artifact limit"
+            fi
+            total="$(( total + size ))"
+            if [ "${total}" -gt "${MAX_AGGREGATE_COMPRESSED_BYTES}" ]; then
+              fail_with artifact_size_limit_exceeded \
+                "aggregate compressed limit exceeded at ${name}"
+            fi
+            part="archives/${name}.zip.part"
+            set +e
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" </dev/null \
+              | head -c "${transport_cap}" > "${part}"
+            statuses=("${PIPESTATUS[@]}")
+            set -e
+            producer="${statuses[0]}"
+            consumer="${statuses[1]}"
+            actual="$(wc -c < "${part}" | tr -d '[:space:]')"
+            if [ "${actual}" -gt "${MAX_COMPRESSED_ARTIFACT_BYTES}" ]; then
+              rm -f "${part}"
+              fail_with artifact_size_limit_exceeded \
+                "artifact ${name} exceeded the transport cap after ${actual} bytes" \
+                "producer status ${producer}, consumer status ${consumer}"
+            fi
+            if [ "${consumer}" != "0" ]; then
+              rm -f "${part}"
+              fail_with evidence_generation_failure \
+                "bounded consumer failed for ${name} (status ${consumer})" \
+                "producer status ${producer}, consumer status ${consumer}"
+            fi
+            if [ "${producer}" != "0" ]; then
+              rm -f "${part}"
+              fail_with evidence_generation_failure \
+                "download failed for ${name} (status ${producer})" \
+                "producer status ${producer}, consumer status ${consumer}"
+            fi
+            if [ "${actual}" != "${size}" ]; then
+              rm -f "${part}"
+              fail_with artifact_size_limit_exceeded \
+                "artifact ${name} size ${actual} does not match declared ${size}"
+            fi
+            mv "${part}" "archives/${name}.zip"
+            printf '%s\t%s\n' "${name}" "${size}" >> declared-sizes.tsv
+          done < artifacts.tsv
+
+          awk -F'\t' 'BEGIN { printf "{" } { if (NR > 1) printf ","; printf "\"%s\":%s", $1, $2 }
+            END { print "}" }' declared-sizes.tsv > declared-sizes.json
+          cat declared-sizes.json
+
+      - name: Verify archive cardinality
+        shell: bash
+        run: |
+          set -euo pipefail
+          count="$(ls -1 archives | wc -l | tr -d '[:space:]')"
+          if [ "${count}" != "6" ]; then
+            # Reached only if the validated six-artifact set and the downloaded
+            # archives disagree, which is an internal inconsistency.
+            printf 'MESC_PORTABILITY_FAILURE_CATEGORY=%s\n' \
+              aggregate_verifier_internal_error >&2
+            printf 'expected 6 archives, found %s\n' "${count}" >&2
+            exit 1
+          fi
+
+      # Pull-request runs: no canonical SHA exists, so the flag is not passed and
+      # the envelope omits the key entirely (FD-PV-14).
+      - name: Aggregate and compare all six cells (pull request)
+        if: github.event_name != 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run python tests/_mesc_b2a_portability.py aggregate \
+            --archives archives \
+            --extract-root extracted \
+            --declared-sizes declared-sizes.json \
+            --evidence-out evidence/portability-evidence.json
+
+      # Canonical-main dispatch: the value threaded here is the already guarded
+      # dispatch input, verified above to be exactly forty lowercase hexadecimal
+      # characters and to equal the checked-out HEAD on refs/heads/main. It is
+      # never taken from GITHUB_SHA, a ref, a branch name or a tag.
+      - name: Aggregate and compare all six cells (canonical-main dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run python tests/_mesc_b2a_portability.py aggregate \
+            --archives archives \
+            --extract-root extracted \
+            --declared-sizes declared-sizes.json \
+            --evidence-out evidence/portability-evidence.json \
+            --canonical-sha "${EXPECTED_SHA}"
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+
+      - name: Publish non-admissible envelope to the job summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '### B2A portability envelope'
+            echo
+            echo 'Infrastructure-validation output only.'
+            echo 'NOT admissible portability evidence. Does NOT accept B2A.'
+            echo 'Windows and macOS obligations remain open. B2B remains unauthorized.'
+            echo
+            echo '```json'
+            cat evidence/portability-evidence.json
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+          cat evidence/portability-evidence.json
+
+      # Only a separately authorized canonical-main dispatch may retain the
+      # envelope as an artifact. Pull-request runs never upload a seventh
+      # artifact.
+      - name: Upload evidence envelope (canonical-main dispatch only)
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: b2a-portability-evidence
+          path: evidence/portability-evidence.json
+          retention-days: 14
+          if-no-files-found: error

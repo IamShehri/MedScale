@@ -70,10 +70,28 @@ Note: P01-02 completed dataset identity, rights documentation, and immutable rev
 ## P01-04B — P01-04 tooling and contract implementation
 
 - Prerequisites: P01-04A specification ratified; founder authorization for tooling implementation.
-- Outputs: grouped deterministic allocation implementation; artifact schemas; canonical serialization; leakage-detection primitives; safe output boundaries; formal execution entry point; regression fixtures.
+- Outputs (adopted): private deterministic split core; canonical artifacts and fingerprinting; private fixture facade; leakage primitives; three-fixture synthetic qualification; atomic publication boundary; write-path protections; cross-platform qualification.
 - Acceptance criteria: implementation is consistent with ratified P01-04A policy; deterministic serialization and fingerprinting behavior are fixture-validated; execution safety controls are reviewable; no real split artifacts are produced during implementation or qualification.
+- Acceptance summary: all ten P01-04B acceptance criteria are SATISFIED on canonical main `d5a6ac1654cabd33b6a795756d2796bceaf1652a`; the three synthetic qualification fixtures (`exact-reference-1000-v1`, `constraint-stress-1000-v1`, `leakage-positive-v1`) are accepted; qualification is deterministic and byte-identical across the supported Linux, Windows and macOS runtimes; no real partition membership was generated or disclosed.
 - Stop conditions: implementation diverges from ratified specification; execution controls allow unauthorized seeding, mutation, or writeback; fixtures contain real partition membership; scope expands beyond contracts and tooling without separate authorization.
-- Authorization status: NOT AUTHORIZED.
+- Authorization status: COMPLETED AND ACCEPTED — REAL EXECUTION NOT AUTHORIZED.
+
+Note: P01-04B acceptance is tooling acceptance only. It does not authorize any real split, real partition membership, canonical leakage execution, evidence publication, model access, inference, retrieval, training or fine-tuning, and it does not authorize P01-04 overall, P01-04C, P01-04D or any later phase.
+
+## P01-04C — Fixture Qualification
+
+- Prerequisites: P01-04B canonically accepted; separate founder authorization for P01-04C.
+- Outputs: fixture qualification record for synthetic small inputs; repeated-run byte-identity evidence; edge-case qualification evidence.
+- Acceptance criteria: all fixture tests pass for synthetic small input; artifacts are byte-identical on repeated runs; empty, single-example, and all-one-label edge cases pass; no real dataset partition membership is generated.
+- Ratified edge-case semantics — `pass` does not mean every edge case produces a successful split:
+  - empty: expected fail-closed
+  - single-example: expected success
+  - all-one-label: expected success
+- Stop conditions: real dataset partition membership generated; qualification performed without separate founder authorization; fixtures substituted with real data.
+- Acceptance summary: all four P01-04C criteria SATISFIED; canonical acceptance baseline `b20dbe0000a129f3019d6f7d2895622ce0560069`; reviewed candidate head `c9cf1cc58b3ff89c39327c328a10308c0a9dbf4d`; PR #85 merged; post-merge CI, CodeQL and Optional Extras / Backends all successful; no real dataset membership generated.
+- Authorization status: COMPLETED AND ACCEPTED — REAL DATASET EXECUTION NOT AUTHORIZED.
+
+Note: P01-04C acceptance accepts synthetic qualification only. It does not authorize P01-04D, real split generation, real membership, canonical leakage execution or any later phase.
 
 ## P01-05 — B0/B1 baseline runner
 

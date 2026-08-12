@@ -143,3 +143,217 @@ Every formal execution must produce external evidence (outside the repository an
 - verification rerun results.
 
 External evidence must not be committed to the repository. It must be stored in a designated external-evidence location and referenced by stable identity only.
+
+---
+
+## Prospective operator interface
+
+**Historical as of the remediation-design baseline.** The following status was
+true before canonical implementation adoption and before founder P01-04D entry
+authorization:
+
+```text
+DESIGN RATIFIED / IMPLEMENTATION NOT AUTHORIZED / EXECUTION NOT AUTHORIZED
+```
+
+That block is preserved unrewritten as historical evidence. It is not the
+current governing status. Current truth is recorded under **Current truth** in
+`Supported operator surface` below, and in the terminal status block under
+`Stage boundary` at the end of this document.
+
+This section records the design ratified by `FD-DREADY-3`, `FD-DREADY-4` and
+`FD-DREADY-5` in
+[`../p01-04d-entry-readiness-remediation/founder-authorization.md`](../p01-04d-entry-readiness-remediation/founder-authorization.md),
+which controls. It resolves readiness blocker **B-1** at the design level.
+
+Design-level resolution is not entry, not implementation authority and not
+execution authority. Nothing in this section is a runnable command, and no
+real input path, workspace path or evidence path is recorded here.
+
+### Supported operator surface
+
+```text
+script:
+scripts/mesc_p01_04d_operator.py
+
+commands:
+generate
+compare
+
+command count:
+2
+```
+
+**Historical as of the remediation-design baseline.** The script does not exist
+at this baseline. When it exists, it is a canonical repository-controlled
+script, never an improvised or one-off script, and it is not exported from
+`medscale.mesc`, not registered as a `medscale` CLI subcommand, not installed as
+a public console script and not callable through an environment-variable
+activation switch. No third command exists on this surface.
+
+**Current truth.** The sentence `The script does not exist at this baseline.`
+describes the remediation-design baseline and is preserved for it. The script
+now exists on canonical main. Its implementation code was adopted by PR #90, and
+PR #91 reconciled the canonical implementation truth; see
+[`../p01-04d-formal-executor/canonical-adoption-record.md`](../p01-04d-formal-executor/canonical-adoption-record.md).
+Every property described in the paragraph above holds of the adopted script: it
+is canonical and repository-controlled, unexported, unregistered, not installed
+as a console script, not environment-activated, and it carries no third command.
+
+Entry is now authorized under the founder decision recorded in
+[`../p01-04d-entry-authorization/founder-authorization.md`](../p01-04d-entry-authorization/founder-authorization.md).
+Execution remains unauthorized. No protected input has been opened, and no
+Generation A or Generation B has occurred. The invocation parameters, validation
+order, artifact inventory, stage separation and execution semantics recorded in
+this protocol are unchanged by this note.
+
+Formal execution uses a separate private formal-execution component. It does not
+reuse the fixture-only execution authority of `FixtureSplitFacade` or
+`_fixture_publication_v1`, which remain private, fixture-only, synthetic-only,
+non-evidence, unexported and unchanged.
+
+### `generate`
+
+Executes exactly one generation per process. Generation identity is exactly `A`
+or `B`. One invocation never executes both generations.
+
+Each invocation requires explicit, safely parameterized operator inputs for:
+
+```text
+expected canonical commit
+read-only repository root
+generation identity
+fresh generation workspace
+external evidence root
+future evidence root
+ordered-example registry
+source-document registry
+transformed-dataset identity
+external source-records label source
+ratified decision record
+exact Python version
+```
+
+The operator rejects, fail-closed and before any mutation:
+
+```text
+workspace reuse
+repository-root output
+P01-03G output
+future-evidence-root output
+relative or unresolved protected-root aliases
+unknown generation identity
+missing expected commit
+canonical commit movement
+```
+
+### `compare`
+
+Runs only after Generation A and Generation B have terminated.
+
+It shall:
+
+```text
+read completed A and B inventories
+verify exact expected inventory
+compare every D artifact byte-for-byte
+recompute the authoritative split fingerprint
+verify all descriptors and manifests
+record the equality disposition externally
+```
+
+It shall not:
+
+```text
+repair an artifact
+rewrite a generation workspace
+copy one generation over the other
+suppress an inequality
+promote to the final evidence root
+perform P01-04E leakage execution
+```
+
+Any inequality invalidates both candidates. The invalidation rules recorded
+above apply unchanged: an invalidated candidate is never overwritten, never
+deleted and never modified in place.
+
+### Exact seven-file A/B comparison requirements
+
+The expected inventory of each generation workspace is exactly these seven
+P01-04D candidate artifacts, and nothing else:
+
+```text
+split-policy.json
+group-registry.jsonl
+example-registry.jsonl
+excluded-ledger.json
+split-summary-identity-core.json
+split-summary.json
+generation-manifest.json
+```
+
+```text
+P01-04D artifact count:
+7
+```
+
+Comparison requirements:
+
+1. Each workspace inventory is derived from the workspace itself and must equal
+   the exact seven filenames above — no missing file, no eighth artifact.
+2. No log, receipt, lock, marker, PID file, timestamp file or sidecar is part of
+   the deterministic generation bundle or of the comparison.
+3. All seven files are compared **byte-for-byte** between Generation A and
+   Generation B. Byte equality is required for all seven, not a subset.
+4. The authoritative full lowercase 64-hex `split_fingerprint` is recomputed and
+   must match the value carried in `split-summary.json` and in
+   `generation-manifest.json`. The 16-hex `split_hash` is
+   compatibility/display-only and is never the authoritative value. Under the
+   `FD-DREADY-7` supersession map, `split-fingerprint.json` maps to
+   **no standalone file**:
+
+```text
+standalone fingerprint file:
+none
+```
+5. All descriptors and manifests are verified. `generation-manifest.json` must
+   be non-circular and must carry no generation identity, workspace path,
+   process ID, timestamp, hostname, username, command line or external-evidence
+   path, so Generation A and Generation B produce identical manifest bytes when
+   all scientific inputs and code are identical.
+6. The equality disposition is recorded externally. It is never recorded by
+   mutating a generation workspace.
+7. Any inequality in any of the seven files invalidates both candidates. No
+   repair, rewrite, copy, suppression or promotion is permitted.
+
+### Stage boundary
+
+```text
+P01-04D   formal split generation candidate bundle
+P01-04E   canonical leakage audit and finding resolution — leakage-audit.json
+P01-04F   freeze, independent verification and closeout record —
+          p01-04-closeout-record.json
+P01-04G   separately authorized repository promotion
+```
+
+`publication-manifest.json` is the existing fixture-only publication artifact and
+is not the formal P01-04D generation manifest. The formal P01-04D
+candidate-bundle manifest is `generation-manifest.json`. `compare` never performs
+P01-04E leakage execution.
+
+**Current truth.** The P01-04D status recorded by this protocol is:
+
+```text
+P01-04D entry:
+AUTHORIZED
+
+P01-04D implementation:
+ADOPTED ON CANONICAL MAIN
+
+P01-04D execution:
+NOT AUTHORIZED
+```
+
+Entry authorization and canonical implementation adoption grant no execution
+authority: no protected input has been opened, and neither Generation A nor
+Generation B has occurred.
