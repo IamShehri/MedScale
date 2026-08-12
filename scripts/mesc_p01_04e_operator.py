@@ -47,8 +47,6 @@ _LOWERCASE_HEX = frozenset("0123456789abcdef")
 _SHA256_LEN = 64
 _COMMIT_LEN = 40
 
-_EXPECTED_CANONICAL_MAIN = "5888cbad58126096013bc4b4680b6b1e5a82bc14"
-
 # ---------------------------------------------------------------------------
 # Operator errors
 # ---------------------------------------------------------------------------
@@ -147,11 +145,17 @@ def _resolve_repository_commit(repository_root: Path) -> str:
     raise OperatorError(f"repository reference {ref_name!r} could not be resolved")
 
 
-def _verify_repository_identity(repository_root: Path) -> None:
+def _verify_repository_identity(repository_root: Path, expected_canonical_commit: str) -> None:
+    """Fail closed unless the checked-out repository HEAD equals the required commit.
+
+    The invocation authority supplies ``expected_canonical_commit`` at runtime;
+    no compile-time canonical-main binding exists, so adoption can never stale
+    the operator.
+    """
     actual = _resolve_repository_commit(repository_root)
-    if actual != _EXPECTED_CANONICAL_MAIN:
+    if actual != expected_canonical_commit:
         raise OperatorError(
-            f"repository is at {actual!r}, not the expected {_EXPECTED_CANONICAL_MAIN!r}"
+            f"repository is at {actual!r}, not the expected commit {expected_canonical_commit!r}"
         )
 
 
@@ -401,6 +405,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     audit_parser = subparsers.add_parser("audit", help="execute the P01-04E leakage audit")
     audit_parser.add_argument("--repository-root", required=True, type=Path)
+    audit_parser.add_argument(
+        "--expected-canonical-commit",
+        required=True,
+        help="exact 40-hex commit the checked-out repository HEAD must equal",
+    )
     audit_parser.add_argument("--episode-identity", required=True)
     audit_parser.add_argument("--expected-split-fingerprint", required=True)
     audit_parser.add_argument("--expected-generation-manifest-sha256", required=True)
@@ -424,6 +433,7 @@ def _run_audit(arguments: argparse.Namespace) -> int:
     audit_workspace = arguments.audit_workspace.resolve()
     generation_manifest_path = arguments.generation_manifest.resolve()
     episode_identity = _require_sha256(arguments.episode_identity, "episode-identity")
+    expected_commit = _require_commit(arguments.expected_canonical_commit)
     expected_fingerprint = _require_sha256(
         arguments.expected_split_fingerprint, "expected-split-fingerprint"
     )
@@ -455,7 +465,7 @@ def _run_audit(arguments: argparse.Namespace) -> int:
     if not repository_root.is_dir():
         raise OperatorError(f"repository root is not a directory: {repository_root}")
 
-    _verify_repository_identity(repository_root)
+    _verify_repository_identity(repository_root, expected_commit)
 
     # --- Load and verify example-registry.jsonl ---
     if not example_registry_path.is_file():
@@ -521,6 +531,11 @@ def _run_audit(arguments: argparse.Namespace) -> int:
 
     # --- Build canonical audit bytes ---
     audit_bytes = canonical_audit_bytes(findings, split_identity, source_records_identity)
+
+    # --- Final repository identity verification immediately before mutation ---
+    # No pair enumeration, hashing, classification or unrelated logic intervenes
+    # between this second verification and the first workspace mutation.
+    _verify_repository_identity(repository_root, expected_commit)
 
     # --- Write once ---
     audit_workspace.mkdir(parents=False, exist_ok=False)
