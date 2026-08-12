@@ -368,6 +368,34 @@ fine-tuning and no clinical use.
 
 ## P01-04E — Leakage Audit
 
+### FD-E-CTX-1 — Context contract adjudication
+
+Issued 2026-08-12 before any P01-04E execution. This resolution is controlling
+for P01-04E.
+
+The context leakage contract is the previously founder-ratified FD-B2-6 contract.
+
+P01-04E performs exactly two context detection classes:
+
+**Exact context:** byte equality of raw UTF-8 bytes of individual context
+segments. No normalization is applied before the exact-context comparison.
+
+**Approximate context overlap:** each context segment is normalized using the
+ratified pipeline (NFKC, casefold, whitespace collapse, trim), tokenized using
+the canonical maximal-Unicode-alphanumeric-run contract, and compared via exact
+integer Jaccard arithmetic with threshold >= 0.95.
+
+The older criterion phrase "no identical normalized context segments across
+partitions" is prospectively superseded for P01-04E by FD-E-CTX-1.  It does not
+introduce a third `normalized_context` detection class, a new finding type, or a
+new finding-schema version.
+
+Context findings use `finding_type = context_overlap`:
+- exact context: `score_representation = none`
+- approximate context: `score_representation = jaccard:<reduced-i>/<reduced-u>`
+
+### Acceptance criteria
+
 P01-04E passes acceptance when:
 
 1. Exact-example cross-partition check: zero cross-partition `original_example_id` duplicates.
@@ -375,14 +403,33 @@ P01-04E passes acceptance when:
 3. Exact-question cross-partition check: zero unresolved byte-exact cross-partition matches.
 4. Normalized-question cross-partition check: zero unresolved normalized cross-partition matches (NFKC, case-folded, whitespace-collapsed).
 5. Near-duplicate question detection: zero unresolved Jaccard >= 0.90 cross-partition candidates.
-6. Context equality: no identical normalized context segments across partitions.
+6. Context detection: zero unresolved cross-partition context findings (exact-byte equality and normalized-tokenized Jaccard >= 0.95 per FD-E-CTX-1 above).
 7. All detected candidates are classified through evidence-preserved review rules; no candidate is silently suppressed.
 8. Findings are zero or all findings are classified as non-leakage with explicit evidence.
-9. `leakage-audit-report.json` is produced with `leaked: false`.
+9. `leakage-audit.json` is produced with `leaked: false`.
 
 A finding is unresolved unless it is explicitly classified as a false positive with supporting evidence. Suppression of a finding is a stop condition.
 
 P01-04E acceptance requires a separate founder authorization.
+
+### Current implementation status
+
+```text
+P01-04E implementation:
+ADOPTED / QUALIFIED
+
+P01-04E execution:
+NOT AUTHORIZED
+
+P01-04E acceptance:
+NOT YET ESTABLISHED
+
+P01-04F:
+NOT AUTHORIZED
+
+P01-04G:
+NOT AUTHORIZED
+```
 
 ---
 
