@@ -89,4 +89,55 @@ Verification date: 2026-07-16
 - MedGemma access requires acceptance of the Health AI Developer Foundation Terms of Use.
 - Aya Expanse 8B requires acceptance of the CC-BY-NC License Agreement and Cohere Labs Acceptable Use Policy.
 - SciFact is CC BY-NC 2.0 and may not be used for commercial purposes.
+
+## Current-authority supersession — P01-05
+
+The following entries are HISTORICAL SELECTIONS — SUPERSEDED FOR EXECUTION
+under the current founder constraint prohibiting Chinese model families for
+MESC execution.
+
+**Qwen / `Qwen/Qwen3-4B-Instruct-2507`**
+
+- Historical selection: External general baseline.
+- Current execution authority: REVOKED / NOT PERMITTED.
+- Reason: Chinese model family — not permitted for MESC execution.
+- Historical record preserved; not removed.
+
+**DeepSeek / `deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B`**
+
+- Historical selection: External reasoning baseline.
+- Current execution authority: REVOKED / NOT PERMITTED.
+- Reason: Chinese model family — not permitted for MESC execution.
+- Historical record preserved; not removed.
+
+**BAAI / `BAAI/bge-m3`**
+
+- Historical selection: Primary retrieval and reranking candidate.
+- Current execution authority: REVOKED / NOT PERMITTED as MESC embedding /
+  retrieval / reranking model.
+- Reason: Chinese model family — not permitted for MESC embedding / retrieval /
+  reranking.
+- Historical record preserved; not removed.
+
+**Controlling current truth**
+
+- `meta-llama/Llama-3.2-3B-Instruct`: PERMITTED PRIMARY PILOT TARGET —
+  execution still separately gated.
+- `meta-llama/Llama-3.2-1B-Instruct`: PERMITTED LOW-MEMORY FALLBACK —
+  substitution separately gated.
+- `google/medgemma-1.5-4b-it`: PERMITTED FUTURE CLINICAL SPECIALIST /
+  COMPARATOR — separate authorization required.
+- `BioMistral/BioMistral-7B`: PERMITTED FUTURE BIOMEDICAL SPECIALIST —
+  separate authorization required.
+- `CohereLabs/aya-expanse-8b`: FUTURE COMPARATOR ONLY — license/non-commercial
+  constraints remain — separate authorization required.
+
+**No replacement selection**
+
+This supersession does not select replacements for Qwen/DeepSeek/BGE-M3.
+Future comparator/retrieval replacement selection requires a separate
+evidence-based decision.
+
+---
+
 - No selected role was changed during this verification pass.
