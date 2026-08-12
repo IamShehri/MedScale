@@ -88,9 +88,13 @@ P01-05 entry contract: CANONICALLY DEFINED
 
 B0 implementation: EXISTING / RECONCILED
 
-B0 execution: NOT AUTHORIZED
+B1 implementation: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
 
-B1 implementation: NOT AUTHORIZED
+B1 development evidence-pack tooling: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+
+B1 development evidence pack: NOT PRODUCED
+
+B0 execution: NOT AUTHORIZED
 
 B1 execution: NOT AUTHORIZED
 

@@ -94,12 +94,14 @@ Blocking findings: NONE
 
 B1 evidence source: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES
 
-B1 implementation: NOT AUTHORIZED
+B1 implementation: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+
+B1 development evidence-pack tooling: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+
+B1 development evidence pack: NOT PRODUCED
 
 B0 execution: NOT AUTHORIZED
 
 B1 execution: NOT AUTHORIZED
-
-B1 development evidence pack: NOT PRODUCED
 
 Test evidence pack: NOT AUTHORIZED
