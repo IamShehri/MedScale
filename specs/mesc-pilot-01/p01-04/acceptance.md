@@ -312,6 +312,58 @@ P01-04D passes acceptance when:
 
 P01-04D acceptance requires a separate founder authorization.
 
+### P01-04D acceptance disposition
+
+**Current truth.** The sentence above describes the state before execution and
+is preserved for it. The separate founder authorization was issued, the
+execution was performed, and P01-04D is now accepted.
+
+The ten criteria above are unchanged. They were not modified after the result
+was known, and each is mapped individually in
+[`../p01-04d-execution-acceptance/acceptance-verification.md`](../p01-04d-execution-acceptance/acceptance-verification.md).
+The controlling decision is
+[`../p01-04d-execution-acceptance/founder-disposition.md`](../p01-04d-execution-acceptance/founder-disposition.md).
+
+```text
+1. Executed code, not hand-written:                       SATISFIED
+2. Two independent workspaces:                            SATISFIED
+3. Generation A byte-identical to Generation B:           SATISFIED
+4. Exact row totals 700 / 150 / 150:                      SATISFIED
+5. No source-document group split across partitions:      SATISFIED
+6. Zero cross-partition example-identity duplicates:      SATISFIED
+7. Zero cross-partition source_document_id overlaps:      SATISFIED
+8. Label distributions match the ratified target matrix:  SATISFIED
+9. Split fingerprint recomputes to the same value:        SATISFIED
+10. No runtime metadata, paths, timestamps or usernames:  SATISFIED
+```
+
+```text
+P01-04D:
+ACCEPTED
+
+FORMAL SPLIT GENERATION:
+COMPLETE
+
+AUTHORITATIVE RESULT:
+Episode #2
+
+AUTHORITATIVE SPLIT FINGERPRINT:
+43bd2b2f1777139927960df72d6f540525d216a239048f596e35d8befb58fb91
+
+P01-04E:
+NOT STARTED — NOT AUTHORIZED
+
+P01-04F and P01-04G:
+NOT AUTHORIZED
+```
+
+This disposition accepts the formal split generation only. It establishes a
+deterministic, formally verified, independently reproduced split. It establishes
+nothing about model quality, clinical validity, benchmark superiority or
+training effectiveness, and it authorizes no leakage execution, no freeze, no
+promotion, no model access, no inference, no retrieval, no training, no
+fine-tuning and no clinical use.
+
 ---
 
 ## P01-04E — Leakage Audit
