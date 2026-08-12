@@ -415,20 +415,14 @@ P01-04E acceptance requires a separate founder authorization.
 ### Current implementation status
 
 ```text
-P01-04E implementation:
-ADOPTED / QUALIFIED
-
-P01-04E execution:
-NOT AUTHORIZED
-
-P01-04E acceptance:
-NOT YET ESTABLISHED
+P01-04E:
+ACCEPTED / CLOSED
 
 P01-04F:
-NOT AUTHORIZED
+ACCEPTED / CLOSED
 
 P01-04G:
-NOT AUTHORIZED
+NOT STARTED / NOT AUTHORIZED
 ```
 
 ---
