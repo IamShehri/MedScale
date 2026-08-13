@@ -36,7 +36,6 @@ This document defines what P01-05 entry adoption does and does not authorize. It
 - real B1 run
 - benchmark-result generation
 - publication of results
-- B1 runner wiring unless B1 evidence source is canonically ratified
 - P01-06
 - P01-07
 - vNext Stage 1 implementation
@@ -70,7 +69,7 @@ Real B0 execution still requires a separately gated authorization.
 
 ## B1 execution path
 
-B1 execution path is NOT complete unless B1 evidence source is canonically ratified.
+The B1 evidence source is canonically ratified and the B1 runner wiring is implemented and qualified with synthetic fixtures. Real B1 execution remains NOT AUTHORIZED.
 
 B1 must use:
 

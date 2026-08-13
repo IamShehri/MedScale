@@ -88,9 +88,13 @@ P01-05 entry contract: CANONICALLY DEFINED
 
 B0 implementation: EXISTING / RECONCILED
 
-B0 execution: NOT AUTHORIZED
+B1 implementation: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
 
-B1 implementation: NOT AUTHORIZED
+B1 development evidence-pack tooling: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+
+B1 development evidence pack: NOT PRODUCED
+
+B0 execution: NOT AUTHORIZED
 
 B1 execution: NOT AUTHORIZED
 
@@ -108,3 +112,4 @@ vNext Stage 1 implementation: NOT AUTHORIZED
 - `execution-protocol.md` — execution boundary and protocol
 - `decision-record.md` — model authority and evidence-source decisions
 - `acceptance.md` — acceptance criteria
+- `p01-05-b1-implementation/` — B1 implementation package (authority, criteria, record)

@@ -195,10 +195,10 @@ Future comparator/retrieval replacement selection requires a separate evidence-b
 | B0 CLI | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
 | transformers runtime | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
 | B0 tests | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
-| B1 orchestration | MISSING | MISSING | BLOCKED | B1 implementation must be authorized |
-| B1 evidence contract | PARTIAL | PRESENT | DOCUMENTATION | P01-05 entry adoption |
-| B1 runner wiring | MISSING | MISSING | BLOCKED | B1 implementation must be authorized |
-| B1 tests | MISSING | MISSING | BLOCKED | B1 implementation must be authorized |
+| B1 orchestration | MISSING | PRESENT | IMPLEMENTATION | FD-P01-05-B1-EVIDENCE-1 implementation task |
+| B1 evidence contract | PARTIAL | PRESENT | IMPLEMENTATION | P01-05 entry adoption + B1 evidence-source ratification |
+| B1 runner wiring | MISSING | PRESENT | IMPLEMENTATION | FD-P01-05-B1-EVIDENCE-1 implementation task |
+| B1 tests | MISSING | PRESENT | IMPLEMENTATION | FD-P01-05-B1-EVIDENCE-1 implementation task |
 | run manifest | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
 | baseline report | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
 | evaluation mapping | PRESENT | PRESENT | NO_DELTA | NONE — already adopted |
@@ -208,7 +208,7 @@ Future comparator/retrieval replacement selection requires a separate evidence-b
 
 - B0 core: PRESENT
 - B0 real-execution authority: MISSING / NOT AUTHORIZED
-- B1: BLOCKED PENDING B1 IMPLEMENTATION AUTHORIZATION (evidence source ratified)
+- B1: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES (implementation task FD-P01-05-B1-EVIDENCE-1)
 - model-selection authority: CONFLICT requiring this reconciliation — RECONCILED
 
 ---
@@ -271,7 +271,8 @@ All real model execution requires a later founder authorization after implementa
 - B0 EXECUTION: NOT AUTHORIZED
 - B1 EVIDENCE SOURCE: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES (FD-P01-05-B1-EVIDENCE-1)
 - B1 DEVELOPMENT EVIDENCE PACK: NOT PRODUCED
-- B1 IMPLEMENTATION: NOT AUTHORIZED
+- B1 IMPLEMENTATION: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+- B1 DEVELOPMENT EVIDENCE-PACK TOOLING: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
 - B1 EXECUTION: NOT AUTHORIZED
 - TEST EVIDENCE PACK: NOT AUTHORIZED
 - P01-06: NOT AUTHORIZED

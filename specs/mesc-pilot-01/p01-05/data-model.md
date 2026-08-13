@@ -156,18 +156,22 @@ B1 differs from B0 ONLY by an explicit additional evidence input channel.
 
 ### B1Config prospective contract
 
-B1Config is the prospective counterpart of B0Config. It reuses the same base fields and adds an explicit supplied-evidence reference.
+B1Config is the counterpart of B0Config. It reuses the same base fields and binds an immutable run-level evidence-pack identity.
 
-Prospective fields:
+Because a B1 run consumes a multi-example evidence pack, the earlier prospective singular `evidence_reference` wording is reconciled to a run-level evidence-pack identity. The reconciled fields are:
 
 - All B0Config fields
-- `evidence_reference`: `SuppliedEvidenceReference`
+- `evidence_pack_sha256`: `str`
+- `evidence_pack_size`: `int`
+- `evidence_schema_version`: `"mesc-pilot-01-b1-evidence-pack/1"`
+- `annotation_protocol_version`: `"mesc-pilot-01-b1-annotation/1"`
+- `subset_digest`: `str`
 
-Validation must enforce that the evidence condition reflects the presence of a non-empty, valid supplied evidence reference, and that no retrieval channel is smuggled in.
+Validation must enforce that the evidence condition reflects the presence of a valid supplied evidence pack, and that no retrieval channel is smuggled in. The ratified per-cue record contract `mesc-pilot-01-b1-evidence-cue/1` (FD-P01-05-B1-EVIDENCE-1) supersedes the earlier prospective `SuppliedEvidenceReference` shape below for cue-level identity.
 
 ### B1RuntimeManifest prospective contract
 
-B1RuntimeManifest reuses the B0RuntimeManifest shape and adds an explicit evidence-condition field that records the supplied-evidence reference identity rather than `"none"`.
+B1RuntimeManifest reuses the B0RuntimeManifest shape and adds an explicit evidence-condition field that records the supplied evidence-pack identity rather than `"none"`.
 
 ### B1Prediction prospective contract
 
@@ -211,7 +215,7 @@ No fabricated evidence. No teacher-generated evidence. No LLM-generated gold. No
 
 Where B1 contracts reuse B0 shapes, document the equivalence rather than duplicating the contract.
 
-- B1Config ≡ B0Config + supplied-evidence reference
+- B1Config ≡ B0Config + run-level evidence-pack identity
 - B1RuntimeManifest ≡ B0RuntimeManifest + evidence-condition recording
 - B1Prediction ≡ B0Prediction
 - B1ExampleScore ≡ B0ExampleScore
