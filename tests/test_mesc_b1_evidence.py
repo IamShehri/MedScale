@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from typing import cast
 
 import pytest
 
@@ -29,6 +30,7 @@ from medscale.mesc._b1_evidence import (
     B1EvidenceReferenceError,
     B1EvidenceValidationError,
     B1SourceRecord,
+    DevelopmentSubsetSelection,
     ExampleRegistryRow,
     annotation_input_from_source_record,
     build_evidence_pack,
@@ -38,6 +40,7 @@ from medscale.mesc._b1_evidence import (
     cue_from_document,
     cue_to_document,
     load_b1_source_records_from_bytes,
+    load_development_subset_from_bytes,
     load_example_registry_from_bytes,
     make_adjudication_submission,
     make_annotation_submission,
@@ -46,11 +49,13 @@ from medscale.mesc._b1_evidence import (
     render_annotation_view,
     segment_sha256,
     select_development_subset,
+    subset_manifest_document,
     subset_ordering_key,
     validate_evidence_cue,
     validate_evidence_pack,
     validate_view_has_no_prohibited_fields,
 )
+from medscale.mesc._canonical_json_v1 import canonical_json_bytes
 
 _SPLIT_FINGERPRINT = "43bd2b2f1777139927960df72d6f540525d216a239048f596e35d8befb58fb91"
 
@@ -311,7 +316,7 @@ def _registry(rows: list[dict[str, object]]) -> tuple[tuple[ExampleRegistryRow, 
     return load_example_registry_from_bytes(lines.encode("utf-8"))
 
 
-def test_subset_selection_is_deterministic_and_uses_production_counts() -> None:
+def test_subset_selection_is_deterministic() -> None:
     rows = [_registry_row(f"e{i}", "validation", i) for i in range(200)]
     rows += [_registry_row(f"t{i}", "test", 200 + i) for i in range(20)]
     registry_rows, registry_sha256 = _registry(rows)
@@ -375,6 +380,67 @@ def test_subset_digest_changes_with_split_fingerprint() -> None:
     assert a.subset_digest != b.subset_digest
 
 
+def _subset_selection() -> DevelopmentSubsetSelection:
+    rows = [_registry_row(f"e{i}", "validation", i) for i in range(200)]
+    registry_rows, registry_sha256 = _registry(rows)
+    return select_development_subset(
+        registry_rows,
+        registry_sha256=registry_sha256,
+        source_split_fingerprint=_SPLIT_FINGERPRINT,
+    )
+
+
+def test_subset_manifest_round_trip_preserves_identity() -> None:
+    selection = _subset_selection()
+    loaded = load_development_subset_from_bytes(
+        canonical_json_bytes(subset_manifest_document(selection)) + b"\n"
+    )
+    assert loaded == selection
+
+
+def test_subset_manifest_rejects_tampered_digest() -> None:
+    selection = _subset_selection()
+    document = subset_manifest_document(selection)
+    document["subset_digest"] = "f" * 64
+    with pytest.raises(B1EvidenceValidationError, match="does not match its content"):
+        load_development_subset_from_bytes(canonical_json_bytes(document))
+
+
+def test_pack_binds_to_supplied_subset_identity() -> None:
+    selection = _subset_selection()
+    selected = selection.ordered_selected_example_ids
+    outside = next(f"e{i}" for i in range(200) if f"e{i}" not in selected)
+    member_pack = _agreed(
+        _source(example_id=selected[0], document=selection.ordered_selected_source_document_ids[0]),
+        indices=[1],
+        status="AVAILABLE",
+    )
+    bound = build_evidence_pack(
+        list(member_pack.cues),
+        source_split_fingerprint=_SPLIT_FINGERPRINT,
+        subset_digest=selection.subset_digest,
+        development_subset=selection,
+    )
+    assert bound.subset_digest == selection.subset_digest
+    with pytest.raises(B1EvidenceValidationError, match="does not match the supplied"):
+        build_evidence_pack(
+            list(member_pack.cues),
+            source_split_fingerprint=_SPLIT_FINGERPRINT,
+            subset_digest="0" * 64,
+            development_subset=selection,
+        )
+    outsider_pack = _agreed(
+        _source(example_id=outside, document="pmid:1"), indices=[1], status="AVAILABLE"
+    )
+    with pytest.raises(B1EvidenceValidationError, match="not a member"):
+        build_evidence_pack(
+            list(outsider_pack.cues),
+            source_split_fingerprint=_SPLIT_FINGERPRINT,
+            subset_digest=selection.subset_digest,
+            development_subset=selection,
+        )
+
+
 def test_registry_rows_reject_duplicate_json_keys() -> None:
     with pytest.raises(B1EvidenceValidationError, match="duplicate JSON key"):
         load_example_registry_from_bytes(
@@ -406,10 +472,11 @@ def test_pack_rejects_non_final_cues() -> None:
     record = _source()
     pack = _agreed(record, indices=[1], status="AVAILABLE")
     document = pack_to_document(pack)
-    document["cues"][0]["review_status"] = "ADJUDICATED"  # type: ignore[index]
+    cues = cast("list[dict[str, object]]", document["cues"])
+    cues[0]["review_status"] = "ADJUDICATED"
     with pytest.raises(B1EvidenceValidationError, match="FINAL"):
         build_evidence_pack(
-            [cue_from_document(document["cues"][0])],  # type: ignore[index]
+            [cue_from_document(cues[0])],
             source_split_fingerprint=_SPLIT_FINGERPRINT,
             subset_digest="0" * 64,
         )
@@ -441,10 +508,24 @@ def test_pack_rejects_tampered_sha() -> None:
 
 def test_derive_evidence_id_excludes_reviewer_and_environment() -> None:
     record = _source()
-    cue = _agreed(record, indices=[1], status="AVAILABLE").cues[0]
-    assert cue.evidence_id.startswith("mesc-b1-evidence:")
-    assert "r1" not in cue.evidence_id
-    assert "reviewer" not in cue.evidence_id
+    first = make_annotation_submission(
+        reviewer_id="r1",
+        example_id=record.example_id,
+        source_document_id=record.source_document_id,
+        selected_segment_indices=[1],
+        annotation_status="AVAILABLE",
+    )
+    second = make_annotation_submission(
+        reviewer_id="reviewer-999",
+        example_id=record.example_id,
+        source_document_id=record.source_document_id,
+        selected_segment_indices=[1],
+        annotation_status="AVAILABLE",
+    )
+    cue_a = build_final_cue_from_agreement(compare_annotations(first, second), source_record=record)
+    cue_b = build_final_cue_from_agreement(compare_annotations(second, first), source_record=record)
+    assert cue_a.evidence_id.startswith("mesc-b1-evidence:")
+    assert cue_a.evidence_id == cue_b.evidence_id
     assert ANNOTATION_PROTOCOL_VERSION == "mesc-pilot-01-b1-annotation/1"
     assert EVIDENCE_CUE_SCHEMA_VERSION == "mesc-pilot-01-b1-evidence-cue/1"
 

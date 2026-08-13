@@ -37,6 +37,7 @@ from medscale.mesc._b1_evidence import (
     build_final_cue_from_agreement,
     compare_annotations,
     load_b1_source_records_from_path,
+    load_development_subset_from_path,
     load_example_registry_from_path,
     make_adjudication_submission,
     make_annotation_submission,
@@ -303,21 +304,22 @@ def _cmd_finalize_cues(args: argparse.Namespace) -> int:
         records = load_b1_source_records_from_path(source)
         by_key = {(record.example_id, record.source_document_id): record for record in records}
         submissions: dict[tuple[str, str], B1AnnotationSubmission | B1AdjudicationSubmission] = {}
+        comparisons: dict[tuple[str, str], B1AnnotationComparison] = {}
         if args.comparison is not None:
             comparison_path = Path(args.comparison)
             _require_file(comparison_path, "comparison")
             comparison = _read_json_object(comparison_path, "comparison")
-            if comparison.get("outcome") != "AGREED":
+            a = _submission_from_document(_required_mapping(comparison, "submission_a"))
+            b = _submission_from_document(_required_mapping(comparison, "submission_b"))
+            recomputed = compare_annotations(a, b)
+            if recomputed.outcome != "AGREED":
                 raise B1EvidenceError(
                     "cannot finalize a comparison that is not AGREED; "
                     "human adjudication is required"
                 )
-            a = _submission_from_document(_required_mapping(comparison, "submission_a"))
-            b = _submission_from_document(_required_mapping(comparison, "submission_b"))
             key = (a.example_id, a.source_document_id)
-            if key != (b.example_id, b.source_document_id):
-                raise B1EvidenceError("comparison submissions disagree on example identity")
             submissions[key] = a
+            comparisons[key] = recomputed
         if args.adjudication is not None:
             adjudication_path = Path(args.adjudication)
             _require_file(adjudication_path, "adjudication")
@@ -339,22 +341,19 @@ def _cmd_finalize_cues(args: argparse.Namespace) -> int:
             if isinstance(submission, B1AdjudicationSubmission):
                 cues.append(build_final_cue_from_adjudication(submission, source_record=record))
             else:
-                cues.append(
-                    build_final_cue_from_agreement(
-                        B1AnnotationComparison(
-                            example_id=submission.example_id,
-                            source_document_id=submission.source_document_id,
-                            outcome="AGREED",
-                            submission_a=submission,
-                            submission_b=submission,
-                        ),
-                        source_record=record,
-                    )
-                )
+                agreed = comparisons.get(key)
+                if agreed is None:
+                    raise B1EvidenceError(f"missing recomputed comparison for {key}")
+                cues.append(build_final_cue_from_agreement(agreed, source_record=record))
         pack: B1EvidencePack = build_evidence_pack(
             cues,
             source_split_fingerprint=args.split_fingerprint,
             subset_digest=args.subset_digest,
+            development_subset=(
+                load_development_subset_from_path(Path(args.subset_manifest))
+                if args.subset_manifest is not None
+                else None
+            ),
         )
         write_evidence_pack(pack, output)
     except B1EvidenceError as exc:
@@ -434,6 +433,12 @@ def _build_parser() -> argparse.ArgumentParser:
     fin.add_argument("--source-record", required=True, help="label-free source-record JSONL")
     fin.add_argument("--split-fingerprint", required=True, help="P01-04 split fingerprint")
     fin.add_argument("--subset-digest", required=True, help="development-subset digest")
+    fin.add_argument(
+        "--subset-manifest",
+        default=None,
+        help="development-subset manifest JSON; when supplied the pack is bound "
+        "to that exact subset identity",
+    )
     fin.add_argument("--output", required=True, help="evidence pack JSON output path")
     fin.set_defaults(func=_cmd_finalize_cues)
 

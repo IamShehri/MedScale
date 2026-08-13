@@ -440,11 +440,14 @@ def test_report_never_persists_raw_prompts() -> None:
     assert "ctx-0" not in serialized
 
 
-def test_run_writes_no_artifact(tmp_path: Path) -> None:
-    before = set(tmp_path.iterdir())
+def test_run_writes_no_artifact(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    workdir = tmp_path / "work"
+    workdir.mkdir()
+    monkeypatch.chdir(workdir)
+    before = set(workdir.iterdir())
     config, dataset, pack = _scenario()
     _run(config, dataset, pack, _FakeGenerator("yes"))
-    assert set(tmp_path.iterdir()) == before
+    assert set(workdir.iterdir()) == before
 
 
 def test_write_report_is_explicit_and_reproducible(tmp_path: Path) -> None:

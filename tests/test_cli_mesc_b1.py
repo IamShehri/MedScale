@@ -540,6 +540,192 @@ def test_b1_evidence_finalize_cues_refuses_adjudication_required(
     assert "human adjudication" in capsys.readouterr().err
 
 
+def test_b1_evidence_finalize_cues_recomputes_not_trusts_outcome(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    source = tmp_path / "source.jsonl"
+    _write_source_records(source)
+    a = tmp_path / "a.json"
+    b = tmp_path / "b.json"
+    _write_submission(a, "r1", [0])
+    _write_submission(b, "r2", [1])
+    comparison = tmp_path / "comparison.json"
+    assert (
+        mesc_b1_evidence.main(
+            [
+                "compare-annotations",
+                "--submission-a",
+                str(a),
+                "--submission-b",
+                str(b),
+                "--output",
+                str(comparison),
+            ]
+        )
+        == 0
+    )
+    document = json.loads(comparison.read_text(encoding="utf-8"))
+    assert document["outcome"] == "ADJUDICATION_REQUIRED"
+    document["outcome"] = "AGREED"
+    comparison.write_text(
+        json.dumps(document, sort_keys=True, separators=(",", ":")), encoding="utf-8"
+    )
+    rc = mesc_b1_evidence.main(
+        [
+            "finalize-cues",
+            "--comparison",
+            str(comparison),
+            "--source-record",
+            str(source),
+            "--split-fingerprint",
+            _SPLIT_FINGERPRINT,
+            "--subset-digest",
+            "0" * 64,
+            "--output",
+            str(tmp_path / "pack.json"),
+        ]
+    )
+    assert rc == 2
+    assert "human adjudication" in capsys.readouterr().err
+
+
+def test_b1_evidence_finalize_cues_from_adjudication(tmp_path: Path) -> None:
+    source = tmp_path / "source.jsonl"
+    _write_source_records(source)
+    adjudication = tmp_path / "adjudication.json"
+    adjudication.write_text(
+        json.dumps(
+            {
+                "reviewer_id": "r3",
+                "example_id": "e0",
+                "source_document_id": "pmid:1",
+                "selected_segment_indices": [0],
+                "annotation_status": "AVAILABLE",
+            }
+        ),
+        encoding="utf-8",
+    )
+    pack = tmp_path / "pack.json"
+    rc = mesc_b1_evidence.main(
+        [
+            "finalize-cues",
+            "--adjudication",
+            str(adjudication),
+            "--source-record",
+            str(source),
+            "--split-fingerprint",
+            _SPLIT_FINGERPRINT,
+            "--subset-digest",
+            "0" * 64,
+            "--output",
+            str(pack),
+        ]
+    )
+    assert rc == 0
+    document = json.loads(pack.read_text(encoding="utf-8"))
+    assert document["record_count"] == 1
+    assert document["cues"][0]["review_status"] == "FINAL"
+
+
+def test_b1_evidence_finalize_cues_binds_subset_manifest(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from medscale.mesc._b1_evidence import (
+        load_example_registry_from_bytes,
+        select_development_subset,
+        write_subset_manifest,
+    )
+
+    source = tmp_path / "source.jsonl"
+    _write_source_records(source)
+    a = tmp_path / "a.json"
+    _write_submission(a, "r1", [0])
+    comparison = tmp_path / "comparison.json"
+    assert (
+        mesc_b1_evidence.main(
+            [
+                "compare-annotations",
+                "--submission-a",
+                str(a),
+                "--submission-b",
+                str(a),
+                "--output",
+                str(comparison),
+            ]
+        )
+        == 0
+    )
+    registry_bytes = b"".join(
+        json.dumps(
+            {
+                "schema_version": "mesc-pilot-01-example-registry/1",
+                "example_id": f"e{i}",
+                "source_document_id": f"pmid:{i}",
+                "assigned_split": "validation",
+                "partition_key": f"pk-{i}",
+                "row_ordinal": i,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        + b"\n"
+        for i in range(200)
+    )
+    registry_rows, registry_sha256 = load_example_registry_from_bytes(registry_bytes)
+    selection = select_development_subset(
+        registry_rows,
+        registry_sha256=registry_sha256,
+        source_split_fingerprint=_SPLIT_FINGERPRINT,
+    )
+    manifest = tmp_path / "subset-manifest.json"
+    write_subset_manifest(selection, manifest)
+    assert "e0" in selection.ordered_selected_example_ids
+    args = [
+        "finalize-cues",
+        "--comparison",
+        str(comparison),
+        "--source-record",
+        str(source),
+        "--split-fingerprint",
+        _SPLIT_FINGERPRINT,
+        "--subset-digest",
+        selection.subset_digest,
+        "--subset-manifest",
+        str(manifest),
+        "--output",
+        str(tmp_path / "pack.json"),
+    ]
+    assert mesc_b1_evidence.main(args) == 0
+    bad_digest = list(args)
+    bad_digest[bad_digest.index("--subset-digest") + 1] = "0" * 64
+    bad_digest[bad_digest.index("--output") + 1] = str(tmp_path / "pack-bad.json")
+    rc = mesc_b1_evidence.main(bad_digest)
+    assert rc == 2
+    assert "does not match the supplied development subset" in capsys.readouterr().err
+
+
+def test_b1_evidence_finalize_cues_requires_input(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    source = tmp_path / "source.jsonl"
+    _write_source_records(source)
+    rc = mesc_b1_evidence.main(
+        [
+            "finalize-cues",
+            "--source-record",
+            str(source),
+            "--split-fingerprint",
+            _SPLIT_FINGERPRINT,
+            "--subset-digest",
+            "0" * 64,
+            "--output",
+            str(tmp_path / "pack.json"),
+        ]
+    )
+    assert rc == 2
+    assert "provide --comparison or --adjudication" in capsys.readouterr().err
+
+
 def test_b1_evidence_validate_pack(tmp_path: Path) -> None:
     source = tmp_path / "source.jsonl"
     _write_source_records(source)

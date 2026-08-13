@@ -150,7 +150,7 @@ evidence-cue channel. Additive private modules were preferred.
 
 ## Validation performed
 
-- FOCUSED TESTS: 81 passed
+- FOCUSED TESTS: 88 passed
   (`tests/test_mesc_b1_evidence.py`, `tests/test_mesc_b1.py`,
   `tests/test_cli_mesc_b1.py`)
 - B0 REGRESSION TESTS: 57 passed
@@ -162,7 +162,36 @@ evidence-cue channel. Additive private modules were preferred.
   harness, unrelated to this implementation; CI runs on Linux)
 - RUFF: clean
 - FORMAT: clean
-- MYPY: success, no issues in 117 source files
+- MYPY: success, no issues in 200 source files (whole repository, including
+  tests, matching the CI gate)
+
+## Review-fix round (PR #119 review findings, all resolved)
+
+- `finalize-cues` no longer trusts the serialized `outcome` field: the
+  comparison is recomputed from `submission_a`/`submission_b` via
+  `compare_annotations` and only a genuinely AGREED recomputation can
+  finalize; a tampered "AGREED" file with divergent submissions fails closed
+  (covered by `test_b1_evidence_finalize_cues_recomputes_not_trusts_outcome`)
+- Pack construction now verifies subset identity: `--subset-manifest` binds
+  the pack to the manifest (`subset_digest` must match and every cue
+  `example_id` must be a subset member); the manifest loader
+  `load_development_subset_from_bytes` verifies the manifest's self-digest
+- Durable write-once publication: `_write_atomic_json` and `write_b1_report`
+  now fsync the temporary file (plus best-effort parent-directory fsync) and
+  publish via exclusive-create hard link so a file created between the
+  existence check and the rename can never be silently replaced
+- Domain cleanliness: `annotation_input_from_source_record` exported in
+  `__all__`; `_require_status`/`_require_review_status` simplified;
+  `_final_cue_from_selection` validates `example_id` and
+  `source_document_id` directly instead of a self-comparison
+- Test quality: reviewer-independence evidence-identity assertion,
+  adjudication-path and subset-manifest CLI coverage, no-artifact run
+  isolated in a fresh working directory
+- Governance reconciliation: `p01-05/acceptance.md` marks the no-source-change
+  checklist rows as historical entry-contract acceptance superseded by this
+  package; `p01-05/README.md` document index lists the implementation package;
+  `p01-05/decision-record.md` and `p01-05/plan.md` already carry the
+  FD-P01-05-B1-EVIDENCE-1 delta/status reconciliation
 
 ## Boundaries honored
 

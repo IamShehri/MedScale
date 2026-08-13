@@ -15,7 +15,6 @@ invocation and are represented as typed errors, never as model output states.
 
 from __future__ import annotations
 
-import contextlib
 import re
 import sys
 from collections.abc import Callable, Sequence
@@ -40,9 +39,10 @@ from medscale.mesc._b1_evidence import (
     B1EvidencePack,
     validate_evidence_cue,
     validate_evidence_pack,
+    write_atomic_json_document,
 )
 from medscale.mesc._pilot_loader import B0InputDataset, B0InputRecord
-from medscale.mesc._split_v1 import canonical_json_bytes, sha256_hexdigest
+from medscale.mesc._split_v1 import sha256_hexdigest
 from medscale.modelkit.interfaces import GenerationRequest
 
 __all__ = [
@@ -612,19 +612,5 @@ def report_to_document(report: B1Report) -> dict[str, object]:
 
 
 def write_b1_report(report: B1Report, path: Path) -> None:
-    """Atomically write the B1 report; never silently overwrite an existing file."""
-    if path.exists():
-        raise FileExistsError(f"refusing to overwrite existing output: {path}")
-    data = canonical_json_bytes(report_to_document(report)) + b"\n"
-    tmp = path.with_name(path.name + ".partial")
-    published = False
-    try:
-        with tmp.open("wb") as handle:
-            handle.write(data)
-            handle.flush()
-        tmp.replace(path)
-        published = True
-    finally:
-        if not published:
-            with contextlib.suppress(FileNotFoundError):
-                tmp.unlink()
+    """Durably write the B1 report; never silently overwrite an existing file."""
+    write_atomic_json_document(path, report_to_document(report))

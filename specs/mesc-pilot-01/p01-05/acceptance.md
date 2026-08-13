@@ -92,6 +92,12 @@ Historical adoption commit `ce1272235cb48dbacdb18f20e1ae8db695b01328` is retaine
 
 Blocking findings: NONE
 
+The checklist above is the historical **entry-contract acceptance** for the
+P01-05 plan. The B1 implementation task (FD-P01-05-B1-EVIDENCE-1) intentionally
+added implementation source files and tests; its acceptance criteria and
+evidence live in `p01-05-b1-implementation/acceptance.md`, which supersedes the
+entry-contract-only rows for implementation scope.
+
 B1 evidence source: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES
 
 B1 implementation: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES

@@ -112,3 +112,4 @@ vNext Stage 1 implementation: NOT AUTHORIZED
 - `execution-protocol.md` — execution boundary and protocol
 - `decision-record.md` — model authority and evidence-source decisions
 - `acceptance.md` — acceptance criteria
+- `p01-05-b1-implementation/` — B1 implementation package (authority, criteria, record)

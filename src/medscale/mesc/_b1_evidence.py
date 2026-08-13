@@ -18,6 +18,7 @@ import contextlib
 import hashlib
 import itertools
 import json
+import os
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -55,6 +56,7 @@ __all__ = [
     "DevelopmentSubsetSelection",
     "ExampleRegistryRow",
     "SegmentReference",
+    "annotation_input_from_source_record",
     "build_evidence_pack",
     "build_final_cue_from_adjudication",
     "build_final_cue_from_agreement",
@@ -65,6 +67,8 @@ __all__ = [
     "load_b1_source_records_from_bytes",
     "load_b1_source_records_from_path",
     "load_b1_source_records_from_records",
+    "load_development_subset_from_bytes",
+    "load_development_subset_from_path",
     "load_example_registry_from_bytes",
     "load_example_registry_from_path",
     "make_adjudication_submission",
@@ -338,12 +342,7 @@ def _require_status(value: object) -> AnnotationStatus:
         raise B1EvidenceValidationError(
             f"annotation_status must be one of {_ANNOTATION_STATUSES}, got {value!r}"
         )
-    for candidate in _ANNOTATION_STATUSES:
-        if value == candidate:
-            return candidate
-    raise B1EvidenceValidationError(
-        f"annotation_status must be one of {_ANNOTATION_STATUSES}, got {value!r}"
-    )
+    return value
 
 
 def _require_review_status(value: object) -> ReviewStatus:
@@ -351,12 +350,7 @@ def _require_review_status(value: object) -> ReviewStatus:
         raise B1EvidenceValidationError(
             f"review_status must be one of {_REVIEW_STATUSES}, got {value!r}"
         )
-    for candidate in _REVIEW_STATUSES:
-        if value == candidate:
-            return candidate
-    raise B1EvidenceValidationError(
-        f"review_status must be one of {_REVIEW_STATUSES}, got {value!r}"
-    )
+    return value
 
 
 # ---------------------------------------------------------------------------
@@ -638,8 +632,8 @@ def _final_cue_from_selection(
     context: Sequence[str],
 ) -> B1EvidenceCue:
     _require_status_index_consistency(status, indices)
-    if example_id != _require_nonblank_str(example_id, "example_id"):
-        raise B1EvidenceValidationError("example_id must be a non-blank string")
+    _require_nonblank_str(example_id, "example_id")
+    _require_nonblank_str(source_document_id, "source_document_id")
     references: list[SegmentReference] = []
     hashes: list[str] = []
     for index in indices:
@@ -1051,6 +1045,111 @@ def subset_manifest_document(selection: DevelopmentSubsetSelection) -> dict[str,
     }
 
 
+def load_development_subset_from_bytes(data: bytes) -> DevelopmentSubsetSelection:
+    """Parse a subset manifest and verify its self-consistent identity.
+
+    The manifest is self-authenticating: its ``subset_digest`` must equal the
+    canonical digest of the manifest document with that field blanked, exactly
+    as produced by :func:`select_development_subset`.
+    """
+    raw = bytes(data)
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raise B1EvidenceValidationError(
+            "subset manifest begins with a UTF-8 byte-order mark (BOM); remove the BOM"
+        )
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise B1EvidenceValidationError(f"subset manifest is not valid UTF-8: {exc}") from exc
+    try:
+        obj = json.loads(text, object_pairs_hook=_reject_duplicate_keys)
+    except json.JSONDecodeError as exc:
+        raise B1EvidenceValidationError(f"malformed subset manifest JSON: {exc}") from exc
+    if not isinstance(obj, dict):
+        raise B1EvidenceValidationError("subset manifest must be a JSON object")
+    expected = {
+        "schema_version",
+        "source_split_fingerprint",
+        "example_registry_sha256",
+        "selection_domain_separator",
+        "validation_population",
+        "selected_count",
+        "ordered_selected_example_ids",
+        "ordered_selected_source_document_ids",
+        "ordered_selection_keys",
+        "subset_digest",
+    }
+    if set(obj) != expected:
+        raise B1EvidenceValidationError(
+            f"subset manifest fields must be exactly {sorted(expected)}; got {sorted(obj)}"
+        )
+
+    def _require_str(field: str) -> str:
+        value = obj[field]
+        if not isinstance(value, str) or not value.strip():
+            raise B1EvidenceValidationError(f"{field} must be a non-blank string")
+        return value
+
+    def _require_int(field: str) -> int:
+        value = obj[field]
+        if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+            raise B1EvidenceValidationError(f"{field} must be a non-negative integer")
+        return value
+
+    def _require_id_list(field: str) -> tuple[str, ...]:
+        value = obj[field]
+        if not isinstance(value, list):
+            raise B1EvidenceValidationError(f"{field} must be a list of non-blank strings")
+        items: list[str] = []
+        for index, item in enumerate(value):
+            if not isinstance(item, str) or not item.strip():
+                raise B1EvidenceValidationError(f"{field}[{index}] must be a non-blank string")
+            items.append(item)
+        return tuple(items)
+
+    schema_version = _require_str("schema_version")
+    if schema_version != DEVELOPMENT_SUBSET_SCHEMA_VERSION:
+        raise B1EvidenceValidationError(
+            f"subset manifest schema_version must be {DEVELOPMENT_SUBSET_SCHEMA_VERSION!r}"
+        )
+    selection = DevelopmentSubsetSelection(
+        schema_version=schema_version,
+        source_split_fingerprint=_require_str("source_split_fingerprint"),
+        example_registry_sha256=_require_str("example_registry_sha256"),
+        selection_domain_separator=_require_str("selection_domain_separator"),
+        validation_population=_require_int("validation_population"),
+        selected_count=_require_int("selected_count"),
+        ordered_selected_example_ids=_require_id_list("ordered_selected_example_ids"),
+        ordered_selected_source_document_ids=_require_id_list(
+            "ordered_selected_source_document_ids"
+        ),
+        ordered_selection_keys=_require_id_list("ordered_selection_keys"),
+        subset_digest=_require_str("subset_digest"),
+    )
+    if (
+        selection.selected_count != len(selection.ordered_selected_example_ids)
+        or selection.selected_count != len(selection.ordered_selected_source_document_ids)
+        or selection.selected_count != len(selection.ordered_selection_keys)
+    ):
+        raise B1EvidenceValidationError(
+            "subset manifest selected_count must match each ordered selection list"
+        )
+    if len(selection.subset_digest) != 64:
+        raise B1EvidenceValidationError(
+            "subset manifest subset_digest must be a full 64-hex SHA-256"
+        )
+    blanked = dict(subset_manifest_document(selection))
+    blanked["subset_digest"] = ""
+    if sha256_hexdigest(blanked) != selection.subset_digest:
+        raise B1EvidenceValidationError("subset manifest subset_digest does not match its content")
+    return selection
+
+
+def load_development_subset_from_path(path: Path) -> DevelopmentSubsetSelection:
+    """Parse a subset manifest from an explicit caller-supplied path."""
+    return load_development_subset_from_bytes(path.read_bytes())
+
+
 def write_subset_manifest(selection: DevelopmentSubsetSelection, path: Path) -> None:
     """Write the subset manifest deterministically; refuse to overwrite."""
     _write_atomic_json(path, subset_manifest_document(selection))
@@ -1126,16 +1225,28 @@ def build_evidence_pack(
     source_split_fingerprint: str,
     subset_digest: str,
     require_record_count: int | None = None,
+    development_subset: DevelopmentSubsetSelection | None = None,
 ) -> B1EvidencePack:
     """Build a deterministic identity-bound evidence pack.
 
     ``require_record_count`` enforces an exact record count where the ratified
     contract fixes it (the future development pack requires exactly 100).
+
+    When ``development_subset`` is supplied, the pack is bound to that exact
+    subset identity: ``subset_digest`` must match the manifest digest and every
+    cue's ``example_id`` must be a member of the subset's ordered selection.
     """
     if not cues:
         raise B1EvidenceValidationError("evidence pack must contain at least one cue")
     _require_nonblank_str(source_split_fingerprint, "source_split_fingerprint")
     _require_nonblank_str(subset_digest, "subset_digest")
+    if development_subset is not None:
+        _require_nonblank_str(development_subset.subset_digest, "subset_digest")
+        if subset_digest != development_subset.subset_digest:
+            raise B1EvidenceValidationError(
+                "subset_digest does not match the supplied development subset manifest"
+            )
+        subset_members = frozenset(development_subset.ordered_selected_example_ids)
     if require_record_count is not None and (
         not isinstance(require_record_count, int)
         or isinstance(require_record_count, bool)
@@ -1159,6 +1270,11 @@ def build_evidence_pack(
             )
         if cue.example_id in seen:
             raise B1EvidenceValidationError(f"duplicate cue example_id: {cue.example_id}")
+        if development_subset is not None and cue.example_id not in subset_members:
+            raise B1EvidenceValidationError(
+                f"cue example_id {cue.example_id!r} is not a member of the supplied "
+                "development subset"
+            )
         seen.add(cue.example_id)
     if require_record_count is not None and len(cues) != require_record_count:
         raise B1EvidenceValidationError(
@@ -1234,19 +1350,59 @@ def write_evidence_pack(pack: B1EvidencePack, path: Path) -> None:
     _write_atomic_json(path, pack_to_document(pack))
 
 
+def write_atomic_json_document(path: Path, document: Mapping[str, object]) -> None:
+    """Deterministic durable write-once JSON publication (shared by B1 writers).
+
+    Publishes via exclusive-create so a file created after the initial
+    existence check can never be silently replaced, and fsyncs both the
+    temporary file and (best-effort) the parent directory so a published
+    artifact is never truncated or zero-length after a host crash.
+    """
+    _write_atomic_json(path, document)
+
+
 def _write_atomic_json(path: Path, document: Mapping[str, object]) -> None:
-    if path.exists():
-        raise FileExistsError(f"refusing to overwrite existing output: {path}")
     data = canonical_json_bytes(document) + b"\n"
     tmp = path.with_name(path.name + ".partial")
-    published = False
     try:
         with tmp.open("wb") as handle:
             handle.write(data)
             handle.flush()
-        tmp.replace(path)
-        published = True
+            os.fsync(handle.fileno())
+        _publish_exclusive_create(tmp, path)
+        _fsync_directory(path.parent)
     finally:
-        if not published:
-            with contextlib.suppress(FileNotFoundError):
-                tmp.unlink()
+        with contextlib.suppress(FileNotFoundError):
+            tmp.unlink()
+
+
+def _publish_exclusive_create(tmp: Path, path: Path) -> None:
+    """Atomically publish ``tmp`` as ``path`` without ever replacing a file.
+
+    Uses a hard link (fails if the destination already exists) so a concurrent
+    or previously created file is never overwritten; falls back to an
+    existence re-check plus rename where hard links are unsupported.
+    """
+    try:
+        os.link(tmp, path)
+        return
+    except FileExistsError:
+        raise FileExistsError(f"refusing to overwrite existing output: {path}") from None
+    except OSError:
+        if path.exists():
+            raise FileExistsError(f"refusing to overwrite existing output: {path}") from None
+        tmp.replace(path)
+
+
+def _fsync_directory(directory: Path) -> None:
+    """Best-effort directory fsync (not supported on all platforms)."""
+    try:
+        descriptor = os.open(directory, os.O_RDONLY)
+    except OSError:
+        return
+    try:
+        os.fsync(descriptor)
+    except OSError:
+        pass
+    finally:
+        os.close(descriptor)
