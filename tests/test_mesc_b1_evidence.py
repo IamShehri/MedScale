@@ -408,33 +408,66 @@ def test_subset_manifest_rejects_tampered_digest() -> None:
 
 def test_pack_binds_to_supplied_subset_identity() -> None:
     selection = _subset_selection()
-    selected = selection.ordered_selected_example_ids
-    outside = next(f"e{i}" for i in range(200) if f"e{i}" not in selected)
-    member_pack = _agreed(
-        _source(example_id=selected[0], document=selection.ordered_selected_source_document_ids[0]),
-        indices=[1],
-        status="AVAILABLE",
-    )
+    member_ids = selection.ordered_selected_example_ids
+    member_documents = selection.ordered_selected_source_document_ids
+    outside = next(f"e{i}" for i in range(200) if f"e{i}" not in member_ids)
+
+    def _pack_for(example_id: str, document: str) -> B1EvidencePack:
+        return _agreed(
+            _source(example_id=example_id, document=document),
+            indices=[1],
+            status="AVAILABLE",
+        )
+
+    full_cues = [
+        _pack_for(example_id, document).cues[0]
+        for example_id, document in zip(member_ids, member_documents, strict=True)
+    ]
     bound = build_evidence_pack(
-        list(member_pack.cues),
+        full_cues,
         source_split_fingerprint=_SPLIT_FINGERPRINT,
         subset_digest=selection.subset_digest,
         development_subset=selection,
     )
     assert bound.subset_digest == selection.subset_digest
+    assert bound.record_count == selection.selected_count
     with pytest.raises(B1EvidenceValidationError, match="does not match the supplied"):
         build_evidence_pack(
-            list(member_pack.cues),
+            full_cues,
             source_split_fingerprint=_SPLIT_FINGERPRINT,
             subset_digest="0" * 64,
             development_subset=selection,
         )
-    outsider_pack = _agreed(
-        _source(example_id=outside, document="pmid:1"), indices=[1], status="AVAILABLE"
-    )
+    with pytest.raises(B1EvidenceValidationError, match="source_split_fingerprint does not match"):
+        build_evidence_pack(
+            full_cues,
+            source_split_fingerprint="0" * 64,
+            subset_digest=selection.subset_digest,
+            development_subset=selection,
+        )
+    outsider_pack = _pack_for(outside, "pmid:1")
     with pytest.raises(B1EvidenceValidationError, match="not a member"):
         build_evidence_pack(
-            list(outsider_pack.cues),
+            [outsider_pack.cues[0]],
+            source_split_fingerprint=_SPLIT_FINGERPRINT,
+            subset_digest=selection.subset_digest,
+            development_subset=selection,
+        )
+    wrong_document_pack = _pack_for(member_ids[0], "pmid:not-the-manifest-document")
+    with pytest.raises(B1EvidenceValidationError, match="source_document_id"):
+        build_evidence_pack(
+            [wrong_document_pack.cues[0]],
+            source_split_fingerprint=_SPLIT_FINGERPRINT,
+            subset_digest=selection.subset_digest,
+            development_subset=selection,
+        )
+    partial = [
+        _pack_for(example_id, document).cues[0]
+        for example_id, document in zip(member_ids[:10], member_documents[:10], strict=True)
+    ]
+    with pytest.raises(B1EvidenceValidationError, match="exactly"):
+        build_evidence_pack(
+            partial,
             source_split_fingerprint=_SPLIT_FINGERPRINT,
             subset_digest=selection.subset_digest,
             development_subset=selection,

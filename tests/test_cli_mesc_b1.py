@@ -660,7 +660,7 @@ def test_b1_evidence_finalize_cues_binds_subset_manifest(
             {
                 "schema_version": "mesc-pilot-01-example-registry/1",
                 "example_id": f"e{i}",
-                "source_document_id": f"pmid:{i}",
+                "source_document_id": f"pmid:{i + 1}",
                 "assigned_split": "validation",
                 "partition_key": f"pk-{i}",
                 "row_ordinal": i,
@@ -695,7 +695,14 @@ def test_b1_evidence_finalize_cues_binds_subset_manifest(
         "--output",
         str(tmp_path / "pack.json"),
     ]
-    assert mesc_b1_evidence.main(args) == 0
+    rc = mesc_b1_evidence.main(args)
+    assert rc == 2
+    assert "exactly" in capsys.readouterr().err
+    unbound = list(args)
+    manifest_flag = unbound.index("--subset-manifest")
+    del unbound[manifest_flag : manifest_flag + 2]
+    unbound[unbound.index("--subset-digest") + 1] = "0" * 64
+    assert mesc_b1_evidence.main(unbound) == 0
     bad_digest = list(args)
     bad_digest[bad_digest.index("--subset-digest") + 1] = "0" * 64
     bad_digest[bad_digest.index("--output") + 1] = str(tmp_path / "pack-bad.json")

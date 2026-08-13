@@ -1233,8 +1233,10 @@ def build_evidence_pack(
     contract fixes it (the future development pack requires exactly 100).
 
     When ``development_subset`` is supplied, the pack is bound to that exact
-    subset identity: ``subset_digest`` must match the manifest digest and every
-    cue's ``example_id`` must be a member of the subset's ordered selection.
+    subset identity: ``subset_digest`` and ``source_split_fingerprint`` must
+    match the manifest, every cue's ``example_id``/``source_document_id`` pair
+    must be the manifest's selection, and the pack must represent the complete
+    subset (a partial cue set cannot claim the subset's identity).
     """
     if not cues:
         raise B1EvidenceValidationError("evidence pack must contain at least one cue")
@@ -1246,7 +1248,23 @@ def build_evidence_pack(
             raise B1EvidenceValidationError(
                 "subset_digest does not match the supplied development subset manifest"
             )
-        subset_members = frozenset(development_subset.ordered_selected_example_ids)
+        if source_split_fingerprint != development_subset.source_split_fingerprint:
+            raise B1EvidenceValidationError(
+                "source_split_fingerprint does not match the supplied development subset manifest"
+            )
+        subset_members = dict(
+            zip(
+                development_subset.ordered_selected_example_ids,
+                development_subset.ordered_selected_source_document_ids,
+                strict=True,
+            )
+        )
+        if require_record_count is not None:
+            raise B1EvidenceValidationError(
+                "require_record_count cannot be combined with development_subset "
+                "(the subset defines the record count)"
+            )
+        require_record_count = development_subset.selected_count
     if require_record_count is not None and (
         not isinstance(require_record_count, int)
         or isinstance(require_record_count, bool)
@@ -1270,11 +1288,17 @@ def build_evidence_pack(
             )
         if cue.example_id in seen:
             raise B1EvidenceValidationError(f"duplicate cue example_id: {cue.example_id}")
-        if development_subset is not None and cue.example_id not in subset_members:
-            raise B1EvidenceValidationError(
-                f"cue example_id {cue.example_id!r} is not a member of the supplied "
-                "development subset"
-            )
+        if development_subset is not None:
+            if cue.example_id not in subset_members:
+                raise B1EvidenceValidationError(
+                    f"cue example_id {cue.example_id!r} is not a member of the supplied "
+                    "development subset"
+                )
+            if cue.source_document_id != subset_members[cue.example_id]:
+                raise B1EvidenceValidationError(
+                    f"cue source_document_id for {cue.example_id!r} does not match the "
+                    "supplied development subset manifest"
+                )
         seen.add(cue.example_id)
     if require_record_count is not None and len(cues) != require_record_count:
         raise B1EvidenceValidationError(
