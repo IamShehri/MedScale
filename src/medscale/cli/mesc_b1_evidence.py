@@ -349,11 +349,7 @@ def _cmd_finalize_cues(args: argparse.Namespace) -> int:
             cues,
             source_split_fingerprint=args.split_fingerprint,
             subset_digest=args.subset_digest,
-            development_subset=(
-                load_development_subset_from_path(Path(args.subset_manifest))
-                if args.subset_manifest is not None
-                else None
-            ),
+            development_subset=load_development_subset_from_path(Path(args.subset_manifest)),
         )
         write_evidence_pack(pack, output)
     except B1EvidenceError as exc:
@@ -435,9 +431,10 @@ def _build_parser() -> argparse.ArgumentParser:
     fin.add_argument("--subset-digest", required=True, help="development-subset digest")
     fin.add_argument(
         "--subset-manifest",
-        default=None,
-        help="development-subset manifest JSON; when supplied the pack is bound "
-        "to that exact subset identity",
+        required=True,
+        help="development-subset manifest JSON; the pack is bound to that exact "
+        "subset identity (digest, split fingerprint, per-example document, and "
+        "complete membership)",
     )
     fin.add_argument("--output", required=True, help="evidence pack JSON output path")
     fin.set_defaults(func=_cmd_finalize_cues)

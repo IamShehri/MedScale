@@ -172,9 +172,12 @@ evidence-cue channel. Additive private modules were preferred.
   `compare_annotations` and only a genuinely AGREED recomputation can
   finalize; a tampered "AGREED" file with divergent submissions fails closed
   (covered by `test_b1_evidence_finalize_cues_recomputes_not_trusts_outcome`)
-- Pack construction now verifies subset identity: `--subset-manifest` binds
-  the pack to the manifest (`subset_digest` must match and every cue
-  `example_id` must be a subset member); the manifest loader
+- Pack construction now verifies subset identity: `--subset-manifest` is
+  REQUIRED by `finalize-cues` and binds the pack to the manifest
+  (`subset_digest` and `source_split_fingerprint` must match, every cue
+  `source_document_id` must match the manifest per-example document, and the
+  record count must equal the subset `selected_count`, so a partial cue set
+  can never claim the subset's identity); the manifest loader
   `load_development_subset_from_bytes` verifies the manifest's self-digest
 - Durable write-once publication: `_write_atomic_json` and `write_b1_report`
   now fsync the temporary file (plus best-effort parent-directory fsync) and

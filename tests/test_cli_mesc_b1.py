@@ -254,6 +254,43 @@ def _write_source_records(path: Path, count: int = 1) -> None:
     path.write_text(lines, encoding="utf-8")
 
 
+def _write_single_subset_manifest(path: Path) -> str:
+    """Write a one-member development-subset manifest matching the source fixture.
+
+    Returns the manifest's ``subset_digest``.
+    """
+    from medscale.mesc._b1_evidence import (
+        load_example_registry_from_bytes,
+        select_development_subset,
+        write_subset_manifest,
+    )
+
+    registry_bytes = b"".join(
+        json.dumps(
+            {
+                "schema_version": "mesc-pilot-01-example-registry/1",
+                "example_id": f"e{i}",
+                "source_document_id": f"pmid:{i + 1}",
+                "assigned_split": "validation",
+                "partition_key": f"pk-{i}",
+                "row_ordinal": i,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        + b"\n"
+        for i in range(1)
+    )
+    registry_rows, registry_sha256 = load_example_registry_from_bytes(registry_bytes)
+    selection = select_development_subset(
+        registry_rows,
+        registry_sha256=registry_sha256,
+        source_split_fingerprint=_SPLIT_FINGERPRINT,
+    )
+    write_subset_manifest(selection, path)
+    return selection.subset_digest
+
+
 def _registry_line(example_id: str, split: str, ordinal: int) -> str:
     return json.dumps(
         {
@@ -459,6 +496,8 @@ def test_b1_evidence_compare_annotations_requires_adjudication(tmp_path: Path) -
 def test_b1_evidence_finalize_cues_from_agreement(tmp_path: Path) -> None:
     source = tmp_path / "source.jsonl"
     _write_source_records(source)
+    manifest = tmp_path / "subset-manifest.json"
+    subset_digest = _write_single_subset_manifest(manifest)
     a = tmp_path / "a.json"
     _write_submission(a, "r1", [0])
     comparison = tmp_path / "comparison.json"
@@ -485,7 +524,9 @@ def test_b1_evidence_finalize_cues_from_agreement(tmp_path: Path) -> None:
             "--split-fingerprint",
             _SPLIT_FINGERPRINT,
             "--subset-digest",
-            "0" * 64,
+            subset_digest,
+            "--subset-manifest",
+            str(manifest),
             "--output",
             str(pack),
         ]
@@ -532,6 +573,8 @@ def test_b1_evidence_finalize_cues_refuses_adjudication_required(
             _SPLIT_FINGERPRINT,
             "--subset-digest",
             "0" * 64,
+            "--subset-manifest",
+            str(tmp_path / "manifest.json"),
             "--output",
             str(tmp_path / "pack.json"),
         ]
@@ -581,6 +624,8 @@ def test_b1_evidence_finalize_cues_recomputes_not_trusts_outcome(
             _SPLIT_FINGERPRINT,
             "--subset-digest",
             "0" * 64,
+            "--subset-manifest",
+            str(tmp_path / "manifest.json"),
             "--output",
             str(tmp_path / "pack.json"),
         ]
@@ -592,6 +637,8 @@ def test_b1_evidence_finalize_cues_recomputes_not_trusts_outcome(
 def test_b1_evidence_finalize_cues_from_adjudication(tmp_path: Path) -> None:
     source = tmp_path / "source.jsonl"
     _write_source_records(source)
+    manifest = tmp_path / "subset-manifest.json"
+    subset_digest = _write_single_subset_manifest(manifest)
     adjudication = tmp_path / "adjudication.json"
     adjudication.write_text(
         json.dumps(
@@ -616,7 +663,9 @@ def test_b1_evidence_finalize_cues_from_adjudication(tmp_path: Path) -> None:
             "--split-fingerprint",
             _SPLIT_FINGERPRINT,
             "--subset-digest",
-            "0" * 64,
+            subset_digest,
+            "--subset-manifest",
+            str(manifest),
             "--output",
             str(pack),
         ]
@@ -698,11 +747,11 @@ def test_b1_evidence_finalize_cues_binds_subset_manifest(
     rc = mesc_b1_evidence.main(args)
     assert rc == 2
     assert "exactly" in capsys.readouterr().err
-    unbound = list(args)
-    manifest_flag = unbound.index("--subset-manifest")
-    del unbound[manifest_flag : manifest_flag + 2]
-    unbound[unbound.index("--subset-digest") + 1] = "0" * 64
-    assert mesc_b1_evidence.main(unbound) == 0
+    without_manifest = list(args)
+    manifest_flag = without_manifest.index("--subset-manifest")
+    del without_manifest[manifest_flag : manifest_flag + 2]
+    with pytest.raises(SystemExit):
+        mesc_b1_evidence.main(without_manifest)
     bad_digest = list(args)
     bad_digest[bad_digest.index("--subset-digest") + 1] = "0" * 64
     bad_digest[bad_digest.index("--output") + 1] = str(tmp_path / "pack-bad.json")
@@ -725,6 +774,8 @@ def test_b1_evidence_finalize_cues_requires_input(
             _SPLIT_FINGERPRINT,
             "--subset-digest",
             "0" * 64,
+            "--subset-manifest",
+            str(tmp_path / "manifest.json"),
             "--output",
             str(tmp_path / "pack.json"),
         ]
@@ -736,6 +787,8 @@ def test_b1_evidence_finalize_cues_requires_input(
 def test_b1_evidence_validate_pack(tmp_path: Path) -> None:
     source = tmp_path / "source.jsonl"
     _write_source_records(source)
+    manifest = tmp_path / "subset-manifest.json"
+    subset_digest = _write_single_subset_manifest(manifest)
     a = tmp_path / "a.json"
     _write_submission(a, "r1", [0])
     comparison = tmp_path / "comparison.json"
@@ -765,7 +818,9 @@ def test_b1_evidence_validate_pack(tmp_path: Path) -> None:
                 "--split-fingerprint",
                 _SPLIT_FINGERPRINT,
                 "--subset-digest",
-                "0" * 64,
+                subset_digest,
+                "--subset-manifest",
+                str(manifest),
                 "--output",
                 str(pack),
             ]
@@ -781,6 +836,8 @@ def test_b1_evidence_validate_pack(tmp_path: Path) -> None:
 def test_b1_evidence_validate_pack_rejects_tampered_pack(tmp_path: Path) -> None:
     source = tmp_path / "source.jsonl"
     _write_source_records(source)
+    manifest = tmp_path / "subset-manifest.json"
+    subset_digest = _write_single_subset_manifest(manifest)
     a = tmp_path / "a.json"
     _write_submission(a, "r1", [0])
     comparison = tmp_path / "comparison.json"
@@ -810,7 +867,9 @@ def test_b1_evidence_validate_pack_rejects_tampered_pack(tmp_path: Path) -> None
                 "--split-fingerprint",
                 _SPLIT_FINGERPRINT,
                 "--subset-digest",
-                "0" * 64,
+                subset_digest,
+                "--subset-manifest",
+                str(manifest),
                 "--output",
                 str(pack),
             ]
