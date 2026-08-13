@@ -19,6 +19,7 @@ import hashlib
 import itertools
 import json
 import os
+import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -1387,9 +1388,9 @@ def write_atomic_json_document(path: Path, document: Mapping[str, object]) -> No
 
 def _write_atomic_json(path: Path, document: Mapping[str, object]) -> None:
     data = canonical_json_bytes(document) + b"\n"
-    tmp = path.with_name(path.name + ".partial")
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.{uuid.uuid4().hex}.partial")
     try:
-        with tmp.open("wb") as handle:
+        with tmp.open("xb") as handle:
             handle.write(data)
             handle.flush()
             os.fsync(handle.fileno())

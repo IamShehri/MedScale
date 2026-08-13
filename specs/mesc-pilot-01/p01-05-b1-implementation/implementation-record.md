@@ -151,8 +151,9 @@ evidence-cue channel. Additive private modules were preferred.
 ## Validation performed
 
 - FOCUSED TESTS: 88 passed
-  (`tests/test_mesc_b1_evidence.py`, `tests/test_mesc_b1.py`,
-  `tests/test_cli_mesc_b1.py`)
+  (`python -m pytest tests/test_mesc_b1_evidence.py tests/test_mesc_b1.py
+  tests/test_cli_mesc_b1.py -q`; 33 + 29 + 26 test functions in the three
+  cited files)
 - B0 REGRESSION TESTS: 57 passed
   (`tests/test_mesc_b0.py`, `tests/test_architecture.py`,
   `tests/test_cli_ux.py`)
