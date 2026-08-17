@@ -1,6 +1,6 @@
 # P01-05 B1 Human Evidence Arm Deferral
 
-Status: **CANONICAL FOUNDER DECISION CANDIDATE**
+Status: **CANONICAL FOUNDER DECISION**
 
 Decision: `FD-P01-05-B1-DEFER-1`
 
@@ -16,7 +16,7 @@ Current truth after adoption of this package:
 - B1 human development arm: DEFERRED BEFORE HUMAN ANNOTATION COMPLETION
 - complete human A/B annotation set: NOT PRODUCED
 - B1 development evidence pack: NOT PRODUCED
-- real B1 execution: NOT PERFORMED / NOT AUTHORIZED
+- B1 real model execution: NOT PERFORMED / NOT AUTHORIZED
 - B0 execution: NOT AUTHORIZED by this decision
 - P01-06: NOT AUTHORIZED
 - vNext Stage 1: NOT AUTHORIZED
