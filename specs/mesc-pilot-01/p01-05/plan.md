@@ -96,15 +96,19 @@ P01-05 entry contract: CANONICALLY DEFINED
 
 B0 implementation: EXISTING / RECONCILED
 
-B1 implementation: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+B1 implementation: PRESERVED / ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
 
-B1 development evidence-pack tooling: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+B1 development evidence-pack tooling: PRESERVED / ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+
+B1 human development arm: DEFERRED BEFORE HUMAN ANNOTATION COMPLETION (`FD-P01-05-B1-DEFER-1`)
+
+Complete human A/B annotation set: NOT PRODUCED
 
 B1 development evidence pack: NOT PRODUCED
 
 B0 execution: NOT AUTHORIZED
 
-B1 execution: NOT AUTHORIZED
+B1 real model execution: NOT PERFORMED / NOT AUTHORIZED
 
 P01-06: NOT AUTHORIZED
 
