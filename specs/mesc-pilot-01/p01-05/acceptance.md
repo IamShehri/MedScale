@@ -112,6 +112,6 @@ B1 development evidence pack: NOT PRODUCED
 
 B0 execution: NOT AUTHORIZED
 
-B1 execution: NOT PERFORMED / NOT AUTHORIZED
+B1 real model execution: NOT PERFORMED / NOT AUTHORIZED
 
 Test evidence pack: NOT AUTHORIZED
