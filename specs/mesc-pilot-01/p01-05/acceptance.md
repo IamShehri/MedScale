@@ -100,14 +100,18 @@ entry-contract-only rows for implementation scope.
 
 B1 evidence source: RATIFIED — MANUAL LABEL-BLIND NATIVE-CONTEXT EVIDENCE CUES
 
-B1 implementation: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+B1 implementation: PRESERVED / ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
 
-B1 development evidence-pack tooling: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+B1 development evidence-pack tooling: PRESERVED / ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
+
+B1 human development arm: DEFERRED BEFORE HUMAN ANNOTATION COMPLETION (`FD-P01-05-B1-DEFER-1`)
+
+Complete human A/B annotation set: NOT PRODUCED
 
 B1 development evidence pack: NOT PRODUCED
 
 B0 execution: NOT AUTHORIZED
 
-B1 execution: NOT AUTHORIZED
+B1 execution: NOT PERFORMED / NOT AUTHORIZED
 
 Test evidence pack: NOT AUTHORIZED
