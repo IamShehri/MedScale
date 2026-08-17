@@ -100,11 +100,15 @@ B1 implementation: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
 
 B1 development evidence-pack tooling: ADOPTED / QUALIFIED WITH SYNTHETIC FIXTURES
 
+B1 human development arm: DEFERRED BEFORE HUMAN ANNOTATION COMPLETION (`FD-P01-05-B1-DEFER-1`)
+
+Complete human A/B annotation set: NOT PRODUCED
+
 B1 development evidence pack: NOT PRODUCED
 
 B0 execution: NOT AUTHORIZED
 
-B1 execution: NOT AUTHORIZED
+B1 execution: NOT PERFORMED / NOT AUTHORIZED
 
 P01-06: NOT AUTHORIZED
 
