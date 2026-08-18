@@ -2,6 +2,13 @@
 
 Status: **entry contract defined — execution not authorized**
 
+> **Current post-entry status (2026-08-19):** B0 was later separately authorized,
+> executed once over the frozen 150-example validation input, and accepted with
+> artifact-integrity verification. See
+> `../p01-05-b0-execution-acceptance/`. The historical entry-contract text below
+> intentionally remains unchanged for provenance. B1 execution and P01-06 remain
+> NOT AUTHORIZED.
+
 Purpose: qualify and complete deterministic B0/B1 runner contracts before real baseline execution
 
 ---
@@ -113,3 +120,4 @@ vNext Stage 1 implementation: NOT AUTHORIZED
 - `decision-record.md` — model authority and evidence-source decisions
 - `acceptance.md` — acceptance criteria
 - `p01-05-b1-implementation/` — B1 implementation package (authority, criteria, record)
+- `../p01-05-b0-execution-acceptance/` — later separately authorized B0 execution acceptance and evidence identities
