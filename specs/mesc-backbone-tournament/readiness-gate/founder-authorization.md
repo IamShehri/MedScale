@@ -79,10 +79,12 @@ The episode ends when it produces either:
 
 Any `BLOCKED` disposition for a non-empty roster slot forces the episode outcome to `BLOCKED`; that candidate may not simply be omitted to produce a ready verdict. An intentionally empty optional challenger slot is not a blocker.
 
+A `READY_FOR_EXECUTION_AUTHORIZATION_CANDIDATE` outcome additionally requires at least two distinct non-empty roster candidates to be `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`. If zero or one candidate is admitted after the roster is conclusively dispositioned, the episode outcome is `BLOCKED`.
+
 It cannot be reused to refresh candidate versions, add candidates after outputs are observed, or execute the tournament.
 
 ## Fail-closed rule
 
-If the Pilot-01 closeout adoption proof or ancestry check fails, any non-empty roster candidate has unresolved required evidence, any required evaluation axis cannot be frozen, canonical state moves materially, an authoritative source cannot be resolved, a license/access fact remains unclear, R2 compatibility is uncertain, or equal-treatment cannot be frozen without seeing model outputs, stop and report `BLOCKED`.
+If the Pilot-01 closeout adoption proof or ancestry check fails, any non-empty roster candidate has unresolved required evidence, fewer than two distinct candidates can be conclusively admitted, any required evaluation axis cannot be frozen, canonical state moves materially, an authoritative source cannot be resolved, a license/access fact remains unclear, R2 compatibility is uncertain, or equal-treatment cannot be frozen without seeing model outputs, stop and report `BLOCKED`.
 
 No scientific or runtime action may be used to resolve a readiness ambiguity.

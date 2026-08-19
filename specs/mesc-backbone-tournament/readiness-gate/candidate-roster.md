@@ -40,6 +40,8 @@ Disposition semantics are mandatory:
 - `NOT_ADMITTED`: authoritative evidence conclusively proves a disqualifying policy, license/access, architecture, security, or feasibility condition. It cannot be used merely because evidence is missing.
 - `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`: all required admission evidence is proven; this only permits inclusion in a later inactive execution-authorization candidate and grants no execution authority.
 
+A readiness package may be `READY_FOR_EXECUTION_AUTHORIZATION_CANDIDATE` only if at least **two distinct non-empty roster slots** are `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`. Zero or one admitted candidate is insufficient for the comparative Backbone Tournament and forces the overall readiness verdict to `BLOCKED`, even when every other non-empty slot is conclusively `NOT_ADMITTED`.
+
 ## Challenger rule
 
 The challenger slot may be populated only before any tournament execution and only if:

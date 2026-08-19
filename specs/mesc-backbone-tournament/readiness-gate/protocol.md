@@ -54,6 +54,8 @@ Candidate disposition is deterministic:
 - `NOT_ADMITTED` may be used only when authoritative evidence conclusively establishes a disqualifying condition, such as a policy conflict, incompatible license/access condition, or demonstrated architectural/runtime infeasibility. It must not be used as a substitute for unresolved evidence.
 - `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE` means every admission requirement above is proven for proposal into a later, separately reviewed execution-authorization package. It grants no execution authority by itself.
 
+A successful readiness verdict additionally requires an **execution-viable competitive roster**: at least two distinct non-empty roster candidates must be `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`. If fewer than two distinct candidates are admitted after all non-empty slots are conclusively dispositioned, the overall readiness verdict is `BLOCKED`. This minimum does not predetermine either future winner; it only prevents a zero- or one-candidate package from being labeled ready for a comparative tournament intended to select Compact and Flagship/Reasoner backbones.
+
 ## 4. Design-time roster and challenger
 
 Initial family-level roster:
