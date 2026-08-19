@@ -32,7 +32,13 @@ For each non-empty slot, the readiness episode must record:
 - hardware/runtime feasibility;
 - required library/runtime versions where authoritative documentation makes them material;
 - security implications such as remote code requirements;
-- `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`, `NOT_ADMITTED`, or `BLOCKED`.
+- one deterministic disposition: `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`, `NOT_ADMITTED`, or `BLOCKED`.
+
+Disposition semantics are mandatory:
+
+- `BLOCKED`: required evidence remains unresolved, unproven, contradictory, or unavailable. Any `BLOCKED` non-empty roster slot forces the overall readiness verdict to `BLOCKED`.
+- `NOT_ADMITTED`: authoritative evidence conclusively proves a disqualifying policy, license/access, architecture, security, or feasibility condition. It cannot be used merely because evidence is missing.
+- `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`: all required admission evidence is proven; this only permits inclusion in a later inactive execution-authorization candidate and grants no execution authority.
 
 ## Challenger rule
 
@@ -45,6 +51,8 @@ The challenger slot may be populated only before any tournament execution and on
 - adding it does not require weakening R2, safety, reproducibility, or equal-treatment rules.
 
 If no challenger meets these conditions, the slot remains empty.
+
+An intentionally empty challenger slot is not `BLOCKED`; only a populated or required non-empty roster slot with unresolved evidence can create a candidate-level blocker.
 
 ## No silent substitution
 

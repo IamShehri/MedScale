@@ -39,8 +39,9 @@ One bounded readiness episode may:
 - resolve exact candidate repository IDs and immutable revisions without downloading/opening model weights;
 - resolve tokenizer/processor identities and revisions without runtime model execution;
 - classify license/access/hardware/runtime/admissibility constraints;
+- assign `BLOCKED` to unresolved candidate evidence and `NOT_ADMITTED` only to conclusively proven disqualifications;
 - fill or leave empty the single challenger slot before any model execution;
-- design and freeze a synthetic/hand-authored R2-compatible evaluation corpus contract;
+- design and freeze a synthetic/hand-authored R2-compatible evaluation corpus contract covering all six required protocol axes;
 - create hand-authored/synthetic fixture specifications, but not run models against them;
 - freeze prompts, decoding, parsing, metrics, selection thresholds, compute accounting, and report schemas;
 - produce documentation artifacts: candidate manifest, protocol-freeze report, readiness verdict, execution plan, and a separate inactive tournament-execution authorization candidate.
@@ -76,10 +77,12 @@ The episode ends when it produces either:
 - `READY_FOR_EXECUTION_AUTHORIZATION_CANDIDATE`, or
 - `BLOCKED` with explicit unresolved evidence/constraints.
 
+Any `BLOCKED` disposition for a non-empty roster slot forces the episode outcome to `BLOCKED`; that candidate may not simply be omitted to produce a ready verdict. An intentionally empty optional challenger slot is not a blocker.
+
 It cannot be reused to refresh candidate versions, add candidates after outputs are observed, or execute the tournament.
 
 ## Fail-closed rule
 
-If the Pilot-01 closeout adoption proof or ancestry check fails, canonical state moves materially, an authoritative source cannot be resolved, a license/access fact remains unclear, R2 compatibility is uncertain, or equal-treatment cannot be frozen without seeing model outputs, stop and report `BLOCKED`.
+If the Pilot-01 closeout adoption proof or ancestry check fails, any non-empty roster candidate has unresolved required evidence, any required evaluation axis cannot be frozen, canonical state moves materially, an authoritative source cannot be resolved, a license/access fact remains unclear, R2 compatibility is uncertain, or equal-treatment cannot be frozen without seeing model outputs, stop and report `BLOCKED`.
 
 No scientific or runtime action may be used to resolve a readiness ambiguity.

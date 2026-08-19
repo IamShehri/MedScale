@@ -39,10 +39,10 @@ The authorized episode must produce a deterministic package containing:
 2. controlling governance inventory;
 3. candidate family-to-exact-ID resolution;
 4. immutable model/tokenizer/processor revision pins or explicit blockers;
-5. authoritative license/access evidence and admissibility verdict per candidate;
+5. authoritative license/access evidence and deterministic admissibility disposition per candidate, using `BLOCKED` for unresolved evidence and `NOT_ADMITTED` only for conclusively proven disqualification;
 6. hardware/runtime feasibility evidence;
 7. challenger-slot disposition;
-8. frozen R2-compatible evaluation-corpus specification and provenance rules;
+8. frozen R2-compatible evaluation-corpus specification and provenance rules that explicitly cover **all six required protocol axes**: medical knowledge/reasoning, evidence fidelity, uncertainty/abstention, safety, structured/FHIR readiness, and operational characteristics;
 9. frozen prompt/decoding/parser/error/abstention contract;
 10. frozen metrics and selection thresholds for Compact and Flagship roles;
 11. reproducibility/artifact schema;
@@ -50,6 +50,8 @@ The authorized episode must produce a deterministic package containing:
    - `READY_FOR_EXECUTION_AUTHORIZATION_CANDIDATE`, or
    - `BLOCKED`;
 13. a separate founder execution-disposition/authorization candidate that remains inactive.
+
+Any `BLOCKED` disposition for a non-empty roster slot forces item 12 to be `BLOCKED`; it cannot be bypassed by excluding that candidate. An intentionally empty optional challenger slot is not a blocker.
 
 ## Required execution-candidate fields
 
@@ -75,9 +77,11 @@ Stop and report `BLOCKED` if:
 
 - the Pilot-01 closeout adoption proof or ancestry check fails;
 - canonical state moves materially during readiness;
+- any non-empty roster candidate has unresolved identity, immutable revision, license/access, R2, security, or hardware/runtime feasibility evidence;
 - any exact candidate identity/revision cannot be proven;
 - candidate license/access terms are unresolved;
 - R2 compatibility cannot be proven;
+- any of the six required evaluation axes cannot be frozen into the R2-compatible corpus/protocol contract;
 - an equal-treatment decision would require observing model outputs;
 - hardware/runtime feasibility cannot be established without model execution;
 - protocol scoring/thresholds cannot be frozen pre-execution;

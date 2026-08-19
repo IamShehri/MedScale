@@ -48,7 +48,11 @@ Every candidate must have, before execution authorization:
 - no conflict with the project policy excluding Chinese model families from the core model stack;
 - no conflict with Program Rule R2 or other canonical safety/governance rules.
 
-If any item cannot be proven, the candidate is `NOT_ADMITTED` until a later explicit governance change.
+Candidate disposition is deterministic:
+
+- `BLOCKED` means one or more required facts remain unresolved, unproven, contradictory, or unavailable. Any `BLOCKED` disposition for a non-empty roster slot forces the **overall readiness verdict to `BLOCKED`** and prevents production of a ready execution-authorization candidate.
+- `NOT_ADMITTED` may be used only when authoritative evidence conclusively establishes a disqualifying condition, such as a policy conflict, incompatible license/access condition, or demonstrated architectural/runtime infeasibility. It must not be used as a substitute for unresolved evidence.
+- `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE` means every admission requirement above is proven for proposal into a later, separately reviewed execution-authorization package. It grants no execution authority by itself.
 
 ## 4. Design-time roster and challenger
 
@@ -81,7 +85,7 @@ External benchmark families may inspire task design only unless separately prove
 
 ## 6. Required evaluation axes
 
-The frozen evaluation contract should cover, at minimum:
+The frozen evaluation contract **must cover every axis below at minimum**. Omission of any axis is a protocol-freeze blocker and forces the readiness verdict to `BLOCKED`.
 
 ### A. Medical knowledge and reasoning
 
