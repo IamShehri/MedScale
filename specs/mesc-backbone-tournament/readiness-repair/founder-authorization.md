@@ -18,7 +18,7 @@ This authorization may activate only after all of the following are mechanically
 
 1. then-current canonical `main` is equal to or descends from readiness-gate merge `24faa6fae47f96236407f8e1fa2b262abba5894f`;
 2. PR #126 / readiness-gate adoption remains present in canonical ancestry;
-3. the separate prior readiness result is adopted or otherwise canonically reconciled as `FD-MESC-BT-READINESS-1 = CONSUMED` with terminal result `BLOCKED`;
+3. this exact repair package has been canonically adopted and its `prior-readiness-blocker-record.md` thereby reconciles `FD-MESC-BT-READINESS-1 = CONSUMED` with terminal result `BLOCKED`, or an equivalent later canonical record proves the same state;
 4. this repair package is based on then-current canonical truth or is rebased/reissued before review if main moved materially;
 5. the exact repair-package head passes required exact-head CI;
 6. the exact repair-package head passes required exact-head CodeQL;
