@@ -66,7 +66,7 @@ The notebook is a convenience execution surface. This runbook is the durable rep
 
 ## Required Colab environment
 
-1. Use a Google Colab hosted runtime.
+1. Use a Google Colab-hosted runtime.
 2. Select a GPU runtime.
 3. Do not mount Google Drive for this readiness gate.
 4. Store the Hugging Face access token in Colab Secrets as `HF_TOKEN`; never print it.

@@ -68,8 +68,9 @@ Any future speculative-decoding adoption must prove:
 4. **Target identity pinning** — each draft model is bound to an exact target-model identity/revision and training recipe.
 5. **Domain-aware draft training** — if medical-domain draft adaptation is used, the training data receives the same provenance, licensing, decontamination, split, and safety controls as other MESC training data.
 6. **No evaluation leakage** — target-cache or draft-training generation must never consume quarantined MESC-Eval/test scientific content.
-7. **Performance proof** — latency, throughput, memory, energy/cost, accepted-token length, and tail latency are measured on representative MESC workloads.
-8. **Fallback** — MESC can always disable speculative decoding and return to the canonical target-only path.
+7. **R2 synthetic-only / no-PHI boundary** — all DeepSpec draft training, target-cache generation, and evaluation must obey canonical Program Rule R2: synthetic data only, with no real patient data, product telemetry, or clinical content entering MESC training, evaluation, or benchmark data. If an intended DeepSpec workflow appears to require real or credentialed patient data, work stops and the licensing/PHI boundary is raised before any execution.
+8. **Performance proof** — latency, throughput, memory, energy/cost, accepted-token length, and tail latency are measured on representative MESC workloads.
+9. **Fallback** — MESC can always disable speculative decoding and return to the canonical target-only path.
 
 ## Important upstream constraints
 
@@ -84,12 +85,12 @@ Do not evaluate DeepSpec during Pilot-01 or initial backbone selection.
 Recommended sequence:
 
 1. close Pilot-01;
-2. run MESC Backbone Tournament;
+2. run MESC Backbone Tournament only after its separate authorization;
 3. choose and freeze MESC-Compact and MESC-Reasoner;
 4. complete canonical target-only quality/safety evaluation;
 5. profile real serving bottlenecks;
-6. only then open `MESC SPECULATIVE DECODING ADMISSION`;
-7. compare DSpark, DFlash, Eagle3, and any newer strong open alternatives against a no-speculation baseline.
+6. only then, and under a separate explicit authorization, open `MESC SPECULATIVE DECODING ADMISSION`;
+7. compare DSpark, DFlash, Eagle3, and any newer strong open alternatives against a no-speculation baseline while preserving Program Rule R2.
 
 ## Recommendation
 

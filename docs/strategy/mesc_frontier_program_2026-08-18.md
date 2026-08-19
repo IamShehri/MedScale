@@ -547,16 +547,15 @@ No single competitor currently owns all ten as one coherent open system.
 
 ### P0 — Do now
 
-- finish Pilot-01 B0 scientifically;
-- preserve exact provenance;
+- preserve the completed, canonically accepted Pilot-01 B0 result and exact provenance;
 - merge/review strategic docs separately from execution;
 - design backbone tournament protocol;
 - design MESC-Eval v0 taxonomy;
 - design data provenance/decontamination contract.
 
-### P1 — Immediately after Pilot-01
+### P1 — After Pilot-01 closeout and separate authorization
 
-- run zero-shot tournament;
+- open the zero-shot tournament only after separate authorization;
 - select Compact + Reasoner finalists;
 - reproduce Fully Open Meditron-style medical post-training baselines;
 - add MESC-specific abstention/contradiction/evidence data;
