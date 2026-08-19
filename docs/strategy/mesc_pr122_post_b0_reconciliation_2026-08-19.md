@@ -30,7 +30,7 @@ PR #122 was authored before the later B0 execution and acceptance. Its strategic
 
 In particular:
 
-- `docs/execution/p01-05_b0_colab_remote_readiness_runbook.md` is a historical satisfied gate and must not be used to reacquire the model or rerun B0.
+- `docs/execution/p01_05_b0_colab_remote_readiness_runbook.md` is a historical satisfied gate and must not be used to reacquire the model or rerun B0.
 - `docs/strategy/mesc_strategic_model_roadmap_2026-08-18.md` has been reconciled directly to the accepted B0 state.
 - `docs/strategy/mesc_frontier_program_2026-08-18.md` now preserves the completed canonical B0 result as historical work and places the Backbone Tournament behind Pilot-01 closeout plus separate authorization.
 - References in donor reviews to actions `after Pilot-01` remain future strategy only and do not authorize implementation, B1, P01-06, training, retrieval, sandbox adoption, speculative decoding, or MCRL implementation.
