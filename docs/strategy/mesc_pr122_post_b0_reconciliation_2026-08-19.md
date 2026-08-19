@@ -26,14 +26,28 @@ Current execution boundary:
 
 ## Reconciliation of PR #122 planning text
 
-PR #122 was authored before the later B0 execution and acceptance. Its strategic content remains useful, but any planning sentence that describes B0 remote readiness, B0 execution authorization, or completion of the B0 baseline as a future step is now historical sequencing context rather than a live instruction.
+PR #122 was authored before the later B0 execution and acceptance. Its strategic content remains useful, but any planning sentence that describes B0 remote readiness, B0 execution authorization, or completion of the B0 baseline as a future step is historical sequencing context rather than a live instruction.
 
 In particular:
 
 - `docs/execution/p01-05_b0_colab_remote_readiness_runbook.md` is a historical satisfied gate and must not be used to reacquire the model or rerun B0.
 - `docs/strategy/mesc_strategic_model_roadmap_2026-08-18.md` has been reconciled directly to the accepted B0 state.
-- In `docs/strategy/mesc_frontier_program_2026-08-18.md`, the P0 bullet `finish Pilot-01 B0 scientifically` is satisfied by the canonical B0 acceptance and is not authorization to execute B0 again.
+- `docs/strategy/mesc_frontier_program_2026-08-18.md` now preserves the completed canonical B0 result as historical work and places the Backbone Tournament behind Pilot-01 closeout plus separate authorization.
 - References in donor reviews to actions `after Pilot-01` remain future strategy only and do not authorize implementation, B1, P01-06, training, retrieval, sandbox adoption, speculative decoding, or MCRL implementation.
+
+## Donor-wide binding boundary
+
+All donor reviews introduced or indexed by PR #122 inherit the canonical Program Rules. They are architectural or research references only and cannot weaken those rules.
+
+In particular, Program Rule R2 remains binding across DeepSeek Harness, DeepSpec, OpenSandbox, and any future donor-derived design:
+
+- MESC training, evaluation, benchmark construction, target-cache generation, and donor-derived experiments remain within the canonical synthetic-only boundary;
+- no real patient data, product telemetry, PHI, or other prohibited clinical content may enter those training/evaluation/benchmark paths;
+- if a proposed donor workflow appears to require real or credentialed patient data, work stops and the licensing/PHI boundary must be raised before any execution;
+- a donor review, roadmap item, or architectural recommendation is never execution authorization;
+- any donor implementation, model-family admission, training, evaluation expansion, retrieval activation, or external-system integration requires its own explicit authorization and applicable admission gates.
+
+The more specific DeepSpec review additionally repeats the R2 requirement for speculative-decoding draft training, target-cache generation, and evaluation. This donor-wide section ensures the same binding boundary applies to every donor review in this PR, including documents that do not restate R2 locally.
 
 ## Governance rule
 
