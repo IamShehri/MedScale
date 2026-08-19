@@ -12,7 +12,7 @@ This repair package is eligible for canonical adoption only if all are true:
 - PR #126 / merge `24faa6fae47f96236407f8e1fa2b262abba5894f` remains in canonical ancestry;
 - the prior one-shot readiness decision is canonically reconciled as consumed and terminally `BLOCKED`, not reusable;
 - changes are documentation/governance only;
-- no model access, gated acceptance, inference, training, retrieval, test access, quantization change, challenger addition, or downstream implementation is introduced;
+- no model access, gated access request or acceptance, gated-access terms acceptance, inference, training, retrieval, test access, quantization change, challenger addition, or downstream implementation is introduced;
 - the proposed authorization is limited to one read-only repair/protocol-freeze-completion episode;
 - exact-head CI passes;
 - exact-head CodeQL passes;
@@ -96,6 +96,8 @@ An older Apertus policy, third-party summary, search snippet, model-generated le
 
 If exact terms conclusively prohibit the intended bounded R2 research use, Apertus may be `NOT_ADMITTED`. If exact terms remain ambiguous or unproven, Apertus remains `BLOCKED`.
 
+The episode may inspect public legal/AUP material, but it may not request or accept gated model access, gated-access terms, or model-access agreements for any purpose in order to resolve the blocker.
+
 ## Refresh rule
 
 All four non-empty candidate identities/revisions/access conditions must be refreshed during the new episode from then-current authoritative sources. Prior episode pins are historical evidence only.
@@ -122,7 +124,7 @@ Stop and report `BLOCKED` if:
 - hardware/runtime feasibility cannot be established without inference;
 - equal-treatment or scoring requires observing model outputs;
 - any required execution-candidate field remains a placeholder at the point a ready verdict would be claimed;
-- scope expands toward weights, gated access, inference, training, retrieval, prohibited data, quantization changes, challenger addition, or downstream implementation.
+- scope expands toward weights, gated access request/acceptance, gated-access terms acceptance, inference, training, retrieval, prohibited data, quantization changes, challenger addition, or downstream implementation.
 
 ## Post-repair authority state
 
