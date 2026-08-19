@@ -47,6 +47,53 @@ run digest:
 66797ef270714a482bc1346513e9c61b98a7ffa5880b12bfb79834b1baeb6ae9
 ```
 
+## Frozen P01-04 validation-partition provenance binding
+
+The byte-attested B0 input above is the execution materialization of the frozen
+P01-04 `validation` partition. The scientific-content bytes remain external; the
+repository binds that external input identity to the canonical P01-04 partition
+through the following already-adopted identities:
+
+```text
+P01-04 frozen-root stable identity:
+mesc-p01-04f-frozen-root/1:sha256:5888707d342602012b97fd7406cfd68146e4f3e5b643e1023954ea085614d290
+
+P01-04 split fingerprint:
+43bd2b2f1777139927960df72d6f540525d216a239048f596e35d8befb58fb91
+
+promoted example-registry.jsonl:
+sha256     4783d57bf9e0cdb642e0b5410ec0a388bd90d5c3d73a9b466d34f2e7b04ba310
+byte_size  311432
+schema     mesc-pilot-01-example-registry/1
+
+promoted split-summary.json:
+sha256     704e4eaf9ffdd682055811c23284937d6523fe15981207a62bc62cca5adbab4b
+byte_size  628
+schema     mesc-pilot-01-split-summary/1
+
+validation partition cardinality:
+150
+
+validation gold distribution:
+maybe 17
+no    50
+yes   83
+```
+
+The authoritative `split-summary.json` records the split fingerprint, validation
+cardinality, and validation label matrix. P01-04G promotion acceptance records the
+byte-exact promoted registry and split-summary identities above. As a concrete
+crosswalk anchor, the determinism-probe example
+`mesc-pilot-01:fc0fec260202f8a320dfec307968931fd499f62c530bf7939139d439b7990a57`
+is recorded in the promoted example registry as `assigned_split="validation"`
+with `row_ordinal=12`, matching the preserved B0 report probe identity.
+
+The B0 input SHA-256 and the P01-04 registry/split SHA-256 values identify
+different artifacts and are therefore not expected to be equal. This section is
+the provenance binding from the byte-attested execution input to the frozen
+partition authority; it does not duplicate scientific-content bytes in Git and
+does not claim an independent model rerun.
+
 ## Runtime manifest observed in the preserved report
 
 ```text
