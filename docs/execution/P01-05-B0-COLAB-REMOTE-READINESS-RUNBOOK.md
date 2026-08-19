@@ -1,7 +1,16 @@
 # P01-05 B0 — Google Colab Remote Model Readiness Runbook
 
 Date: 2026-08-18
-Status: FOUNDER-AUTHORIZED REMOTE READINESS RUNBOOK
+Status: HISTORICAL READINESS GATE — SATISFIED / SUPERSEDED AS NEXT GATE
+
+> **Canonical reconciliation (2026-08-19):** This runbook records the bounded
+> remote-readiness gate that preceded the separately authorized B0 execution.
+> That later B0 execution was completed once and accepted canonically in PR #123
+> at merge commit `3f34b35daf4050d010a5f0061d6e8387f9649c10`; see
+> `specs/mesc-pilot-01/p01-05-b0-execution-acceptance/`. The readiness instructions
+> and terminal state below are preserved as historical execution provenance. They
+> are **not** a current instruction to acquire the model again or rerun B0. B1 and
+> P01-06 remain NOT AUTHORIZED.
 
 ## Scope
 
@@ -103,6 +112,8 @@ MUST NOT:
 
 ## Required successful terminal state
 
+The following block records the required terminal state **at the time this readiness gate was executed**. Its `NEXT_GATE` field is historical and has since been consumed by the separately authorized, accepted B0 execution.
+
 ```text
 P01-05 B0 REMOTE MODEL ACQUISITION / ENVIRONMENT READINESS
 
@@ -164,4 +175,4 @@ STOP_REASON:
 NONE
 ```
 
-Then stop. A separate founder authorization is required before real B0 inference.
+At the time of this readiness gate, the required action was to stop and obtain a separate founder authorization before real B0 inference. That authorization was subsequently issued and consumed for exactly one B0 validation execution, which is now accepted canonically. This historical runbook grants no new authority: no second B0 run, B1 execution, test-partition execution or scientific-content inspection, P01-06+, training, retrieval, fallback substitution, or quantization change is authorized here.
