@@ -40,18 +40,18 @@ This protects scientific provenance and gives later MESC systems a meaningful be
 
 ## 2. Backbone tournament, not backbone ideology
 
-Current core tournament:
+Proposed core tournament lineup (design-time only; no tournament is authorized by this document):
 
 1. `gpt-oss-20b` — reasoning/flagship candidate.
 2. `Apertus 1.5 8B` — compact, fully open, multilingual, native text/image/audio candidate.
 3. `Phi-4 Multimodal 5.6B` — lightweight native multimodal control.
 4. `MedGemma 1.5 4B IT` — medical-specialist control.
 
-Keep one challenger slot for a new model that appears before tournament freeze.
+Keep one challenger slot for a new model that appears before any separately authorized tournament freeze.
 
 Selection must use MESC-specific evidence, not vendor benchmark claims.
 
-Tournament outputs:
+If separately authorized and executed, tournament outputs:
 
 - one **MESC-Compact** backbone;
 - one **MESC-Reasoner / Flagship** backbone.
