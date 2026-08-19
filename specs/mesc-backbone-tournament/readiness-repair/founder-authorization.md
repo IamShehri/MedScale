@@ -75,7 +75,7 @@ The optional challenger slot is frozen `EMPTY` for this repair episode. This aut
 This authorization does **not** permit:
 
 - downloading, opening, loading, inspecting, or accessing model weights;
-- requesting or accepting gated model-weight access or clicking through model-access agreements for the purpose of obtaining weights;
+- requesting or accepting gated model access, gated-access terms, or model-access agreements for any purpose;
 - inference or generation;
 - benchmark or tournament execution;
 - B0 rerun or replication;
