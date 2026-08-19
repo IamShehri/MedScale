@@ -1,8 +1,16 @@
 # MESC Strategic Model Roadmap — Canonical Strategy Draft
 
 Date: 2026-08-18
-Status: FOUNDER-DIRECTED STRATEGY DRAFT
+Status: FOUNDER-DIRECTED STRATEGY DRAFT — RECONCILED AFTER B0 ACCEPTANCE
 Repository context: TheHalfMoon/MESC
+
+> **Canonical reconciliation (2026-08-19):** Pilot-01 B0 was subsequently
+> authorized separately, executed exactly once over the frozen 150-example
+> validation input, and accepted canonically in PR #123 at merge commit
+> `3f34b35daf4050d010a5f0061d6e8387f9649c10`. This strategy document does not
+> authorize a second B0 run, B1, P01-06+, training, retrieval, test-partition
+> execution or scientific-content inspection, fallback substitution, or
+> quantization changes.
 
 ## North Star
 
@@ -34,9 +42,9 @@ Core capabilities:
 - tool/FHIR readiness
 
 Model strategy:
-- Preserve the current Llama-3.2-3B-Instruct Pilot-01 B0 as the scientific general-model control.
+- Preserve the completed Llama-3.2-3B-Instruct Pilot-01 B0 as the canonical scientific general-model control.
 - Do not promote Llama-3.2-3B as the MESC flagship by default.
-- After Pilot-01, run a bounded backbone tournament.
+- After Pilot-01 and only under separate authorization, run a bounded backbone tournament.
 
 Backbone tournament candidates:
 1. OpenAI gpt-oss-20b — flagship reasoning candidate.
@@ -257,7 +265,7 @@ Adoption strategy:
 ## Hard Strategic Boundaries
 
 - Preserve current Pilot-01 scientific provenance.
-- Do not rewrite the current Llama B0 baseline because newer models exist.
+- Do not rewrite or rerun the accepted Llama B0 baseline because newer models exist.
 - Do not train on held-out benchmark/test content.
 - Do not fabricate provenance.
 - Do not merge incompatible model-family weights arbitrarily.
@@ -269,18 +277,17 @@ Adoption strategy:
 
 ## Near-Term Execution Order
 
-1. Complete Pilot-01 Llama-3.2-3B B0 baseline exactly as authorized.
+1. Preserve the completed, accepted Pilot-01 Llama-3.2-3B B0 baseline and its exact provenance.
 2. Preserve the derived 150-record validation-only input identity.
-3. Use a remote GPU environment because the local machine has insufficient storage and no CUDA GPU.
-4. Pin exact model revision and runtime provenance before inference.
-5. Execute B0 only under a separate real-execution authorization.
-6. Close Pilot-01 baseline scientifically.
-7. Open the MESC Backbone Tournament.
-8. Select Compact + Flagship.
-9. Build MESC 1.0.
-10. Extend to MESC 1.1 Arabic.
-11. Build MESC 2.0 AMGE.
-12. Build MESC 3.0 Medical Omni.
+3. Treat the historical remote-readiness gate as satisfied; do not reacquire or rerun B0 under this strategy PR.
+4. Keep B1 execution and P01-06 blocked unless separately authorized.
+5. Reconcile any remaining Pilot-01 closeout decisions under their own governance before declaring Pilot-01 complete.
+6. Only after separate authorization, open the MESC Backbone Tournament.
+7. Select Compact + Flagship.
+8. Build MESC 1.0.
+9. Extend to MESC 1.1 Arabic.
+10. Build MESC 2.0 AMGE.
+11. Build MESC 3.0 Medical Omni.
 
 ## Current Pilot-01 Proven Validation Input
 
@@ -304,9 +311,14 @@ Membership:
 Adopted B0 loader validation:
 PASS
 
-## Immediate Next Gate
+## Current Execution Boundary
 
-Remote B0 model/environment readiness only.
+B0 remote readiness: SATISFIED / HISTORICAL GATE
+
+B0 real zero-shot validation execution: COMPLETE / ACCEPTED CANONICALLY
+
+Canonical acceptance merge:
+`3f34b35daf4050d010a5f0061d6e8387f9649c10`
 
 Exact Pilot-01 model:
 meta-llama/Llama-3.2-3B-Instruct
@@ -314,4 +326,8 @@ meta-llama/Llama-3.2-3B-Instruct
 Exact revision:
 0cb88a4f764b7a12671c53f0838cd831a0843b95
 
-No inference is authorized by this strategy document itself.
+B1 execution: NOT AUTHORIZED
+
+P01-06+: NOT AUTHORIZED
+
+This strategy document grants no execution authority. Any next Pilot-01 action, backbone-tournament action, training, retrieval activation, or model-family change requires its own explicit authorization and applicable evidence gates.
