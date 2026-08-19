@@ -8,6 +8,8 @@ Date: 2026-08-20
 
 This document records the bounded result that motivated the proposed readiness-repair gate. It does not itself prove or reactivate the prior episode, and it grants no new authority.
 
+If this exact repair package is later canonically adopted, this record may serve as the canonical reconciliation of the prior episode's reported terminal state. Before adoption it remains a proposed reconciliation only.
+
 ## Prior authorization
 
 ```text
@@ -80,6 +82,10 @@ The canonical readiness rules distinguish:
 
 Therefore the Apertus slot may become `NOT_ADMITTED` only if exact authoritative Apertus 1.5 terms conclusively establish incompatibility. Missing, unreadable, incomplete, or ambiguous evidence remains `BLOCKED`.
 
+## Gated-access boundary
+
+The blocker may be investigated only through authoritative public legal/AUP material. A later repair episode may not request or accept gated model access, gated-access terms, or model-access agreements for any purpose to obtain additional evidence or resolve uncertainty.
+
 ## No protocol-freeze completion claim
 
 Because a non-empty candidate remained `BLOCKED`, the prior episode did not claim a successful execution-ready protocol freeze. The following remain subject to a later separately authorized episode:
@@ -98,4 +104,4 @@ Because a non-empty candidate remained `BLOCKED`, the prior episode did not clai
 
 ## Non-effects
 
-This record does not authorize Apertus gated access, any other model access, model execution, inference, benchmark execution, training, retrieval, test access, quantization changes, or downstream implementation.
+This record does not authorize Apertus gated access, any other model access, requesting or accepting gated-access terms or model-access agreements, model execution, inference, benchmark execution, training, retrieval, test access, quantization changes, or downstream implementation.
