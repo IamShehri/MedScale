@@ -28,7 +28,20 @@ Canonical strategy establishes the following sequence:
 5. select one Compact and one Flagship/Reasoner backbone;
 6. proceed toward MESC 1.0 only under later gates.
 
-Pilot-01 is now canonically closed with deferred scientific objectives. This package therefore opens only the next governance prerequisite: tournament readiness and protocol freeze.
+Pilot-01 closeout is a hard prerequisite, not an assumption. Before this readiness authorization may activate, the following objective adoption proof must be mechanically verified against then-current canonical repository truth:
+
+- PR #125 is merged;
+- closeout merge commit: `c0a9acfc678149736bd9054f7fadae1c31b488a1`;
+- closeout merge tree: `71f36f2e49932f82a6ee733833b93306ab5f1f41`;
+- ordered closeout merge parents:
+  1. `f69a1b2f1c050aad6fe77eb6273016c764c109f5`
+  2. `1e52fa581af8f7894e2cfe3dbd1b07683ae0de72`;
+- GitHub merge verification: `verified=true`, `reason=valid`;
+- then-current canonical `main` is equal to or descends from `c0a9acfc678149736bd9054f7fadae1c31b488a1`.
+
+If any element of that adoption proof cannot be verified, `FD-MESC-BT-READINESS-1` remains inactive and readiness must not begin.
+
+This package therefore opens only the next governance prerequisite: tournament readiness and protocol freeze.
 
 ## Design-time roster
 
@@ -82,19 +95,21 @@ This package does not authorize:
 
 ## Fail-closed rule
 
-Readiness must stop and report `BLOCKED` if any required candidate identity, immutable revision, license/access fact, evaluation contract element, R2 boundary, or equal-treatment rule remains materially ambiguous.
+Readiness must stop and report `BLOCKED` if the Pilot-01 closeout adoption proof fails, or if any required candidate identity, immutable revision, license/access fact, evaluation contract element, R2 boundary, or equal-treatment rule remains materially ambiguous.
 
 No ambiguity may be resolved by downloading weights, running a model, inspecting prohibited data, or inferring permission from strategy text.
 
 ## Adoption sequence
 
-1. review this package on one exact head;
-2. exact-head CI and CodeQL pass;
-3. fresh independent exact-head review reports no unresolved blocking findings;
-4. all review threads are resolved/dispositioned;
-5. founder separately exercises Ready;
-6. founder separately exercises Merge with an expected-head guard;
-7. post-merge canonical main/tree/ordered parents are mechanically verified;
-8. only then may `FD-MESC-BT-READINESS-1` become active for one bounded readiness episode.
+1. mechanically verify the Pilot-01 closeout adoption proof above against then-current canonical truth;
+2. review this package on one exact head;
+3. exact-head CI and CodeQL pass;
+4. fresh independent exact-head review reports no unresolved blocking findings;
+5. all review threads are resolved/dispositioned;
+6. founder separately exercises Ready;
+7. founder separately exercises Merge with an expected-head guard;
+8. post-merge canonical main/tree/ordered parents are mechanically verified;
+9. reverify that canonical `main` remains equal to or descends from the verified Pilot-01 closeout merge;
+10. only then may `FD-MESC-BT-READINESS-1` become active for one bounded readiness episode.
 
 Canonical repository truth overrides this package if state moves before adoption.

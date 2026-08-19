@@ -9,6 +9,9 @@ Date: 2026-08-19
 This package is eligible for canonical adoption only if all are true:
 
 - it is based on then-current verified canonical `main`;
+- the separate Pilot-01 closeout disposition is proven adopted by the merged PR #125 / merge commit `c0a9acfc678149736bd9054f7fadae1c31b488a1`;
+- that closeout merge mechanically verifies to tree `71f36f2e49932f82a6ee733833b93306ab5f1f41`, ordered parents `f69a1b2f1c050aad6fe77eb6273016c764c109f5` then `1e52fa581af8f7894e2cfe3dbd1b07683ae0de72`, and GitHub verification `verified=true / reason=valid`;
+- then-current canonical `main` is equal to or a descendant of `c0a9acfc678149736bd9054f7fadae1c31b488a1`;
 - changes are docs/governance only;
 - it preserves canonical Pilot-01 closeout and accepted B0 provenance;
 - it grants no tournament/model execution authority;
@@ -23,7 +26,10 @@ This package is eligible for canonical adoption only if all are true:
 - the founder separately exercises Ready;
 - the founder separately exercises Merge;
 - merge uses an exact expected-head guard or equivalent fail-closed protection;
-- post-merge canonical main/tree/ordered parents are mechanically verified.
+- post-merge canonical main/tree/ordered parents are mechanically verified;
+- after package merge, canonical `main` still contains the verified Pilot-01 closeout merge in its ancestry.
+
+The Pilot-01 closeout prerequisite is fail-closed. Historical or proposed status text is insufficient by itself; the objective merge identity, tree, ordered parents, signature verification, and canonical ancestry above must be mechanically observable.
 
 ## Readiness episode required outputs after adoption
 
@@ -67,6 +73,7 @@ No placeholder in these fields may be treated as execution authority.
 
 Stop and report `BLOCKED` if:
 
+- the Pilot-01 closeout adoption proof or ancestry check fails;
 - canonical state moves materially during readiness;
 - any exact candidate identity/revision cannot be proven;
 - candidate license/access terms are unresolved;

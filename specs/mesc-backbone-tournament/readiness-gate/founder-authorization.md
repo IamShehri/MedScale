@@ -14,15 +14,21 @@ Date: 2026-08-19
 
 ## Preconditions
 
-This authorization may activate only after this exact package passes:
+This authorization may activate only after all of the following are mechanically satisfied:
 
-1. exact-head CI;
-2. exact-head CodeQL;
-3. fresh independent exact-head review with no unresolved blocking findings;
-4. zero unresolved or undispositioned review threads;
-5. separate Founder Ready decision;
-6. separate Founder Merge decision using an exact expected-head guard;
-7. post-merge mechanical verification of canonical `main`, merge tree, and ordered parents.
+1. the separate Pilot-01 closeout disposition is proven adopted by merged PR #125 at merge commit `c0a9acfc678149736bd9054f7fadae1c31b488a1`;
+2. that closeout merge verifies to tree `71f36f2e49932f82a6ee733833b93306ab5f1f41`, ordered parents `f69a1b2f1c050aad6fe77eb6273016c764c109f5` then `1e52fa581af8f7894e2cfe3dbd1b07683ae0de72`, with GitHub verification `verified=true / reason=valid`;
+3. then-current canonical `main` is equal to or a descendant of `c0a9acfc678149736bd9054f7fadae1c31b488a1`;
+4. this exact readiness-package head passes exact-head CI;
+5. this exact readiness-package head passes exact-head CodeQL;
+6. fresh independent exact-head review reports no unresolved blocking findings;
+7. there are zero unresolved or undispositioned review threads;
+8. the founder exercises a separate Founder Ready decision;
+9. the founder exercises a separate Founder Merge decision using an exact expected-head guard;
+10. post-merge mechanical verification proves canonical `main`, merge tree, and ordered parents for this readiness package;
+11. after package merge, canonical `main` is reverified to contain the Pilot-01 closeout merge in its ancestry.
+
+Historical status text, strategy intent, or the mere presence of closeout files is not sufficient evidence for items 1–3 and 11.
 
 ## Authority if activated
 
@@ -74,6 +80,6 @@ It cannot be reused to refresh candidate versions, add candidates after outputs 
 
 ## Fail-closed rule
 
-If canonical state moves materially, an authoritative source cannot be resolved, a license/access fact remains unclear, R2 compatibility is uncertain, or equal-treatment cannot be frozen without seeing model outputs, stop and report `BLOCKED`.
+If the Pilot-01 closeout adoption proof or ancestry check fails, canonical state moves materially, an authoritative source cannot be resolved, a license/access fact remains unclear, R2 compatibility is uncertain, or equal-treatment cannot be frozen without seeing model outputs, stop and report `BLOCKED`.
 
 No scientific or runtime action may be used to resolve a readiness ambiguity.
