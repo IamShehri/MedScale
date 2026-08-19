@@ -44,9 +44,9 @@ Core capabilities:
 Model strategy:
 - Preserve the completed Llama-3.2-3B-Instruct Pilot-01 B0 as the canonical scientific general-model control.
 - Do not promote Llama-3.2-3B as the MESC flagship by default.
-- After Pilot-01 and only under separate authorization, run a bounded backbone tournament.
+- After Pilot-01 closeout and only under separate authorization, run a bounded backbone tournament.
 
-Backbone tournament candidates:
+Proposed backbone tournament candidates (design-time only; no execution authority here):
 1. OpenAI gpt-oss-20b — flagship reasoning candidate.
 2. Swiss AI Apertus 1.5 8B — compact / long-term multimodal candidate.
 3. Microsoft Phi-4 Multimodal 5.6B — native multimodal control.
@@ -282,7 +282,7 @@ Adoption strategy:
 3. Treat the historical remote-readiness gate as satisfied; do not reacquire or rerun B0 under this strategy PR.
 4. Keep B1 execution and P01-06 blocked unless separately authorized.
 5. Reconcile any remaining Pilot-01 closeout decisions under their own governance before declaring Pilot-01 complete.
-6. Only after separate authorization, open the MESC Backbone Tournament.
+6. Only after Pilot-01 closeout and separate authorization, open the MESC Backbone Tournament.
 7. Select Compact + Flagship.
 8. Build MESC 1.0.
 9. Extend to MESC 1.1 Arabic.
