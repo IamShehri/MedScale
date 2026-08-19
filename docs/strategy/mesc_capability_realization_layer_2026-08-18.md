@@ -406,9 +406,11 @@ Ablations should compare at minimum:
 
 ## Data / privacy boundary
 
-Do not persist PHI in experimental MCRL ledgers unless a future explicitly approved architecture provides the required privacy/security controls.
+Under current governance, MCRL research and evaluation must obey Program Rule R2: synthetic data only (for example, Synthea or hand-authored fixtures). No real patient data, product telemetry, or clinical content — from Afia or anywhere — may enter MESC training, evaluation, benchmark data, or experimental MCRL ledgers.
 
-Current MESC research remains synthetic/open/permitted-data only under existing project governance.
+The boundary is absolute and one-way. Models and schemas may flow MESC → Afia; patient, product, and clinical data must never flow back into MESC.
+
+Do not persist PHI in experimental MCRL ledgers under current governance. Any future proposal to persist PHI would require an ADR amending R2 plus explicit operator approval; this document authorizes neither.
 
 ## Implementation principle
 
