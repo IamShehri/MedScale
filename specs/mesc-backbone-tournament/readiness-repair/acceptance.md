@@ -10,7 +10,7 @@ This repair package is eligible for canonical adoption only if all are true:
 
 - canonical `main` at review time is mechanically identified and the package is not relying on stale base truth;
 - PR #126 / merge `24faa6fae47f96236407f8e1fa2b262abba5894f` remains in canonical ancestry;
-- the prior one-shot readiness decision is canonically reconciled as consumed and terminally `BLOCKED`, not reusable;
+- `prior-readiness-blocker-record.md` explicitly records the prior one-shot readiness decision as reported `CONSUMED` with terminal result `BLOCKED`, marks that record as non-self-proving and non-reactivating, and is reviewed as the proposed canonical reconciliation carried by this exact package; canonical adoption of this package is the act that may establish that reconciliation;
 - changes are documentation/governance only;
 - no model access, gated access request or acceptance, gated-access terms acceptance, inference, training, retrieval, test access, quantization change, challenger addition, or downstream implementation is introduced;
 - the proposed authorization is limited to one read-only repair/protocol-freeze-completion episode;
@@ -115,7 +115,7 @@ Necessary architecture-specific loading accommodations may be frozen only when t
 Stop and report `BLOCKED` if:
 
 - canonical state moves materially and cannot be reconciled within the authorization;
-- the prior consumed authorization state cannot be proven;
+- after canonical adoption, the prior consumed authorization state cannot be proven from the adopted reconciliation and controlling canonical history;
 - the exact Apertus 1.5 policy cannot be read and version-bound;
 - any non-empty candidate has unresolved required evidence;
 - fewer than two distinct candidates are admitted;
