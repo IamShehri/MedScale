@@ -68,7 +68,7 @@ Any future speculative-decoding adoption must prove:
 4. **Target identity pinning** — each draft model is bound to an exact target-model identity/revision and training recipe.
 5. **Domain-aware draft training** — if medical-domain draft adaptation is used, the training data receives the same provenance, licensing, decontamination, split, and safety controls as other MESC training data.
 6. **No evaluation leakage** — target-cache or draft-training generation must never consume quarantined MESC-Eval/test scientific content.
-7. **R2 synthetic-only / no-PHI boundary** — all DeepSpec draft training, target-cache generation, and evaluation must obey canonical Program Rule R2: synthetic data only, with no real patient data, product telemetry, or clinical content entering MESC training, evaluation, or benchmark data. If an intended DeepSpec workflow appears to require real or credentialed patient data, work stops and the licensing/PHI boundary is raised before any execution.
+7. **R2 synthetic-only / one-way PHI boundary** — all DeepSpec draft training, target-cache generation, and evaluation must obey canonical Program Rule R2: synthetic or hand-authored fixture data only, with no real patient data, product telemetry, PHI, or prohibited clinical content entering MESC training, evaluation, or benchmark data. Models and schemas may flow from MESC to an authorized consumer product; patient, credentialed, telemetry, or other product data must never flow back from that product into MESC. If an intended DeepSpec workflow appears to require real or credentialed patient/product data, work stops and the licensing/PHI boundary is raised before any execution.
 8. **Performance proof** — latency, throughput, memory, energy/cost, accepted-token length, and tail latency are measured on representative MESC workloads.
 9. **Fallback** — MESC can always disable speculative decoding and return to the canonical target-only path.
 
@@ -102,4 +102,6 @@ Direct dependency: `NOT APPROVED`
 
 DeepSeek model use: `NOT APPROVED`
 
-Use as algorithm/runtime donor after model freeze: `RECOMMENDED FOR FUTURE EVALUATION`.
+Evaluation as an algorithm/serving donor after model freeze: `RECOMMENDED FOR FUTURE EVALUATION ONLY`.
+
+Any DeepSpec runtime dependency, serving integration, or implementation requires separate explicit authorization and the applicable security/dependency/provenance admission gates.
