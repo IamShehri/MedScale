@@ -94,6 +94,56 @@ the provenance binding from the byte-attested execution input to the frozen
 partition authority; it does not duplicate scientific-content bytes in Git and
 does not claim an independent model rerun.
 
+## Independent full-set validation-pair verification
+
+A post-run evidence-only verification compared the complete frozen validation
+identity set with the complete preserved report identity set. It used the exact
+promoted registry at canonical execution commit
+`5e073db72149266a4e14993cc2501ea2e0e163f5`, whose SHA-256 is
+`4783d57bf9e0cdb642e0b5410ec0a388bd90d5c3d73a9b466d34f2e7b04ba310`,
+and the preserved report whose SHA-256 is
+`eaeb58c077f8666c3999855bd74e09303d538f1d37353df62cf236abcf483053`.
+The report itself binds those predictions to input SHA-256
+`0cb55ad4de0eb831e2475030e889ad9a6f0701ea59adbdd6a30cc0d0115be8d3`
+and input size `262968`.
+
+The comparison method was:
+
+1. Select every canonical registry record with `assigned_split="validation"`.
+2. Project each selected record to exactly `example_id` and `row_ordinal`.
+3. Project every `canonical.predictions` record in the preserved report to the
+   same two fields.
+4. Order both sequences by ascending `row_ordinal`. Both sides independently
+   contain 150 unique example IDs and 150 unique row ordinals.
+5. Compare the two ordered sequences pair by pair.
+6. For a stable compact identity, serialize the shared ordered sequence as one
+   canonical JSON array using UTF-8, `sort_keys=True`, `ensure_ascii=False`,
+   `allow_nan=False`, and separators `(",", ":")`, with no trailing newline,
+   then SHA-256 the resulting 17087 bytes.
+
+Result:
+
+```text
+registry validation pairs:   150
+report canonical pairs:      150
+exact pair matches:           150
+pair mismatches:              0
+missing registry pairs:       0
+unexpected report pairs:      0
+ordered pair-sequence bytes:  17087
+ordered pair-sequence SHA256:
+75891648f0de26469c00f8d91d0c424a86dff1a2555f9448f2d367a24de7e7b9
+
+FULL_SET_VALIDATION_PAIR_ATTESTATION=PASS
+```
+
+This proves that the 150 `(example_id, row_ordinal)` identities represented in
+the preserved B0 report are exactly the complete promoted P01-04 validation set,
+not merely a matching cardinality, label distribution, or single probe. The
+verification used identity-only registry metadata plus the already-preserved
+report artifact. It did not rerun inference and did not inspect test-partition
+scientific content.
+
 ## Runtime manifest observed in the preserved report
 
 ```text
@@ -153,7 +203,9 @@ The preserved report was checked after leaving the Colab execution environment:
 - verbose predictions matched their canonical counterparts
 - raw-output canonical hashes recomputed successfully
 - aggregate counts and predicted distribution recomputed consistently
+- all 150 canonical report `(example_id, row_ordinal)` pairs matched the complete
+  promoted P01-04 validation pair sequence exactly
 
-This verification establishes artifact integrity and internal consistency. It is
-not an independent inference rerun and does not establish cross-hardware numerical
-reproducibility.
+This verification establishes artifact integrity, full-set validation provenance,
+and internal consistency. It is not an independent inference rerun and does not
+establish cross-hardware numerical reproducibility.
