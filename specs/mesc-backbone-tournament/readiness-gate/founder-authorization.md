@@ -22,7 +22,7 @@ This authorization may activate only after all of the following are mechanically
 4. this exact readiness-package head passes exact-head CI;
 5. this exact readiness-package head passes exact-head CodeQL;
 6. fresh independent exact-head review reports no unresolved blocking findings;
-7. there are zero unresolved or undispositioned review threads;
+7. there are zero unresolved or undispositioned review threads, and every resolved or explicitly dispositioned thread is supported by recorded evidence;
 8. the founder exercises a separate Founder Ready decision;
 9. the founder exercises a separate Founder Merge decision using an exact expected-head guard;
 10. post-merge mechanical verification proves canonical `main`, merge tree, and ordered parents for this readiness package;

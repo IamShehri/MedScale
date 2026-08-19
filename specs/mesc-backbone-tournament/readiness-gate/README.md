@@ -95,7 +95,7 @@ This package does not authorize:
 
 ## Fail-closed rule
 
-Readiness must stop and report `BLOCKED` if the Pilot-01 closeout adoption proof fails, or if any required candidate identity, immutable revision, license/access fact, evaluation contract element, R2 boundary, or equal-treatment rule remains materially ambiguous.
+Readiness must stop and report `BLOCKED` if the Pilot-01 closeout adoption proof fails, if any required candidate identity, immutable revision, license/access fact, evaluation contract element, R2 boundary, or equal-treatment rule remains materially ambiguous, if any non-empty roster slot has unresolved required evidence, or if fewer than two distinct non-empty roster candidates are admitted.
 
 No ambiguity may be resolved by downloading weights, running a model, inspecting prohibited data, or inferring permission from strategy text.
 
@@ -105,7 +105,7 @@ No ambiguity may be resolved by downloading weights, running a model, inspecting
 2. review this package on one exact head;
 3. exact-head CI and CodeQL pass;
 4. fresh independent exact-head review reports no unresolved blocking findings;
-5. all review threads are resolved/dispositioned;
+5. all review threads are resolved or explicitly dispositioned, and every such disposition is supported by recorded evidence;
 6. founder separately exercises Ready;
 7. founder separately exercises Merge with an expected-head guard;
 8. post-merge canonical main/tree/ordered parents are mechanically verified;
