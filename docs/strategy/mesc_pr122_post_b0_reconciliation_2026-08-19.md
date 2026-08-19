@@ -30,9 +30,9 @@ PR #122 was authored before the later B0 execution and acceptance. Its strategic
 
 In particular:
 
-- `docs/execution/P01-05-B0-COLAB-REMOTE-READINESS-RUNBOOK.md` is a historical satisfied gate and must not be used to reacquire the model or rerun B0.
-- `docs/strategy/MESC_STRATEGIC_MODEL_ROADMAP_2026-08-18.md` has been reconciled directly to the accepted B0 state.
-- In `docs/strategy/MESC_FRONTIER_PROGRAM_2026-08-18.md`, the P0 bullet `finish Pilot-01 B0 scientifically` is satisfied by the canonical B0 acceptance and is not authorization to execute B0 again.
+- `docs/execution/p01-05_b0_colab_remote_readiness_runbook.md` is a historical satisfied gate and must not be used to reacquire the model or rerun B0.
+- `docs/strategy/mesc_strategic_model_roadmap_2026-08-18.md` has been reconciled directly to the accepted B0 state.
+- In `docs/strategy/mesc_frontier_program_2026-08-18.md`, the P0 bullet `finish Pilot-01 B0 scientifically` is satisfied by the canonical B0 acceptance and is not authorization to execute B0 again.
 - References in donor reviews to actions `after Pilot-01` remain future strategy only and do not authorize implementation, B1, P01-06, training, retrieval, sandbox adoption, speculative decoding, or MCRL implementation.
 
 ## Governance rule
