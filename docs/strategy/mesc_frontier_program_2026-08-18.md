@@ -175,6 +175,8 @@ Core external reference families:
 - TIMER-style longitudinal reasoning;
 - MedAraBench for Arabic medical QA.
 
+These are design/reference families, not blanket authorization to ingest or execute their underlying data. Under current Program Rule R2, executable MESC evaluation remains synthetic or hand-authored-fixture only. Any external benchmark containing non-synthetic patient, product, telemetry, PHI, or other prohibited clinical content is reference-only unless an ADR amends R2 and explicit operator approval is granted.
+
 ### MESC-Eval tracks
 
 #### A. Knowledge and reasoning
@@ -343,7 +345,7 @@ Core training ladder:
 - highest MedQA score only;
 - one benchmark win;
 - LLM-as-judge win without human calibration;
-- synthetic-only evaluation;
+- evaluation coverage limited to a single synthetic benchmark or task family;
 - training/test contamination;
 - performance without subgroup analysis.
 
@@ -566,7 +568,7 @@ No single competitor currently owns all ten as one coherent open system.
 - train selected finalists;
 - build verifier;
 - implement first bounded MCRL slice;
-- evaluate HealthBench/MedHELM/Medmarks/BRIDGE-style tasks;
+- design and evaluate R2-compatible synthetic/hand-authored tracks inspired by HealthBench/MedHELM/Medmarks/BRIDGE-style task families;
 - add longitudinal + FHIR agent tracks;
 - release Compact first if quality threshold is met.
 
@@ -601,6 +603,7 @@ No single competitor currently owns all ten as one coherent open system.
 - No adding DeepSeek or other excluded model families to the core stack without explicit founder policy revision.
 - No claiming best-in-class from one benchmark.
 - No hiding negative subgroup or safety results.
+- External benchmark families are reference-only unless their data are R2-compatible; non-synthetic or real clinical content cannot enter MESC evaluation under current governance.
 
 ## Final strategic thesis
 
