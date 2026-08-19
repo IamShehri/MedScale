@@ -57,7 +57,7 @@ One repair episode may only:
 This package does not authorize:
 
 - model-weight download/open/load/access;
-- requesting or accepting gated model access or terms for the purpose of obtaining weights;
+- requesting or accepting gated model access, gated-access terms, or model-access agreements for any purpose;
 - inference or generation;
 - tournament/benchmark execution;
 - B0 rerun or B1/B2/B3 execution;
