@@ -61,6 +61,50 @@ The determinism-probe anchor above is present in the promoted P01-04 example
 registry as `assigned_split="validation"` with `row_ordinal=12`. This binding adds
 no scientific-content bytes to Git and is not an independent inference rerun.
 
+## Full-set validation provenance verification
+
+A post-run evidence-only comparison was performed between the exact promoted
+P01-04 example registry at canonical execution commit
+`5e073db72149266a4e14993cc2501ea2e0e163f5` and the preserved B0 report artifact.
+The registry identity was
+`4783d57bf9e0cdb642e0b5410ec0a388bd90d5c3d73a9b466d34f2e7b04ba310`;
+the report identity was
+`eaeb58c077f8666c3999855bd74e09303d538f1d37353df62cf236abcf483053`;
+and the report bound its predictions to validation input SHA-256
+`0cb55ad4de0eb831e2475030e889ad9a6f0701ea59adbdd6a30cc0d0115be8d3`
+with byte size `262968`.
+
+For each side, the verification projected only `example_id` and `row_ordinal`,
+selected the complete `assigned_split="validation"` registry set, ordered the
+pairs by ascending `row_ordinal`, and performed an exact pair-by-pair comparison.
+The shared sequence was then serialized as a canonical JSON array using UTF-8,
+`sort_keys=True`, `ensure_ascii=False`, `allow_nan=False`, separators
+`(",", ":")`, and no trailing newline.
+
+```text
+registry validation pair count:  150
+report canonical pair count:     150
+unique registry example IDs:     150
+unique registry row ordinals:    150
+unique report example IDs:       150
+unique report row ordinals:      150
+exact pair matches:              150
+pair mismatches:                 0
+missing registry pairs:          0
+unexpected report pairs:         0
+canonical pair-sequence bytes:   17087
+canonical pair-sequence SHA256:
+75891648f0de26469c00f8d91d0c424a86dff1a2555f9448f2d367a24de7e7b9
+
+FULL_SET_VALIDATION_PAIR_ATTESTATION=PASS
+```
+
+This establishes that the preserved report represents exactly the complete
+promoted P01-04 validation identity set, not merely the same count, label
+histogram, or probe example. The comparison was metadata/evidence verification
+only: no inference was rerun and no test-partition scientific content was
+inspected.
+
 ## Gate sequence
 
 ```text
@@ -77,6 +121,7 @@ model device/dtype attestation:                  PASS
 single-example execution probe:                 PASS
 full 150-example execution returned:             PASS
 full-result structural attestation:             PASS
+full-set validation provenance verification:     PASS
 deterministic probe reconciliation:              PASS
 canonical report write:                          PASS
 external evidence preservation:                  PASS
@@ -154,6 +199,9 @@ P01-05 B0 REAL ZERO-SHOT VALIDATION EXECUTION:
 COMPLETE / ACCEPTED
 
 artifact integrity:
+VERIFIED
+
+full-set validation provenance:
 VERIFIED
 
 independent model replication:
