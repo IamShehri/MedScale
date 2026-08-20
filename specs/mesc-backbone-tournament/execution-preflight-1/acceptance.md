@@ -189,23 +189,32 @@ After this authorization package is canonically merged and post-merge verified, 
 
 No other path belongs to the activation-receipt preimage. Missing, reordered, duplicated, extra, or mismatched path/blob entries => `BLOCKED`.
 
-### F.2 Mutually exclusive replay-state predicates
+### F.2 Mutually exclusive replay-state predicates and exhaustive result-ref discovery
+
+The only permitted result-ref namespace is:
+
+```text
+RESULT_REF_NAMESPACE = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/**
+RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
+```
+
+No other branch/ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST exhaustively enumerate every ref under `RESULT_REF_NAMESPACE` from the authoritative Git hosting ref store, consuming every page/cursor until completeness is mechanically proven. A failed, permission-limited, truncated, partially paginated, or otherwise non-exhaustive enumeration => `BLOCKED`. Any malformed or unexpected ref under the namespace => `BLOCKED`. Any exact `RESULT_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, whether or not a PR exists.
 
 State is evaluated with this precedence: canonical terminal receipt → matching in-progress evidence → claim-only evidence → unused. Conflicting or ambiguous evidence overrides all normal states and is `BLOCKED`.
 
 | State | Exact evidence predicate | May a new episode start? |
 |---|---|---|
-| `UNUSED` | no claim ref; no matching activation receipt; no result branch or open/closed result PR for this authorization/receipt; no terminal receipt; no conflicting/mismatched historical evidence | YES, by atomic claim only |
-| `ISSUED` | the exact protected claim ref exists and points to the authorization merge SHA; **no** activation receipt, result branch/PR, or terminal receipt exists yet | NO |
-| `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, result branch, or result PR exists; **no canonical terminal receipt** exists | NO |
-| `BLOCKED` | a matching canonical terminal receipt records `state = BLOCKED`, **or** any claim-protection violation, deleted/retargeted claim evidence, conflicting receipt, mismatched claim target, or ambiguous state is observed | NO |
+| `UNUSED` | exhaustive result-ref enumeration completed; no claim ref; no matching activation receipt; no exact `RESULT_REF`; no open/closed result PR for this authorization/receipt; no terminal receipt; no conflicting/mismatched historical evidence | YES, by atomic claim only |
+| `ISSUED` | the exact protected claim ref exists and points to the authorization merge SHA; **no** activation receipt, exact `RESULT_REF`, result PR, or terminal receipt exists yet | NO |
+| `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, exact `RESULT_REF`, or result PR exists; **no canonical terminal receipt** exists | NO |
+| `BLOCKED` | a matching canonical terminal receipt records `state = BLOCKED`, **or** any incomplete result-ref enumeration, unexpected result ref, claim-protection violation, deleted/retargeted claim evidence, conflicting receipt, mismatched claim target, or ambiguous state is observed | NO |
 | `CONSUMED` | a matching canonical terminal receipt records `state = CONSUMED` and matches the final ready manifest | NO |
 
-`ISSUED` and `IN_PROGRESS` are therefore disjoint: publication/creation of any matching activation-receipt/result evidence moves the logical state from claim-only `ISSUED` to `IN_PROGRESS`. A terminal receipt supersedes both. Any state other than proven `UNUSED` => reject reuse.
+`ISSUED` and `IN_PROGRESS` are therefore disjoint: publication/creation of any matching activation-receipt/result-ref/result-PR evidence moves the logical state from claim-only `ISSUED` to `IN_PROGRESS`. A terminal receipt supersedes both. Any state other than proven `UNUSED` => reject reuse.
 
 ### F.3 Storage-protected atomic claim before any frozen-content read
 
-Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, and search canonical history/open/closed result PR metadata for replay evidence. Do **not** read any Repair-2 blob contents.
+Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, exhaustively enumerate `RESULT_REF_NAMESPACE`, and search canonical history plus open/closed result-PR metadata for replay evidence. Do **not** read any Repair-2 blob contents. Failure to prove complete result-ref enumeration => `BLOCKED` before claim creation.
 
 Before creating the claim, mechanically verify `CLAIM_REF_PROTECTION = PASS` at the Git hosting/storage boundary for this exact namespace:
 
@@ -233,7 +242,7 @@ The claim ref MUST use create-only semantics, only if absent, and MUST point exa
 
 Immediately after creation, re-read the claim ref and protection control. Any missing/changed target or protection drift is `BLOCKED`. Updating, force-updating, retargeting, deleting, or recreating the claim is prohibited. If a claim is ever observed deleted or changed after creation, the episode can never be classified `UNUSED`; the observing worker must preserve durable `BLOCKED` evidence in its result package/terminal receipt and stop.
 
-After successful claim creation and re-verification, create the unique result branch and publish `activation-receipt.json` **before any Repair-2 frozen-content read/hash/parse/decompression**. It must reproduce the receipt preimage and `ACTIVATION_RECEIPT_ID`, record the exact `claim_ref` and target, record the verified claim-protection mechanism identity/enforcement facts, and record `state = ISSUED`. Only after this receipt is published may Section A content verification and Sections C–D begin; from the first such content operation onward the logical state is `IN_PROGRESS`.
+After successful claim creation and re-verification, atomically create exactly `RESULT_REF` with create-only semantics and target the authorization merge SHA, then publish `activation-receipt.json` on that branch **before any Repair-2 frozen-content read/hash/parse/decompression**. Creation failure because `RESULT_REF` already exists => `BLOCKED` and no frozen content may be read. The activation receipt must reproduce the receipt preimage and `ACTIVATION_RECEIPT_ID`, record the exact `claim_ref` and target, record `result_ref = RESULT_REF`, record the verified claim-protection mechanism identity/enforcement facts, record `state = IN_PROGRESS`, and record `content_read_started = false`. The receipt-state field is the replay state after receipt publication; it is therefore `IN_PROGRESS`, not `ISSUED`. Only after this receipt is published may Section A content verification and Sections C–D begin. `content_read_started = false` records the issuance-time fact and is not a separate replay state.
 
 ### F.4 Terminal receipt for both outcomes
 

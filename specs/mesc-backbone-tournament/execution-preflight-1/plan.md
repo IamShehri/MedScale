@@ -14,19 +14,22 @@ Permitted pre-claim operations are limited to:
 - mechanically require Repair-2 canonical merge `0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3` / tree `60e900daecea1cb9e64db95314bf9358387072b7` in ancestry; do not use a PR number as the predicate;
 - compare the expected Repair-2 repository paths to their Git blob IDs from the canonical tree, without reading blob contents;
 - derive `ACTIVATION_RECEIPT_ID` only from the exact ordered four-file authorization-package path/blob-ID preimage under `MESC-BT-PREFLIGHT-RECEIPT-V1`;
-- search canonical history and every open/closed preflight-result PR for prior claim/receipt/result evidence;
+- use exactly `RESULT_REF_NAMESPACE = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/**` and `RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>`;
+- exhaustively enumerate every ref under `RESULT_REF_NAMESPACE` from the authoritative Git hosting ref store, consuming every page/cursor until completeness is mechanically proven; failed, permission-limited, truncated, partial, malformed, or otherwise non-exhaustive enumeration => `BLOCKED`;
+- search canonical history and every open/closed preflight-result PR for prior claim/receipt/result evidence; any exact `RESULT_REF` is replay evidence even without a PR;
 - classify state using the mutually exclusive predicates and precedence in `acceptance.md`: terminal → in-progress → claim-only → unused, with any conflict/ambiguity => `BLOCKED`;
 - require the state to be provably `UNUSED`;
 - mechanically verify storage-boundary protection for `refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/**`: repository ruleset, server-side hook, or equivalent durable enforcement must permit controlled first creation while denying all later updates/force-updates/deletions, deny the preflight worker any relevant bypass, and remain effective through canonical terminal adoption;
-- if protection cannot be proven, terminate `BLOCKED` before claim creation and before any frozen-content read.
+- if result-ref enumeration or claim protection cannot be proven, terminate `BLOCKED` before claim creation and before any frozen-content read.
 
-### Phase 1B — Atomic claim and issuance
+### Phase 1B — Atomic claim and activation receipt
 
 - atomically create the exact claim ref from `acceptance.md` with create-only semantics and target exactly the canonical authorization merge SHA;
 - if creation reports an existing claim or otherwise cannot prove exclusive creation, stop immediately without modifying/deleting the existing ref and without any frozen-content read;
 - immediately re-read the claim ref and protection mechanism; any missing/changed target, deletion evidence, or protection drift => `BLOCKED` and the episode is permanently non-reusable;
-- create the unique preflight-result branch;
-- publish matching `activation-receipt.json`, recording the receipt preimage/ID, claim ref, claim target, exact protection mechanism identity/enforcement facts, and `state = ISSUED`;
+- atomically create exactly `RESULT_REF` with create-only semantics and target it exactly to the canonical authorization merge SHA; if it already exists or exclusive creation cannot be proven => `BLOCKED` before any frozen-content read;
+- publish matching `activation-receipt.json` on `RESULT_REF`, recording the receipt preimage/ID, claim ref, claim target, exact `result_ref`, exact protection mechanism identity/enforcement facts, `state = IN_PROGRESS`, and `content_read_started = false`;
+- interpret `state = IN_PROGRESS` as the replay state created by publication of activation/result evidence; `content_read_started = false` records only the issuance-time content-access fact;
 - do not read any frozen Repair-2 content until that activation receipt is published.
 
 ### Phase 1C — Post-claim exact frozen-input verification
@@ -41,7 +44,7 @@ Only after Phase 1B succeeds:
 - verify prompt/parser/scoring/protocol/report contract bytes and digests;
 - fail closed on any mismatch or if any pre-claim content access is discovered.
 
-From the first post-claim frozen-content operation onward the logical episode state is `IN_PROGRESS`.
+The logical episode state is already `IN_PROGRESS` once the activation receipt/result ref exists. The first post-claim frozen-content operation does not create a new replay state.
 
 ## Phase 2 — Deterministic R2 provenance audit
 
