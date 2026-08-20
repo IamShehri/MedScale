@@ -388,7 +388,15 @@ The top-level values are constrained exactly as follows:
 
 Unknown, missing, or duplicate keys in `terminal_result_ref_protection` or `merge_signature_verification`, malformed artifact entries, a non-deterministic `failed_checks` array, or any value that does not mechanically revalidate => validation failure and PASS is unavailable.
 
-After result-package merge, mechanically re-read the returned merge commit and all bound evidence, construct the record, and publish it through a separate doc-only adoption-verification PR whose only newly introduced artifact is the exact `ADOPTION_RECORD_PATH`. That PR itself must receive exact-head review and expected-head merge protection. The adoption-record path is outside `RESULT_ROOT`; it MUST NOT move `RESULT_REF`, rewrite `consumption-receipt.json`, or mutate any result-package byte.
+After result-package merge, mechanically re-read the returned merge commit and all bound evidence and construct the exact adoption record. Its publication PR has an **exact create-only tree contract**:
+
+1. substitute `<RESULT_MERGE_SHA>` in `ADOPTION_RECORD_PATH` with the exact `result_merge_sha` value in the record, which MUST also equal the mechanically verified canonical result merge SHA;
+2. immediately before opening the adoption-verification PR, and again immediately before merging it, prove that this exact `ADOPTION_RECORD_PATH` is absent from canonical premerge `main`;
+3. the adoption-verification PR/head/tree delta MUST contain exactly one changed repository path: `ADOPTION_RECORD_PATH`, with status **added/create-only**;
+4. zero other additions, modifications, deletions, renames, copies, replacements, or changes to any pre-existing path are permitted; and
+5. a pre-existing target path, path-SHA mismatch, non-create-only status, or any additional tree change => validation failure and PASS is unavailable.
+
+Review that exact one-path create-only head and merge it with expected-head protection. The adoption-record path is outside `RESULT_ROOT`; the PR MUST NOT move `RESULT_REF`, rewrite `consumption-receipt.json`, or mutate any result-package byte.
 
 `CANONICAL_ADOPTION_VERIFIED = PASS` is usable only when the adoption-record file is present on canonical `main`, has `outcome = CANONICAL_ADOPTION_VERIFIED`, and every field revalidates against the canonical result merge, reviewed result head, ordered parents, merge tree/signature evidence, final manifest/artifact digests, claim/result refs, terminal target, and terminal protection. Missing record, noncanonical record PR, missing/unreadable field, digest/signature mismatch, failed revalidation, or `outcome = CANONICAL_ADOPTION_VERIFICATION_FAILED` makes PASS unavailable and keeps the successor candidate inactive/unusable.
 
