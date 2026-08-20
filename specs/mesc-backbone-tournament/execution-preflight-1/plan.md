@@ -2,178 +2,231 @@
 
 Status: **PRE-EXECUTION PLAN / MODEL ACCESS PROHIBITED**
 
-## Phase 1 — Replay proof, protected atomic claim, then exact input verification
+`acceptance.md` is normative. This plan defines execution order and MUST NOT weaken its replay, protection, CAS, graph/tree, receipt, or adoption-verification requirements.
 
-### Phase 1A — Pre-claim governance evidence only; frozen Repair-2 content prohibited
+## Phase 1A — Pre-claim replay proof; frozen Repair-2 content prohibited
 
-Before claim creation, do not read, hash, parse, decompress, or derive values from any frozen Repair-2 artifact content, including `task-prompts.json`, corpus bytes, scoring-key bytes, parser/scoring/report JSON, or other frozen content blobs. Pre-claim inspection is limited to Git/repository metadata plus **non-Repair-2 episode-governance evidence** needed to classify replay/lifecycle state, such as discovered activation/terminal receipt JSON and relevant preflight-result PR description/status fields. Such episode evidence must contain no frozen Repair-2 corpus/prompt/scoring-key/contract content.
+Before claim creation:
 
-Permitted pre-claim operations are limited to:
+- do not read/hash/parse/decompress/derive from any frozen Repair-2 corpus, prompt, scoring-key, parser/scoring/report contract, or other frozen content;
+- inspect only authorization/replay Git metadata plus permitted non-Repair-2 episode receipts and the exact marker-delimited PR evidence block defined in `acceptance.md`;
+- do not fetch or interpret PR patches, diffs, changed-file contents, review comments, or free-form PR prose outside that evidence block;
+- verify the exact Repair-2 canonical merge `0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3` / tree `60e900daecea1cb9e64db95314bf9358387072b7` in ancestry;
+- verify the complete Repair-2 path→Git-blob identity map without reading those blobs;
+- derive `ACTIVATION_RECEIPT_ID` only from the exact ordered four-file authorization-package Git metadata preimage;
+- use the literal `RESULT_REF_PREFIX` / `CLAIM_REF_PREFIX` and exact current episode refs from `acceptance.md`;
+- validate every descendant syntax; for the current authorization SHA, any same-SHA ref with a different receipt ID is conflicting sibling evidence and => `BLOCKED`;
+- exhaustively enumerate every result-prefix ref and every claim-prefix ref, consuming all pages/cursors;
+- traverse all canonical history reachable from then-current `main`, following every parent to roots and proving no shallow/truncated boundary;
+- enumerate the full open + closed/merged PR population, consuming all pages/cursors, and inspect only structural metadata plus the exact evidence block;
+- reject failed/permission-limited/truncated/incomplete searches and malformed/conflicting evidence fail-closed;
+- validate exact claim/result targets and, for result targets, the required commit graph/tree/lifecycle/CAS evidence using only permitted non-Repair-2 episode evidence;
+- classify replay state with terminal canonical receipt → in-progress → claim-only → unused precedence; any ambiguity => `BLOCKED`;
+- require proven `UNUSED`.
 
-- record then-current canonical authorization merge SHA/tree;
-- mechanically require Repair-2 canonical merge `0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3` / tree `60e900daecea1cb9e64db95314bf9358387072b7` in ancestry; do not use a PR number as the predicate;
-- compare the expected Repair-2 repository paths to their Git blob IDs from the canonical tree, without reading blob contents;
-- derive `ACTIVATION_RECEIPT_ID` only from the exact ordered four-file authorization-package path/blob-ID preimage under `MESC-BT-PREFLIGHT-RECEIPT-V1`;
-- use exactly `RESULT_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/` and `RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>`; `RESULT_REF_PREFIX` is a literal ref-name prefix, never a glob;
-- use exactly `CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/` and `CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>`; `CLAIM_REF_PREFIX` is also a literal ref-name prefix, never a glob;
-- for both prefixes, define membership as full ref name starts with that exact prefix; the only well-formed descendant shape is exactly two non-empty path segments after the prefix, `<AUTHORIZATION_MERGE_SHA>` as 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` as 64 lowercase hexadecimal characters; any other descendant under either prefix => `BLOCKED`;
-- independently and exhaustively enumerate every ref whose full name starts with `RESULT_REF_PREFIX` **and** every ref whose full name starts with `CLAIM_REF_PREFIX` from the authoritative Git hosting ref store, consuming every page/cursor for each prefix until completeness of both enumerations is mechanically proven;
-- traverse the **complete canonical history** reachable from then-current `main`, following every parent edge to repository roots; prove the authoritative object graph is not shallow/truncated and that every reachable commit/parent edge in scope was visited; inspect relevant commit/tree metadata and non-Repair-2 episode receipts needed for replay classification;
-- enumerate the **complete PR population in open and closed/merged states**, consuming every page/cursor, and inspect every relevant preflight-result PR metadata/description record;
-- treat any failed request, missing object, permission limit, shallow boundary, truncation, partial pagination, omitted page/cursor, malformed ref, or otherwise non-exhaustive ref/history/PR search as `BLOCKED` before claim creation;
-- treat any exact `RESULT_REF` or exact `CLAIM_REF` as replay evidence preventing `UNUSED`, and treat any malformed/unexpected descendant under either prefix as `BLOCKED`;
-- integrity-check existing exact refs rather than merely counting them: `CLAIM_REF` must be readable and target exactly `AUTHORIZATION_MERGE_SHA`; `RESULT_REF` must be readable and either equal that SHA at initial issuance or be a lifecycle-valid ordinary-fast-forward descendant on the single result lineage; reconcile the lifecycle using only permitted non-Repair-2 episode receipts/PR evidence; unreadable, non-descendant, force/sideways-retargeted, state-inconsistent, or evidence-incomplete targets => `BLOCKED`;
-- classify state using the mutually exclusive predicates and precedence in `acceptance.md`: terminal → in-progress → claim-only → unused, with any conflict/ambiguity => `BLOCKED`;
-- require the state to be provably `UNUSED`;
-- mechanically prove **server-side** protection for both prefixes: `CLAIM_REF_PROTECTION` must permit controlled first creation while denying all later claim updates/force-updates/deletions and worker bypass; `RESULT_REF_PROTECTION` must permit subsequent updates only by the designated principal and only as ordinary fast-forwards on the single authorization-descendant result lineage, deny force/non-fast-forward retargets/deletion/recreation, and support terminal freeze against all later updates/deletion;
-- separately prove a qualifying `RESULT_REF_CAS_PROTOCOL` exists for every post-creation result-ref update: one atomic compare-and-update operation supplying the full ref, `expected_old_oid` equal to the immediately re-read current target, and `new_oid`, with stale-old rejection and no update on mismatch; Git receive-pack old/new/ref semantics or an equivalent hosting operation with an explicit old-OID precondition qualifies; a read followed by an unconditional PATCH/update does not;
-- require an externally preservable `RESULT_REF_CAS_EVIDENCE` record for every attempted update with protocol identity, full ref, expected old OID, new OID, accepted/rejected outcome, and immediately observed post-operation target;
-- if any replay search, exact-ref target check, server protection, qualifying CAS operation, or CAS-evidence path cannot be proven, terminate `BLOCKED` before claim creation and before any frozen-content read.
+### Replay/claim linearization
 
-### Phase 1B — Atomic claim and protected non-self-referential result-ref activation lifecycle
+1. After the first complete replay search, construct canonical `PRECLAIM_REPLAY_SNAPSHOT` exactly as defined in `acceptance.md`.
+2. Immediately before claim creation, repeat all four exhaustive searches and require the snapshot to be byte-identical.
+3. Atomically create exactly `CLAIM_REF` create-only at `AUTHORIZATION_MERGE_SHA`.
+4. Immediately repeat all four searches again before creating `RESULT_REF`; the only permitted relevant delta is appearance of that exact claim at that exact target.
+5. Any other change in main/history boundary, result refs, sibling claim refs, relevant PR evidence, or discovered state => `BLOCKED`, no result-ref creation, no frozen-content read. The claim remains permanent replay evidence and the episode is burned/non-reusable.
 
-- atomically create exactly `CLAIM_REF` with create-only semantics and target exactly the canonical authorization merge SHA;
-- if creation reports an existing claim or otherwise cannot prove exclusive creation, stop immediately without modifying/deleting the existing ref and without any frozen-content read;
-- immediately re-read the claim ref and both server protection mechanisms; any missing/changed claim target, deletion evidence, or protection drift => `BLOCKED` and the episode is permanently non-reusable; absence of a later terminal receipt cannot restore `UNUSED`;
-- atomically create exactly `RESULT_REF` with create-only semantics and target it exactly to the canonical authorization merge SHA; if it already exists or exclusive creation cannot be proven => `BLOCKED` before any frozen-content read;
-- immediately re-read the exact initial result-ref target and `RESULT_REF_PROTECTION`; unreadable/mismatched target or protection drift => `BLOCKED`;
-- construct `activation-receipt.json` and an activation commit whose single parent is exactly the canonical authorization merge SHA; the receipt records `result_ref_activation_parent = AUTHORIZATION_MERGE_SHA`, the server protection identities, selected `RESULT_REF_CAS_PROTOCOL`, `state = IN_PROGRESS`, and `content_read_started = false`, but it MUST NOT contain the SHA of the activation commit that contains it;
-- after the activation commit exists and its SHA is known, immediately re-read and require `RESULT_REF = AUTHORIZATION_MERGE_SHA`; invoke the qualifying atomic CAS operation with expected old OID equal to that SHA and new OID equal to the activation commit; preserve the external CAS evidence;
-- re-read `RESULT_REF`, require the exact observed activation commit SHA, inspect that commit and require its single parent to equal the authorization merge SHA and its tree to contain the exact expected activation-receipt bytes, and reconcile the CAS evidence; define that externally observed SHA as `RESULT_REF_ACTIVATION_COMMIT`;
-- interpret `state = IN_PROGRESS` as the replay state created by publication of activation/result evidence; `content_read_started = false` records only the issuance-time content-access fact;
-- do not read any frozen Repair-2 content until that protected activation CAS fast-forward is published, re-read, structurally verified, and reconciled with external CAS evidence;
-- after activation, advance `RESULT_REF` only through the same immediately-re-read + atomic old-OID-precondition protocol, designated-principal ordinary-fast-forward server protections, and externally preserved CAS evidence on the same authorization-descendant episode lineage; force/non-fast-forward updates, sideways retargets, deletion, recreation, unexpected updaters, missing/invalid CAS evidence, and ancestry breaks => `BLOCKED`;
-- terminal closure is two commits: first a byte-final `TERMINAL_CONTENT_COMMIT` containing the result package and manifest but no `consumption-receipt.json`; then a direct-child `TERMINAL_RECEIPT_COMMIT` adding only `consumption-receipt.json` and altering no bound result artifact;
-- the terminal receipt binds the already-known `RESULT_REF_ACTIVATION_COMMIT`, already-known `TERMINAL_CONTENT_COMMIT`, final manifest SHA-256, claim/ref identities, server protection facts, selected CAS protocol, reconciled lifecycle CAS evidence through the content commit, and terminal state, but MUST NOT contain the SHA of its own containing `TERMINAL_RECEIPT_COMMIT`;
-- immediately before the final update re-read and require `RESULT_REF = TERMINAL_CONTENT_COMMIT`; invoke the qualifying atomic old-OID-precondition update to the observed `TERMINAL_RECEIPT_COMMIT`, preserve/reconcile the final external CAS evidence, re-read and verify the exact parent/tree relation, then freeze the ref against every further update/delete through and after canonical result adoption.
+## Phase 1B — Server protections and atomic result-ref update protocol
 
-### Phase 1C — Post-claim exact frozen-input verification
+Before claim creation, prove:
 
-Only after Phase 1B succeeds:
+- `CLAIM_REF_PROTECTION = PASS`: controlled initial creation, then no update/force-update/delete, with no configured repository/organization bypass actor capable of mutation;
+- `RESULT_REF_PROTECTION = PASS`: before terminal freeze, only the designated preflight principal may make ordinary fast-forwards on the single authorization-descendant result lineage; no force/non-fast-forward retarget, delete/recreate, other-principal update, or configured repository/organization administrative/automation bypass; terminal frozen state denies every later update/delete with no configured bypass;
+- `RESULT_REF_CAS_PROTOCOL` exists and is usable: every post-creation update is one atomic operation with full ref, immediately re-read `expected_old_oid`, `new_oid`, server-side stale-old rejection, and no mutation on mismatch;
+- `RESULT_REF_CAS_EVIDENCE` can be preserved externally for every attempt: protocol identity, ref, expected old OID, new OID, outcome, observed post-target, and pre/post server-protection identity/version.
 
-- read the exact frozen Repair-2 blobs identified by the canonical path→Git-blob map;
-- verify every frozen byte-level SHA-256 binding listed in `README.md` / `acceptance.md`;
-- verify the canonical corpus manifest shard hash/count/byte-length bindings;
-- parse `task-prompts.json` with duplicate-member rejection and reproduce exact `SYSTEM_PROMPT_SHA256`;
-- reproduce `PROMPT_PROTOCOL_SHA256` from its exact canonical four-field preimage;
-- verify prompt/parser/scoring/protocol/report contract bytes and digests;
-- fail closed on any mismatch or if any pre-claim frozen-content access is discovered.
+Git receive-pack old/new/ref semantics or an equivalent explicit old-OID-precondition hosting operation qualifies. Read + unconditional PATCH does not. If any required protection/CAS capability/evidence path cannot be proven, stop `BLOCKED` before claim creation and before any frozen-content read.
 
-The logical episode state is already `IN_PROGRESS` once the activation receipt/result ref exists. The first post-claim frozen-content operation does not create a new replay state.
+## Phase 1C — Result ref creation, activation, and content-read gate
 
-## Phase 2 — Deterministic R2 provenance audit
+After successful claim creation and post-claim snapshot revalidation:
 
-- verify compressed corpus storage identity before decompression;
-- decompress the exact committed `materialized-corpus.jsonl.gz`;
-- parse every one of the 240 JSONL records;
-- reject duplicate JSON member names at every nesting level before any canonical JSON interpretation/hash operation;
-- validate R2 source prohibitions over every payload;
-- verify payload/gold separation;
-- verify every scoring-key evidence reference resolves to the same item's model-visible evidence;
-- emit `r2-provenance-audit.json` using `MESC-BT-PREFLIGHT-CANONICAL-JSON-V1` exactly; the audit contains no self-digest field.
+1. create `RESULT_REF` create-only at `AUTHORIZATION_MERGE_SHA` and re-read the exact target/protection;
+2. construct an activation commit with exactly one parent=`AUTHORIZATION_MERGE_SHA` and only one tree delta: add `RESULT_ROOT/activation-receipt.json`;
+3. activation receipt records authorization parent, current protection identity/version, selected CAS protocol, `state = IN_PROGRESS`, and `content_read_started = false`, but never its own containing commit SHA;
+4. once activation commit SHA is known, immediately re-read target + protection and require the approved values;
+5. atomically CAS from authorization SHA to activation SHA; preserve CAS evidence;
+6. re-read target + protection; validate exact activation parent/tree/receipt; reconcile CAS evidence;
+7. only then define external `RESULT_REF_ACTIVATION_COMMIT` and permit frozen Repair-2 content access.
 
-## Phase 3 — Full corpus/spec/manifest conformance audit
+Any target/protection/graph/tree/CAS drift => `BLOCKED`; frozen-content access remains prohibited.
 
-- reproduce compressed and decompressed corpus SHA-256 values;
-- reproduce logical scoring-key and every per-shard hash/count/byte-length binding;
-- require the exact canonical item-ID set and order;
-- require six axes × 40 items;
-- recompute archetype and difficulty assignment from the frozen rule;
-- verify axis task-template bindings and scoring-key contract compatibility;
-- emit `corpus-conformance-audit.json` using the same canonical JSON rule and no self-digest field.
+## Phase 1D — Exact RESULT_REF graph/tree contract
 
-## Phase 4 — Execution-binding inventory
+```text
+RESULT_ROOT = specs/mesc-backbone-tournament/execution-preflight-1-result/
+```
+
+Allowed paths only:
+
+- `activation-receipt.json`;
+- `r2-provenance-audit.json`;
+- `corpus-conformance-audit.json`;
+- `execution-binding-inventory.md`;
+- `preflight-verdict.md`;
+- `preflight-result-manifest.json`;
+- conditional `execution-authorization-candidate.md`;
+- terminal-only `consumption-receipt.json`.
+
+Every post-creation `RESULT_REF` target commit has exactly one parent; merge commits are forbidden. Parent must equal the immediately previous valid ref target / CAS expected-old OID. Every tree delta is confined to `RESULT_ROOT`.
+
+- Activation commit: only adds activation receipt.
+- Intermediate result commits: may add/update only non-terminal outputs; activation receipt immutable; no consumption receipt; candidate deletion only for required blocked-package rebuild; no other established path deletion.
+- Terminal-content commit: byte-final non-terminal result package and manifest; no consumption receipt; manifest-bound artifacts become immutable.
+- Terminal-receipt commit: direct child of terminal-content commit; only adds consumption receipt; all other blobs byte-identical.
+
+Every result-ref update repeats: immediate target read → fresh protection identity/version read → atomic old-OID CAS → external CAS evidence → target/protection re-read → exact parent/tree/path/immutability validation → evidence reconciliation.
+
+## Phase 2 — Post-activation exact frozen-input verification
+
+Only after Phase 1C succeeds:
+
+- read the exact frozen Repair-2 blobs identified by canonical Git identity;
+- verify all frozen SHA-256 values, shard count/hash/byte-length bindings, and decompressed corpus identity/count;
+- parse canonical JSON with duplicate-member rejection;
+- reproduce exact `SYSTEM_PROMPT_SHA256` and `PROMPT_PROTOCOL_SHA256` from the normative preimages;
+- verify all prompt/parser/scoring/protocol/report contract bindings;
+- fail closed on mismatch or evidence of any forbidden pre-activation frozen-content access.
+
+## Phase 3 — Deterministic R2 provenance audit
+
+- verify compressed storage before decompression;
+- parse exactly 240 corpus records;
+- validate R2 source prohibitions, payload/gold separation, and evidence-reference integrity;
+- emit canonical `r2-provenance-audit.json` with no self-digest field.
+
+## Phase 4 — Corpus/spec/manifest conformance audit
+
+- reproduce compressed/decompressed corpus SHA-256 values;
+- reproduce logical scoring-key and per-shard identities/counts/byte lengths;
+- require exact canonical item IDs/order and six axes × 40;
+- recompute archetype/difficulty assignment;
+- verify task-template and scoring-key contract compatibility;
+- emit canonical `corpus-conformance-audit.json` with no self-digest field.
+
+## Phase 5 — Execution-binding inventory
 
 Without model access:
 
-- carry forward only the four already-admitted immutable candidate identities;
-- do not add a challenger;
-- do not request or accept gated terms;
-- do not finalize an execution subset until exact hardware/provider/runtime feasibility is bound;
-- identify which candidates are public/ungated versus gated;
-- identify the Phi-4 exact-revision `trust_remote_code` security binding as a later execution requirement;
-- record every still-unbound execution requirement explicitly in `execution-binding-inventory.md`;
-- serialize that Markdown as UTF-8 without BOM, LF line endings, exactly one final LF, then compute its full-file SHA-256.
+- retain only already-admitted immutable candidate identities;
+- no challenger, no gated request/acceptance, no execution subset finalization until runtime/hardware feasibility is bound;
+- record public/gated status and all still-unbound execution requirements explicitly;
+- normalize/hash `execution-binding-inventory.md` exactly as required.
 
-## Phase 5 — Complete result-package binding and non-self-referential terminal closure
+## Phase 6 — Result package and two-commit terminal closure
 
-Create the four unconditional core outputs:
+Produce the four unconditional core outputs:
 
 1. `r2-provenance-audit.json`;
 2. `corpus-conformance-audit.json`;
 3. `execution-binding-inventory.md`;
 4. `preflight-verdict.md`.
 
-Before constructing the manifest binding core, determine whether a successor candidate is provisionally eligible under `acceptance.md`. Provisional eligibility requires Sections A–D PASS plus a complete/truthful inventory for the ready path. If eligible, render exactly one `FD-MESC-BT-EXEC-1-CANDIDATE-V2` at `execution-authorization-candidate.md` solely as a hash input, normalize its Markdown bytes exactly as specified, and compute its exact SHA-256 and byte length. Provisional rendering grants no authority. If not eligible, no successor file may exist and `successor_candidate = null`.
+Optionally render only the uniquely identified provisional V2 successor when Sections A–D and inventory readiness permit it. It exists only as a Section E hash input and grants no authority. Any later blocker removes it, sets `successor_candidate = null`, and rebuilds the blocked binding package.
 
-Then bind and close the result without a digest or commit-identity cycle:
+Construct the result binding in the exact non-cyclic order from `acceptance.md`: audits/inventory hashes → optional successor hash → `manifest_binding_core` → core SHA → verdict → verdict SHA → canonical `preflight-result-manifest.json` → external manifest SHA.
 
-1. hash both canonical audit files and the exact execution-binding inventory bytes;
-2. build the exact `manifest_binding_core` defined in `acceptance.md`, binding authorization merge SHA/tree, all frozen Repair-2 input digests, the three known output paths/hashes, the verdict path, and either the exact successor-candidate id/path/SHA-256/byte-length object or `null`;
-3. compute `MANIFEST_BINDING_CORE_SHA256` over the canonical binding-core JSON bytes;
-4. generate `preflight-verdict.md` containing that exact core hash and terminal state, then compute its full-file SHA-256;
-5. generate canonical `preflight-result-manifest.json` containing the full binding core plus exact path/SHA-256/byte-length entries for all four unconditional core outputs and the successor candidate when present;
-6. if any later acceptance, claim, protection, binding, or package check forces `BLOCKED`, remove any provisionally rendered successor, set `successor_candidate = null`, and rebuild the core, verdict, and manifest; stale hashes are invalid;
-7. compute the full manifest SHA-256 externally; do not insert it into the manifest itself;
-8. once the terminal result artifacts are byte-final, create `TERMINAL_CONTENT_COMMIT` on the permitted result lineage containing the exact package/manifest and no `consumption-receipt.json`; after its SHA is known, immediately re-read the current `RESULT_REF`, invoke the qualifying atomic old-OID-precondition update from that observed OID to the content commit, preserve CAS evidence, and re-read/reconcile it;
-9. generate canonical `consumption-receipt.json` outside the manifest artifact set for the terminal outcome:
-   - ready terminal => `terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, `state = CONSUMED`;
-   - blocked terminal => `terminal_state = BLOCKED`, `state = BLOCKED`;
-   - both forms bind the same activation receipt identity, exact claim ref/target, exact server-protection identities and terminal re-verification facts, exact `result_ref`, exact already-observed `result_ref_activation_commit`, exact already-observed `result_ref_terminal_content_commit`, selected CAS protocol and reconciled CAS evidence through the content commit, and exact final result-manifest SHA-256;
-   - the receipt MUST NOT contain the SHA of the commit that will contain the receipt;
-10. create `TERMINAL_RECEIPT_COMMIT` as the direct child of `TERMINAL_CONTENT_COMMIT`, with the only tree delta being addition of `consumption-receipt.json`; immediately re-read and require `RESULT_REF = TERMINAL_CONTENT_COMMIT`, atomically compare-and-update to the observed receipt commit with that exact expected old OID, preserve final external CAS evidence, re-read the exact target and parent/tree relation, reconcile the CAS evidence, then freeze result-ref protection against every later update/delete;
-11. publish the final manifest SHA-256, externally observed `TERMINAL_RECEIPT_COMMIT` SHA, and final CAS evidence identity/record in the result PR description as independently reviewable bindings.
+### Terminal content commit
 
-Any edit to any bound result artifact, including a present successor candidate, must change the manifest binding and invalidate stale evidence. Any self-referential commit-SHA field, missing/invalid CAS evidence, or terminal receipt commit that changes another bound artifact => `BLOCKED`.
+When result artifacts are byte-final:
 
-## Phase 6 — Single successor execution-authorization candidate
+- create `TERMINAL_CONTENT_COMMIT` as a one-parent valid result-lineage commit with no consumption receipt;
+- immediately re-read current result target + fresh protection identity/version;
+- CAS from that exact observed old target to the content commit;
+- preserve CAS evidence;
+- re-read target/protection and validate exact graph/tree/path/immutability; reconcile evidence.
 
-The successor lifecycle is strictly two-stage:
+### Terminal receipt commit
 
-1. provisional rendering after Sections A–D PASS and inventory readiness is permitted only to compute Section E hashes;
-2. the provisional file is not authoritative and grants no execution authority;
-3. it becomes a valid inactive preflight output only when Sections A–G all pass and the terminal package is ready;
-4. any later failure removes it, sets `successor_candidate = null`, and rebuilds the blocked package.
+Then:
 
-The only permitted successor identity/path is:
+- construct canonical `consumption-receipt.json` binding the already-known activation commit, terminal-content commit, final manifest SHA-256, claim/ref identities, server protections, selected CAS protocol/evidence through the content commit, and terminal state;
+- never embed the future receipt-commit SHA inside that receipt;
+- create `TERMINAL_RECEIPT_COMMIT` as direct child of `TERMINAL_CONTENT_COMMIT`, only adding the receipt;
+- immediately re-read result target + protection and require target=`TERMINAL_CONTENT_COMMIT`;
+- CAS to the observed receipt commit and preserve final external evidence;
+- re-read target/protection; verify exact direct-parent/tree delta and receipt bytes; reconcile final CAS evidence;
+- activate terminal frozen result-ref protection and re-read it, requiring no configured bypass.
+
+The terminal receipt becomes canonical only after that entire final sequence succeeds. Publish the externally observed receipt-commit SHA, final manifest SHA, and final CAS/freeze evidence inside the exact PR evidence block, not free-form evidence prose.
+
+If final publication/re-read/graph/tree/CAS/freeze fails, the receipt is noncanonical even if a commit object exists. The episode remains burned/non-reusable through claim/result/history evidence as `ISSUED` or `IN_PROGRESS`; do not fabricate `BLOCKED` or `CONSUMED` terminal closure. A new attempt requires a new separately reviewed Founder authorization.
+
+Canonical ready closure:
 
 ```text
-CANDIDATE_ID = FD-MESC-BT-EXEC-1-CANDIDATE-V2
-AUTHORITATIVE_PATH = specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md
+terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION
+state = CONSUMED
 ```
 
-The prior `readiness-repair-2-result/execution-authorization-candidate.md` is immutable historical seed evidence and is superseded only after the V2 result package is canonically merged and post-merge verified. The successor remains inactive and grants no execution authority.
+Canonical blocked closure:
 
-## Phase 7 — Preflight result
+```text
+terminal_state = BLOCKED
+state = BLOCKED
+```
 
-Terminal result is only:
+`CONSUMED` means this preflight episode was consumed; it is not execution authority.
 
-- `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, or
-- `BLOCKED`.
+## Phase 7 — Pre-merge exact-head result gate
 
-A claimed episode that reaches terminal-package construction must carry the matching terminal `consumption-receipt.json` through the two-commit closure above. A claimed episode that cannot reach terminal receipt closure is still burned and cannot silently restart under this authorization; the claim/result/history evidence prevents `UNUSED` even without a terminal receipt. Any observation that the protected claim was later deleted, changed, retargeted, or became bypassable, or that `RESULT_REF` violated its protected single-lineage lifecycle/frozen target/CAS evidence requirements, forces `BLOCKED` and can never restore `UNUSED`.
-
-## Phase 8 — Independent exact-head result gate and terminal claim/result-ref verification
-
-Before canonical adoption of the preflight result:
+Before canonical adoption of a future preflight **result** package:
 
 - exact-head CI = PASS;
 - exact-head CodeQL = PASS;
 - fresh independent exact-head review = no blocker;
-- zero unresolved blocking review threads;
-- Ready only after all gates;
+- unresolved blocking review threads = 0;
+- Ready only after those gates;
 - expected-head merge protection;
-- immediately before merge, re-read the exact claim ref, exact result ref, and both storage-boundary server protections and require all unchanged from their required terminal state;
-- require `CLAIM_REF` still points to the exact authorization merge SHA;
-- require `RESULT_REF` to point exactly to the externally observed `TERMINAL_RECEIPT_COMMIT`/result PR HEAD; require that commit to have exactly one parent equal to the receipt's bound `result_ref_terminal_content_commit`, require the parent to be a permitted fast-forward descendant of the authorization SHA on the single episode lineage, require the receipt commit tree delta to add only `consumption-receipt.json` while leaving all manifest-bound result artifacts byte-identical, and reconcile every required CAS evidence record including the final update;
-- require terminal result-ref server protection to deny every further update/delete;
-- post-merge canonical SHA/tree/ordered-parent/signature verification;
-- verify the canonical merged `consumption-receipt.json` against the exact final manifest SHA-256 and its bound activation/content commit identities;
-- verify its state matches the verdict (`CONSUMED` for ready, `BLOCKED` for blocked);
-- verify the permanent claim ref still exists, points to the exact authorization merge SHA, and remains protected against update/force-update/delete without worker bypass;
-- verify the permanent frozen result ref still exists at the exact externally observed terminal receipt commit with its server protection/freeze evidence intact;
-- any claim/result-ref/protection/CAS/parent-tree integrity failure => terminal `BLOCKED`; it never permits replay or reclassification as `UNUSED`.
+- immediately before merge, re-read claim ref, frozen result ref, server protections, all CAS evidence, and final graph/tree/manifest/receipt bindings;
+- require claim at authorization SHA;
+- require result ref at exact terminal-receipt commit;
+- require terminal-receipt commit one-parent direct child of the receipt-bound terminal-content commit with only receipt tree delta;
+- require terminal frozen protection with no configured bypass.
+
+Any failure before merge means do not merge the result package. It does not create a canonical terminal outcome.
+
+## Phase 8 — Post-merge canonical adoption verification
+
+After a result-package merge, mechanically verify:
+
+- canonical `main` equals the returned merge SHA;
+- exact merged tree is expected;
+- ordered parents are exact expected old main then exact reviewed result head;
+- commit signature verification is valid;
+- merged result artifacts/receipt/manifest are byte-identical to reviewed exact head;
+- permanent claim and frozen result ref/protections still match the reviewed terminal evidence.
+
+If all pass, record:
+
+```text
+CANONICAL_ADOPTION_VERIFIED = PASS
+```
+
+If any fail, record:
+
+```text
+CANONICAL_ADOPTION_VERIFICATION_FAILED
+```
+
+Do **not** rewrite the immutable terminal receipt or claim that it changed from `CONSUMED` to `BLOCKED`. A failed adoption verification keeps any successor candidate inactive/unusable and requires explicit repair/new authorization. Any later execution authorization must require `CANONICAL_ADOPTION_VERIFIED = PASS` plus its own separately reviewed Founder authorization.
 
 ## Execution remains out of scope
 
-This plan never sends a prompt to a model and never accesses model weights. A later `FD-MESC-BT-EXEC-1` authorization package must separately bind the selected candidate subset, exact runtime/provider/hardware, run bounds, artifact destinations, any gated-access decision, and all remaining activation requirements.
+This plan never sends a prompt to a model, accesses model weights, accepts gated terms, runs inference, executes the tournament, scores/ranks model outputs, trains, retrieves, or selects a winner.
+
+```text
+BACKBONE_TOURNAMENT_EXECUTION = NOT_AUTHORIZED
+MODEL_WEIGHT_ACCESS = NOT_AUTHORIZED
+GATED_ACCESS_REQUEST_OR_ACCEPTANCE = NOT_AUTHORIZED
+PROMPT_SERIALIZATION_TO_MODEL = NOT_AUTHORIZED
+INFERENCE = NOT_AUTHORIZED
+TRAINING = NOT_AUTHORIZED
+RETRIEVAL = NOT_AUTHORIZED
+```
