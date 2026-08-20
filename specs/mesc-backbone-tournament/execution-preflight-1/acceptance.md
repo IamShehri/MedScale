@@ -6,7 +6,7 @@ Date: 2026-08-20
 
 The preflight is complete only if every requirement below is satisfied on one exact canonical input state.
 
-**Execution-order rule:** section letters are acceptance categories, not permission to read frozen Repair-2 content before the one-shot claim. Before the atomic claim in Section F, the worker may inspect Git/repository metadata required to identify the authorization and prove replay state—commit/tree ancestry, repository paths, Git blob IDs, ref targets, protection metadata, and the four authorization-package blob IDs—and may read/parse only **non-Repair-2 episode-governance evidence** required to classify replay/lifecycle state. Permitted content evidence is limited to `activation-receipt.json` / `consumption-receipt.json` reachable from discovered result-lineage commits plus the exact marker-delimited machine-readable PR evidence block defined in F.2. PR patches, diffs, changed-file contents, review comments, free-form PR prose outside that block, and all frozen Repair-2 content are outside pre-claim authority. The worker MUST NOT read, hash, parse, decompress, or derive values from `task-prompts.json`, corpus bytes, scoring-key bytes, or any other frozen Repair-2 artifact content until the claim is successfully created, re-verified, and the matching `activation-receipt.json` is published by the first permitted fast-forward of the protected `RESULT_REF`. Section A content-byte verification and Sections C–D therefore execute only after Section F.3.
+**Execution-order rule:** section letters are acceptance categories, not permission to read frozen Repair-2 content before the one-shot claim. Before the atomic claim in Section F, the worker may inspect Git/repository metadata required to identify the authorization and prove replay state—commit/tree ancestry, repository paths, Git blob IDs, ref targets, protection metadata, and the four authorization-package blob IDs—and may read/parse only **non-Repair-2 episode-governance evidence** required to classify replay/lifecycle state. Permitted content evidence is limited to `activation-receipt.json` / `consumption-receipt.json` reachable from discovered result-lineage commits plus the exact marker-delimited machine-readable PR evidence block defined in F.2 from a structurally selected preflight-result PR. PR patches, diffs, changed-file contents, review comments, free-form PR prose outside that block, and all frozen Repair-2 content are outside pre-claim authority. The worker MUST NOT read, hash, parse, decompress, or derive values from `task-prompts.json`, corpus bytes, scoring-key bytes, or any other frozen Repair-2 artifact content until the claim is successfully created, re-verified, and the matching `activation-receipt.json` is published by the first permitted fast-forward of the protected `RESULT_REF`. Section A content-byte verification and Sections C–D therefore execute only after Section F.3.
 
 ## A. Canonical ancestry and complete input identity
 
@@ -198,16 +198,19 @@ RESULT_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/
 RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/
 CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
+PREFLIGHT_RESULT_PR_HEAD_REF = governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 ```
 
 Each `*_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under a prefix iff its full ref name starts with that exact prefix. The only syntactically well-formed descendant under either prefix has exactly two non-empty path segments after the prefix: `<AUTHORIZATION_MERGE_SHA>` MUST be 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` MUST be 64 lowercase hexadecimal characters. Any malformed descendant => `BLOCKED`. For the **current** `AUTHORIZATION_MERGE_SHA`, the only permitted receipt segment is the uniquely derived current `ACTIVATION_RECEIPT_ID`; any same-authorization sibling with a different receipt ID is unexpected conflicting episode evidence and => `BLOCKED`. Well-formed refs for other authorization SHAs remain historical evidence for those other authorizations and do not by themselves block the current one.
 
-No other governance ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST independently and exhaustively complete all four replay-evidence searches below from authoritative Git hosting data:
+A PR is a **current-episode preflight-result PR** iff all of these structural predicates hold exactly: (1) base repository full name is `TheHalfMoon/MESC`; (2) base ref name is `main`; (3) head repository full name is `TheHalfMoon/MESC`; and (4) retained head ref name is exactly `PREFLIGHT_RESULT_PR_HEAD_REF`. PR state may be open, closed, or merged and is not a selector. Title, labels, reviews, issue linkage, author, and free-form body prose are never selectors. If an authoritative current head OID is exposed for the selected PR, it MUST equal the authoritative `RESULT_REF` target in the same replay snapshot. If the result branch has been deleted and a current head OID is unavailable, the retained exact `headRefName` still selects the PR and the PR remains replay evidence; its lifecycle must be reconciled through canonical history, permitted non-Repair-2 receipts, and the exact evidence block below. Missing/unreadable required structural fields, inability to classify every PR using this predicate, an unreconcilable selected PR, or a structurally matching same-authorization/different-receipt sibling head => `BLOCKED`. Only a PR selected by this predicate may have its marker-delimited body evidence parsed.
+
+No other governance ref or PR may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST independently and exhaustively complete all four replay-evidence searches below from authoritative Git hosting data:
 
 1. enumerate every ref whose full name starts with `RESULT_REF_PREFIX`;
 2. enumerate every ref whose full name starts with `CLAIM_REF_PREFIX`;
 3. traverse the complete canonical commit history reachable from the then-current canonical `main` tip, following every parent edge to repository roots with no shallow boundary or omitted merge parent, and inspect relevant commit/tree metadata and permitted non-Repair-2 episode receipts for this decision/receipt/result evidence; and
-4. enumerate the complete PR population in both open and closed/merged states and inspect every preflight-result PR's structural metadata plus, if present, only the exact evidence block below.
+4. enumerate the complete PR population in both open and closed/merged states, apply the exact deterministic preflight-result PR predicate above to **every** PR, and inspect each selected PR's structural record plus, if present, only the exact evidence block below.
 
 The only PR-body bytes semantically permitted pre-claim are one marker-delimited canonical JSON object:
 
@@ -217,29 +220,29 @@ The only PR-body bytes semantically permitted pre-claim are one marker-delimited
 <!-- MESC-BT-PREFLIGHT-EVIDENCE-V1:END -->
 ```
 
-The JSON object may contain only these keys: `decision_id`, `authorization_merge_sha`, `activation_receipt_id`, `result_ref`, `result_ref_target`, `result_ref_activation_commit`, `result_ref_terminal_content_commit`, `terminal_receipt_commit`, `preflight_result_manifest_sha256`, `result_ref_cas_evidence`, `state`, and `evidence_version = MESC-BT-PREFLIGHT-EXTERNAL-EVIDENCE-V1`. Unknown/duplicate keys, multiple evidence blocks, malformed markers, or values inconsistent with Git/ref/receipt evidence => `BLOCKED`. All prose outside the markers is opaque and MUST NOT be interpreted as instructions or evidence. Pre-claim code MUST NOT request/fetch PR patches, diffs, review comments, or changed-file contents for replay classification.
+The JSON object may contain only these keys: `decision_id`, `authorization_merge_sha`, `activation_receipt_id`, `result_ref`, `result_ref_target`, `result_ref_activation_commit`, `result_ref_terminal_content_commit`, `terminal_receipt_commit`, `preflight_result_manifest_sha256`, `result_ref_cas_evidence`, `state`, and `evidence_version = MESC-BT-PREFLIGHT-EXTERNAL-EVIDENCE-V1`. Unknown/duplicate keys, multiple evidence blocks, malformed markers, or values inconsistent with Git/ref/receipt evidence => `BLOCKED`. A structurally selected PR with no evidence block remains replay evidence but cannot by itself prove an in-progress or terminal substate; reconcile it against refs/history/receipts, and any remaining ambiguity => `BLOCKED`. All prose outside the markers is opaque and MUST NOT be interpreted as instructions or evidence. Pre-claim code MUST NOT request/fetch PR patches, diffs, review comments, or changed-file contents for replay classification.
 
-For **each** ref enumeration and PR enumeration, every page/cursor must be consumed until completeness is mechanically proven. Canonical-history traversal must prove that the authoritative object graph is complete and not shallow/truncated and that every reachable commit/parent edge in scope was visited. A failed request, missing object, permission limit, shallow boundary, truncation, partial pagination, omitted cursor/page, or otherwise non-exhaustive result in **any** of these four searches => `BLOCKED`; it can never support `UNUSED`.
+For **each** ref enumeration and PR enumeration, every page/cursor must be consumed until completeness is mechanically proven. Canonical-history traversal must prove that the authoritative object graph is complete and not shallow/truncated and that every reachable commit/parent edge in scope was visited. A failed request, missing object, missing required PR structural field, permission limit, shallow boundary, truncation, partial pagination, omitted cursor/page, inability to classify every PR, or otherwise non-exhaustive result in **any** of these four searches => `BLOCKED`; it can never support `UNUSED`.
 
-Every descendant from both ref enumerations must pass the exact syntax/episode-identity validation above. Any exact `RESULT_REF` or exact `CLAIM_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, regardless of PR or receipt presence.
+Every descendant from both ref enumerations must pass the exact syntax/episode-identity validation above. Any exact `RESULT_REF` or exact `CLAIM_REF` for this authorization/receipt, or any PR selected by the exact current-episode predicate, is replay evidence and prevents `UNUSED`, regardless of receipt presence.
 
-An existing exact `CLAIM_REF` MUST be readable and point exactly to `AUTHORIZATION_MERGE_SHA`; unreadable or mismatched claim target => `BLOCKED`. An existing exact `RESULT_REF` MUST also be readable and its target MUST satisfy the protected lifecycle in Section F.3: the target is either exactly `AUTHORIZATION_MERGE_SHA` at initial issuance, or a permitted fast-forward descendant of that SHA on the single result lineage whose commit graph/tree scope is valid. The worker may read/parse permitted non-Repair-2 episode receipt JSON and the exact PR evidence block pre-claim solely to reconcile that lifecycle. An unreadable target, non-descendant target, force/sideways retarget, missing required lifecycle/CAS evidence, invalid commit/tree scope, or target inconsistent with matching result-PR/receipt state => `BLOCKED`, never generic `IN_PROGRESS` evidence.
+An existing exact `CLAIM_REF` MUST be readable and point exactly to `AUTHORIZATION_MERGE_SHA`; unreadable or mismatched claim target => `BLOCKED`. An existing exact `RESULT_REF` MUST also be readable and its target MUST satisfy the protected lifecycle in Section F.3: the target is either exactly `AUTHORIZATION_MERGE_SHA` at initial issuance, or a permitted fast-forward descendant of that SHA on the single result lineage whose commit graph/tree scope is valid. The worker may read/parse permitted non-Repair-2 episode receipt JSON and the exact PR evidence block pre-claim solely to reconcile that lifecycle. An unreadable target, non-descendant target, force/sideways retarget, missing required lifecycle/CAS evidence, invalid commit/tree scope, or target inconsistent with matching selected result-PR/receipt state => `BLOCKED`, never generic `IN_PROGRESS` evidence.
 
 State is evaluated with this precedence: canonical terminal receipt → matching in-progress evidence → claim-only evidence → unused. Conflicting or ambiguous evidence overrides all normal states and is `BLOCKED`.
 
 | State | Exact evidence predicate | May a new episode start? |
 |---|---|---|
-| `UNUSED` | both ref-prefix enumerations, complete canonical-history traversal, and complete open+closed/merged PR enumeration are mechanically proven exhaustive; no exact claim ref; no matching activation receipt; no exact `RESULT_REF`; no result PR for this authorization/receipt; no terminal receipt; no malformed/unexpected current-authorization descendant; no conflicting/mismatched historical evidence | YES, by atomic claim only |
-| `ISSUED` | the exact protected claim ref exists and points to the authorization merge SHA; **no** activation receipt, exact `RESULT_REF`, result PR, or terminal receipt exists yet | NO |
-| `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, lifecycle-valid exact `RESULT_REF`, or result PR exists; **no canonical terminal receipt** exists | NO |
-| `BLOCKED` | a matching canonical blocked terminal receipt exists, **or** any incomplete ref/history/PR search, malformed/unexpected current-authorization descendant, claim/result-ref protection violation, deleted/retargeted claim evidence, unreadable or lifecycle-invalid result-ref target, conflicting receipt, mismatched target/state, missing required worker-CAS evidence, or ambiguous state is observed | NO |
+| `UNUSED` | both ref-prefix enumerations, complete canonical-history traversal, and complete open+closed/merged PR enumeration/classification are mechanically proven exhaustive; no exact claim ref; no matching activation receipt; no exact `RESULT_REF`; no PR selected by the current-episode predicate; no terminal receipt; no malformed/unexpected current-authorization descendant or PR sibling; no conflicting/mismatched historical evidence | YES, by atomic claim only |
+| `ISSUED` | the exact protected claim ref exists and points to the authorization merge SHA; **no** activation receipt, exact `RESULT_REF`, selected current-episode result PR, or terminal receipt exists yet | NO |
+| `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, lifecycle-valid exact `RESULT_REF`, or selected current-episode result PR exists; **no canonical terminal receipt** exists | NO |
+| `BLOCKED` | a matching canonical blocked terminal receipt exists, **or** any incomplete ref/history/PR search or PR classification, malformed/unexpected current-authorization descendant, same-authorization/different-receipt result PR, claim/result-ref protection violation, deleted/retargeted claim evidence, unreadable or lifecycle-invalid result-ref target, conflicting receipt, mismatched target/state, missing required worker-CAS evidence, or ambiguous state is observed | NO |
 | `CONSUMED` | a matching **canonical terminal receipt** records `state = CONSUMED`, matches the final ready manifest, and terminal result-ref freeze verification passed | NO |
 
 A terminal receipt is **canonical** only when its containing `TERMINAL_RECEIPT_COMMIT` is the exact frozen `RESULT_REF` target and all F.4 parent/tree/protection checks pass. A candidate receipt that was built but whose final ref update/re-read/freeze failed is not canonical terminal evidence; the episode remains non-reusable through its permanent claim/result history.
 
 `ISSUED` and `IN_PROGRESS` are therefore disjoint. Any state other than proven `UNUSED` => reject reuse.
 
-To linearize replay discovery with atomic claim creation, construct `PRECLAIM_REPLAY_SNAPSHOT` after the first complete scan as canonical JSON containing the current canonical `main` tip, the complete sorted current-authorization records from both ref-prefix scans (including targets), the complete relevant PR structural/evidence-block records, and the digest/identity of the fully traversed history boundary. Immediately before claim creation, repeat all four exhaustive searches and require an identical snapshot. After successful atomic claim creation, repeat them again **before creating `RESULT_REF`** and require the only permitted relevant delta to be appearance of the exact `CLAIM_REF` at `AUTHORIZATION_MERGE_SHA`; `main`, history boundary, result refs, sibling claim refs, and relevant PR evidence must otherwise remain identical. Any pre/post-claim snapshot drift => `BLOCKED`, no `RESULT_REF` creation, and no frozen-content read. The successful claim remains permanent replay evidence, so a drifted episode cannot revert to `UNUSED`.
+To linearize replay discovery with atomic claim creation, construct `PRECLAIM_REPLAY_SNAPSHOT` after the first complete scan as canonical JSON containing the current canonical `main` tip, the complete sorted current-authorization records from both ref-prefix scans (including targets), the complete selected-PR structural/evidence-block records produced by the exact predicate above, and the digest/identity of the fully traversed history boundary. Immediately before claim creation, repeat all four exhaustive searches and require an identical snapshot. After successful atomic claim creation, repeat them again **before creating `RESULT_REF`** and require the only permitted relevant delta to be appearance of the exact `CLAIM_REF` at `AUTHORIZATION_MERGE_SHA`; `main`, history boundary, result refs, sibling claim refs, and selected PR evidence must otherwise remain identical. Any pre/post-claim snapshot drift => `BLOCKED`, no `RESULT_REF` creation, and no frozen-content read. The successful claim remains permanent replay evidence, so a drifted episode cannot revert to `UNUSED`.
 
 ### F.3 Storage-protected atomic claim and non-self-referential protected result-ref lifecycle before any frozen-content read
 
@@ -320,7 +323,7 @@ Any failed activation/intermediate/terminal update, post-update re-read, protect
 
 The activation receipt records `state = IN_PROGRESS` and `content_read_started = false`; the latter is an issuance-time fact, not another replay state.
 
-### F.4 Non-self-referential terminal receipt and terminal result-ref freeze
+### F.4 Non-self-referential terminal receipt, terminal result-ref freeze, and immutable adoption verification
 
 A claimed episode that reaches terminal-package construction may close canonically only with `consumption-receipt.json` outside the result-manifest artifact set. It is canonical JSON under Section B and contains exactly:
 
@@ -345,9 +348,40 @@ A terminal receipt becomes canonical only after F.3.2 step 7 succeeds. If any pa
 
 A successful canonical package therefore has receipt `state = CONSUMED`; a canonical blocked package has `state = BLOCKED`. Both bind the final manifest and known activation/content commits without self-reference. `CONSUMED` means **the one-shot preflight episode has been consumed**, not that model execution or the successor candidate is authorized.
 
-Canonical merge of the result package is the durable repository adoption event. Post-merge mechanical verification is a separate adoption-verification gate; failure of that gate does not rewrite the immutable terminal receipt. Instead it yields `CANONICAL_ADOPTION_VERIFICATION_FAILED`, and the merged successor candidate remains inactive/unusable. Any later execution authorization must require `CANONICAL_ADOPTION_VERIFIED = PASS` plus its own separately reviewed Founder authorization. Thus a post-merge verification failure can never turn a merged `CONSUMED` preflight receipt into execution authority.
+Canonical merge of the result package is the repository adoption event, but post-merge mechanical verification is not a mutable status note and does not rewrite the terminal receipt. It MUST be bound to one immutable canonical record outside `RESULT_ROOT`:
 
-Missing/mismatched server protection, claim, result ref, activation receipt, canonical terminal receipt when terminal closure is asserted, manifest digest, lifecycle/CAS evidence, graph/tree relation, final freeze, or state correspondence => the package is not valid for canonical consumption/adoption.
+```text
+ADOPTION_RECORD_PATH = specs/mesc-backbone-tournament/execution-preflight-1-adoption/<RESULT_MERGE_SHA>/canonical-adoption-verification.json
+```
+
+The record uses Section B canonical JSON, contains no self-digest field, and contains exactly one mechanically revalidatable result-adoption statement. Required fields are:
+
+- `record_version = MESC-BT-PREFLIGHT-CANONICAL-ADOPTION-V1`;
+- `decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT`;
+- `authorization_merge_sha`;
+- `activation_receipt_id`;
+- `result_merge_sha`;
+- `result_merge_tree`;
+- `ordered_parents`, exactly `[PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA]`;
+- `reviewed_result_head_sha`;
+- `preflight_result_manifest_sha256`;
+- `result_package_artifacts`, the complete final manifest artifact map with exact path, SHA-256, and byte length for every bound result artifact;
+- `terminal_receipt_commit`;
+- `terminal_receipt_sha256`;
+- `claim_ref` and `claim_ref_target`;
+- `result_ref` and `result_ref_terminal_target`;
+- `terminal_result_ref_protection_identity_version` plus the final no-bypass/frozen verification facts;
+- `merge_signature_verification`, containing hosting `verified`, hosting `reason`, `signature_sha256 = SHA256(UTF8(exact hosting verification.signature text))`, and `payload_sha256 = SHA256(UTF8(exact hosting verification.payload text))`;
+- `failed_checks`, an exact deterministic array, empty only for a verified PASS; and
+- `outcome`, exactly `CANONICAL_ADOPTION_VERIFIED` or `CANONICAL_ADOPTION_VERIFICATION_FAILED`.
+
+After result-package merge, mechanically re-read the returned merge commit and all bound evidence, construct the record, and publish it through a separate doc-only adoption-verification PR whose only newly introduced artifact is the exact `ADOPTION_RECORD_PATH`. That PR itself must receive exact-head review and expected-head merge protection. The adoption-record path is outside `RESULT_ROOT`; it MUST NOT move `RESULT_REF`, rewrite `consumption-receipt.json`, or mutate any result-package byte.
+
+`CANONICAL_ADOPTION_VERIFIED = PASS` is usable only when the adoption-record file is present on canonical `main`, has `outcome = CANONICAL_ADOPTION_VERIFIED`, and every field revalidates against the canonical result merge, reviewed result head, ordered parents, merge tree/signature evidence, final manifest/artifact digests, claim/result refs, terminal target, and terminal protection. Missing record, noncanonical record PR, missing/unreadable field, digest/signature mismatch, failed revalidation, or `outcome = CANONICAL_ADOPTION_VERIFICATION_FAILED` makes PASS unavailable and keeps the successor candidate inactive/unusable.
+
+Any later execution authorization MUST reference the adoption-record merge SHA/tree and exact `ADOPTION_RECORD_PATH`, canonical Git blob SHA, and full-file SHA-256; it MUST re-read/re-hash/revalidate the record and still require its own separately reviewed Founder authorization. The record is evidence only and cannot create execution authority by itself. Thus a post-merge verification failure can never turn a merged `CONSUMED` preflight receipt into execution authority.
+
+Missing/mismatched server protection, claim, result ref, activation receipt, canonical terminal receipt when terminal closure is asserted, manifest digest, lifecycle/CAS evidence, graph/tree relation, final freeze, adoption record, or state correspondence => the package is not valid for canonical execution authorization.
 
 ## G. Remaining execution-binding inventory and single successor candidate
 
@@ -380,7 +414,7 @@ CANDIDATE_ID = FD-MESC-BT-EXEC-1-CANDIDATE-V2
 AUTHORITATIVE_PATH = specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md
 ```
 
-The older `readiness-repair-2-result/execution-authorization-candidate.md` remains immutable historical seed evidence and is superseded only after the V2 result package is canonically merged and `CANONICAL_ADOPTION_VERIFIED = PASS`. No two candidate records may simultaneously claim current authority.
+The older `readiness-repair-2-result/execution-authorization-candidate.md` remains immutable historical seed evidence and is superseded only after the V2 result package is canonically merged and the canonical adoption record revalidates to `CANONICAL_ADOPTION_VERIFIED = PASS`. No two candidate records may simultaneously claim current authority.
 
 ## H. Terminal state
 
@@ -398,4 +432,4 @@ Otherwise a canonically closed terminal package may conclude:
 BLOCKED
 ```
 
-An interrupted/burned episode that cannot canonically close remains non-reusable as `ISSUED` or `IN_PROGRESS`; it must not fabricate a terminal state. Neither a ready, blocked, nor interrupted preflight authorizes model access or execution. Only a separately reviewed and canonically adopted `FD-MESC-BT-EXEC-1` authorization, with required canonical-adoption verification, can do that.
+An interrupted/burned episode that cannot canonically close remains non-reusable as `ISSUED` or `IN_PROGRESS`; it must not fabricate a terminal state. Neither a ready, blocked, nor interrupted preflight authorizes model access or execution. Only a separately reviewed and canonically adopted `FD-MESC-BT-EXEC-1` authorization, with a referenced and revalidated canonical adoption record, can do that.
