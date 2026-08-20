@@ -6,7 +6,7 @@ Date: 2026-08-20
 
 The preflight is complete only if every requirement below is satisfied on one exact canonical input state.
 
-**Execution-order rule:** section letters are acceptance categories, not permission to read content before the one-shot claim. Before the atomic claim in Section F, the worker may inspect only Git/repository metadata required to identify the authorization and prove replay state: commit/tree ancestry, repository paths, Git blob IDs, PR/result metadata, claim/protection metadata, and the four authorization-package blob IDs. It MUST NOT read, hash, parse, decompress, or derive values from `task-prompts.json`, corpus bytes, scoring-key bytes, or any other frozen Repair-2 artifact content until the claim is successfully created, re-verified, and the matching `activation-receipt.json` is published on the unique result branch. Section A content-byte verification and Sections C–D therefore execute only after Section F.3.
+**Execution-order rule:** section letters are acceptance categories, not permission to read content before the one-shot claim. Before the atomic claim in Section F, the worker may inspect only Git/repository metadata required to identify the authorization and prove replay state: commit/tree ancestry, repository paths, Git blob IDs, PR/result metadata, claim/protection metadata, and the four authorization-package blob IDs. It MUST NOT read, hash, parse, decompress, or derive values from `task-prompts.json`, corpus bytes, scoring-key bytes, or any other frozen Repair-2 artifact content until the claim is successfully created, re-verified, and the matching `activation-receipt.json` is published by the first permitted fast-forward of the protected `RESULT_REF`. Section A content-byte verification and Sections C–D therefore execute only after Section F.3.
 
 ## A. Canonical ancestry and complete input identity
 
@@ -189,7 +189,7 @@ After this authorization package is canonically merged and post-merge verified, 
 
 No other path belongs to the activation-receipt preimage. Missing, reordered, duplicated, extra, or mismatched path/blob entries => `BLOCKED`.
 
-### F.2 Mutually exclusive replay-state predicates and exhaustive ref discovery
+### F.2 Mutually exclusive replay-state predicates and exhaustive discovery
 
 The only permitted result-ref and claim-ref prefixes and full ref identities are:
 
@@ -202,46 +202,78 @@ CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATI
 
 Each `*_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under a prefix iff its full ref name starts with that exact prefix. The only well-formed descendant under either prefix has exactly two non-empty path segments after the prefix: `<AUTHORIZATION_MERGE_SHA>` MUST be 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` MUST be 64 lowercase hexadecimal characters. Any other descendant ref under either prefix => `BLOCKED`.
 
-No other branch/ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST independently and exhaustively enumerate **both** namespaces from the authoritative Git hosting ref store:
+No other governance ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST independently and exhaustively complete all four replay-evidence searches below from authoritative Git hosting data:
 
-1. every ref whose full name starts with `RESULT_REF_PREFIX`; and
-2. every ref whose full name starts with `CLAIM_REF_PREFIX`.
+1. enumerate every ref whose full name starts with `RESULT_REF_PREFIX`;
+2. enumerate every ref whose full name starts with `CLAIM_REF_PREFIX`;
+3. traverse the complete canonical commit history reachable from the then-current canonical `main` tip, following every parent edge to repository roots with no shallow boundary or omitted merge parent, and inspect the relevant commit/tree metadata for this decision/receipt/result evidence; and
+4. enumerate the complete PR population in both open and closed/merged states and inspect every preflight-result PR metadata record relevant to this decision/receipt/result identity.
 
-For each enumeration, every page/cursor must be consumed until completeness is mechanically proven. A failed, permission-limited, truncated, partially paginated, or otherwise non-exhaustive enumeration of **either** prefix => `BLOCKED`. Every descendant from both enumerations must pass the exact shape validation above; any malformed or unexpected descendant => `BLOCKED`. Any exact `RESULT_REF` or exact `CLAIM_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, whether or not a PR or receipt exists.
+For **each** ref enumeration and PR enumeration, every page/cursor must be consumed until completeness is mechanically proven. Canonical-history traversal must prove that the authoritative object graph is complete and not shallow/truncated and that every reachable commit/parent edge in scope was visited. A failed request, missing object, permission limit, shallow boundary, truncation, partial pagination, omitted cursor/page, or otherwise non-exhaustive result in **any** of these four searches => `BLOCKED`; it can never support `UNUSED`.
+
+Every descendant from both ref enumerations must pass the exact shape validation above; any malformed or unexpected descendant => `BLOCKED`. Any exact `RESULT_REF` or exact `CLAIM_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, regardless of PR or receipt presence.
+
+An existing exact `CLAIM_REF` MUST be readable and point exactly to `AUTHORIZATION_MERGE_SHA`; unreadable or mismatched claim target => `BLOCKED`. An existing exact `RESULT_REF` MUST also be readable and its target MUST satisfy the protected lifecycle in Section F.3: the target is either exactly `AUTHORIZATION_MERGE_SHA` at initial issuance, or a permitted fast-forward descendant of that SHA on the single result lineage. An unreadable target, non-descendant target, force/sideways retarget, missing required lifecycle evidence, or target inconsistent with the matching result-PR/receipt state => `BLOCKED`, never generic `IN_PROGRESS` evidence.
 
 State is evaluated with this precedence: canonical terminal receipt → matching in-progress evidence → claim-only evidence → unused. Conflicting or ambiguous evidence overrides all normal states and is `BLOCKED`.
 
 | State | Exact evidence predicate | May a new episode start? |
 |---|---|---|
-| `UNUSED` | exhaustive result-prefix **and claim-prefix** enumeration completed; no exact claim ref; no matching activation receipt; no exact `RESULT_REF`; no open/closed result PR for this authorization/receipt; no terminal receipt; no malformed/unexpected descendant under either prefix; no conflicting/mismatched historical evidence | YES, by atomic claim only |
+| `UNUSED` | both ref-prefix enumerations, complete canonical-history traversal, and complete open+closed/merged PR enumeration are mechanically proven exhaustive; no exact claim ref; no matching activation receipt; no exact `RESULT_REF`; no result PR for this authorization/receipt; no terminal receipt; no malformed/unexpected descendant under either prefix; no conflicting/mismatched historical evidence | YES, by atomic claim only |
 | `ISSUED` | the exact protected claim ref exists and points to the authorization merge SHA; **no** activation receipt, exact `RESULT_REF`, result PR, or terminal receipt exists yet | NO |
-| `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, exact `RESULT_REF`, or result PR exists; **no canonical terminal receipt** exists | NO |
-| `BLOCKED` | a matching canonical terminal receipt records `state = BLOCKED`, **or** any incomplete result-prefix/claim-prefix enumeration, malformed or unexpected descendant under either prefix, claim-protection violation, deleted/retargeted claim evidence, conflicting receipt, mismatched claim target, or ambiguous state is observed | NO |
+| `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, lifecycle-valid exact `RESULT_REF`, or result PR exists; **no canonical terminal receipt** exists | NO |
+| `BLOCKED` | a matching canonical terminal receipt records `state = BLOCKED`, **or** any incomplete ref/history/PR search, malformed or unexpected descendant under either prefix, claim/result-ref protection violation, deleted/retargeted claim evidence, unreadable or lifecycle-invalid result-ref target, conflicting receipt, mismatched claim target, mismatched result-ref target/state, or ambiguous state is observed | NO |
 | `CONSUMED` | a matching canonical terminal receipt records `state = CONSUMED` and matches the final ready manifest | NO |
 
 `ISSUED` and `IN_PROGRESS` are therefore disjoint: publication/creation of any matching activation-receipt/result-ref/result-PR evidence moves the logical state from claim-only `ISSUED` to `IN_PROGRESS`. A terminal receipt supersedes both. Any state other than proven `UNUSED` => reject reuse.
 
-### F.3 Storage-protected atomic claim before any frozen-content read
+### F.3 Storage-protected atomic claim and protected result-ref lifecycle before any frozen-content read
 
-Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, exhaustively enumerate all refs whose full names start with `RESULT_REF_PREFIX` **and** all refs whose full names start with `CLAIM_REF_PREFIX`, validate every descendant shape, and search canonical history plus open/closed result-PR metadata for replay evidence. Do **not** read any Repair-2 blob contents. Failure to prove complete enumeration of either prefix, or discovery of any malformed/unexpected descendant, => `BLOCKED` before claim creation.
+Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry and expected path→blob IDs; derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs; complete both authoritative ref-prefix enumerations; complete the full canonical-history traversal; complete the full open+closed/merged PR enumeration; validate every discovered ref shape and every existing exact claim/result-ref target against this contract; and classify replay state. Do **not** read any Repair-2 blob contents. Failure to prove completeness or integrity of any replay search/target => `BLOCKED` before claim creation.
 
-Before creating the claim, mechanically verify `CLAIM_REF_PROTECTION = PASS` at the Git hosting/storage boundary for every ref whose full name starts with `CLAIM_REF_PREFIX`. The protection must be a repository ruleset, server-side hook, or equivalent durable control that is already effective and that, for this claim prefix:
+Before creating either episode ref, mechanically verify storage-boundary protection at the Git hosting boundary:
 
-1. permits the controlled initial ref creation required by this episode;
-2. denies every subsequent ref update, including ordinary fast-forward updates and force updates;
-3. denies ref deletion;
-4. gives the preflight worker no bypass capable of update/deletion after creation;
+- `CLAIM_REF_PROTECTION = PASS` for every ref whose full name starts with `CLAIM_REF_PREFIX`; and
+- `RESULT_REF_PROTECTION = PASS` for every ref whose full name starts with `RESULT_REF_PREFIX`.
+
+`CLAIM_REF_PROTECTION` must be a repository ruleset, server-side hook, or equivalent durable control that:
+
+1. permits the controlled initial claim creation;
+2. denies every subsequent claim update, including ordinary fast-forward and force updates;
+3. denies claim deletion;
+4. gives the preflight worker no bypass capable of claim update/deletion after creation; and
 5. remains effective from immediately before claim creation through canonical terminal result adoption.
 
-Record the exact protection mechanism identity and observed enforcement facts in `activation-receipt.json` and carry them into `consumption-receipt.json`. If no such durable storage-boundary protection can be proven, do not create a claim and terminate `BLOCKED` before any frozen-content read.
+`RESULT_REF_PROTECTION` must be an equally durable control that:
+
+1. permits controlled initial `RESULT_REF` creation only at `AUTHORIZATION_MERGE_SHA`;
+2. permits subsequent updates only by the designated preflight principal, only as ordinary fast-forwards, and only with compare-and-swap/expected-old-target semantics from the exactly re-read current target;
+3. denies force updates, non-fast-forward/sideways retargets, deletion, recreation, and updates by any other principal;
+4. requires every new target to remain a descendant of `AUTHORIZATION_MERGE_SHA` on the single episode result lineage;
+5. remains effective through terminal result construction and canonical adoption; and
+6. after the exact terminal result commit is published, enters a frozen state that denies every further update and deletion.
+
+Record the exact claim/result protection mechanism identities and observed enforcement facts in `activation-receipt.json` and carry them into `consumption-receipt.json`. If either protection cannot be proven, do not create the claim and terminate `BLOCKED` before any frozen-content read.
 
 Then atomically create exactly `CLAIM_REF`. The claim ref MUST use create-only semantics, only if absent, and MUST point exactly to `AUTHORIZATION_MERGE_SHA`. Creation failure because the ref already exists means another worker/episode already claimed the authorization: stop immediately without changing the ref or starting audit work.
 
-Immediately after creation, re-read the claim ref and protection control. Any missing/changed target or protection drift is `BLOCKED`. Updating, force-updating, retargeting, deleting, or recreating the claim is prohibited. If a claim is ever observed deleted or changed after creation, the episode can never be classified `UNUSED`; the observing worker must preserve durable `BLOCKED` evidence in its result package/terminal receipt and stop.
+Immediately after creation, re-read the claim ref and both protection controls. Any missing/changed claim target or protection drift is `BLOCKED`. Updating, force-updating, retargeting, deleting, or recreating the claim is prohibited. If a claim is ever observed deleted or changed after creation, the episode can never be classified `UNUSED`; the observing worker must preserve durable `BLOCKED` evidence in its result package/terminal receipt and stop.
 
-After successful claim creation and re-verification, atomically create exactly `RESULT_REF` with create-only semantics and target the authorization merge SHA, then publish `activation-receipt.json` on that branch **before any Repair-2 frozen-content read/hash/parse/decompression**. Creation failure because `RESULT_REF` already exists => `BLOCKED` and no frozen content may be read. The activation receipt must reproduce the receipt preimage and `ACTIVATION_RECEIPT_ID`, record the exact `claim_ref` and target, record `result_ref = RESULT_REF`, record the verified claim-protection mechanism identity/enforcement facts, record `state = IN_PROGRESS`, and record `content_read_started = false`. The receipt-state field is the replay state after receipt publication; it is therefore `IN_PROGRESS`, not `ISSUED`. Only after this receipt is published may Section A content verification and Sections C–D begin. `content_read_started = false` records the issuance-time fact and is not a separate replay state.
+After successful claim creation and re-verification, atomically create exactly `RESULT_REF` with create-only semantics at `AUTHORIZATION_MERGE_SHA`. Creation failure because `RESULT_REF` already exists => `BLOCKED` and no frozen content may be read. Immediately re-read `RESULT_REF` and `RESULT_REF_PROTECTION`; any unreadable/mismatched initial target or protection drift => `BLOCKED`.
 
-### F.4 Terminal receipt for both outcomes
+The only permitted `RESULT_REF` update sequence is then:
+
+1. construct the activation commit from the current result-ref target; it may add only the episode bootstrap/result metadata required to publish the matching `activation-receipt.json` and must not contain any frozen Repair-2 content read or derived-content result;
+2. atomically fast-forward `RESULT_REF` from exactly `AUTHORIZATION_MERGE_SHA` to that activation commit using expected-old-target protection;
+3. re-read the ref and require the exact activation commit target; only after this succeeds is activation receipt publication complete and frozen Repair-2 content access permitted;
+4. later episode result commits may advance `RESULT_REF` only by the same expected-old-target, ordinary-fast-forward rule on that single lineage; and
+5. the final permitted update is to the exact terminal result commit containing the final package and matching terminal receipt; after re-reading that exact target, `RESULT_REF` is frozen against every later update/delete through and after canonical result adoption.
+
+Any skipped expected-old-target check, unexpected updater, force/non-fast-forward update, deletion/recreation, unreadable target, ancestry break, or observed target that cannot be reconciled with this exact sequence => `BLOCKED` and permanently prevents `UNUSED`.
+
+The activation receipt must reproduce the receipt preimage and `ACTIVATION_RECEIPT_ID`, record the exact `claim_ref` and target, record `result_ref = RESULT_REF`, `result_ref_activation_target = <activation commit SHA>`, both verified protection mechanism identities/enforcement facts, `state = IN_PROGRESS`, and `content_read_started = false`. The receipt-state field is the replay state after receipt publication; it is therefore `IN_PROGRESS`, not `ISSUED`. Only after the protected activation fast-forward is re-read successfully may Section A content verification and Sections C–D begin. `content_read_started = false` records the issuance-time fact and is not a separate replay state.
+
+### F.4 Terminal receipt and terminal result-ref freeze for both outcomes
 
 Every claimed episode must terminate with `consumption-receipt.json` outside the result-manifest artifact set. It is canonical JSON under Section B and contains exactly:
 
@@ -251,15 +283,21 @@ Every claimed episode must terminate with `consumption-receipt.json` outside the
 - `claim_ref`;
 - `claim_ref_target`;
 - `claim_ref_protection` containing the exact protection mechanism identity and terminal re-verification facts;
+- `result_ref`;
+- `result_ref_activation_target`;
+- `result_ref_terminal_target`;
+- `result_ref_protection` containing the exact protection mechanism identity, permitted-lifecycle evidence, frozen-state identity, and terminal re-verification facts;
 - `preflight_result_manifest_sha256`;
 - `terminal_state`, exactly `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION` or `BLOCKED`;
 - `state`, exactly `CONSUMED` when `terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, otherwise exactly `BLOCKED`.
 
+Before the terminal receipt is considered valid, the worker MUST re-read `CLAIM_REF`, `RESULT_REF`, and both protections. `CLAIM_REF` must still point exactly to `AUTHORIZATION_MERGE_SHA`. `RESULT_REF` must be readable, must point exactly to `result_ref_terminal_target`, that terminal target must be a permitted fast-forward descendant of `AUTHORIZATION_MERGE_SHA` on the single episode lineage, and result-ref frozen protection must already deny all further update/delete. Any mismatch => `BLOCKED`.
+
 A successful package therefore records `state = CONSUMED`; a blocked package records `state = BLOCKED`. Both bind the exact final manifest SHA-256 and matching activation identity. The terminal receipt is not included in the manifest hash set, avoiding a digest cycle.
 
-Canonical merge of the result package is the durable terminal-state transition. The protected claim ref remains permanent in either outcome. A claimed episode that cannot publish a terminal result remains burned/non-reusable; any later evidence of the claim or its activation receipt prevents `UNUSED`. It requires a new separately reviewed Founder authorization rather than a restart.
+Canonical merge of the result package is the durable terminal-state transition. The protected claim ref remains permanent in either outcome, and the frozen `RESULT_REF` remains permanent at its exact terminal result target. A claimed episode that cannot publish a terminal result remains burned/non-reusable; any later evidence of the claim, result ref, or activation receipt prevents `UNUSED`. It requires a new separately reviewed Founder authorization rather than a restart.
 
-Missing/mismatched protection, claim, activation receipt, terminal receipt, manifest digest, or state correspondence => `BLOCKED`.
+Missing/mismatched protection, claim, result ref, activation receipt, terminal receipt, manifest digest, lifecycle evidence, or state correspondence => `BLOCKED`.
 
 ## G. Remaining execution-binding inventory and single successor candidate
 
