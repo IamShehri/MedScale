@@ -40,7 +40,7 @@ Before a successful protected atomic claim, authority is limited to:
 
 - Git/repository metadata needed for authorization/replay identity: commit/tree ancestry, repository paths, Git blob IDs, refs/targets, protection/ruleset identity/version, and authorization-package blob IDs;
 - non-Repair-2 episode receipts reachable from discovered result-lineage commits; and
-- only the exact marker-delimited machine-readable preflight evidence block defined in `acceptance.md` from relevant PR descriptions.
+- only the exact marker-delimited machine-readable preflight evidence block defined in `acceptance.md` from structurally selected preflight-result PRs.
 
 Pre-claim code MUST NOT fetch or semantically interpret PR patches, diffs, changed-file contents, review comments, or free-form PR prose outside that evidence block. It MUST NOT read, hash, parse, decompress, or derive values from any frozen Repair-2 corpus, prompt, scoring-key, parser/scoring/report contract, or other frozen Repair-2 artifact content.
 
@@ -55,18 +55,21 @@ RESULT_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/
 RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/
 CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
+PREFLIGHT_RESULT_PR_HEAD_REF = governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 ```
 
-Both prefixes are literal prefixes, never globs. Descendants must have exactly a 40-lowercase-hex authorization SHA and 64-lowercase-hex receipt ID. For the current authorization SHA, the only permitted receipt component is the uniquely derived current `ACTIVATION_RECEIPT_ID`; any same-authorization sibling with a different receipt ID => `BLOCKED`. Well-formed refs for other authorization SHAs are historical evidence for those authorizations only.
+Both ref prefixes are literal prefixes, never globs. Descendants must have exactly a 40-lowercase-hex authorization SHA and 64-lowercase-hex receipt ID. For the current authorization SHA, the only permitted receipt component is the uniquely derived current `ACTIVATION_RECEIPT_ID`; any same-authorization sibling with a different receipt ID => `BLOCKED`. Well-formed refs for other authorization SHAs are historical evidence for those authorizations only.
+
+The deterministic current-episode preflight-result PR predicate is identical to `acceptance.md`: a PR is selected iff its base repository is exactly `TheHalfMoon/MESC`, base ref is exactly `main`, head repository is exactly `TheHalfMoon/MESC`, and retained `headRefName` is exactly `PREFLIGHT_RESULT_PR_HEAD_REF`. PR state may be open, closed, or merged and is not a selector. Title, labels, reviews, and free-form body prose are never selectors. If a current head OID is exposed, it must equal the authoritative `RESULT_REF` target in the same replay snapshot. If the result branch was deleted and a current head OID is unavailable, the retained exact `headRefName` still selects the PR and it remains replay evidence; it must be reconciled through canonical history, permitted receipts, and the exact evidence block. Missing/unreadable required structural fields, an unreconcilable selected PR, or a same-authorization/different-receipt result-PR head is `BLOCKED`. Only a structurally selected PR may have its marker-delimited evidence block parsed.
 
 Before `UNUSED` can be accepted, the worker must exhaustively and independently:
 
 1. enumerate all refs under `RESULT_REF_PREFIX`;
 2. enumerate all refs under `CLAIM_REF_PREFIX`;
 3. traverse all commit history reachable from then-current canonical `main`, following every parent to roots with no shallow/truncated boundary; and
-4. enumerate the entire open + closed/merged PR population and inspect relevant structural metadata plus the exact evidence block only.
+4. enumerate the entire open + closed/merged PR population, apply the exact deterministic preflight-result PR predicate to every PR, and inspect only the selected PR structural record plus the exact evidence block.
 
-Every page/cursor must be consumed. Missing objects, permission limits, shallow history, truncation, omitted pages/cursors, malformed refs, conflicting evidence, or inability to prove completeness => `BLOCKED`.
+Every page/cursor must be consumed. Missing objects, missing required PR structural fields, permission limits, shallow history, truncation, omitted pages/cursors, malformed refs, conflicting evidence, or inability to prove completeness => `BLOCKED`.
 
 The worker must construct the canonical `PRECLAIM_REPLAY_SNAPSHOT` defined in `acceptance.md`, repeat all four exhaustive searches immediately before claim creation, and require an identical snapshot. After atomic claim creation, it must repeat them again before creating `RESULT_REF`; the only permitted relevant delta is appearance of the exact `CLAIM_REF` at `AUTHORIZATION_MERGE_SHA`. Any other drift => `BLOCKED`, no result-ref creation, no frozen-content read. The successful claim itself remains permanent replay evidence, so the episode cannot revert to `UNUSED`.
 
@@ -151,21 +154,21 @@ state = BLOCKED
 
 ## Post-merge adoption verification
 
-Canonical merge is the repository adoption event, but post-merge verification does not rewrite the immutable terminal receipt. It produces a separate adoption-verification outcome:
+Canonical merge of the result package is the repository adoption event, but post-merge verification does not rewrite the immutable terminal receipt or mutate `RESULT_ROOT`. The verification outcome is usable only through one immutable canonical adoption record outside the result package:
 
 ```text
-CANONICAL_ADOPTION_VERIFIED = PASS
+ADOPTION_RECORD_PATH = specs/mesc-backbone-tournament/execution-preflight-1-adoption/<RESULT_MERGE_SHA>/canonical-adoption-verification.json
 ```
 
-only if canonical merge SHA/tree/ordered parents/signature and the exact merged result package are mechanically valid. Otherwise:
+The record is canonical JSON under `MESC-BT-PREFLIGHT-CANONICAL-JSON-V1`, contains no self-digest field, and must bind exactly the verified result adoption. It contains at least: `record_version = MESC-BT-PREFLIGHT-CANONICAL-ADOPTION-V1`, `decision_id`, `authorization_merge_sha`, `activation_receipt_id`, `result_merge_sha`, `result_merge_tree`, exact ordered parent array `[PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA]`, `reviewed_result_head_sha`, `preflight_result_manifest_sha256`, the complete final `result_package_artifacts` path/SHA-256/byte-length map, `terminal_receipt_commit`, `terminal_receipt_sha256`, exact claim/result ref identities and terminal targets, terminal protection identity/version, and `merge_signature_verification`. The signature-verification object records hosting `verified`, hosting `reason`, `signature_sha256 = SHA256(UTF8(exact hosting verification.signature text))`, and `payload_sha256 = SHA256(UTF8(exact hosting verification.payload text))`. It also records `outcome` as exactly `CANONICAL_ADOPTION_VERIFIED` or `CANONICAL_ADOPTION_VERIFICATION_FAILED`; failed verification records an exact deterministic `failed_checks` array and grants no authority.
 
-```text
-CANONICAL_ADOPTION_VERIFICATION_FAILED
-```
+After result-merge verification, publish this record through a separate doc-only adoption-verification PR whose only new artifact is the exact `ADOPTION_RECORD_PATH`; review that exact head and merge it with expected-head protection. A PASS outcome is not canonically usable until that adoption-record file is present on canonical `main`. This separate record never changes the frozen `RESULT_REF`, terminal receipt, or result-package bytes.
 
-A verification failure leaves the successor candidate inactive/unusable and cannot turn a merged ready/`CONSUMED` preflight receipt into execution authority. Any later `FD-MESC-BT-EXEC-1` authorization must require `CANONICAL_ADOPTION_VERIFIED = PASS` and its own separately reviewed Founder authorization.
+`CANONICAL_ADOPTION_VERIFIED = PASS` therefore means: the canonical adoption record exists on `main`, has `outcome = CANONICAL_ADOPTION_VERIFIED`, and all record fields mechanically revalidate against the result merge, reviewed result head, final manifest/artifact digests, signature evidence, claim/result refs, and terminal protection. Any missing record, mismatched field, failed revalidation, noncanonical record PR, or `outcome = CANONICAL_ADOPTION_VERIFICATION_FAILED` means PASS is unavailable and the successor candidate remains inactive/unusable.
 
-The older `readiness-repair-2-result/execution-authorization-candidate.md` is immutable historical seed evidence. The V2 successor can supersede it only after its result package is canonically merged and `CANONICAL_ADOPTION_VERIFIED = PASS`.
+Any later `FD-MESC-BT-EXEC-1` authorization must reference the canonical adoption-record merge SHA/tree plus the exact record path, Git blob SHA, and file SHA-256; it must re-read and revalidate the record and still require its own separately reviewed Founder authorization. The adoption record is evidence only and never grants execution authority by itself.
+
+The older `readiness-repair-2-result/execution-authorization-candidate.md` is immutable historical seed evidence. The V2 successor can supersede it only after its result package is canonically merged and the canonical adoption record revalidates to `CANONICAL_ADOPTION_VERIFIED = PASS`.
 
 ## Authorized post-activation audit work
 
