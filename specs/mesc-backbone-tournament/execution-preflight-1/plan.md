@@ -9,19 +9,21 @@ Status: **PRE-EXECUTION PLAN / MODEL ACCESS PROHIBITED**
 Before claim creation:
 
 - do not read/hash/parse/decompress/derive from any frozen Repair-2 corpus, prompt, scoring-key, parser/scoring/report contract, or other frozen content;
-- inspect only authorization/replay Git metadata plus permitted non-Repair-2 episode receipts and the exact marker-delimited PR evidence block defined in `acceptance.md` from structurally selected preflight-result PRs;
+- inspect only authorization/replay Git metadata plus permitted non-Repair-2 episode receipts and the exact marker-delimited PR evidence block defined in `acceptance.md` from structurally selected current-episode preflight-result PRs;
 - do not fetch or interpret PR patches, diffs, changed-file contents, review comments, or free-form PR prose outside that evidence block;
 - verify the exact Repair-2 canonical merge `0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3` / tree `60e900daecea1cb9e64db95314bf9358387072b7` in ancestry;
 - verify the complete Repair-2 path→Git-blob identity map without reading those blobs;
 - derive `ACTIVATION_RECEIPT_ID` only from the exact ordered four-file authorization-package Git metadata preimage;
 - use the literal `RESULT_REF_PREFIX` / `CLAIM_REF_PREFIX` and exact current episode refs from `acceptance.md`;
-- define `PREFLIGHT_RESULT_PR_HEAD_REF = governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>` exactly as in `acceptance.md`;
-- classify a PR as the current-episode preflight-result PR iff base repo=`TheHalfMoon/MESC`, base ref=`main`, head repo=`TheHalfMoon/MESC`, and retained head ref name exactly equals `PREFLIGHT_RESULT_PR_HEAD_REF`; PR state is not a selector and title/labels/reviews/free-form body never select it;
-- when a selected PR exposes a current head OID, require it to equal the authoritative `RESULT_REF` target in the same replay snapshot; when the branch was deleted and the OID is unavailable, retain the PR as replay evidence and reconcile its lifecycle through history, permitted receipts, and the exact evidence block; missing structural fields, unreconcilable selected PRs, or same-authorization/different-receipt PR heads => `BLOCKED`;
+- define `PREFLIGHT_RESULT_PR_AUTH_PREFIX = governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/` and `PREFLIGHT_RESULT_PR_HEAD_REF = governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>` exactly as in `acceptance.md`;
+- apply both deterministic PR classification rules from `acceptance.md` to every enumerated PR: (1) the **current-episode selector**, requiring base repo=`TheHalfMoon/MESC`, base ref=`main`, head repo=`TheHalfMoon/MESC`, and retained head ref exactly `PREFLIGHT_RESULT_PR_HEAD_REF`; and (2) the **current-authorization namespace-conflict detector**, under which any PR with head repo=`TheHalfMoon/MESC` and retained head ref beginning with `PREFLIGHT_RESULT_PR_AUTH_PREFIX` is valid only if it also satisfies the current-episode selector;
+- PR state is not a selector; title/labels/reviews/issue linkage/author/free-form body never select it. A reserved-namespace PR with a different receipt suffix, malformed/non-64-lowercase-hex suffix, extra segment, wrong base repo/ref, or any other non-current structure => `BLOCKED`, even when its branch/ref was deleted;
+- when a current-episode selected PR exposes a current head OID, require it to equal the authoritative `RESULT_REF` target in the same replay snapshot; when the branch was deleted and the OID is unavailable, retain the PR as replay evidence and reconcile its lifecycle through history, permitted receipts, and the exact evidence block; missing structural fields, unreconcilable selected PRs, incomplete classification, or any reserved-namespace conflict => `BLOCKED`;
 - validate every descendant syntax; for the current authorization SHA, any same-SHA ref with a different receipt ID is conflicting sibling evidence and => `BLOCKED`;
 - exhaustively enumerate every result-prefix ref and every claim-prefix ref, consuming all pages/cursors;
 - traverse all canonical history reachable from then-current `main`, following every parent to roots and proving no shallow/truncated boundary;
-- enumerate the full open + closed/merged PR population, consuming all pages/cursors, apply the exact deterministic PR predicate to every PR, and inspect only selected PR structural records plus the exact evidence block;
+- enumerate the full open + closed/merged PR population, consuming all pages/cursors, apply **both** deterministic PR classification rules to every PR, reject any namespace conflict, and inspect only current-episode selected PR structural records plus their exact evidence blocks;
+- require the PR evidence object keyset/version and replay-snapshot keyset/version exactly as defined in `acceptance.md`; unknown/duplicate/missing keys or wrong constant values fail closed;
 - reject failed/permission-limited/truncated/incomplete searches, unreadable required PR structural fields, incomplete PR classification, and malformed/conflicting evidence fail-closed;
 - validate exact claim/result targets and, for result targets, the required commit graph/tree/lifecycle/CAS evidence using only permitted non-Repair-2 episode evidence;
 - classify replay state with terminal canonical receipt → in-progress → claim-only → unused precedence; any ambiguity => `BLOCKED`;
@@ -29,11 +31,11 @@ Before claim creation:
 
 ### Replay/claim linearization
 
-1. After the first complete replay search, construct canonical `PRECLAIM_REPLAY_SNAPSHOT` exactly as defined in `acceptance.md`, including the selected-PR structural/evidence records generated by the exact predicate.
-2. Immediately before claim creation, repeat all four exhaustive searches and require the snapshot to be byte-identical.
+1. After the first complete replay search, construct canonical `PRECLAIM_REPLAY_SNAPSHOT` exactly as defined in `acceptance.md`: exact top-level keys `snapshot_version`, `authorization_merge_sha`, `activation_receipt_id`, `main_tip`, `history_reachable_commit_count`, `history_graph_sha256`, `result_refs`, `claim_refs`, `selected_prs`; `snapshot_version` exactly `MESC-BT-PREFLIGHT-REPLAY-SNAPSHOT-V1`; exact per-array record schemas/order; exact history-graph preimage/digest.
+2. Immediately before claim creation, repeat all four exhaustive searches and require the canonical snapshot bytes to be byte-identical.
 3. Atomically create exactly `CLAIM_REF` create-only at `AUTHORIZATION_MERGE_SHA`.
 4. Immediately repeat all four searches again before creating `RESULT_REF`; the only permitted relevant delta is appearance of that exact claim at that exact target.
-5. Any other change in main/history boundary, result refs, sibling claim refs, selected PR evidence, or discovered state => `BLOCKED`, no result-ref creation, no frozen-content read. The claim remains permanent replay evidence and the episode is burned/non-reusable.
+5. `main_tip`, history digest/count, result refs, sibling claim refs, and selected PR evidence must otherwise remain identical. Any other change => `BLOCKED`, no result-ref creation, no frozen-content read. The claim remains permanent replay evidence and the episode is burned/non-reusable.
 
 ## Phase 1B — Server protections and atomic result-ref update protocol
 
@@ -213,7 +215,9 @@ Then construct exactly:
 ADOPTION_RECORD_PATH = specs/mesc-backbone-tournament/execution-preflight-1-adoption/<RESULT_MERGE_SHA>/canonical-adoption-verification.json
 ```
 
-The file is canonical JSON under `MESC-BT-PREFLIGHT-CANONICAL-JSON-V1`, contains no self-digest field, and binds the exact result adoption. Include: record version, decision ID, authorization merge SHA, activation receipt ID, result merge SHA/tree, ordered parents `[PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA]`, reviewed result head SHA, final manifest SHA-256, complete result-package artifact path/SHA-256/byte-length map, terminal receipt commit/SHA-256, exact claim/result refs and terminal targets, terminal protection identity/version/no-bypass facts, and `merge_signature_verification` with hosting `verified`, hosting `reason`, SHA-256 of the exact hosting signature text bytes, and SHA-256 of the exact hosting verification payload text bytes. Include deterministic `failed_checks` and `outcome` exactly `CANONICAL_ADOPTION_VERIFIED` or `CANONICAL_ADOPTION_VERIFICATION_FAILED`.
+The file is canonical JSON under `MESC-BT-PREFLIGHT-CANONICAL-JSON-V1`, contains no self-digest field, and MUST contain exactly these top-level keys: `record_version`, `decision_id`, `authorization_merge_sha`, `activation_receipt_id`, `result_merge_sha`, `result_merge_tree`, `ordered_parents`, `reviewed_result_head_sha`, `preflight_result_manifest_sha256`, `result_package_artifacts`, `terminal_receipt_commit`, `terminal_receipt_sha256`, `claim_ref`, `claim_ref_target`, `result_ref`, `result_ref_terminal_target`, `terminal_result_ref_protection`, `merge_signature_verification`, `failed_checks`, and `outcome`. Unknown, missing, or duplicate top-level keys invalidate the record.
+
+Apply the exact value and nested-schema rules from `acceptance.md`: `record_version = MESC-BT-PREFLIGHT-CANONICAL-ADOPTION-V1`; `decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT`; ordered parents exactly `[PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA]`; complete exact `result_package_artifacts` map with each value containing only `sha256` and `byte_length`; exact `terminal_result_ref_protection` keys `mechanism_identity`, `mechanism_version`, `observed_result_ref_target`, `terminal_frozen`, `no_configured_bypass`; exact `merge_signature_verification` keys `verified`, `reason`, `signature_sha256`, `payload_sha256`; deterministic unique NFC `failed_checks` strings sorted by Unicode code point; and `outcome` exactly `CANONICAL_ADOPTION_VERIFIED` or `CANONICAL_ADOPTION_VERIFICATION_FAILED`. Unknown/missing/duplicate nested keys or a value that does not mechanically revalidate invalidates the record.
 
 Publish this record through a separate doc-only adoption-verification PR whose only newly introduced artifact is `ADOPTION_RECORD_PATH`. The adoption-record PR must itself receive exact-head review and expected-head merge protection. It must not change `RESULT_ROOT`, the frozen `RESULT_REF`, terminal receipt, or result-package bytes.
 
