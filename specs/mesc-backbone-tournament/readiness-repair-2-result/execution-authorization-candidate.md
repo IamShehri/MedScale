@@ -12,6 +12,27 @@ A future `FD-MESC-BT-EXEC-1` may authorize one bounded zero-shot Backbone Tourna
 
 It may not become active until every activation field below is exact and non-placeholder.
 
+## Frozen readiness bindings
+
+These readiness artifacts are fixed inputs to any later execution proposal:
+
+```text
+READINESS_CORPUS_SPEC_ID = MESC-BT-CORPUS-SPEC-V1
+READINESS_CORPUS_SPEC_ITEM_COUNT = 240
+READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
+
+PROMPT_BUNDLE_ID = MESC-BT-PROMPTS-V1
+TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
+SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
+
+PROTOCOL_ID = MESC-BT-PROTOCOL-V1
+PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
+PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
+
+REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
+REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+```
+
 ## Required exact activation bindings
 
 ### Canonical code
@@ -34,24 +55,19 @@ google/medgemma-1.5-4b-it @ 91850547d9f0b2fdd21aa7c5f4f3d1a8a52c243b
 
 Tokenizer/processor revisions must equal the selected model-repository revision unless the later package proves and binds a different authoritative immutable asset.
 
-### Corpus
+### Materialized execution corpus
+
+The readiness corpus-spec digest above is already frozen. Execution additionally requires the concrete synthetic/hand-authored case payload bytes:
 
 ```text
-CORPUS_PATH = REQUIRED
-CORPUS_ITEM_COUNT = REQUIRED; must equal 240 under MESC-BT-PROTOCOL-V1
-CORPUS_SHA256 = REQUIRED
+MATERIALIZED_CORPUS_PATH = REQUIRED
+MATERIALIZED_CORPUS_ITEM_COUNT = REQUIRED; must equal 240
+MATERIALIZED_CORPUS_SHA256 = REQUIRED; distinct from READINESS_CORPUS_SPEC_SHA256
 R2_PROVENANCE_AUDIT = REQUIRED / PASS
+SPEC_CONFORMANCE_AUDIT = REQUIRED / PASS
 ```
 
-No corpus hash may be invented before the 240-item synthetic/hand-authored corpus is materialized and independently validated.
-
-### Protocol
-
-```text
-PROTOCOL_ID = MESC-BT-PROTOCOL-V1
-PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
-SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
-```
+No materialized-corpus hash may be invented before the 240 concrete `ITEM_PAYLOAD` records are committed and independently validated against `MESC-BT-CORPUS-SPEC-V1`.
 
 ### Runtime and hardware
 
@@ -89,7 +105,7 @@ The later package must bind an explicit maximum number of runs/attempts per cand
 
 ### Artifact destinations
 
-Exact result/output paths, canonical serialization rules, and expected artifact hashes/digests must be specified before execution.
+Exact result/output paths, canonical serialization rules, and expected artifact hashes/digests must be specified before execution. Aggregate output must conform to `MESC-BT-REPORT-V1` and bind the exact materialized-corpus digest.
 
 ## Mandatory review/adoption gates
 
@@ -97,14 +113,15 @@ Before `FD-MESC-BT-EXEC-1` can become active:
 
 1. the repair-2 terminal result must be canonically merged and verified;
 2. ADR-0034 must be canonical;
-3. the exact 240-item corpus must be committed and R2-audited;
-4. every activation binding above must be concrete;
-5. exact-head CI/CodeQL must pass;
-6. a fresh independent exact-head review must report no unresolved blocking findings;
-7. all review threads must be resolved/dispositioned;
-8. Founder Ready and Founder Merge must be exercised on the exact execution package;
-9. merge must use expected-head protection;
-10. post-merge canonical verification must prove adoption.
+3. the frozen readiness corpus/prompt/protocol/report artifacts and digests above must be canonical;
+4. the exact 240-item materialized corpus must be committed, spec-conformance checked, and R2-audited;
+5. every activation binding above must be concrete;
+6. exact-head CI/CodeQL must pass;
+7. a fresh independent exact-head review must report no unresolved blocking findings;
+8. all review threads must be resolved/dispositioned;
+9. Founder Ready and Founder Merge must be exercised on the exact execution package;
+10. merge must use expected-head protection;
+11. post-merge canonical verification must prove adoption.
 
 ## Current state
 

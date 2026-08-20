@@ -52,17 +52,31 @@ R6_EXPENSIVE_DECISION_ADR = SATISFIED_BY_ADR_0034_CANDIDATE
 R7_NO_RESULT_WITHOUT_ARTIFACT = PRESERVED
 ```
 
-### Six-axis freeze
+### Acceptance items 16–23
 
-`MESC-BT-PROTOCOL-V1` freezes all six mandatory axes with a 240-item R2-only future corpus design, equal-treatment rules, deterministic decoding, parser/error/abstention semantics, visible scoring weights, Compact/Flagship thresholds, tie-breaks, and `NO_SELECTION` behavior.
+The readiness corpus is now an exact digest-bound 240-slot specification artifact; future case bytes remain a distinct execution-stage materialization.
 
 ```text
-PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
+READINESS_CORPUS_SPEC_ID = MESC-BT-CORPUS-SPEC-V1
+READINESS_CORPUS_ITEM_COUNT = 240
+READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
+MATERIALIZED_CORPUS_SHA256 = REQUIRED_LATER_FOR_EXECUTION
+
+PROMPT_BUNDLE_ID = MESC-BT-PROMPTS-V1
+TASK_TEMPLATE_COUNT = 6
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
+TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
+
+PROTOCOL_ID = MESC-BT-PROTOCOL-V1
+PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
+PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
+
+REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
+REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
 ALL_SIX_AXES_FROZEN = YES
 ```
 
-The exact materialized corpus hash is correctly deferred to the separate execution authorization because readiness is authorized to freeze the corpus specification/provenance contract, not fabricate uncreated corpus bytes.
+`acceptance-reconciliation.md` explicitly maps these artifacts to canonical repair-2 acceptance items 16–23. The readiness corpus-spec digest must not be substituted for the later materialized case-byte digest required by `FD-MESC-BT-EXEC-1`.
 
 ## Terminal verdict candidate
 
@@ -82,6 +96,6 @@ INFERENCE = NOT_AUTHORIZED
 
 ## Negative authority statement
 
-No model was downloaded, opened, loaded, queried, or ranked in repair-2. No gated access was requested or accepted. No synthetic tournament corpus was executed. No B0/B1/B2/B3, P01-06+, Pilot-01 test inspection, PHI/patient/product/telemetry access, training, retrieval, fallback substitution, quantization change, challenger addition, or downstream runtime implementation occurred.
+No model was downloaded, opened, loaded, queried, or ranked in repair-2. No gated access was requested or accepted. No synthetic tournament case payload was executed. No B0/B1/B2/B3, P01-06+, Pilot-01 test inspection, PHI/patient/product/telemetry access, training, retrieval, fallback substitution, quantization change, challenger addition, or downstream runtime implementation occurred.
 
 Until canonical adoption of this exact result, repair-2 remains active/non-terminal and the prior canonical readiness state remains the source of truth.

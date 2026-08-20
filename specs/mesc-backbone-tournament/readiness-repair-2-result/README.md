@@ -44,12 +44,38 @@ All four non-empty roster slots were independently refreshed from then-current a
 
 No non-empty slot remains `BLOCKED`. At least two distinct candidates are admitted, so the protocol-freeze phase is permitted by the controlling readiness contract.
 
+## Acceptance-artifact reconciliation
+
+The readiness corpus and future execution materialization are explicitly separated. The readiness artifact freezes the 240 item identities/archetypes/difficulty/target-state/provenance/template bindings; the later execution artifact supplies concrete synthetic/hand-authored case payloads and receives its own distinct SHA-256.
+
+```text
+READINESS_CORPUS_SPEC_ID = MESC-BT-CORPUS-SPEC-V1
+READINESS_CORPUS_ITEM_COUNT = 240
+READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
+MATERIALIZED_CORPUS_SHA256 = REQUIRED_LATER_FOR_EXECUTION
+
+PROMPT_BUNDLE_ID = MESC-BT-PROMPTS-V1
+SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
+TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
+PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
+PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
+
+REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
+REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+```
+
+See `acceptance-reconciliation.md` for the normative mapping to repair-2 acceptance items 16–23.
+
 ## Package files
 
 - `apertus-aup-resolution.md` — exact legal-artifact binding and disposition evidence.
 - `candidate-manifest.md` — refreshed exact candidate identities, revisions, licensing/access/runtime evidence, and dispositions.
-- `protocol-freeze.md` — six-axis R2-compatible corpus/equal-treatment/scoring freeze.
+- `corpus-specification.json` — canonical 240-slot readiness corpus specification and R2 materialization contract.
+- `task-prompts.json` — exact system prompt, six task templates, formatting policy, and answer-state envelope.
+- `protocol-freeze.md` — six-axis equal-treatment/decoding/scoring/resource freeze and digest bindings.
+- `report-schema.json` — canonical future aggregate-report JSON Schema.
 - `reproducibility-schema.md` — required future run/artifact identity contract.
+- `acceptance-reconciliation.md` — explicit readiness-spec versus later materialized-corpus distinction and acceptance mapping.
 - `execution-authorization-candidate.md` — `FD-MESC-BT-EXEC-1` candidate, explicitly inactive.
 - `readiness-verdict.md` — terminal repair-2 verdict candidate.
 - `docs/adr/0034-backbone-tournament-protocol-freeze.md` — R6 decision record for experiment-defining protocol choices.

@@ -4,6 +4,17 @@ Status: **FROZEN READINESS CONTRACT — FUTURE EXECUTION ONLY**
 
 This schema defines what a separately authorized tournament must record. It creates no execution authority.
 
+Frozen readiness artifact identities:
+
+```text
+READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
+TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
+SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
+PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
+PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
+REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+```
+
 ## 1. Run identity
 
 Every future candidate run must bind:
@@ -18,9 +29,12 @@ candidate_tokenizer_or_processor_revision
 runtime_adapter_or_custom_code_revision
 protocol_id
 protocol_config_sha256
-system_prompt_sha256
-corpus_sha256
-corpus_item_count
+prompt_bundle_sha256
+prompt_protocol_sha256
+readiness_corpus_spec_sha256
+materialized_corpus_sha256
+materialized_corpus_item_count
+report_schema_sha256
 hardware_identity
 provider_identity
 runtime_versions
@@ -29,6 +43,8 @@ run_finished_at_utc
 ```
 
 No field that determines executable identity may float to `main`, `latest`, or an unpinned package version.
+
+`readiness_corpus_spec_sha256` identifies the frozen 240-slot readiness manifest. `materialized_corpus_sha256` identifies the later concrete synthetic/hand-authored JSONL case bytes. They are different artifacts and must never be substituted for one another.
 
 ## 2. Environment identity
 
@@ -58,6 +74,7 @@ Minimum normalized record:
   "candidate_revision": "...",
   "item_id": "BT-A-001",
   "axis": "A_MEDICAL_REASONING",
+  "task_template_id": "MESC-BT-TASK-A-V1",
   "prompt_hash": "sha256:...",
   "raw_output_path": "...",
   "raw_output_sha256": "...",
@@ -78,7 +95,11 @@ Raw outputs must be preserved where safe. Normalization must not overwrite or su
 
 ## 4. Aggregate report
 
-For every admitted/executed candidate, report:
+The canonical future report schema is `report-schema.json` with SHA-256:
+
+`64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1`
+
+For every admitted/executed candidate, the report records at minimum:
 
 - item count attempted/completed;
 - every failure/error count;
@@ -100,7 +121,7 @@ No silent candidate removal is permitted after execution begins.
 
 A future implementation must construct a canonical run manifest as UTF-8 canonical JSON with sorted keys and compact separators. The run digest is SHA-256 over that canonical manifest. Timestamps and filesystem paths may be included in the evidence report but must not substitute for content hashes.
 
-The manifest must reference every per-item raw-output hash and the materialized corpus/protocol hashes so a third party can prove what was evaluated.
+The manifest must reference every per-item raw-output hash, the readiness corpus-spec hash, the later materialized-corpus hash, prompt bundle hash, protocol hash, report-schema hash, and exact execution environment so a third party can prove what was evaluated.
 
 ## 6. Access and secret handling
 
@@ -108,4 +129,4 @@ Credentials, access tokens, private gated artifacts, and accepted-terms receipts
 
 ## 7. Claim boundary
 
-No tournament performance, role winner, clinical capability, or publication claim exists until a separately authorized run executes and the committed artifacts satisfy R5 and R7. This readiness package records only static evidence and a frozen protocol.
+No tournament performance, role winner, clinical capability, or publication claim exists until a separately authorized run executes and the committed artifacts satisfy R5 and R7. This readiness package records only static evidence and frozen, digest-bound readiness artifacts.
