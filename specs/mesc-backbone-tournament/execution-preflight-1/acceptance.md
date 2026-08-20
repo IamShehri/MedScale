@@ -8,48 +8,95 @@ The preflight is complete only if every requirement below is satisfied on one ex
 
 ## A. Canonical ancestry and complete input identity
 
-1. canonical authorization base SHA is recorded and contains PR #130 in ancestry;
-2. canonical authorization base tree is recorded;
-3. every frozen Repair-2 artifact consumed by the audit is identified by repository path and Git blob SHA;
-4. **all** frozen Repair-2 bindings listed in the preflight README are mandatory and must be reproduced; none is optional or conditionally applicable. Exact verification includes:
-   - `corpus-specification.json` bytes against `CORPUS_SPEC_SHA256`;
-   - `materialized-corpus.jsonl.gz` bytes against `MATERIALIZED_CORPUS_GZIP_SHA256`;
-   - decompressed logical corpus bytes against `MATERIALIZED_CORPUS_SHA256` and exact count 240;
-   - `corpus-manifest.json` bytes against `CORPUS_MANIFEST_SHA256`;
-   - every scoring-key shard by path/Git blob/manifest SHA-256/count/byte length and their frozen logical concatenation against `SCORING_KEYS_SHA256`;
-   - `task-prompts.json` exact bytes against `TASK_PROMPT_BUNDLE_SHA256`;
-   - the exact system-prompt string according to the frozen derivation against `SYSTEM_PROMPT_SHA256`;
-   - `normalized-output-schema.json` exact bytes against `NORMALIZED_OUTPUT_SCHEMA_SHA256`;
-   - `parser-contract.json` exact bytes against `PARSER_CONTRACT_SHA256`;
-   - `report-validation-contract.json` exact bytes against `REPORT_VALIDATION_CONTRACT_SHA256`;
-   - `scoring-contract.json` exact bytes against `SCORING_CONTRACT_SHA256`;
-   - `protocol-config.json` exact bytes against `PROTOCOL_CONFIG_SHA256`;
-   - the frozen composite prompt/protocol derivation against `PROMPT_PROTOCOL_SHA256`;
-   - `report-schema.json` exact bytes against `REPORT_SCHEMA_SHA256`;
-5. no corpus substitution, regeneration, rematerialization, floating ref, or omitted frozen contract binding is permitted.
+The Repair-2 canonical Git identity is fixed as:
+
+```text
+REPAIR_2_CANONICAL_MERGE_SHA = 0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3
+REPAIR_2_CANONICAL_TREE = 60e900daecea1cb9e64db95314bf9358387072b7
+```
+
+The PR number is historical metadata only and is not an ancestry predicate. The preflight must mechanically prove that `REPAIR_2_CANONICAL_MERGE_SHA` is an ancestor of the canonical authorization merge and that the commit has exactly `REPAIR_2_CANONICAL_TREE`.
+
+Every frozen Repair-2 file input used by this preflight is additionally bound to its repository path and Git blob SHA in that exact canonical tree:
+
+| Repository path | Git blob SHA |
+|---|---|
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/corpus-specification.json` | `d067a9939f8862fb5a36713fba5f5d24c4a9ef20` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/materialized-corpus.jsonl.gz` | `cfd8ec3dac6a9a1f9f638eb73b21d52f07edfc4c` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/corpus-manifest.json` | `801cfc6a591baa1d70621236cbc55e8c761c1c65` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/scoring-keys-A.jsonl` | `9f164e31bbafe8ee0479d34831e1a0506523a603` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/scoring-keys-B.jsonl` | `3811ab1b39147fdede5dbb29b7a758e68fabef3e` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/scoring-keys-C.jsonl` | `cbca882762707c84fa2afd960a2d7772e8934aed` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/scoring-keys-D.jsonl` | `fef60fa940a070a2f48da07d1a07755acb86f6e1` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/scoring-keys-E.jsonl` | `1db506fdb0b2dba74df599603d0615ee1a797e30` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/scoring-keys-F.jsonl` | `5747c4493f26ad6aa8e2b76919e86220a2c603e4` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/task-prompts.json` | `9a2edb0843e31e04c56320e93334d06471b9e69e` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/normalized-output-schema.json` | `2af7feab3bda5403c7c37a86a0b4535bbffcc2cb` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/parser-contract.json` | `7ed89a551b208854443e6e4aa4796fa30559fd2d` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/report-validation-contract.json` | `4200d144986648a5c7ac4a198d32b001367fdc4f` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/scoring-contract.json` | `a31a9e9977327c1ab269267771d717a20b270186` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/protocol-config.json` | `28bc86a263c1a5f4edc7e0edb2106f0120d207f2` |
+| `specs/mesc-backbone-tournament/readiness-repair-2-result/report-schema.json` | `6310e7ba0914e95bbf5a50d38637007c8b30299c` |
+
+All entries above are mandatory. `corpus-manifest.json` remains the immutable canonical source for the six scoring-key shard SHA-256/count/byte-length bindings; this table adds Git-object identity and does not replace that manifest.
+
+Exact frozen digest verification includes:
+
+- `corpus-specification.json` bytes against `CORPUS_SPEC_SHA256`;
+- `materialized-corpus.jsonl.gz` bytes against `MATERIALIZED_CORPUS_GZIP_SHA256`;
+- decompressed logical corpus bytes against `MATERIALIZED_CORPUS_SHA256` and exact count 240;
+- `corpus-manifest.json` bytes against `CORPUS_MANIFEST_SHA256`;
+- every scoring-key shard by path/Git blob/manifest SHA-256/count/byte length and their frozen logical concatenation against `SCORING_KEYS_SHA256`;
+- `task-prompts.json` exact bytes against `TASK_PROMPT_BUNDLE_SHA256`;
+- `normalized-output-schema.json` exact bytes against `NORMALIZED_OUTPUT_SCHEMA_SHA256`;
+- `parser-contract.json` exact bytes against `PARSER_CONTRACT_SHA256`;
+- `report-validation-contract.json` exact bytes against `REPORT_VALIDATION_CONTRACT_SHA256`;
+- `scoring-contract.json` exact bytes against `SCORING_CONTRACT_SHA256`;
+- `protocol-config.json` exact bytes against `PROTOCOL_CONFIG_SHA256`;
+- `report-schema.json` exact bytes against `REPORT_SCHEMA_SHA256`.
+
+The two derived prompt bindings are also mandatory and have exact source/preimage rules:
+
+1. `SYSTEM_PROMPT_SHA256` is `SHA256(UTF8(task-prompts.json["system_prompt"]))`, where `task-prompts.json` is the exact blob above and JSON parsing rejects duplicate member names.
+2. `PROMPT_PROTOCOL_SHA256` is SHA-256 of the no-newline canonical JSON bytes for exactly:
+
+```json
+{"prompt_bundle_sha256":"54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1cb7d532c314b7","protocol_config_sha256":"097cdd11f5389203cf432760ec316a78b12d157c0676477de69dde707e058203","system_prompt_sha256":"02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867","version":"MESC-BT-PROMPT-PROTOCOL-DIGEST-V1"}
+```
+
+The resulting digest must equal `a2a42aef340e27f9396b40810999d5f2c4136af467ce27ee9e3c149e3257c89c`.
+
+No corpus substitution, regeneration, rematerialization, floating ref, omitted frozen contract binding, or alternate derivation is permitted.
 
 Any missing path, blob identity, digest reproduction, or derivation proof => `BLOCKED`.
 
-## B. Canonical audit serialization and SHA-256 rule
+## B. Canonical JSON serialization and SHA-256 rule
 
-Both audit JSON artifacts use exactly the same serialization rule.
+`MESC-BT-PREFLIGHT-CANONICAL-JSON-V1` applies to both audit files and every preflight canonical JSON preimage or artifact that invokes this section, including activation/terminal receipts and result-manifest objects.
 
-1. The audit object MUST NOT contain any field that stores its own file SHA-256.
-2. The audit file is the exact hash preimage. It is serialized as one RFC 8259 JSON object using:
-   - UTF-8 encoding without BOM;
-   - Unicode strings normalized to NFC before serialization;
-   - object keys sorted lexicographically by Unicode code point at every object level;
-   - array order preserved exactly as defined by the audit contract;
-   - separators exactly `,` and `:` with no insignificant whitespace;
-   - JSON escaping only as required by RFC 8259; non-ASCII Unicode is encoded directly as UTF-8, not `\u`-escaped unless required by JSON syntax;
-   - booleans as `true`/`false`, null as `null`;
-   - audit numeric values restricted to base-10 integers, with no leading plus sign, no leading zeros except `0`, and no floating-point values;
-   - **no trailing newline** and no bytes before or after the JSON object.
-3. `SHA256(file_bytes)` over the complete audit file bytes is the artifact SHA-256.
-4. The resulting audit SHA-256 is published only in `preflight-result-manifest.json`; it is never inserted back into the audit file.
-5. The exact canonicalization rule identifier is `MESC-BT-PREFLIGHT-CANONICAL-JSON-V1` and must be recorded in each audit.
+Before canonicalization, every parsed JSON object MUST reject duplicate member names at every nesting level. Duplicate member names are invalid; no first-wins, last-wins, merge, or parser-dependent behavior is permitted. Detection of any duplicate member name => `BLOCKED` before serialization or SHA-256 computation.
 
-Any serializer that cannot reproduce these exact bytes => `BLOCKED`.
+Canonical serialization is one RFC 8259 JSON object using:
+
+- UTF-8 encoding without BOM;
+- Unicode strings normalized to NFC before serialization;
+- object keys sorted lexicographically by Unicode code point at every object level;
+- array order preserved exactly as defined by the applicable contract;
+- separators exactly `,` and `:` with no insignificant whitespace;
+- JSON escaping only as required by RFC 8259; non-ASCII Unicode is encoded directly as UTF-8, not `\u`-escaped unless required by JSON syntax;
+- booleans as `true`/`false`, null as `null`;
+- numeric values restricted to base-10 integers, with no leading plus sign, no leading zeros except `0`, and no floating-point values;
+- no trailing newline and no bytes before or after the JSON object.
+
+For an audit artifact:
+
+1. the audit object MUST NOT contain any field storing its own file SHA-256;
+2. the complete canonical audit file bytes are the hash preimage;
+3. `SHA256(file_bytes)` is the audit artifact SHA-256;
+4. the digest is published only in `preflight-result-manifest.json`, never inserted back into the audit file;
+5. each audit records `canonicalization_rule_id = MESC-BT-PREFLIGHT-CANONICAL-JSON-V1`.
+
+Any parser or serializer that cannot enforce or reproduce these exact bytes => `BLOCKED`.
 
 ## C. R2 provenance audit
 
@@ -99,11 +146,8 @@ To avoid a verdict/manifest digest cycle while binding the successor bytes, cons
 
 1. Compute the exact SHA-256 of the two audit files under Section B.
 2. Compute `SHA256(file_bytes)` for `execution-binding-inventory.md`, whose file bytes MUST be UTF-8 without BOM, LF line endings, and exactly one final LF.
-3. Determine the successor-candidate binding before constructing the manifest core:
-   - if Sections A–D pass and the execution-binding inventory is complete and truthful for a provisional `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION` path, render exactly one `FD-MESC-BT-EXEC-1-CANDIDATE-V2` at `execution-authorization-candidate.md` under the preflight result directory, encoded as UTF-8 without BOM, LF line endings, and exactly one final LF; compute its exact full-file SHA-256 and byte length;
-   - otherwise no successor-candidate file may be present and the binding value is `null`;
-   - provisional rendering grants no authority and is valid only as an input to the result-package binding.
-4. Construct `manifest_binding_core` as canonical JSON under `MESC-BT-PREFLIGHT-CANONICAL-JSON-V1` containing exactly:
+3. After Sections A–D PASS and the execution-binding inventory is complete and truthful for the provisional ready path, the episode may provisionally render exactly one `FD-MESC-BT-EXEC-1-CANDIDATE-V2` solely as a Section E hash input. Render it at `execution-authorization-candidate.md` under the preflight result directory, UTF-8 without BOM, LF line endings, exactly one final LF, then compute its exact full-file SHA-256 and byte length. Provisional rendering grants no authority and is not yet a valid preflight output. If those prerequisites are not met, no successor file may be present and the binding value is `null`.
+4. Construct `manifest_binding_core` as canonical JSON under Section B containing exactly:
    - `manifest_id = MESC-BT-PREFLIGHT-RESULT-MANIFEST-V1`;
    - exact authorization decision ID;
    - exact canonical authorization merge SHA and tree;
@@ -114,27 +158,80 @@ To avoid a verdict/manifest digest cycle while binding the successor bytes, cons
 5. `MANIFEST_BINDING_CORE_SHA256 = SHA256(canonical_manifest_binding_core_bytes)`.
 6. Generate `preflight-verdict.md` in UTF-8 without BOM, LF endings, exactly one final LF, and require it to contain the exact `MANIFEST_BINDING_CORE_SHA256`, manifest ID, authorization merge SHA/tree, and terminal preflight state.
 7. Compute the exact full-file SHA-256 of `preflight-verdict.md`.
-8. Generate `preflight-result-manifest.json` as canonical JSON under Section B. It must contain the complete `manifest_binding_core` object, its SHA-256, and an `artifacts` map containing the exact path, SHA-256, and byte length of all four unconditional core outputs plus the successor candidate when `successor_candidate` is non-null.
-9. If any later binding, receipt, or acceptance check forces terminal `BLOCKED` after provisional candidate rendering, remove the successor-candidate file, set `successor_candidate = null`, and rebuild the binding core, verdict, and manifest from the resulting blocked package; stale hashes are invalid.
-10. The manifest MUST NOT contain its own file SHA-256. Its exact full-file SHA-256 is computed externally and published in `consumption-receipt.json` and in the preflight result PR description.
+8. Generate `preflight-result-manifest.json` as canonical JSON under Section B. It must contain the complete `manifest_binding_core` object, its SHA-256, and an `artifacts` map containing exact path, SHA-256, and byte length for all four unconditional core outputs plus the successor candidate when `successor_candidate` is non-null.
+9. If any Section E, F, G, receipt, claim, or later acceptance check forces terminal `BLOCKED`, remove any provisionally rendered successor, set `successor_candidate = null`, and rebuild the binding core, verdict, and manifest from the blocked package; stale hashes are invalid.
+10. The manifest MUST NOT contain its own file SHA-256. Its exact full-file SHA-256 is computed externally and recorded in the terminal receipt and the preflight result PR description.
 
 A present-but-unbound successor candidate, missing/mismatched core hash, output hash, byte length, path, or verdict reference => `BLOCKED`.
 
-## F. One-shot activation receipt, durable consumption, and replay rejection
+## F. Atomic one-shot claim, activation receipt, durable terminal receipt, and replay rejection
 
-The authorization episode requires a receipt before any audit begins.
+The authorization episode is single-use. Exactly one worker may transition it from `UNUSED`; any observed non-`UNUSED` state rejects reuse.
 
-1. After this authorization PR is canonically merged and post-merge verified, derive `ACTIVATION_RECEIPT_ID` as SHA-256 of canonical JSON under Section B containing exactly:
-   - `decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT`;
-   - canonical authorization merge SHA;
-   - canonical authorization merge tree;
-   - the four authorization-package repository paths and their Git blob SHAs;
-   - `receipt_version = MESC-BT-PREFLIGHT-RECEIPT-V1`.
-2. Before starting the episode, search canonical history and open/closed preflight-result PRs for this decision ID and receipt ID. If a canonical `consumption-receipt.json` already records this receipt as `CONSUMED`, or a different receipt is associated with the same authorization merge SHA/tree, replay is rejected => `BLOCKED`.
-3. The result branch must contain `activation-receipt.json` before audit-result publication. It must exactly reproduce the receipt preimage, `ACTIVATION_RECEIPT_ID`, and `state = ISSUED`. Missing or mismatched receipt => `BLOCKED`.
-4. A successful result package must include `consumption-receipt.json` containing the same receipt ID/preimage, `state = CONSUMED`, and the exact SHA-256 of `preflight-result-manifest.json`.
-5. Canonical merge of the result package is the durable consumed-state transition. After that merge, any attempt to reuse `FD-MESC-BT-EXEC-1-PREFLIGHT` or the same receipt is rejected fail-closed.
-6. A failed/blocked episode must still preserve its receipt and negative evidence; it may not silently restart under the same authorization. A new attempt requires a new separately reviewed founder authorization.
+### F.1 Exact activation receipt preimage
+
+After this authorization package is canonically merged and post-merge verified, derive `ACTIVATION_RECEIPT_ID` as SHA-256 of canonical JSON under Section B containing exactly these keys:
+
+- `decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT`;
+- `authorization_merge_sha = <canonical authorization merge SHA>`;
+- `authorization_merge_tree = <canonical authorization merge tree>`;
+- `authorization_package_files = <ordered array below>`;
+- `receipt_version = MESC-BT-PREFLIGHT-RECEIPT-V1`.
+
+`authorization_package_files` contains exactly four objects, in this exact array order, with each `git_blob_sha` read from the canonical authorization merge tree:
+
+1. `{"path":"specs/mesc-backbone-tournament/execution-preflight-1/README.md","git_blob_sha":"<40-hex blob SHA>"}`
+2. `{"path":"specs/mesc-backbone-tournament/execution-preflight-1/acceptance.md","git_blob_sha":"<40-hex blob SHA>"}`
+3. `{"path":"specs/mesc-backbone-tournament/execution-preflight-1/founder-authorization.md","git_blob_sha":"<40-hex blob SHA>"}`
+4. `{"path":"specs/mesc-backbone-tournament/execution-preflight-1/plan.md","git_blob_sha":"<40-hex blob SHA>"}`
+
+No other path belongs to the activation-receipt preimage. Missing, reordered, duplicated, extra, or mismatched path/blob entries => `BLOCKED`.
+
+### F.2 Replay-state table
+
+The effective episode state is:
+
+| State | Evidence | May a new episode start? |
+|---|---|---|
+| `UNUSED` | no claim ref; no matching activation/terminal receipt; no existing result episode for this authorization | YES, by atomic claim only |
+| `ISSUED` | claim ref exists but no terminal receipt; activation receipt may not yet be published | NO |
+| `IN_PROGRESS` | matching activation receipt/result branch or result PR exists and no terminal receipt is canonical | NO |
+| `BLOCKED` | matching terminal receipt records `state = BLOCKED` | NO |
+| `CONSUMED` | matching terminal receipt records `state = CONSUMED` | NO |
+
+Any ambiguity, conflicting evidence, mismatched receipt for the same authorization merge SHA/tree, or any state other than proven `UNUSED` => reject reuse and stop `BLOCKED`.
+
+### F.3 Atomic claim before any audit
+
+Before reading/decompressing the corpus for audit work, first perform the replay search over canonical history plus open/closed preflight-result PRs, then atomically create exactly one immutable claim ref:
+
+```text
+refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
+```
+
+The claim ref MUST be created with create-only semantics, only if absent, and MUST point exactly to `AUTHORIZATION_MERGE_SHA`. Creation failure because the ref already exists means another worker/episode already claimed the authorization: stop immediately without changing the ref or starting audit work.
+
+The claim ref is permanent governance evidence. Updating, force-updating, retargeting, deleting, or recreating it is prohibited. If later evidence exists but the expected claim ref is missing or points elsewhere, the authorization is `BLOCKED`; absence must never be interpreted as permission to reuse.
+
+After successful atomic claim, create the unique result branch and publish `activation-receipt.json` before any audit-result publication. It must exactly reproduce the receipt preimage, `ACTIVATION_RECEIPT_ID`, the exact claim ref, and `state = ISSUED`. Once audit work starts, the episode is logically `IN_PROGRESS` even if the immutable activation receipt continues to record its issuance state.
+
+### F.4 Terminal receipt for both outcomes
+
+Every claimed episode must terminate with `consumption-receipt.json` outside the result-manifest artifact set. It is canonical JSON under Section B and contains exactly:
+
+- `receipt_version = MESC-BT-PREFLIGHT-TERMINAL-RECEIPT-V1`;
+- `activation_receipt_id`;
+- `activation_receipt_preimage`;
+- `claim_ref`;
+- `preflight_result_manifest_sha256`;
+- `terminal_state`, exactly `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION` or `BLOCKED`;
+- `state`, exactly `CONSUMED` when `terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, otherwise exactly `BLOCKED`.
+
+A successful package therefore records `state = CONSUMED`; a blocked package records `state = BLOCKED`. Both bind the exact final manifest SHA-256 and matching activation identity. The terminal receipt is not included in the manifest hash set, avoiding a digest cycle.
+
+Canonical merge of the result package is the durable terminal-state transition. The claim ref remains permanent in either outcome. A claimed episode that cannot publish a terminal result remains burned/non-reusable; it requires a new separately reviewed Founder authorization rather than a restart.
+
+Missing/mismatched claim, activation receipt, terminal receipt, manifest digest, or state correspondence => `BLOCKED`.
 
 ## G. Remaining execution-binding inventory and single successor candidate
 
@@ -153,16 +250,21 @@ The result must explicitly report the status of every `FD-MESC-BT-EXEC-1` mandat
 
 An `UNBOUND` execution item must remain explicitly blocking for execution; it does not make a successful corpus audit false.
 
-If Sections A–D pass and the inventory is complete and truthful for the ready path, the result may provisionally render exactly one successor inactive candidate for Section E binding:
+The successor-candidate lifecycle is exactly:
+
+1. provisional rendering is allowed only under Section E after Sections A–D PASS and inventory readiness checks;
+2. provisional bytes exist only to compute the Section E manifest binding and grant no authority;
+3. `FD-MESC-BT-EXEC-1-CANDIDATE-V2` becomes a valid preflight output only if Sections A–G all pass and the terminal package is `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`;
+4. any later failure requires removal of the provisional file, `successor_candidate = null`, and deterministic rebuild of the blocked binding package.
+
+The only permitted successor identity/path is:
 
 ```text
 CANDIDATE_ID = FD-MESC-BT-EXEC-1-CANDIDATE-V2
 AUTHORITATIVE_PATH = specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md
 ```
 
-The successor is a valid preflight output only if its exact bytes are bound by Section E and Sections E–F also pass. A `BLOCKED` terminal package must not retain the successor candidate; it must use `successor_candidate = null` and preserve the blocked evidence instead.
-
-The older `readiness-repair-2-result/execution-authorization-candidate.md` remains immutable historical seed evidence and is superseded **only after** the V2 result package is canonically merged and post-merge verified. No two candidate records may simultaneously claim current authority.
+The older `readiness-repair-2-result/execution-authorization-candidate.md` remains immutable historical seed evidence and is superseded only after the V2 result package is canonically merged and post-merge verified. No two candidate records may simultaneously claim current authority.
 
 ## H. Terminal state
 

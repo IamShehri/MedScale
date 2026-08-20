@@ -17,7 +17,7 @@ Date: 2026-08-20
 This authorization activates only when all are true:
 
 1. this exact package is reviewed against then-current canonical `main`;
-2. PR #130 remains in canonical ancestry;
+2. exact Repair-2 canonical merge `0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3` / tree `60e900daecea1cb9e64db95314bf9358387072b7` remains in canonical ancestry and is mechanically verified by Git identity, not PR number;
 3. `FD-MESC-BT-READINESS-REPAIR-2 = CONSUMED / REUSABLE = NO` remains canonical;
 4. `BACKBONE_TOURNAMENT_READINESS = READY_FOR_EXECUTION_AUTHORIZATION_CANDIDATE` remains canonical;
 5. exact-head CI passes;
@@ -28,22 +28,33 @@ This authorization activates only when all are true:
 10. merge uses exact expected-head protection;
 11. post-merge canonical main/tree/ordered parents/signature are mechanically verified.
 
+Canonical merge activates only this authorization contract. It does not itself start or claim the one-shot episode.
+
 ## Authority if activated
 
 One episode may:
 
 - inspect canonical repository/governance history read-only;
-- read the exact committed Repair-2 corpus, corpus specification, manifest, scoring keys, prompts, parser/scoring/report contracts, and their Git objects;
+- read the exact committed Repair-2 corpus, corpus specification, manifest, scoring keys, prompts, parser/scoring/report contracts, and their Git objects only after the one-shot claim requirements in `acceptance.md` permit the episode to start;
 - decompress the exact committed corpus locally and compute deterministic byte lengths and SHA-256 values;
 - run deterministic local validation over all 240 committed corpus records and all 240 scoring-key records;
 - verify exact item-ID membership/order, six 40-item axes, archetype/difficulty assignment, task-template bindings, answer-state/scoring-key compatibility, evidence-reference integrity, payload/gold separation, and frozen R2 source prohibitions;
 - generate deterministic `R2_PROVENANCE_AUDIT` and `CORPUS_SPEC_MANIFEST_CONFORMANCE_AUDIT` artifacts under the exact canonical serialization rule in `acceptance.md`;
-- generate a fully hash-bound preflight result manifest, verdict, execution-binding inventory, activation receipt, and consumption receipt;
+- generate a fully hash-bound preflight result manifest, verdict, execution-binding inventory, activation receipt, and terminal receipt;
 - record negative audit findings as first-class evidence and terminate `BLOCKED` on any mismatch;
 - inspect public, ungated candidate/runtime metadata read-only only when needed to inventory remaining execution bindings;
 - record exact hardware/provider/runtime facts only when they are actually observed and independently identifiable;
-- propose, but not activate, a candidate subset of at least two previously admitted candidates;
-- create exactly one uniquely identified successor inactive candidate, `FD-MESC-BT-EXEC-1-CANDIDATE-V2`, at `specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md` only if all acceptance sections pass.
+- propose, but not activate, a candidate subset of at least two previously admitted candidates.
+
+### Successor-candidate lifecycle
+
+After Sections A–D of `acceptance.md` PASS and the execution-binding inventory is complete and truthful for the provisional ready path, the episode may render exactly one provisional `FD-MESC-BT-EXEC-1-CANDIDATE-V2` at:
+
+`specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md`
+
+That provisional file exists solely to compute the Section E manifest binding. It grants no authority and is not yet a valid output. It becomes a valid inactive preflight output only if all acceptance sections pass and the terminal state is `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`.
+
+If any later acceptance, claim, receipt, binding, review, or package check fails, the provisional successor must be removed, `successor_candidate` must be set to `null`, and the blocked manifest/verdict package must be rebuilt with fresh hashes.
 
 The existing `readiness-repair-2-result/execution-authorization-candidate.md` is immutable historical seed evidence. It is superseded only if the V2 successor is later canonically merged and post-merge verified; until then it remains the only canonical candidate record.
 
@@ -73,20 +84,41 @@ This authorization does **not** permit:
 
 ## Fail-closed rules
 
-Any mismatch in committed corpus/storage/logical/scoring-key identity, any missing frozen protocol-contract binding, any non-canonical item ID, any prohibited source indication, any gold leakage into model-visible payload, any unresolved evidence-reference mismatch, any result-package hash mismatch, any missing/mismatched activation or consumption receipt, or any inability to reproduce a required audit deterministically => `BLOCKED`.
+Any mismatch in committed corpus/storage/logical/scoring-key identity, any missing frozen protocol-contract binding, any non-canonical item ID, any prohibited source indication, any gold leakage into model-visible payload, any unresolved evidence-reference mismatch, any duplicate JSON member name in a canonicalized preflight object, any result-package hash mismatch, any missing/mismatched claim or receipt, any conflicting replay-state evidence, or any inability to reproduce a required audit deterministically => `BLOCKED`.
 
 Gated candidates remain non-accessible during this episode. No wording in this authorization constitutes acceptance of Apertus or MedGemma gated terms.
 
-## Single-use receipt and consumption rule
+## Atomic single-use claim, receipt, and consumption rule
 
-This decision is single-use and must be replay-resistant.
+This decision is single-use and replay-resistant. `acceptance.md` is normative for the exact receipt preimage, claim-ref name, canonical JSON encoding, and terminal receipt shape.
 
-1. After this authorization package is canonically merged and post-merge verified, derive `ACTIVATION_RECEIPT_ID` exactly as specified in `acceptance.md`, bound to this decision ID, the canonical authorization merge SHA/tree, and the four authorization-package Git blob SHAs.
-2. Before any audit begins, canonical history and any existing/open/closed result PR for this decision must be checked for that receipt. An already-consumed receipt, a mismatched receipt for the same authorization merge, or an existing completed/blocked episode => `BLOCKED`; this authorization cannot be replayed.
-3. The result branch must carry the matching `activation-receipt.json` before audit-result publication.
-4. Every terminal episode, successful or blocked, preserves its receipt and evidence. A successful result additionally carries `consumption-receipt.json` bound to the exact final result-manifest SHA-256.
-5. Canonical merge of the result package is the durable `CONSUMED` state. After that state exists, reuse is rejected fail-closed.
-6. A failed or blocked episode may not restart under this decision. A new attempt requires a new separately reviewed founder authorization.
+The state table is binding:
+
+| State | New episode allowed? |
+|---|---|
+| `UNUSED` | YES, only by successful atomic claim |
+| `ISSUED` | NO |
+| `IN_PROGRESS` | NO |
+| `BLOCKED` | NO |
+| `CONSUMED` | NO |
+
+Before any audit or corpus-content inspection:
+
+1. derive `ACTIVATION_RECEIPT_ID` from the canonically merged four-file package exactly as specified in `acceptance.md`;
+2. search canonical history and all open/closed preflight-result PRs for the decision, receipt, claim, and prior episode evidence;
+3. require proven `UNUSED`;
+4. atomically create the immutable claim ref keyed by this decision namespace, canonical authorization merge SHA, and receipt ID, using create-only semantics;
+5. if the claim already exists or creation otherwise cannot prove exclusivity, stop immediately; do not update/delete the claim and do not begin the episode;
+6. only the successful claimant may create the unique result branch and `activation-receipt.json`.
+
+An existing claim, `ISSUED`, `IN_PROGRESS`, `BLOCKED`, `CONSUMED`, conflicting receipt, or ambiguous state always rejects reuse. Claim refs are permanent governance evidence and may not be force-updated, retargeted, deleted, or recreated.
+
+Every claimed terminal episode, successful or blocked, must preserve the activation identity and publish `consumption-receipt.json` bound to the exact final result-manifest SHA-256:
+
+- `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION` => receipt `state = CONSUMED`;
+- `BLOCKED` => receipt `state = BLOCKED`.
+
+Canonical merge of the result package is the durable terminal-state transition. A claimed episode that cannot publish a terminal package is still burned and non-reusable. Any later attempt requires a new separately reviewed Founder authorization.
 
 Terminal outcomes are only:
 

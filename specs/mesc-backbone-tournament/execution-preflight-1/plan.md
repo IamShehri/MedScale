@@ -2,22 +2,26 @@
 
 Status: **PRE-EXECUTION PLAN / MODEL ACCESS PROHIBITED**
 
-## Phase 1 — Exact canonical input capture and receipt issuance
+## Phase 1 — Exact canonical input capture, replay proof, and atomic claim
 
 - record then-current canonical authorization merge SHA/tree;
-- require PR #130 in ancestry;
-- enumerate exact Repair-2 artifact paths, Git blob SHAs, byte lengths, and every frozen SHA-256 binding listed in the authorization README;
-- verify every frozen prompt/parser/scoring/protocol/report contract binding without an optional or “as applicable” path;
-- derive `ACTIVATION_RECEIPT_ID` under `MESC-BT-PREFLIGHT-RECEIPT-V1` exactly as defined in `acceptance.md`;
-- reject replay if the same authorization is already consumed, completed, blocked, or associated with a mismatched receipt;
-- create the matching `activation-receipt.json` on the unique preflight-result branch before audit-result publication;
-- fail closed if any frozen binding or receipt invariant cannot be reproduced.
+- mechanically require Repair-2 canonical merge `0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3` / tree `60e900daecea1cb9e64db95314bf9358387072b7` in ancestry; do not use a PR number as the predicate;
+- verify the complete Repair-2 repository path→Git-blob map and every frozen SHA-256 binding listed in `README.md` / `acceptance.md`;
+- verify the exact `SYSTEM_PROMPT_SHA256` and `PROMPT_PROTOCOL_SHA256` derivations from their bound source blobs;
+- derive `ACTIVATION_RECEIPT_ID` from the exact ordered four-file authorization-package preimage under `MESC-BT-PREFLIGHT-RECEIPT-V1`;
+- search canonical history plus every open/closed preflight-result PR for prior claim/receipt/episode evidence;
+- require the state to be provably `UNUSED`; `ISSUED`, `IN_PROGRESS`, `BLOCKED`, `CONSUMED`, conflicting, or ambiguous evidence rejects reuse;
+- before any audit or corpus-content inspection, atomically create the immutable claim ref defined in `acceptance.md` with create-only semantics and target exactly the canonical authorization merge SHA;
+- if claim creation reports an existing ref or otherwise fails to prove exclusive creation, stop immediately without audit work and without modifying/deleting the existing claim;
+- after successful claim only, create the unique preflight-result branch and matching `activation-receipt.json`;
+- fail closed if any frozen binding, receipt, state, or claim invariant cannot be reproduced.
 
 ## Phase 2 — Deterministic R2 provenance audit
 
 - verify compressed corpus storage identity before decompression;
 - decompress the exact committed `materialized-corpus.jsonl.gz`;
 - parse every one of the 240 JSONL records;
+- reject duplicate JSON member names at every nesting level before any canonical JSON interpretation/hash operation;
 - validate R2 source prohibitions over every payload;
 - verify payload/gold separation;
 - verify every scoring-key evidence reference resolves to the same item's model-visible evidence;
@@ -55,7 +59,7 @@ Create the four unconditional core outputs:
 3. `execution-binding-inventory.md`;
 4. `preflight-verdict.md`.
 
-Before constructing the manifest binding core, determine whether a successor candidate is provisionally eligible under `acceptance.md`. If eligible, render exactly one `FD-MESC-BT-EXEC-1-CANDIDATE-V2` at `execution-authorization-candidate.md`, normalize its Markdown bytes exactly as specified, and compute its exact SHA-256 and byte length. If not eligible, no successor file may exist and `successor_candidate = null`.
+Before constructing the manifest binding core, determine whether a successor candidate is provisionally eligible under `acceptance.md`. Provisional eligibility requires Sections A–D PASS plus a complete/truthful inventory for the ready path. If eligible, render exactly one `FD-MESC-BT-EXEC-1-CANDIDATE-V2` at `execution-authorization-candidate.md` solely as a hash input, normalize its Markdown bytes exactly as specified, and compute its exact SHA-256 and byte length. Provisional rendering grants no authority. If not eligible, no successor file may exist and `successor_candidate = null`.
 
 Then bind the result without a digest cycle:
 
@@ -64,23 +68,31 @@ Then bind the result without a digest cycle:
 3. compute `MANIFEST_BINDING_CORE_SHA256` over the canonical binding-core JSON bytes;
 4. generate `preflight-verdict.md` containing that exact core hash and terminal state, then compute its full-file SHA-256;
 5. generate canonical `preflight-result-manifest.json` containing the full binding core plus exact path/SHA-256/byte-length entries for all four unconditional core outputs and the successor candidate when present;
-6. if any later binding, receipt, or acceptance check forces `BLOCKED`, remove any provisionally rendered successor, set `successor_candidate = null`, and rebuild the core, verdict, and manifest; stale hashes are invalid;
+6. if any later acceptance, claim, receipt, binding, or package check forces `BLOCKED`, remove any provisionally rendered successor, set `successor_candidate = null`, and rebuild the core, verdict, and manifest; stale hashes are invalid;
 7. compute the full manifest SHA-256 externally; do not insert it into the manifest itself;
-8. generate `consumption-receipt.json` with the matching activation receipt identity, `state = CONSUMED`, and exact final result-manifest SHA-256 only for a successful result package;
+8. generate canonical `consumption-receipt.json` outside the manifest artifact set for **both** terminal outcomes:
+   - ready terminal => `terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, `state = CONSUMED`;
+   - blocked terminal => `terminal_state = BLOCKED`, `state = BLOCKED`;
+   - both forms bind the same activation receipt identity, immutable claim ref, and exact final result-manifest SHA-256;
 9. publish the final manifest SHA-256 in the result PR description as an independently reviewable binding.
 
 Any edit to any bound result artifact, including a present successor candidate, must change the manifest binding and invalidate stale evidence.
 
 ## Phase 6 — Single successor execution-authorization candidate
 
-A successor candidate is permitted only on the provisional ready path and only through the bound construction in Phase 5:
+The successor lifecycle is strictly two-stage:
+
+1. provisional rendering after Sections A–D PASS and inventory readiness is permitted only to compute Section E hashes;
+2. the provisional file is not authoritative and grants no execution authority;
+3. it becomes a valid inactive preflight output only when Sections A–G all pass and the terminal package is ready;
+4. any later failure removes it, sets `successor_candidate = null`, and rebuilds the blocked package.
+
+The only permitted successor identity/path is:
 
 ```text
 CANDIDATE_ID = FD-MESC-BT-EXEC-1-CANDIDATE-V2
 AUTHORITATIVE_PATH = specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md
 ```
-
-A successful result may contain exactly one such candidate, and its exact bytes must be bound by `preflight-result-manifest.json`. A blocked result must contain no successor candidate and must bind `successor_candidate = null`.
 
 The prior `readiness-repair-2-result/execution-authorization-candidate.md` is immutable historical seed evidence and is superseded only after the V2 result package is canonically merged and post-merge verified. The successor remains inactive and grants no execution authority.
 
@@ -91,7 +103,7 @@ Terminal result is only:
 - `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, or
 - `BLOCKED`.
 
-A blocked episode preserves its receipt and negative evidence and cannot silently restart under this authorization.
+Every claimed episode must carry the matching terminal `consumption-receipt.json`. A blocked or otherwise burned episode cannot silently restart under this authorization.
 
 ## Phase 8 — Independent exact-head result gate
 
@@ -104,7 +116,9 @@ Before canonical adoption of the preflight result:
 - Ready only after all gates;
 - expected-head merge protection;
 - post-merge canonical SHA/tree/ordered-parent/signature verification;
-- verify the canonical merged `consumption-receipt.json` as the durable consumed-state marker.
+- verify the canonical merged terminal `consumption-receipt.json` against the exact final manifest SHA-256;
+- verify its state matches the verdict (`CONSUMED` for ready, `BLOCKED` for blocked);
+- verify the immutable claim ref still exists and points to the exact authorization merge SHA.
 
 ## Execution remains out of scope
 
