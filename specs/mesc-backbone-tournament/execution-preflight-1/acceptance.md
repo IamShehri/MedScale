@@ -6,6 +6,8 @@ Date: 2026-08-20
 
 The preflight is complete only if every requirement below is satisfied on one exact canonical input state.
 
+**Execution-order rule:** section letters are acceptance categories, not permission to read content before the one-shot claim. Before the atomic claim in Section F, the worker may inspect only Git/repository metadata required to identify the authorization and prove replay state: commit/tree ancestry, repository paths, Git blob IDs, PR/result metadata, claim/protection metadata, and the four authorization-package blob IDs. It MUST NOT read, hash, parse, decompress, or derive values from `task-prompts.json`, corpus bytes, scoring-key bytes, or any other frozen Repair-2 artifact content until the claim is successfully created, re-verified, and the matching `activation-receipt.json` is published on the unique result branch. Section A content-byte verification and Sections C–D therefore execute only after Section F.3.
+
 ## A. Canonical ancestry and complete input identity
 
 The Repair-2 canonical Git identity is fixed as:
@@ -15,9 +17,9 @@ REPAIR_2_CANONICAL_MERGE_SHA = 0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3
 REPAIR_2_CANONICAL_TREE = 60e900daecea1cb9e64db95314bf9358387072b7
 ```
 
-The PR number is historical metadata only and is not an ancestry predicate. The preflight must mechanically prove that `REPAIR_2_CANONICAL_MERGE_SHA` is an ancestor of the canonical authorization merge and that the commit has exactly `REPAIR_2_CANONICAL_TREE`.
+The PR number is historical metadata only and is not an ancestry predicate. Pre-claim metadata inspection must mechanically prove that `REPAIR_2_CANONICAL_MERGE_SHA` is an ancestor of the canonical authorization merge and that the commit has exactly `REPAIR_2_CANONICAL_TREE`.
 
-Every frozen Repair-2 file input used by this preflight is additionally bound to its repository path and Git blob SHA in that exact canonical tree:
+Every frozen Repair-2 file input used by this preflight is additionally bound to its repository path and Git blob SHA in that exact canonical tree. This path/blob identity check is Git metadata and may be performed pre-claim; reading or hashing the blob contents may not.
 
 | Repository path | Git blob SHA |
 |---|---|
@@ -40,7 +42,7 @@ Every frozen Repair-2 file input used by this preflight is additionally bound to
 
 All entries above are mandatory. `corpus-manifest.json` remains the immutable canonical source for the six scoring-key shard SHA-256/count/byte-length bindings; this table adds Git-object identity and does not replace that manifest.
 
-Exact frozen digest verification includes:
+**Only after successful Section F.3 claim + activation-receipt publication**, exact frozen content verification must include:
 
 - `corpus-specification.json` bytes against `CORPUS_SPEC_SHA256`;
 - `materialized-corpus.jsonl.gz` bytes against `MATERIALIZED_CORPUS_GZIP_SHA256`;
@@ -55,7 +57,7 @@ Exact frozen digest verification includes:
 - `protocol-config.json` exact bytes against `PROTOCOL_CONFIG_SHA256`;
 - `report-schema.json` exact bytes against `REPORT_SCHEMA_SHA256`.
 
-The two derived prompt bindings are also mandatory and have exact source/preimage rules:
+The two derived prompt bindings are also mandatory **post-claim only** and have exact source/preimage rules:
 
 1. `SYSTEM_PROMPT_SHA256` is `SHA256(UTF8(task-prompts.json["system_prompt"]))`, where `task-prompts.json` is the exact blob above and JSON parsing rejects duplicate member names.
 2. `PROMPT_PROTOCOL_SHA256` is SHA-256 of the no-newline canonical JSON bytes for exactly:
@@ -66,9 +68,9 @@ The two derived prompt bindings are also mandatory and have exact source/preimag
 
 The resulting digest must equal `a2a42aef340e27f9396b40810999d5f2c4136af467ce27ee9e3c149e3257c89c`.
 
-No corpus substitution, regeneration, rematerialization, floating ref, omitted frozen contract binding, or alternate derivation is permitted.
+No corpus substitution, regeneration, rematerialization, floating ref, omitted frozen contract binding, alternate derivation, or pre-claim content read is permitted.
 
-Any missing path, blob identity, digest reproduction, or derivation proof => `BLOCKED`.
+Any missing path, blob identity, digest reproduction, derivation proof, or execution-order violation => `BLOCKED`.
 
 ## B. Canonical JSON serialization and SHA-256 rule
 
@@ -170,7 +172,7 @@ The authorization episode is single-use. Exactly one worker may transition it fr
 
 ### F.1 Exact activation receipt preimage
 
-After this authorization package is canonically merged and post-merge verified, derive `ACTIVATION_RECEIPT_ID` as SHA-256 of canonical JSON under Section B containing exactly these keys:
+After this authorization package is canonically merged and post-merge verified, derive `ACTIVATION_RECEIPT_ID` using only canonical authorization Git metadata; this derivation requires no Repair-2 content read. It is SHA-256 of canonical JSON under Section B containing exactly these keys:
 
 - `decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT`;
 - `authorization_merge_sha = <canonical authorization merge SHA>`;
@@ -187,33 +189,51 @@ After this authorization package is canonically merged and post-merge verified, 
 
 No other path belongs to the activation-receipt preimage. Missing, reordered, duplicated, extra, or mismatched path/blob entries => `BLOCKED`.
 
-### F.2 Replay-state table
+### F.2 Mutually exclusive replay-state predicates
 
-The effective episode state is:
+State is evaluated with this precedence: canonical terminal receipt → matching in-progress evidence → claim-only evidence → unused. Conflicting or ambiguous evidence overrides all normal states and is `BLOCKED`.
 
-| State | Evidence | May a new episode start? |
+| State | Exact evidence predicate | May a new episode start? |
 |---|---|---|
-| `UNUSED` | no claim ref; no matching activation/terminal receipt; no existing result episode for this authorization | YES, by atomic claim only |
-| `ISSUED` | claim ref exists but no terminal receipt; activation receipt may not yet be published | NO |
-| `IN_PROGRESS` | matching activation receipt/result branch or result PR exists and no terminal receipt is canonical | NO |
-| `BLOCKED` | matching terminal receipt records `state = BLOCKED` | NO |
-| `CONSUMED` | matching terminal receipt records `state = CONSUMED` | NO |
+| `UNUSED` | no claim ref; no matching activation receipt; no result branch or open/closed result PR for this authorization/receipt; no terminal receipt; no conflicting/mismatched historical evidence | YES, by atomic claim only |
+| `ISSUED` | the exact protected claim ref exists and points to the authorization merge SHA; **no** activation receipt, result branch/PR, or terminal receipt exists yet | NO |
+| `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, result branch, or result PR exists; **no canonical terminal receipt** exists | NO |
+| `BLOCKED` | a matching canonical terminal receipt records `state = BLOCKED`, **or** any claim-protection violation, deleted/retargeted claim evidence, conflicting receipt, mismatched claim target, or ambiguous state is observed | NO |
+| `CONSUMED` | a matching canonical terminal receipt records `state = CONSUMED` and matches the final ready manifest | NO |
 
-Any ambiguity, conflicting evidence, mismatched receipt for the same authorization merge SHA/tree, or any state other than proven `UNUSED` => reject reuse and stop `BLOCKED`.
+`ISSUED` and `IN_PROGRESS` are therefore disjoint: publication/creation of any matching activation-receipt/result evidence moves the logical state from claim-only `ISSUED` to `IN_PROGRESS`. A terminal receipt supersedes both. Any state other than proven `UNUSED` => reject reuse.
 
-### F.3 Atomic claim before any audit
+### F.3 Storage-protected atomic claim before any frozen-content read
 
-Before reading/decompressing the corpus for audit work, first perform the replay search over canonical history plus open/closed preflight-result PRs, then atomically create exactly one immutable claim ref:
+Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, and search canonical history/open/closed result PR metadata for replay evidence. Do **not** read any Repair-2 blob contents.
+
+Before creating the claim, mechanically verify `CLAIM_REF_PROTECTION = PASS` at the Git hosting/storage boundary for this exact namespace:
+
+```text
+refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/**
+```
+
+The protection must be a repository ruleset, server-side hook, or equivalent durable control that is already effective and that, for this claim namespace:
+
+1. permits the controlled initial ref creation required by this episode;
+2. denies every subsequent ref update, including ordinary fast-forward updates and force updates;
+3. denies ref deletion;
+4. gives the preflight worker no bypass capable of update/deletion after creation;
+5. remains effective from immediately before claim creation through canonical terminal result adoption.
+
+Record the exact protection mechanism identity and observed enforcement facts in `activation-receipt.json` and carry them into `consumption-receipt.json`. If no such durable storage-boundary protection can be proven, do not create a claim and terminate `BLOCKED` before any frozen-content read.
+
+Then atomically create exactly one claim ref:
 
 ```text
 refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 ```
 
-The claim ref MUST be created with create-only semantics, only if absent, and MUST point exactly to `AUTHORIZATION_MERGE_SHA`. Creation failure because the ref already exists means another worker/episode already claimed the authorization: stop immediately without changing the ref or starting audit work.
+The claim ref MUST use create-only semantics, only if absent, and MUST point exactly to `AUTHORIZATION_MERGE_SHA`. Creation failure because the ref already exists means another worker/episode already claimed the authorization: stop immediately without changing the ref or starting audit work.
 
-The claim ref is permanent governance evidence. Updating, force-updating, retargeting, deleting, or recreating it is prohibited. If later evidence exists but the expected claim ref is missing or points elsewhere, the authorization is `BLOCKED`; absence must never be interpreted as permission to reuse.
+Immediately after creation, re-read the claim ref and protection control. Any missing/changed target or protection drift is `BLOCKED`. Updating, force-updating, retargeting, deleting, or recreating the claim is prohibited. If a claim is ever observed deleted or changed after creation, the episode can never be classified `UNUSED`; the observing worker must preserve durable `BLOCKED` evidence in its result package/terminal receipt and stop.
 
-After successful atomic claim, create the unique result branch and publish `activation-receipt.json` before any audit-result publication. It must exactly reproduce the receipt preimage, `ACTIVATION_RECEIPT_ID`, the exact claim ref, and `state = ISSUED`. Once audit work starts, the episode is logically `IN_PROGRESS` even if the immutable activation receipt continues to record its issuance state.
+After successful claim creation and re-verification, create the unique result branch and publish `activation-receipt.json` **before any Repair-2 frozen-content read/hash/parse/decompression**. It must reproduce the receipt preimage and `ACTIVATION_RECEIPT_ID`, record the exact `claim_ref` and target, record the verified claim-protection mechanism identity/enforcement facts, and record `state = ISSUED`. Only after this receipt is published may Section A content verification and Sections C–D begin; from the first such content operation onward the logical state is `IN_PROGRESS`.
 
 ### F.4 Terminal receipt for both outcomes
 
@@ -223,15 +243,17 @@ Every claimed episode must terminate with `consumption-receipt.json` outside the
 - `activation_receipt_id`;
 - `activation_receipt_preimage`;
 - `claim_ref`;
+- `claim_ref_target`;
+- `claim_ref_protection` containing the exact protection mechanism identity and terminal re-verification facts;
 - `preflight_result_manifest_sha256`;
 - `terminal_state`, exactly `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION` or `BLOCKED`;
 - `state`, exactly `CONSUMED` when `terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, otherwise exactly `BLOCKED`.
 
 A successful package therefore records `state = CONSUMED`; a blocked package records `state = BLOCKED`. Both bind the exact final manifest SHA-256 and matching activation identity. The terminal receipt is not included in the manifest hash set, avoiding a digest cycle.
 
-Canonical merge of the result package is the durable terminal-state transition. The claim ref remains permanent in either outcome. A claimed episode that cannot publish a terminal result remains burned/non-reusable; it requires a new separately reviewed Founder authorization rather than a restart.
+Canonical merge of the result package is the durable terminal-state transition. The protected claim ref remains permanent in either outcome. A claimed episode that cannot publish a terminal result remains burned/non-reusable; any later evidence of the claim or its activation receipt prevents `UNUSED`. It requires a new separately reviewed Founder authorization rather than a restart.
 
-Missing/mismatched claim, activation receipt, terminal receipt, manifest digest, or state correspondence => `BLOCKED`.
+Missing/mismatched protection, claim, activation receipt, terminal receipt, manifest digest, or state correspondence => `BLOCKED`.
 
 ## G. Remaining execution-binding inventory and single successor candidate
 

@@ -2,19 +2,46 @@
 
 Status: **PRE-EXECUTION PLAN / MODEL ACCESS PROHIBITED**
 
-## Phase 1 — Exact canonical input capture, replay proof, and atomic claim
+## Phase 1 — Metadata-only replay proof, protected atomic claim, then exact input verification
+
+### Phase 1A — Pre-claim metadata only
+
+Before claim creation, perform **metadata-only** checks. Do not read, hash, parse, decompress, or derive values from any frozen Repair-2 artifact content, including `task-prompts.json`, corpus bytes, scoring-key bytes, parser/scoring/report JSON, or other content blobs.
+
+Permitted pre-claim operations are limited to:
 
 - record then-current canonical authorization merge SHA/tree;
 - mechanically require Repair-2 canonical merge `0ee6f6d2cfba8f5ac3850c08a0a9b1a9040144a3` / tree `60e900daecea1cb9e64db95314bf9358387072b7` in ancestry; do not use a PR number as the predicate;
-- verify the complete Repair-2 repository path→Git-blob map and every frozen SHA-256 binding listed in `README.md` / `acceptance.md`;
-- verify the exact `SYSTEM_PROMPT_SHA256` and `PROMPT_PROTOCOL_SHA256` derivations from their bound source blobs;
-- derive `ACTIVATION_RECEIPT_ID` from the exact ordered four-file authorization-package preimage under `MESC-BT-PREFLIGHT-RECEIPT-V1`;
-- search canonical history plus every open/closed preflight-result PR for prior claim/receipt/episode evidence;
-- require the state to be provably `UNUSED`; `ISSUED`, `IN_PROGRESS`, `BLOCKED`, `CONSUMED`, conflicting, or ambiguous evidence rejects reuse;
-- before any audit or corpus-content inspection, atomically create the immutable claim ref defined in `acceptance.md` with create-only semantics and target exactly the canonical authorization merge SHA;
-- if claim creation reports an existing ref or otherwise fails to prove exclusive creation, stop immediately without audit work and without modifying/deleting the existing claim;
-- after successful claim only, create the unique preflight-result branch and matching `activation-receipt.json`;
-- fail closed if any frozen binding, receipt, state, or claim invariant cannot be reproduced.
+- compare the expected Repair-2 repository paths to their Git blob IDs from the canonical tree, without reading blob contents;
+- derive `ACTIVATION_RECEIPT_ID` only from the exact ordered four-file authorization-package path/blob-ID preimage under `MESC-BT-PREFLIGHT-RECEIPT-V1`;
+- search canonical history and every open/closed preflight-result PR for prior claim/receipt/result evidence;
+- classify state using the mutually exclusive predicates and precedence in `acceptance.md`: terminal → in-progress → claim-only → unused, with any conflict/ambiguity => `BLOCKED`;
+- require the state to be provably `UNUSED`;
+- mechanically verify storage-boundary protection for `refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/**`: repository ruleset, server-side hook, or equivalent durable enforcement must permit controlled first creation while denying all later updates/force-updates/deletions, deny the preflight worker any relevant bypass, and remain effective through canonical terminal adoption;
+- if protection cannot be proven, terminate `BLOCKED` before claim creation and before any frozen-content read.
+
+### Phase 1B — Atomic claim and issuance
+
+- atomically create the exact claim ref from `acceptance.md` with create-only semantics and target exactly the canonical authorization merge SHA;
+- if creation reports an existing claim or otherwise cannot prove exclusive creation, stop immediately without modifying/deleting the existing ref and without any frozen-content read;
+- immediately re-read the claim ref and protection mechanism; any missing/changed target, deletion evidence, or protection drift => `BLOCKED` and the episode is permanently non-reusable;
+- create the unique preflight-result branch;
+- publish matching `activation-receipt.json`, recording the receipt preimage/ID, claim ref, claim target, exact protection mechanism identity/enforcement facts, and `state = ISSUED`;
+- do not read any frozen Repair-2 content until that activation receipt is published.
+
+### Phase 1C — Post-claim exact frozen-input verification
+
+Only after Phase 1B succeeds:
+
+- read the exact frozen Repair-2 blobs identified by the canonical path→Git-blob map;
+- verify every frozen byte-level SHA-256 binding listed in `README.md` / `acceptance.md`;
+- verify the canonical corpus manifest shard hash/count/byte-length bindings;
+- parse `task-prompts.json` with duplicate-member rejection and reproduce exact `SYSTEM_PROMPT_SHA256`;
+- reproduce `PROMPT_PROTOCOL_SHA256` from its exact canonical four-field preimage;
+- verify prompt/parser/scoring/protocol/report contract bytes and digests;
+- fail closed on any mismatch or if any pre-claim content access is discovered.
+
+From the first post-claim frozen-content operation onward the logical episode state is `IN_PROGRESS`.
 
 ## Phase 2 — Deterministic R2 provenance audit
 
@@ -68,12 +95,12 @@ Then bind the result without a digest cycle:
 3. compute `MANIFEST_BINDING_CORE_SHA256` over the canonical binding-core JSON bytes;
 4. generate `preflight-verdict.md` containing that exact core hash and terminal state, then compute its full-file SHA-256;
 5. generate canonical `preflight-result-manifest.json` containing the full binding core plus exact path/SHA-256/byte-length entries for all four unconditional core outputs and the successor candidate when present;
-6. if any later acceptance, claim, receipt, binding, or package check forces `BLOCKED`, remove any provisionally rendered successor, set `successor_candidate = null`, and rebuild the core, verdict, and manifest; stale hashes are invalid;
+6. if any later acceptance, claim, protection, receipt, binding, or package check forces `BLOCKED`, remove any provisionally rendered successor, set `successor_candidate = null`, and rebuild the core, verdict, and manifest; stale hashes are invalid;
 7. compute the full manifest SHA-256 externally; do not insert it into the manifest itself;
 8. generate canonical `consumption-receipt.json` outside the manifest artifact set for **both** terminal outcomes:
    - ready terminal => `terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, `state = CONSUMED`;
    - blocked terminal => `terminal_state = BLOCKED`, `state = BLOCKED`;
-   - both forms bind the same activation receipt identity, immutable claim ref, and exact final result-manifest SHA-256;
+   - both forms bind the same activation receipt identity, exact claim ref/target, exact claim-protection identity and terminal re-verification facts, and exact final result-manifest SHA-256;
 9. publish the final manifest SHA-256 in the result PR description as an independently reviewable binding.
 
 Any edit to any bound result artifact, including a present successor candidate, must change the manifest binding and invalidate stale evidence.
@@ -103,9 +130,9 @@ Terminal result is only:
 - `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, or
 - `BLOCKED`.
 
-Every claimed episode must carry the matching terminal `consumption-receipt.json`. A blocked or otherwise burned episode cannot silently restart under this authorization.
+Every claimed episode must carry the matching terminal `consumption-receipt.json`. A blocked or otherwise burned episode cannot silently restart under this authorization. Any observation that the protected claim was later deleted, changed, retargeted, or became bypassable forces `BLOCKED` and can never restore `UNUSED`.
 
-## Phase 8 — Independent exact-head result gate
+## Phase 8 — Independent exact-head result gate and terminal claim verification
 
 Before canonical adoption of the preflight result:
 
@@ -115,10 +142,12 @@ Before canonical adoption of the preflight result:
 - zero unresolved blocking review threads;
 - Ready only after all gates;
 - expected-head merge protection;
+- immediately before merge, re-read the exact claim ref and storage-boundary protection and require both unchanged from activation;
 - post-merge canonical SHA/tree/ordered-parent/signature verification;
 - verify the canonical merged terminal `consumption-receipt.json` against the exact final manifest SHA-256;
 - verify its state matches the verdict (`CONSUMED` for ready, `BLOCKED` for blocked);
-- verify the immutable claim ref still exists and points to the exact authorization merge SHA.
+- verify the permanent claim ref still exists, points to the exact authorization merge SHA, and remains protected against update/force-update/delete without worker bypass;
+- any claim/protection integrity failure => terminal `BLOCKED`; it never permits replay or reclassification as `UNUSED`.
 
 ## Execution remains out of scope
 

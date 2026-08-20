@@ -32,10 +32,12 @@ Canonical merge activates only this authorization contract. It does not itself s
 
 ## Authority if activated
 
-One episode may:
+Before the one-shot claim succeeds, authority is limited to Git/repository metadata needed to identify this canonical authorization and prove replay/claim state: commit/tree ancestry, repository paths, Git blob IDs, result-PR metadata, claim-ref metadata, claim-protection metadata, and the four authorization-package blob IDs. **No frozen Repair-2 artifact content may be read, hashed, parsed, decompressed, or used for a derived digest before the protected atomic claim and matching activation receipt are established exactly as required by `acceptance.md`.**
 
-- inspect canonical repository/governance history read-only;
-- read the exact committed Repair-2 corpus, corpus specification, manifest, scoring keys, prompts, parser/scoring/report contracts, and their Git objects only after the one-shot claim requirements in `acceptance.md` permit the episode to start;
+Only after that protected claim and activation receipt exist may the single episode:
+
+- read the exact committed Repair-2 corpus, corpus specification, manifest, scoring keys, prompts, parser/scoring/report contracts, and their Git-object contents;
+- verify all frozen byte-level SHA-256 and prompt/protocol derivations;
 - decompress the exact committed corpus locally and compute deterministic byte lengths and SHA-256 values;
 - run deterministic local validation over all 240 committed corpus records and all 240 scoring-key records;
 - verify exact item-ID membership/order, six 40-item axes, archetype/difficulty assignment, task-template bindings, answer-state/scoring-key compatibility, evidence-reference integrity, payload/gold separation, and frozen R2 source prohibitions;
@@ -84,36 +86,41 @@ This authorization does **not** permit:
 
 ## Fail-closed rules
 
-Any mismatch in committed corpus/storage/logical/scoring-key identity, any missing frozen protocol-contract binding, any non-canonical item ID, any prohibited source indication, any gold leakage into model-visible payload, any unresolved evidence-reference mismatch, any duplicate JSON member name in a canonicalized preflight object, any result-package hash mismatch, any missing/mismatched claim or receipt, any conflicting replay-state evidence, or any inability to reproduce a required audit deterministically => `BLOCKED`.
+Any mismatch in committed corpus/storage/logical/scoring-key identity, any missing frozen protocol-contract binding, any non-canonical item ID, any prohibited source indication, any gold leakage into model-visible payload, any unresolved evidence-reference mismatch, any duplicate JSON member name in a canonicalized preflight object, any result-package hash mismatch, any pre-claim frozen-content read, any missing/mismatched claim or receipt, any missing or bypassable storage-boundary claim protection, any deleted/retargeted/updated claim after creation, any conflicting replay-state evidence, or any inability to reproduce a required audit deterministically => `BLOCKED`.
 
 Gated candidates remain non-accessible during this episode. No wording in this authorization constitutes acceptance of Apertus or MedGemma gated terms.
 
-## Atomic single-use claim, receipt, and consumption rule
+## Atomic single-use claim, receipt, protection, and consumption rule
 
-This decision is single-use and replay-resistant. `acceptance.md` is normative for the exact receipt preimage, claim-ref name, canonical JSON encoding, and terminal receipt shape.
+This decision is single-use and replay-resistant. `acceptance.md` is normative for the exact receipt preimage, claim-ref namespace, storage-boundary protection requirements, canonical JSON encoding, state predicates, and terminal receipt shape.
 
-The state table is binding:
+State evaluation uses this exact precedence: canonical terminal receipt → matching in-progress evidence → protected claim-only evidence → unused. Conflicting or ambiguous evidence is `BLOCKED`.
 
-| State | New episode allowed? |
-|---|---|
-| `UNUSED` | YES, only by successful atomic claim |
-| `ISSUED` | NO |
-| `IN_PROGRESS` | NO |
-| `BLOCKED` | NO |
-| `CONSUMED` | NO |
+| State | Exact predicate | New episode allowed? |
+|---|---|---|
+| `UNUSED` | no claim ref, activation receipt, result branch/PR, terminal receipt, or conflicting evidence for this authorization/receipt | YES, only by successful protected atomic claim |
+| `ISSUED` | exact protected claim exists at the exact authorization merge SHA, with no activation receipt, result branch/PR, or terminal receipt | NO |
+| `IN_PROGRESS` | exact protected claim exists and matching activation-receipt/result-branch/result-PR evidence exists, with no canonical terminal receipt | NO |
+| `BLOCKED` | canonical blocked terminal receipt, or any protection violation, deleted/changed claim evidence, conflicting receipt, mismatched target, or ambiguous state | NO |
+| `CONSUMED` | canonical consumed terminal receipt matches the final ready manifest | NO |
 
-Before any audit or corpus-content inspection:
+`ISSUED` and `IN_PROGRESS` are mutually exclusive. A terminal receipt supersedes both. Any state other than proven `UNUSED` rejects reuse.
 
-1. derive `ACTIVATION_RECEIPT_ID` from the canonically merged four-file package exactly as specified in `acceptance.md`;
-2. search canonical history and all open/closed preflight-result PRs for the decision, receipt, claim, and prior episode evidence;
+Before any frozen Repair-2 content read:
+
+1. derive `ACTIVATION_RECEIPT_ID` only from canonical authorization Git metadata and the exact ordered four-file authorization-package blob IDs specified in `acceptance.md`;
+2. search canonical history and all open/closed preflight-result PR metadata for the decision, receipt, claim, and prior episode evidence;
 3. require proven `UNUSED`;
-4. atomically create the immutable claim ref keyed by this decision namespace, canonical authorization merge SHA, and receipt ID, using create-only semantics;
-5. if the claim already exists or creation otherwise cannot prove exclusivity, stop immediately; do not update/delete the claim and do not begin the episode;
-6. only the successful claimant may create the unique result branch and `activation-receipt.json`.
+4. mechanically prove storage-boundary protection for `refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/**` using a repository ruleset, server-side hook, or equivalent durable control that permits the controlled initial creation but denies every subsequent update, force update, and deletion, gives the preflight worker no relevant bypass, and remains effective through canonical terminal adoption;
+5. if that protection cannot be proven, terminate `BLOCKED` before reading frozen content and do not create the claim;
+6. atomically create the exact claim ref with create-only semantics, pointing exactly to the canonical authorization merge SHA;
+7. immediately re-read and verify the claim target and protection; any drift is `BLOCKED`;
+8. only the successful claimant may create the unique result branch and publish the matching `activation-receipt.json`, recording the claim target and exact protection identity/enforcement facts;
+9. only after that activation receipt is published may any frozen Repair-2 content be read, hashed, parsed, decompressed, or used for derived digest verification.
 
-An existing claim, `ISSUED`, `IN_PROGRESS`, `BLOCKED`, `CONSUMED`, conflicting receipt, or ambiguous state always rejects reuse. Claim refs are permanent governance evidence and may not be force-updated, retargeted, deleted, or recreated.
+Competing workers observing an existing claim must stop. Claim refs are permanent governance evidence. Updating, force-updating, retargeting, deleting, or recreating a claim is prohibited. If a claim is ever observed changed or deleted after creation, that episode is permanently non-`UNUSED`; durable `BLOCKED` evidence must be preserved and the authorization cannot be restarted.
 
-Every claimed terminal episode, successful or blocked, must preserve the activation identity and publish `consumption-receipt.json` bound to the exact final result-manifest SHA-256:
+Every claimed terminal episode, successful or blocked, must preserve the activation identity and publish `consumption-receipt.json` bound to the exact final result-manifest SHA-256 and terminal re-verification of claim protection:
 
 - `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION` => receipt `state = CONSUMED`;
 - `BLOCKED` => receipt `state = BLOCKED`.
