@@ -86,7 +86,7 @@ This authorization does **not** permit:
 
 ## Fail-closed rules
 
-Any mismatch in committed corpus/storage/logical/scoring-key identity, any missing frozen protocol-contract binding, any non-canonical item ID, any prohibited source indication, any gold leakage into model-visible payload, any unresolved evidence-reference mismatch, any duplicate JSON member name in a canonicalized preflight object, any result-package hash mismatch, any pre-claim frozen-content read, any missing/mismatched claim or receipt, any failed/incomplete result-ref enumeration, any unexpected result ref, any missing or bypassable storage-boundary claim protection, any deleted/retargeted/updated claim after creation, any conflicting replay-state evidence, or any inability to reproduce a required audit deterministically => `BLOCKED`.
+Any mismatch in committed corpus/storage/logical/scoring-key identity, any missing frozen protocol-contract binding, any non-canonical item ID, any prohibited source indication, any gold leakage into model-visible payload, any unresolved evidence-reference mismatch, any duplicate JSON member name in a canonicalized preflight object, any result-package hash mismatch, any pre-claim frozen-content read, any missing/mismatched claim or receipt, any failed/incomplete result-ref **or claim-ref** enumeration, any unexpected result or claim ref, any missing or bypassable storage-boundary claim protection, any deleted/retargeted/updated claim after creation, any conflicting replay-state evidence, or any inability to reproduce a required audit deterministically => `BLOCKED`.
 
 Gated candidates remain non-accessible during this episode. No wording in this authorization constitutes acceptance of Apertus or MedGemma gated terms.
 
@@ -94,25 +94,27 @@ Gated candidates remain non-accessible during this episode. No wording in this a
 
 This decision is single-use and replay-resistant. `acceptance.md` is normative for the exact receipt preimage, claim-ref prefix, result-ref prefix, storage-boundary protection requirements, canonical JSON encoding, state predicates, and terminal receipt shape.
 
-The only permitted result-ref identity is derived exactly as:
+The only permitted result-ref and claim-ref identities are derived exactly as:
 
 ```text
 RESULT_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/
 RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
+CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/
+CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 ```
 
-`RESULT_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under the result prefix iff its full ref name starts with that exact prefix. The only well-formed descendant has exactly two non-empty path segments after the prefix: `<AUTHORIZATION_MERGE_SHA>` must be 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` must be 64 lowercase hexadecimal characters. Any other descendant ref is `BLOCKED`.
+Each prefix is a literal ref-name prefix, never a glob. A ref is under a prefix iff its full ref name starts with that exact prefix. The only well-formed descendant has exactly two non-empty path segments after the prefix: `<AUTHORIZATION_MERGE_SHA>` must be 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` must be 64 lowercase hexadecimal characters. Any other descendant under either prefix is `BLOCKED`.
 
-Before `UNUSED` may be accepted, every ref whose full name starts with `RESULT_REF_PREFIX` must be exhaustively enumerated from the authoritative Git hosting ref store with all pages/cursors consumed. Failed, permission-limited, truncated, partial, or otherwise non-exhaustive enumeration is `BLOCKED`. Any malformed/unexpected descendant ref is `BLOCKED`; any exact `RESULT_REF` is replay evidence even without a PR.
+Before `UNUSED` may be accepted, **both** prefix spaces must be independently and exhaustively enumerated from the authoritative Git hosting ref store: every ref whose full name starts with `RESULT_REF_PREFIX` and every ref whose full name starts with `CLAIM_REF_PREFIX`, with all pages/cursors consumed for each enumeration. Failed, permission-limited, truncated, partial, or otherwise non-exhaustive enumeration of either prefix is `BLOCKED`. Every discovered descendant must pass exact shape validation. Any malformed/unexpected descendant is `BLOCKED`; any exact `RESULT_REF` or exact `CLAIM_REF` is replay evidence even without a PR or receipt.
 
 State evaluation uses this exact precedence: canonical terminal receipt → matching in-progress evidence → protected claim-only evidence → unused. Conflicting or ambiguous evidence is `BLOCKED`.
 
 | State | Exact predicate | New episode allowed? |
 |---|---|---|
-| `UNUSED` | exhaustive result-ref enumeration completed; no claim ref, activation receipt, exact result ref, result PR, terminal receipt, or conflicting evidence for this authorization/receipt | YES, only by successful protected atomic claim |
+| `UNUSED` | exhaustive result-prefix and claim-prefix enumeration completed; no exact claim ref, activation receipt, exact result ref, result PR, terminal receipt, malformed/unexpected descendant, or conflicting evidence for this authorization/receipt | YES, only by successful protected atomic claim |
 | `ISSUED` | exact protected claim exists at the exact authorization merge SHA, with no activation receipt, exact result ref, result PR, or terminal receipt | NO |
 | `IN_PROGRESS` | exact protected claim exists and matching activation-receipt/exact-result-ref/result-PR evidence exists, with no canonical terminal receipt | NO |
-| `BLOCKED` | canonical blocked terminal receipt, or incomplete result-ref enumeration, unexpected result ref, protection violation, deleted/changed claim evidence, conflicting receipt, mismatched target, or ambiguous state | NO |
+| `BLOCKED` | canonical blocked terminal receipt, or incomplete result-prefix/claim-prefix enumeration, malformed/unexpected descendant under either prefix, protection violation, deleted/changed claim evidence, conflicting receipt, mismatched target, or ambiguous state | NO |
 | `CONSUMED` | canonical consumed terminal receipt matches the final ready manifest | NO |
 
 `ISSUED` and `IN_PROGRESS` are mutually exclusive. Publishing the matching activation receipt or creating the exact result ref makes the logical replay state `IN_PROGRESS`. A terminal receipt supersedes both. Any state other than proven `UNUSED` rejects reuse.
@@ -120,10 +122,10 @@ State evaluation uses this exact precedence: canonical terminal receipt → matc
 Before any frozen Repair-2 content read:
 
 1. derive `ACTIVATION_RECEIPT_ID` only from canonical authorization Git metadata and the exact ordered four-file authorization-package blob IDs specified in `acceptance.md`;
-2. exhaustively enumerate every ref whose full name starts with `RESULT_REF_PREFIX`, consuming all pages/cursors until completeness is mechanically proven, and search canonical history plus all open/closed preflight-result PR metadata for the decision, receipt, claim, and prior episode evidence;
-3. if result-ref enumeration is incomplete, fails, or exposes an unexpected/matching result ref, terminate `BLOCKED` before claim creation;
+2. exhaustively enumerate every ref whose full name starts with `RESULT_REF_PREFIX` **and** every ref whose full name starts with `CLAIM_REF_PREFIX`, independently consuming all pages/cursors until completeness of both searches is mechanically proven; validate every descendant shape; also search canonical history plus all open/closed preflight-result PR metadata for the decision, receipt, claim, and prior episode evidence;
+3. if either ref enumeration is incomplete or fails, or exposes any malformed/unexpected descendant, exact `RESULT_REF`, or exact `CLAIM_REF` inconsistent with a provably unused episode, terminate `BLOCKED` before claim creation;
 4. require proven `UNUSED`;
-5. use exactly `CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/` and `CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>`; `CLAIM_REF_PREFIX` is a literal prefix, never a glob, and the only well-formed descendant has the same exact 40-lowercase-hex/64-lowercase-hex two-segment shape; mechanically prove storage-boundary protection for every ref whose full name starts with `CLAIM_REF_PREFIX` using a repository ruleset, server-side hook, or equivalent durable control that permits the controlled initial creation but denies every subsequent update, force update, and deletion, gives the preflight worker no relevant bypass, and remains effective through canonical terminal adoption;
+5. mechanically prove storage-boundary protection for every ref whose full name starts with `CLAIM_REF_PREFIX` using a repository ruleset, server-side hook, or equivalent durable control that permits the controlled initial creation but denies every subsequent update, force update, and deletion, gives the preflight worker no relevant bypass, and remains effective through canonical terminal adoption;
 6. if that protection cannot be proven, terminate `BLOCKED` before reading frozen content and do not create the claim;
 7. atomically create exactly `CLAIM_REF` with create-only semantics, pointing exactly to the canonical authorization merge SHA;
 8. immediately re-read and verify the claim target and protection; any drift is `BLOCKED`;

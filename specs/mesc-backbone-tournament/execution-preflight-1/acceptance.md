@@ -189,45 +189,43 @@ After this authorization package is canonically merged and post-merge verified, 
 
 No other path belongs to the activation-receipt preimage. Missing, reordered, duplicated, extra, or mismatched path/blob entries => `BLOCKED`.
 
-### F.2 Mutually exclusive replay-state predicates and exhaustive result-ref discovery
+### F.2 Mutually exclusive replay-state predicates and exhaustive ref discovery
 
-The only permitted result-ref prefix and full ref identity are:
+The only permitted result-ref and claim-ref prefixes and full ref identities are:
 
 ```text
 RESULT_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/
 RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
+CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/
+CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 ```
 
-`RESULT_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under the result prefix iff its full ref name starts with that exact prefix. The only well-formed descendant has exactly two non-empty path segments after the prefix: `<AUTHORIZATION_MERGE_SHA>` MUST be 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` MUST be 64 lowercase hexadecimal characters. Any other descendant ref under `RESULT_REF_PREFIX` => `BLOCKED`.
+Each `*_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under a prefix iff its full ref name starts with that exact prefix. The only well-formed descendant under either prefix has exactly two non-empty path segments after the prefix: `<AUTHORIZATION_MERGE_SHA>` MUST be 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` MUST be 64 lowercase hexadecimal characters. Any other descendant ref under either prefix => `BLOCKED`.
 
-No other branch/ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST exhaustively enumerate every ref whose full name starts with `RESULT_REF_PREFIX` from the authoritative Git hosting ref store, consuming every page/cursor until completeness is mechanically proven. A failed, permission-limited, truncated, partially paginated, or otherwise non-exhaustive enumeration => `BLOCKED`. Any malformed or unexpected descendant ref => `BLOCKED`. Any exact `RESULT_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, whether or not a PR exists.
+No other branch/ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST independently and exhaustively enumerate **both** namespaces from the authoritative Git hosting ref store:
+
+1. every ref whose full name starts with `RESULT_REF_PREFIX`; and
+2. every ref whose full name starts with `CLAIM_REF_PREFIX`.
+
+For each enumeration, every page/cursor must be consumed until completeness is mechanically proven. A failed, permission-limited, truncated, partially paginated, or otherwise non-exhaustive enumeration of **either** prefix => `BLOCKED`. Every descendant from both enumerations must pass the exact shape validation above; any malformed or unexpected descendant => `BLOCKED`. Any exact `RESULT_REF` or exact `CLAIM_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, whether or not a PR or receipt exists.
 
 State is evaluated with this precedence: canonical terminal receipt → matching in-progress evidence → claim-only evidence → unused. Conflicting or ambiguous evidence overrides all normal states and is `BLOCKED`.
 
 | State | Exact evidence predicate | May a new episode start? |
 |---|---|---|
-| `UNUSED` | exhaustive result-ref enumeration completed; no claim ref; no matching activation receipt; no exact `RESULT_REF`; no open/closed result PR for this authorization/receipt; no terminal receipt; no conflicting/mismatched historical evidence | YES, by atomic claim only |
+| `UNUSED` | exhaustive result-prefix **and claim-prefix** enumeration completed; no exact claim ref; no matching activation receipt; no exact `RESULT_REF`; no open/closed result PR for this authorization/receipt; no terminal receipt; no malformed/unexpected descendant under either prefix; no conflicting/mismatched historical evidence | YES, by atomic claim only |
 | `ISSUED` | the exact protected claim ref exists and points to the authorization merge SHA; **no** activation receipt, exact `RESULT_REF`, result PR, or terminal receipt exists yet | NO |
 | `IN_PROGRESS` | the exact protected claim ref exists and at least one matching activation receipt, exact `RESULT_REF`, or result PR exists; **no canonical terminal receipt** exists | NO |
-| `BLOCKED` | a matching canonical terminal receipt records `state = BLOCKED`, **or** any incomplete result-ref enumeration, unexpected result ref, claim-protection violation, deleted/retargeted claim evidence, conflicting receipt, mismatched claim target, or ambiguous state is observed | NO |
+| `BLOCKED` | a matching canonical terminal receipt records `state = BLOCKED`, **or** any incomplete result-prefix/claim-prefix enumeration, malformed or unexpected descendant under either prefix, claim-protection violation, deleted/retargeted claim evidence, conflicting receipt, mismatched claim target, or ambiguous state is observed | NO |
 | `CONSUMED` | a matching canonical terminal receipt records `state = CONSUMED` and matches the final ready manifest | NO |
 
 `ISSUED` and `IN_PROGRESS` are therefore disjoint: publication/creation of any matching activation-receipt/result-ref/result-PR evidence moves the logical state from claim-only `ISSUED` to `IN_PROGRESS`. A terminal receipt supersedes both. Any state other than proven `UNUSED` => reject reuse.
 
 ### F.3 Storage-protected atomic claim before any frozen-content read
 
-Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, exhaustively enumerate all refs whose full names start with `RESULT_REF_PREFIX`, and search canonical history plus open/closed result-PR metadata for replay evidence. Do **not** read any Repair-2 blob contents. Failure to prove complete result-ref enumeration => `BLOCKED` before claim creation.
+Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, exhaustively enumerate all refs whose full names start with `RESULT_REF_PREFIX` **and** all refs whose full names start with `CLAIM_REF_PREFIX`, validate every descendant shape, and search canonical history plus open/closed result-PR metadata for replay evidence. Do **not** read any Repair-2 blob contents. Failure to prove complete enumeration of either prefix, or discovery of any malformed/unexpected descendant, => `BLOCKED` before claim creation.
 
-Before creating the claim, define and mechanically verify `CLAIM_REF_PROTECTION = PASS` at the Git hosting/storage boundary for:
-
-```text
-CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/
-CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
-```
-
-`CLAIM_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under the claim prefix iff its full ref name starts with that exact prefix. The only well-formed descendant has exactly two non-empty path segments after the prefix, with the same exact 40-lowercase-hex authorization SHA and 64-lowercase-hex receipt-ID shape. Any malformed/unexpected descendant is `BLOCKED`. The protection must cover every ref whose full name starts with `CLAIM_REF_PREFIX`.
-
-The protection must be a repository ruleset, server-side hook, or equivalent durable control that is already effective and that, for this claim prefix:
+Before creating the claim, mechanically verify `CLAIM_REF_PROTECTION = PASS` at the Git hosting/storage boundary for every ref whose full name starts with `CLAIM_REF_PREFIX`. The protection must be a repository ruleset, server-side hook, or equivalent durable control that is already effective and that, for this claim prefix:
 
 1. permits the controlled initial ref creation required by this episode;
 2. denies every subsequent ref update, including ordinary fast-forward updates and force updates;
