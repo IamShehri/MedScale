@@ -61,7 +61,7 @@ PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f
 PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
 
 REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
 ```
 
 See `acceptance-reconciliation.md` for the normative mapping to repair-2 acceptance items 16–23.
@@ -73,7 +73,7 @@ See `acceptance-reconciliation.md` for the normative mapping to repair-2 accepta
 - `corpus-specification.json` — canonical 240-slot readiness corpus specification and R2 materialization contract.
 - `task-prompts.json` — exact system prompt, six task templates, formatting policy, and answer-state envelope.
 - `protocol-freeze.md` — six-axis equal-treatment/decoding/scoring/resource freeze and digest bindings.
-- `report-schema.json` — canonical future aggregate-report JSON Schema.
+- `report-schema.json` — canonical future aggregate-report JSON Schema; it requires candidate attempt/completion counts, typed failure counts, exclusions, and negative-result records.
 - `reproducibility-schema.md` — required future run/artifact identity contract.
 - `acceptance-reconciliation.md` — explicit readiness-spec versus later materialized-corpus distinction and acceptance mapping.
 - `execution-authorization-candidate.md` — `FD-MESC-BT-EXEC-1` candidate, explicitly inactive.

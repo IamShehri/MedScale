@@ -61,10 +61,10 @@ Canonical compact sorted-key JSON Schema:
 
 ```text
 REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
 ```
 
-The schema binds the canonical code/tree identity, protocol/prompt/corpus hashes, all six axis scores, aggregate score, safety failures, role-gate outcomes, operational metrics, negative results, role results, and artifact-manifest digest. A later report must also bind the separately materialized corpus digest and exact count 240.
+The schema binds the canonical code/tree identity, protocol/prompt/corpus hashes, per-candidate attempted/completed counts, all six axis scores, aggregate score, safety failures, typed error-count records, explicit exclusions, typed candidate/global negative results, role-gate outcomes, operational metrics, role results, and artifact-manifest digest. A later report must also bind the separately materialized corpus digest and exact count 240.
 
 ## Acceptance mapping
 
@@ -77,7 +77,7 @@ The schema binds the canonical code/tree identity, protocol/prompt/corpus hashes
 | 20 — role thresholds/tie-break/resource/NO_SELECTION | `protocol-freeze.md` and ADR-0034 |
 | 21 — latency/token/cost/memory accounting | `protocol-freeze.md` and `reproducibility-schema.md` |
 | 22 — reproducibility/raw/normalized/error/exclusion/report/artifact schemas | `reproducibility-schema.md` plus `report-schema.json` |
-| 23 — prompt/protocol and report-schema digests | `092858...66ef1` and `64962c...a80d1` |
+| 23 — prompt/protocol and report-schema digests | `092858...66ef1` and `e0183f...80c56` |
 
 ## Fail-closed boundary
 

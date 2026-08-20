@@ -12,7 +12,7 @@ TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
 PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
 PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
-REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
 ```
 
 ## 1. Run identity
@@ -97,12 +97,12 @@ Raw outputs must be preserved where safe. Normalization must not overwrite or su
 
 The canonical future report schema is `report-schema.json` with SHA-256:
 
-`64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1`
+`e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56`
 
-For every admitted/executed candidate, the report records at minimum:
+For every admitted/executed candidate, the schema **requires**, rather than merely documents:
 
-- item count attempted/completed;
-- every failure/error count;
+- `items_attempted` and `items_completed` counts;
+- explicit integer counts for `TIMEOUT`, `RUNTIME_FAILURE`, `GENERATION_FAILURE`, `PARSE_FAILURE`, `SCHEMA_FAILURE`, `SAFETY_FAILURE`, and total errors;
 - six visible axis scores;
 - aggregate score using only frozen weights;
 - critical safety failure count;
@@ -110,10 +110,13 @@ For every admitted/executed candidate, the report records at minimum:
 - Flagship/Reasoner gate result;
 - median/p95 latency;
 - peak VRAM where measurable;
-- total generated tokens;
+- total input/output tokens;
 - provider cost where applicable;
-- exclusions with explicit reasons;
-- all negative results.
+- exclusions as typed records containing `item_id`, reason, and error class;
+- candidate-level negative results as typed records;
+- top-level negative-result records tied to candidate identity.
+
+The schema is fail-closed with `additionalProperties=false` on the report root, candidate report, error-count object, exclusion object, and negative-result objects. A report that omits the required evidence cannot validate as `MESC-BT-REPORT-V1`.
 
 No silent candidate removal is permitted after execution begins.
 

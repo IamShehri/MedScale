@@ -99,7 +99,7 @@ If a native processor uses modality control tokens or required chat delimiters, 
 
 Optional enhanced reasoning/thinking modes are disabled where exposed.
 
-- GPT-OSS: `reasoning_effort=medium` only because the pinned native chat contract defines that field; hidden reasoning is not scored.
+- GPT-OSS: `reasoning_effort=medium` only because the pinned native chat contract defines a required/default reasoning-effort field; hidden reasoning is not scored.
 - Apertus: optional thinking mode disabled.
 - Phi-4 Multimodal: no optional enhanced-reasoning mode enabled.
 - MedGemma: no optional enhanced-reasoning mode enabled.
@@ -228,10 +228,10 @@ Exact canonical report schema artifact:
 
 ```text
 REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
 ```
 
-A future aggregate report must conform to this schema and bind the canonical code/tree identity, protocol/prompt/corpus hashes, all six axis scores, aggregate score, safety failures, role-gate results, operational metrics, negative results, role results, and artifact-manifest digest.
+A future aggregate report must conform to this schema. For every candidate, the schema requires attempted/completed counts, typed error counts for all protocol error classes, exclusions with reasons/error classes, typed candidate negative results, all six axis scores, aggregate score, safety/gate results, and operational metrics. The report root also requires typed candidate-bound negative results, role results, canonical code/tree identity, protocol/prompt/corpus hashes, and the artifact-manifest digest.
 
 ## 11. Canonical protocol configuration payload
 

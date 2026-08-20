@@ -41,7 +41,9 @@ Rules R2 and R3 remain binding: evaluation data must be synthetic/hand-authored 
 
 5. Freeze `MESC-BT-REPORT-V1` as the aggregate report JSON Schema. Its SHA-256 is:
 
-   `64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1`
+   `e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56`
+
+   The schema is fail-closed for the aggregate evidence contract: each candidate report must include attempted/completed counts, typed failure/error counts, exclusions with reasons, typed negative results, six axis scores, aggregate score, safety/gate outcomes, and operational measurements. Top-level negative results are also typed and candidate-bound.
 
 6. Freeze common semantic limits at 8,192 input tokens and 1,024 output tokens, single-turn, with no tools or retrieval. Each candidate may use only its exact pinned native chat/processor formatting where technically necessary; semantic prompt content is identical.
 
@@ -73,6 +75,7 @@ Rules R2 and R3 remain binding: evaluation data must be synthetic/hand-authored 
 - Runtime-specific formatting can be accommodated without semantic prompt optimization.
 - A model can win neither role; the protocol does not force a positive result.
 - Readiness and execution corpus identities are cryptographically distinct, preventing a specification digest from masquerading as case-byte evidence.
+- The report schema cannot validate while omitting the attempt/completion, error, exclusion, or negative-result evidence promised by the reproducibility contract.
 
 **Negative / costs**
 
@@ -85,6 +88,7 @@ Rules R2 and R3 remain binding: evaluation data must be synthetic/hand-authored 
 - **Use vendor benchmark results to choose the backbone** — rejected because the canonical tournament requires MESC-specific evidence and pre-output equal treatment.
 - **Use external clinical benchmark datasets directly** — rejected under R2 unless separately proven compatible and authorized.
 - **Materialize clinical case payloads during readiness merely to obtain a digest** — rejected because readiness can freeze the deterministic 240-slot corpus specification while concrete case bytes remain an execution-stage artifact requiring separate validation/authorization.
+- **Leave report error/exclusion/negative-result objects open-ended** — rejected because a report could validate while omitting evidence required by the reproducibility contract.
 - **Freeze only an aggregate score** — rejected because it hides safety/evidence tradeoffs.
 - **Allow adaptive prompts per model** — rejected because it would make the comparison non-equivalent and invite post-output optimization.
 - **Force a winner** — rejected; `NO_SELECTION` preserves negative-result integrity.

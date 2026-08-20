@@ -30,7 +30,7 @@ PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f
 PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
 
 REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
 ```
 
 ## Required exact activation bindings
@@ -105,7 +105,7 @@ The later package must bind an explicit maximum number of runs/attempts per cand
 
 ### Artifact destinations
 
-Exact result/output paths, canonical serialization rules, and expected artifact hashes/digests must be specified before execution. Aggregate output must conform to `MESC-BT-REPORT-V1` and bind the exact materialized-corpus digest.
+Exact result/output paths, canonical serialization rules, and expected artifact hashes/digests must be specified before execution. Aggregate output must conform to `MESC-BT-REPORT-V1` at SHA-256 `e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56`, including per-candidate attempt/completion counts, typed failure counts, exclusions, negative results, and the exact materialized-corpus digest.
 
 ## Mandatory review/adoption gates
 

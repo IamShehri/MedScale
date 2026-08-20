@@ -72,9 +72,11 @@ PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f
 PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
 
 REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = 64962cd417e5b0816ec1a3078a506f9a5509367ed573168f9c152151035a80d1
+REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
 ALL_SIX_AXES_FROZEN = YES
 ```
+
+`report-schema.json` is fail-closed for the aggregate evidence promised by the reproducibility contract: candidate attempt/completion counts, typed error counts, exclusions with reasons, candidate/global negative-result records, scoring/gates, and operational fields are structurally required.
 
 `acceptance-reconciliation.md` explicitly maps these artifacts to canonical repair-2 acceptance items 16–23. The readiness corpus-spec digest must not be substituted for the later materialized case-byte digest required by `FD-MESC-BT-EXEC-1`.
 
