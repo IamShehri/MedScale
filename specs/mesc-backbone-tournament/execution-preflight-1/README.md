@@ -25,9 +25,15 @@ The episode may produce only:
 
 1. a deterministic R2 provenance audit over the already-frozen 240-item corpus;
 2. a deterministic corpus-specification/manifest conformance audit over the same frozen corpus;
-3. exact audit artifact SHA-256 bindings;
+3. exact audit and result-package SHA-256 bindings under the serialization rules in `acceptance.md`;
 4. a fail-closed execution-binding inventory identifying what is still unbound;
-5. an inactive `FD-MESC-BT-EXEC-1` activation candidate only if all preflight acceptance criteria pass.
+5. a uniquely identified successor candidate, `FD-MESC-BT-EXEC-1-CANDIDATE-V2`, only if all preflight acceptance criteria pass.
+
+The existing `readiness-repair-2-result/execution-authorization-candidate.md` remains immutable historical seed evidence. A successful preflight must **not** edit or duplicate its authority. Instead it creates the single successor candidate at:
+
+`specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md`
+
+That successor becomes the sole authoritative inactive execution-authorization candidate only after the entire preflight result package is separately reviewed, merged, and post-merge verified. Until then, the historical seed remains the only canonical candidate record and no execution authority exists.
 
 ## Frozen inputs
 
@@ -50,6 +56,19 @@ PROTOCOL_CONFIG_SHA256 = 097cdd11f5389203cf432760ec316a78b12d157c0676477de69dde7
 PROMPT_PROTOCOL_SHA256 = a2a42aef340e27f9396b40810999d5f2c4136af467ce27ee9e3c149e3257c89c
 REPORT_SCHEMA_SHA256 = cb3fc506b41cc6236959bb4a89bce249db13c99aeb0c7178ff233f6de44e026d
 ```
+
+Every frozen input above is mandatory. `acceptance.md` defines the exact byte/digest verification obligations; none may be omitted as “not applicable.”
+
+## Preflight result binding
+
+A successful episode must create a canonical `preflight-result-manifest.json` that binds the exact canonical authorization input identity and the exact SHA-256 of all four core outputs:
+
+- `r2-provenance-audit.json`;
+- `corpus-conformance-audit.json`;
+- `execution-binding-inventory.md`;
+- `preflight-verdict.md`.
+
+The manifest uses the non-circular binding-core construction defined in `acceptance.md`. The verdict must reference that binding-core SHA-256. A separate `consumption-receipt.json` binds the authorization package/head and final result-manifest SHA-256; it is not part of the manifest's four-output hash set and therefore creates no digest cycle.
 
 ## Hard boundary
 
