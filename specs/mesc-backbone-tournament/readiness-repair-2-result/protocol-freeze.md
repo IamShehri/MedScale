@@ -15,11 +15,11 @@ TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1c
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
 NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
 PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
-REPORT_VALIDATION_CONTRACT_SHA256 = f02e0217d5cc8120a0047b6a4d71456452d598a4b948331c536e76ca6dc3118e
-SCORING_CONTRACT_SHA256 = 8df9d1ef50ca5f56a38f68e85b1fec636b1386d7e94e96f521fb3327e4ef3e5f
-PROTOCOL_CONFIG_SHA256 = 9648deca4d7ae607d3d264c44e641d54982e670eb763638594b2d6d004fb7046
-PROMPT_PROTOCOL_SHA256 = bc5d85125c942695d8c191920a635c3cea28a68d31e3fe6de1092dd42c8bc92a
-REPORT_SCHEMA_SHA256 = 93b8251fd5c7f650bd806aa144c62a7c149720af848a74acbd0127f488384ac9
+REPORT_VALIDATION_CONTRACT_SHA256 = c68fcac507e4ebc164632370d2392631b9fec9c388369eb5b8bfa495e5877c1a
+SCORING_CONTRACT_SHA256 = a61471d467521b59eb62ee2825d23fa15891bb45a664360aaf2e4ef5882c7d40
+PROTOCOL_CONFIG_SHA256 = 097cdd11f5389203cf432760ec316a78b12d157c0676477de69dde707e058203
+PROMPT_PROTOCOL_SHA256 = a2a42aef340e27f9396b40810999d5f2c4136af467ce27ee9e3c149e3257c89c
+REPORT_SCHEMA_SHA256 = cb3fc506b41cc6236959bb4a89bce249db13c99aeb0c7178ff233f6de44e026d
 ```
 
 ## Corpus and prompt projection
@@ -36,7 +36,7 @@ A future execution authorization must re-attest the same corpus identity and bin
 
 `scoring-contract.json` is normative. Each item scores 0–100 from exact state/answer/evidence/control comparisons; protocol failures score zero and remain in denominators. Each axis is the arithmetic mean of 40 items (decimal half-up, 2dp); aggregate weights are 25/20/15/20/10/10. Compact/Flagship gates and critical-safety semantics are frozen there.
 
-`report-validation-contract.json` is also normative. It enforces exact bindings, unique candidate identities, terminal error arithmetic, exclusion correspondence, aggregate/gate recomputation, and winner linkage that JSON Schema alone cannot express.
+`report-validation-contract.json` is also normative. It enforces exact bindings, canonical corpus item-ID membership, unique candidate identities, terminal error arithmetic, exclusion correspondence, aggregate/gate recomputation, and winner linkage that JSON Schema alone cannot express.
 
 Tie order: safety → evidence fidelity → medical reasoning → lower peak VRAM → lower median latency. `peak_vram_mb` and latency must be non-negative numeric measurements for every selection participant; null/missing is report nonconformance. Remaining exact tie => `NO_SELECTION / EXACT_TIE_AFTER_ALL_FROZEN_TIE_BREAKERS`. No additional post-output tie-breaker.
 

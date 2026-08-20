@@ -15,11 +15,11 @@ TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1c
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
 NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
 PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
-REPORT_VALIDATION_CONTRACT_SHA256 = f02e0217d5cc8120a0047b6a4d71456452d598a4b948331c536e76ca6dc3118e
-SCORING_CONTRACT_SHA256 = 8df9d1ef50ca5f56a38f68e85b1fec636b1386d7e94e96f521fb3327e4ef3e5f
-PROTOCOL_CONFIG_SHA256 = 9648deca4d7ae607d3d264c44e641d54982e670eb763638594b2d6d004fb7046
-PROMPT_PROTOCOL_SHA256 = bc5d85125c942695d8c191920a635c3cea28a68d31e3fe6de1092dd42c8bc92a
-REPORT_SCHEMA_SHA256 = 93b8251fd5c7f650bd806aa144c62a7c149720af848a74acbd0127f488384ac9
+REPORT_VALIDATION_CONTRACT_SHA256 = c68fcac507e4ebc164632370d2392631b9fec9c388369eb5b8bfa495e5877c1a
+SCORING_CONTRACT_SHA256 = a61471d467521b59eb62ee2825d23fa15891bb45a664360aaf2e4ef5882c7d40
+PROTOCOL_CONFIG_SHA256 = 097cdd11f5389203cf432760ec316a78b12d157c0676477de69dde707e058203
+PROMPT_PROTOCOL_SHA256 = a2a42aef340e27f9396b40810999d5f2c4136af467ce27ee9e3c149e3257c89c
+REPORT_SCHEMA_SHA256 = cb3fc506b41cc6236959bb4a89bce249db13c99aeb0c7178ff233f6de44e026d
 ```
 
 ## Mandatory pre-activation bindings
@@ -34,7 +34,7 @@ Before activation it must bind all of the following, fail-closed:
 6. the already-frozen corpus storage/logical/count/spec/manifest identities above — **no corpus substitution or rematerialization**;
 7. a deterministic **R2 provenance audit artifact** with `RESULT=PASS` and its SHA-256, proving the frozen source/prohibition and payload/gold-separation constraints;
 8. a deterministic **corpus specification/manifest conformance audit artifact** with `RESULT=PASS` and its SHA-256, proving all 240 IDs/order/axes/archetypes/difficulty bands/answer-state rules/task-template bindings/payload integrity/R2 constraints;
-9. `MESC-BT-REPORT-VALIDATION-V1` and the exact report-schema digest above;
+9. `MESC-BT-REPORT-VALIDATION-V1` and the exact report-schema digest above, including canonical report `item_id` membership against the same 240-item corpus;
 10. exact-head CI/CodeQL, fresh independent review, zero unresolved blocking threads, Ready/post-Ready gates, expected-head merge protection, and post-merge verification.
 
 Both corpus audits must PASS **before any candidate prompt serialization or model access**. Infrastructure retries are attempt-level evidence only; every corpus item has one terminal disposition.
