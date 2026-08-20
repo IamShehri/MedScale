@@ -4,85 +4,28 @@ Status: **TERMINAL VERDICT CANDIDATE — EFFECTIVE ONLY AFTER CANONICAL MERGE AN
 
 Authority: `FD-MESC-BT-READINESS-REPAIR-2`
 
-Canonical episode snapshot:
+Base: `53f517e57602b1b721fce6edae71d6f9e64d3bc6` / tree `aff1c0ba76cd9959141c7208d8efb14b37228f16`. Apertus exact AUP blocker is resolved; all four non-empty roster candidates are refreshed/admitted; challenger is `EMPTY`; no non-empty candidate is `BLOCKED`; roster gate passes. R2/R3/R5/R6/R7 boundaries remain preserved.
 
 ```text
-main = 53f517e57602b1b721fce6edae71d6f9e64d3bc6
-tree = aff1c0ba76cd9959141c7208d8efb14b37228f16
-```
-
-## Required evidence disposition
-
-### Apertus blocker
-
-```text
-BT-RDY-BLK-APERTUS-AUP-001 = RESOLVED
-AUP_BYTE_LENGTH = 53794
-AUP_SHA256 = 424b0a0d24ee1369f9a8614d9e4c7eb0fc3ee8a9ad7ece39baea3a83f0d4ba76
-AUP_COMPUTED_GIT_BLOB = 8ddd8e25b6672340dd4f921ba623578571a65526
-AUP_AUTHORITATIVE_GIT_BLOB = 8ddd8e25b6672340dd4f921ba623578571a65526
-AUP_BINDING = EXACT_MATCH
-```
-
-The exact v1.5 PDF was interpreted only after byte identity was proven. No gated model access or terms acceptance occurred.
-
-### Candidate roster
-
-```text
-openai/gpt-oss-20b = ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE
-swiss-ai/Apertus-v1.5-8B = ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE
-microsoft/Phi-4-multimodal-instruct = ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE
-google/medgemma-1.5-4b-it = ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE
-challenger = EMPTY
-BLOCKED_NON_EMPTY_CANDIDATES = 0
-ADMITTED_DISTINCT_CANDIDATES = 4
-MINIMUM_REQUIRED = 2
-ROSTER_GATE = PASS
-```
-
-Every non-empty candidate was refreshed from then-current authoritative sources during repair-2. Historical repair-1 dispositions were not treated as current proof.
-
-### Program rules
-
-```text
-R2_SYNTHETIC_ONLY = PRESERVED
-R3_DERIVATIVE_AND_COMMERCIAL_USE = PROVEN_COMPATIBLE_FOR_ADMITTED_CANDIDATES
-R5_VERIFICATION_IS_A_RUN = PRESERVED
-R6_EXPENSIVE_DECISION_ADR = SATISFIED_BY_ADR_0034_CANDIDATE
-R7_NO_RESULT_WITHOUT_ARTIFACT = PRESERVED
-```
-
-### Acceptance items 16–23
-
-The readiness corpus is now an exact digest-bound 240-slot specification artifact; future case bytes remain a distinct execution-stage materialization.
-
-```text
-READINESS_CORPUS_SPEC_ID = MESC-BT-CORPUS-SPEC-V1
-READINESS_CORPUS_ITEM_COUNT = 240
-READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
-MATERIALIZED_CORPUS_SHA256 = REQUIRED_LATER_FOR_EXECUTION
-
-PROMPT_BUNDLE_ID = MESC-BT-PROMPTS-V1
-TASK_TEMPLATE_COUNT = 6
+CORPUS_SPEC_SHA256 = 49f554d57e29da4b1d04223d43f1630731e5f8c9b72e7a1e15f959e38c00643b
+MATERIALIZED_CORPUS_ITEM_COUNT = 240
+MATERIALIZED_CORPUS_SHA256 = 48fba9119f0170eb40775c75f12916e277cb3953abe22357e0b22497dadbbebd
+MATERIALIZED_CORPUS_GZIP_SHA256 = 667cd68e5ccc9356321eb5857c6e9203e1320ec33d866ccf514411c211ceb632
+CORPUS_MANIFEST_SHA256 = 201fa1351923a72097ff7e467b6dce2eb8bd0cfa1e88c73157788f77dd89e745
+SCORING_KEYS_SHA256 = bb3524bc8dd1f05bad433c664ac3c48a5110939ac78b5ffa2ad8853f944c6318
+TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1cb7d532c314b7
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
-TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
-
-PROTOCOL_ID = MESC-BT-PROTOCOL-V1
-PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
-PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
-
-REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
-ALL_SIX_AXES_FROZEN = YES
+NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
+PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
+SCORING_CONTRACT_SHA256 = d02f84cdc6c6609f795a909a7d4878d9193f47bdcbcb1719f9645ac7e258a63f
+PROTOCOL_CONFIG_SHA256 = 01bd6fdfbf5cfb883195c1aac9d05da7dd34f7a507ce8e81db201f591ae265b6
+PROMPT_PROTOCOL_SHA256 = b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77
+REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c
 ```
 
-`report-schema.json` is fail-closed for the aggregate evidence promised by the reproducibility contract: candidate attempt/completion counts, typed error counts, exclusions with reasons, candidate/global negative-result records, scoring/gates, and operational fields are structurally required.
+Acceptance items 16–23 are now bound by concrete synthetic corpus bytes/count, separate gold keys, prompts, strict parser/normalized schema, deterministic scoring/gates/tie result, accounting/reproducibility contracts, protocol digest, and report-schema digest.
 
-`acceptance-reconciliation.md` explicitly maps these artifacts to canonical repair-2 acceptance items 16–23. The readiness corpus-spec digest must not be substituted for the later materialized case-byte digest required by `FD-MESC-BT-EXEC-1`.
-
-## Terminal verdict candidate
-
-If and only if this exact result package passes exact-head CI/CodeQL, fresh independent exact-head review, zero unresolved blocking threads, expected-head merge protection, and post-merge canonical verification, record:
+If and only if this exact result head passes exact-head CI/CodeQL, fresh independent exact-head review, zero unresolved blocking threads, Ready/post-Ready gates, expected-head merge, and post-merge verification, record:
 
 ```text
 FD-MESC-BT-READINESS-REPAIR-2 = CONSUMED
@@ -94,10 +37,4 @@ GATED_ACCESS_REQUEST_OR_ACCEPTANCE = NOT_AUTHORIZED
 INFERENCE = NOT_AUTHORIZED
 ```
 
-`FD-MESC-BT-EXEC-1` exists only as an inactive candidate and cannot inherit execution authority from readiness.
-
-## Negative authority statement
-
-No model was downloaded, opened, loaded, queried, or ranked in repair-2. No gated access was requested or accepted. No synthetic tournament case payload was executed. No B0/B1/B2/B3, P01-06+, Pilot-01 test inspection, PHI/patient/product/telemetry access, training, retrieval, fallback substitution, quantization change, challenger addition, or downstream runtime implementation occurred.
-
-Until canonical adoption of this exact result, repair-2 remains active/non-terminal and the prior canonical readiness state remains the source of truth.
+No model access, inference, generation, tournament execution, training, retrieval, Pilot-01 inspection, PHI/patient/product/telemetry data, challenger addition, or downstream implementation occurred.

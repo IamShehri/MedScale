@@ -2,83 +2,36 @@
 
 Status: **NORMATIVE RESULT-PACKAGE RECONCILIATION CANDIDATE**
 
-This document reconciles items 16–23 of the canonically adopted `FD-MESC-BT-READINESS-REPAIR-2` acceptance contract without expanding readiness authority into model execution or weight access.
-
-## Readiness corpus versus execution materialization
-
-The term `corpus` has two distinct artifact layers that must not be conflated:
-
-1. **Readiness corpus specification** — the frozen, pre-output 240-slot evaluation manifest that fixes all item identities, six-axis allocation, archetypes, difficulty bands, target answer-state rules, R2 provenance constraints, task-template binding, and materialization rules. This is the corpus artifact required and hashable at readiness.
-2. **Execution materialized corpus** — the later concrete synthetic/hand-authored `ITEM_PAYLOAD` content for those already-frozen slots. Its byte digest cannot exist until those payloads are materialized, committed, R2-audited, and separately authorized for execution. It remains a mandatory blocker for `FD-MESC-BT-EXEC-1`.
-
-The readiness artifact is canonical compact sorted-key JSON at:
-
-`specs/mesc-backbone-tournament/readiness-repair-2-result/corpus-specification.json`
+The specific Repair-2 contract requires a frozen R2-compatible corpus (item 16) and exact corpus count/digest (item 17). This package therefore materializes the corpus during readiness without executing it.
 
 ```text
-READINESS_CORPUS_SPEC_ID = MESC-BT-CORPUS-SPEC-V1
-READINESS_CORPUS_ITEM_COUNT = 240
-READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
-MATERIALIZED_CORPUS_SHA256 = REQUIRED_LATER_FOR_EXECUTION
-```
-
-The specification deterministically expands to 40 slots per axis: eight frozen archetypes times five frozen difficulty bands. Item IDs are fixed as `BT-{axis_letter}-{001..040}`. It cannot be altered after model outputs without superseding governance.
-
-## Frozen prompt artifacts
-
-Canonical compact sorted-key JSON:
-
-`specs/mesc-backbone-tournament/readiness-repair-2-result/task-prompts.json`
-
-```text
-PROMPT_BUNDLE_ID = MESC-BT-PROMPTS-V1
-TASK_TEMPLATE_COUNT = 6
+CORPUS_SPEC_SHA256 = 49f554d57e29da4b1d04223d43f1630731e5f8c9b72e7a1e15f959e38c00643b
+MATERIALIZED_CORPUS_ITEM_COUNT = 240
+MATERIALIZED_CORPUS_SHA256 = 48fba9119f0170eb40775c75f12916e277cb3953abe22357e0b22497dadbbebd
+MATERIALIZED_CORPUS_GZIP_SHA256 = 667cd68e5ccc9356321eb5857c6e9203e1320ec33d866ccf514411c211ceb632
+CORPUS_MANIFEST_SHA256 = 201fa1351923a72097ff7e467b6dce2eb8bd0cfa1e88c73157788f77dd89e745
+SCORING_KEYS_SHA256 = bb3524bc8dd1f05bad433c664ac3c48a5110939ac78b5ffa2ad8853f944c6318
+TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1cb7d532c314b7
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
-TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
+NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
+PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
+SCORING_CONTRACT_SHA256 = d02f84cdc6c6609f795a909a7d4878d9193f47bdcbcb1719f9645ac7e258a63f
+PROTOCOL_CONFIG_SHA256 = 01bd6fdfbf5cfb883195c1aac9d05da7dd34f7a507ce8e81db201f591ae265b6
+PROMPT_PROTOCOL_SHA256 = b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77
+REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c
 ```
 
-There is one exact task template per mandatory axis. All use the same `{{ITEM_PAYLOAD}}` placeholder and normalized answer envelope. Candidate-native templates may encode identical semantics only.
-
-The frozen protocol configuration remains:
-
-```text
-PROTOCOL_ID = MESC-BT-PROTOCOL-V1
-PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
-```
-
-The prompt/protocol combined digest is SHA-256 over compact sorted-key JSON containing exactly `version`, `system_prompt_sha256`, `prompt_bundle_sha256`, and `protocol_config_sha256`:
-
-```text
-PROMPT_PROTOCOL_DIGEST_ID = MESC-BT-PROMPT-PROTOCOL-DIGEST-V1
-PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
-```
-
-## Frozen report schema
-
-Canonical compact sorted-key JSON Schema:
-
-`specs/mesc-backbone-tournament/readiness-repair-2-result/report-schema.json`
-
-```text
-REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
-```
-
-The schema binds the canonical code/tree identity, protocol/prompt/corpus hashes, per-candidate attempted/completed counts, all six axis scores, aggregate score, safety failures, typed error-count records, explicit exclusions, typed candidate/global negative results, role-gate outcomes, operational metrics, role results, and artifact-manifest digest. A later report must also bind the separately materialized corpus digest and exact count 240.
-
-## Acceptance mapping
-
-| Acceptance item | Repair-2 result artifact |
+| Acceptance item | Bound artifact |
 |---|---|
-| 16 — frozen R2-compatible corpus across six axes | `corpus-specification.json` plus `protocol-freeze.md` |
-| 17 — exact corpus count and deterministic corpus digest | count `240`; readiness corpus-spec digest `73a236...d65c3` |
-| 18 — frozen system/task prompts and execution semantics | `task-prompts.json` plus `protocol-freeze.md` |
-| 19 — metrics/weights | `protocol-freeze.md` |
-| 20 — role thresholds/tie-break/resource/NO_SELECTION | `protocol-freeze.md` and ADR-0034 |
-| 21 — latency/token/cost/memory accounting | `protocol-freeze.md` and `reproducibility-schema.md` |
-| 22 — reproducibility/raw/normalized/error/exclusion/report/artifact schemas | `reproducibility-schema.md` plus `report-schema.json` |
-| 23 — prompt/protocol and report-schema digests | `092858...66ef1` and `e0183f...80c56` |
+| 16 | `materialized-corpus.jsonl.gz` + verified decompressed 240-line JSONL, `corpus-specification.json`, `corpus-manifest.json` |
+| 17 | count `240`; logical corpus SHA-256 `48fba9119f0170eb40775c75f12916e277cb3953abe22357e0b22497dadbbebd` |
+| 18 | `task-prompts.json`, `normalized-output-schema.json`, `parser-contract.json`, `protocol-config.json` |
+| 19 | `scoring-contract.json` + `scoring-keys-A.jsonl` … `scoring-keys-F.jsonl` |
+| 20 | `scoring-contract.json`, `protocol-config.json`, ADR-0034 |
+| 21 | `protocol-freeze.md`, `reproducibility-schema.md`, `report-schema.json` |
+| 22 | normalized/parser/reproducibility/report contracts |
+| 23 | prompt/protocol `b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77`; report schema `1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c` |
 
-## Fail-closed boundary
+Only `payload` is candidate input; gold keys never enter prompts. Parser failures, schema failures, per-item scoring, axis aggregation, role gates, and terminal exact-tie `NO_SELECTION` are deterministic and pre-output.
 
-The readiness corpus-spec digest is **not** represented as the digest of future case bytes. `FD-MESC-BT-EXEC-1` remains inactive until the exact materialized 240-item JSONL corpus is committed, independently R2-audited, and its own SHA-256 is bound with exact runtime/hardware/access state. No model may be loaded or queried merely because the readiness specification is complete.
+This closes readiness only. It does not activate model access or `FD-MESC-BT-EXEC-1`.

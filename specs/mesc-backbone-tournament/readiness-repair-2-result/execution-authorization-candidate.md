@@ -2,128 +2,28 @@
 
 Status: **DRAFT / INACTIVE / NOT AUTHORIZED**
 
-Date: 2026-08-20
-
-This document is produced only because a successful readiness verdict requires a separate founder execution-disposition/authorization candidate. It is intentionally incomplete as executable authority and cannot authorize any model access or inference.
-
-## Candidate scope if later completed, separately reviewed, adopted, and mechanically verified
-
-A future `FD-MESC-BT-EXEC-1` may authorize one bounded zero-shot Backbone Tournament using only the candidates and protocol canonically admitted by the readiness result.
-
-It may not become active until every activation field below is exact and non-placeholder.
-
-## Frozen readiness bindings
-
-These readiness artifacts are fixed inputs to any later execution proposal:
+A future execution package may reference the frozen Repair-2 artifacts below but cannot inherit authority from them.
 
 ```text
-READINESS_CORPUS_SPEC_ID = MESC-BT-CORPUS-SPEC-V1
-READINESS_CORPUS_SPEC_ITEM_COUNT = 240
-READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
-
-PROMPT_BUNDLE_ID = MESC-BT-PROMPTS-V1
-TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
+CORPUS_SPEC_SHA256 = 49f554d57e29da4b1d04223d43f1630731e5f8c9b72e7a1e15f959e38c00643b
+MATERIALIZED_CORPUS_ITEM_COUNT = 240
+MATERIALIZED_CORPUS_SHA256 = 48fba9119f0170eb40775c75f12916e277cb3953abe22357e0b22497dadbbebd
+MATERIALIZED_CORPUS_GZIP_SHA256 = 667cd68e5ccc9356321eb5857c6e9203e1320ec33d866ccf514411c211ceb632
+CORPUS_MANIFEST_SHA256 = 201fa1351923a72097ff7e467b6dce2eb8bd0cfa1e88c73157788f77dd89e745
+SCORING_KEYS_SHA256 = bb3524bc8dd1f05bad433c664ac3c48a5110939ac78b5ffa2ad8853f944c6318
+TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1cb7d532c314b7
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
-
-PROTOCOL_ID = MESC-BT-PROTOCOL-V1
-PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
-PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
-
-REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
+NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
+PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
+SCORING_CONTRACT_SHA256 = d02f84cdc6c6609f795a909a7d4878d9193f47bdcbcb1719f9645ac7e258a63f
+PROTOCOL_CONFIG_SHA256 = 01bd6fdfbf5cfb883195c1aac9d05da7dd34f7a507ce8e81db201f591ae265b6
+PROMPT_PROTOCOL_SHA256 = b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77
+REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c
 ```
 
-## Required exact activation bindings
+Before activation it must additionally bind: exact canonical MESC commit/tree; selected admitted revisions; tokenizer/processor/custom-code revisions; exact hardware/provider/runtime/precision state; explicit founder authorization for any gated-access request/terms acceptance; bounded run attempts; artifact destinations; exact-head CI/CodeQL; fresh independent review; zero unresolved threads; Ready/Merge gates; and post-merge verification.
 
-### Canonical code
-
-```text
-MESC_COMMIT_SHA = REQUIRED
-MESC_TREE_SHA = REQUIRED
-```
-
-### Candidate set
-
-The later package must explicitly choose from the readiness-admitted exact revisions; it may not silently substitute, quantize, or update a candidate. Current admissible revision candidates are:
-
-```text
-openai/gpt-oss-20b @ 6cee5e81ee83917806bbde320786a8fb61efebee
-swiss-ai/Apertus-v1.5-8B @ a411d838600baf0e3635a3daf66fb7c55fc97bb6
-microsoft/Phi-4-multimodal-instruct @ 93f923e1a7727d1c4f446756212d9d3e8fcc5d81
-google/medgemma-1.5-4b-it @ 91850547d9f0b2fdd21aa7c5f4f3d1a8a52c243b
-```
-
-Tokenizer/processor revisions must equal the selected model-repository revision unless the later package proves and binds a different authoritative immutable asset.
-
-### Materialized execution corpus
-
-The readiness corpus-spec digest above is already frozen. Execution additionally requires the concrete synthetic/hand-authored case payload bytes:
-
-```text
-MATERIALIZED_CORPUS_PATH = REQUIRED
-MATERIALIZED_CORPUS_ITEM_COUNT = REQUIRED; must equal 240
-MATERIALIZED_CORPUS_SHA256 = REQUIRED; distinct from READINESS_CORPUS_SPEC_SHA256
-R2_PROVENANCE_AUDIT = REQUIRED / PASS
-SPEC_CONFORMANCE_AUDIT = REQUIRED / PASS
-```
-
-No materialized-corpus hash may be invented before the 240 concrete `ITEM_PAYLOAD` records are committed and independently validated against `MESC-BT-CORPUS-SPEC-V1`.
-
-### Runtime and hardware
-
-```text
-HARDWARE_IDENTITY = REQUIRED
-PROVIDER_IDENTITY = REQUIRED
-PYTHON_VERSION = REQUIRED
-TORCH_VERSION = REQUIRED
-ENGINE_VERSION_OR_COMMIT = REQUIRED
-CUDA_DRIVER_RUNTIME = REQUIRED where applicable
-PRECISION_QUANTIZATION_PER_CANDIDATE = REQUIRED
-CUSTOM_CODE_HASHES = REQUIRED where applicable
-```
-
-Phi-4 may use `trust_remote_code=True` only if the exact pinned repository code is separately reviewed and bound. Apertus compatibility code must be pinned to an exact approved runtime revision. No floating remote code is permitted.
-
-### Gated access
-
-Apertus and MedGemma require gated-access/terms decisions. This candidate does **not** make those decisions.
-
-Before activation, a later exact package must state, for each gated candidate:
-
-```text
-ACCESS_REQUIRED = YES
-TERMS_VERSION_OR_REFERENCE = REQUIRED
-FOUNDER_OPERATOR_EXPLICIT_ACCESS_AUTHORIZATION = REQUIRED
-NON_SECRET_ACCESS_EVIDENCE = REQUIRED
-```
-
-No assistant or automation may request access, accept terms, or obtain weights merely because this draft exists.
-
-### Run bound
-
-The later package must bind an explicit maximum number of runs/attempts per candidate and the retry semantics from `MESC-BT-PROTOCOL-V1`. No open-ended inference is authorized.
-
-### Artifact destinations
-
-Exact result/output paths, canonical serialization rules, and expected artifact hashes/digests must be specified before execution. Aggregate output must conform to `MESC-BT-REPORT-V1` at SHA-256 `e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56`, including per-candidate attempt/completion counts, typed failure counts, exclusions, negative results, and the exact materialized-corpus digest.
-
-## Mandatory review/adoption gates
-
-Before `FD-MESC-BT-EXEC-1` can become active:
-
-1. the repair-2 terminal result must be canonically merged and verified;
-2. ADR-0034 must be canonical;
-3. the frozen readiness corpus/prompt/protocol/report artifacts and digests above must be canonical;
-4. the exact 240-item materialized corpus must be committed, spec-conformance checked, and R2-audited;
-5. every activation binding above must be concrete;
-6. exact-head CI/CodeQL must pass;
-7. a fresh independent exact-head review must report no unresolved blocking findings;
-8. all review threads must be resolved/dispositioned;
-9. Founder Ready and Founder Merge must be exercised on the exact execution package;
-10. merge must use expected-head protection;
-11. post-merge canonical verification must prove adoption.
-
-## Current state
+Current state:
 
 ```text
 FD-MESC-BT-EXEC-1 = INACTIVE_CANDIDATE
@@ -134,5 +34,3 @@ INFERENCE = NOT_AUTHORIZED
 TRAINING = NOT_AUTHORIZED
 RETRIEVAL = NOT_AUTHORIZED
 ```
-
-This state remains controlling after readiness succeeds until a later exact execution package satisfies every activation gate.

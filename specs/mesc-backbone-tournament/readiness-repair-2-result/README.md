@@ -2,99 +2,35 @@
 
 Status: **RESULT CANDIDATE — EFFECTIVE ONLY AFTER CANONICAL MERGE AND POST-MERGE VERIFICATION**
 
-Date: 2026-08-20
-
 Authority: `FD-MESC-BT-READINESS-REPAIR-2`
 
-Canonical snapshot inspected:
+Episode base: `53f517e57602b1b721fce6edae71d6f9e64d3bc6` / tree `aff1c0ba76cd9959141c7208d8efb14b37228f16`.
+
+Repair-2 resolved the Apertus v1.5 AUP blocker with exact public artifact binding (`53794` bytes; SHA-256 `424b0a0d24ee1369f9a8614d9e4c7eb0fc3ee8a9ad7ece39baea3a83f0d4ba76`; authoritative/computed Git blob `8ddd8e25b6672340dd4f921ba623578571a65526`). All four non-empty candidates were refreshed and remain `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE`; challenger remains `EMPTY`.
+
+## Frozen readiness artifacts
 
 ```text
-main = 53f517e57602b1b721fce6edae71d6f9e64d3bc6
-tree = aff1c0ba76cd9959141c7208d8efb14b37228f16
-```
-
-This package records the terminal evidence candidate for the one bounded read-only repair-2 episode. It does not execute the tournament and does not access model weights.
-
-## Result summary
-
-The previously unresolved Apertus 1.5 AUP artifact was reconstructed from authoritative public GitHub Base64 content and mechanically bound to the repository object before interpretation:
-
-```text
-path = apertus_1.5/USAGE_POLICY.pdf
-byte_length = 53794
-sha256 = 424b0a0d24ee1369f9a8614d9e4c7eb0fc3ee8a9ad7ece39baea3a83f0d4ba76
-git_blob_sha1 = 8ddd8e25b6672340dd4f921ba623578571a65526
-authoritative_git_blob_sha1 = 8ddd8e25b6672340dd4f921ba623578571a65526
-binding = EXACT_MATCH
-```
-
-The exact bound PDF rendered successfully and identified itself as Apertus LLM Acceptable Use Policy v1.5 dated 2026-07-14. Material restrictions were assessed against canonical MESC Program Rules before candidate disposition.
-
-All four non-empty roster slots were independently refreshed from then-current authoritative sources. Historical repair-1 dispositions were not carried forward as evidence.
-
-## Candidate disposition candidate
-
-| Slot | Exact candidate | Exact revision | Disposition |
-|---|---|---|---|
-| 1 | `openai/gpt-oss-20b` | `6cee5e81ee83917806bbde320786a8fb61efebee` | `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE` |
-| 2 | `swiss-ai/Apertus-v1.5-8B` | `a411d838600baf0e3635a3daf66fb7c55fc97bb6` | `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE` |
-| 3 | `microsoft/Phi-4-multimodal-instruct` | `93f923e1a7727d1c4f446756212d9d3e8fcc5d81` | `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE` |
-| 4 | `google/medgemma-1.5-4b-it` | `91850547d9f0b2fdd21aa7c5f4f3d1a8a52c243b` | `ADMITTED_FOR_EXECUTION_AUTH_CANDIDATE` |
-| 5 | Challenger | n/a | `EMPTY` |
-
-No non-empty slot remains `BLOCKED`. At least two distinct candidates are admitted, so the protocol-freeze phase is permitted by the controlling readiness contract.
-
-## Acceptance-artifact reconciliation
-
-The readiness corpus and future execution materialization are explicitly separated. The readiness artifact freezes the 240 item identities/archetypes/difficulty/target-state/provenance/template bindings; the later execution artifact supplies concrete synthetic/hand-authored case payloads and receives its own distinct SHA-256.
-
-```text
-READINESS_CORPUS_SPEC_ID = MESC-BT-CORPUS-SPEC-V1
-READINESS_CORPUS_ITEM_COUNT = 240
-READINESS_CORPUS_SPEC_SHA256 = 73a236db0fe4a7ab9064d87b70d8dac98b3a7f1bf15132ac239f2393072d65c3
-MATERIALIZED_CORPUS_SHA256 = REQUIRED_LATER_FOR_EXECUTION
-
-PROMPT_BUNDLE_ID = MESC-BT-PROMPTS-V1
+CORPUS_SPEC_SHA256 = 49f554d57e29da4b1d04223d43f1630731e5f8c9b72e7a1e15f959e38c00643b
+MATERIALIZED_CORPUS_ITEM_COUNT = 240
+MATERIALIZED_CORPUS_SHA256 = 48fba9119f0170eb40775c75f12916e277cb3953abe22357e0b22497dadbbebd
+MATERIALIZED_CORPUS_GZIP_SHA256 = 667cd68e5ccc9356321eb5857c6e9203e1320ec33d866ccf514411c211ceb632
+CORPUS_MANIFEST_SHA256 = 201fa1351923a72097ff7e467b6dce2eb8bd0cfa1e88c73157788f77dd89e745
+SCORING_KEYS_SHA256 = bb3524bc8dd1f05bad433c664ac3c48a5110939ac78b5ffa2ad8853f944c6318
+TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1cb7d532c314b7
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
-TASK_PROMPT_BUNDLE_SHA256 = fb0b24fbc55f81e3fc3b828fe9b7c291df883e82c8f9362f2cf2d8afeedca777
-PROTOCOL_CONFIG_SHA256 = 30e9402ef10739da040a741938a7bcac1405d81d97884e08bfbd88f0b0446baa
-PROMPT_PROTOCOL_SHA256 = 0928585636fc3ea2e3b1066ac0cf19a30b38bb69ffad6a1b240247bb2f566ef1
-
-REPORT_SCHEMA_ID = MESC-BT-REPORT-V1
-REPORT_SCHEMA_SHA256 = e0183fe7df42575d31a2759a097a362fdec05ad600256d4061de368617c80c56
+NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
+PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
+SCORING_CONTRACT_SHA256 = d02f84cdc6c6609f795a909a7d4878d9193f47bdcbcb1719f9645ac7e258a63f
+PROTOCOL_CONFIG_SHA256 = 01bd6fdfbf5cfb883195c1aac9d05da7dd34f7a507ce8e81db201f591ae265b6
+PROMPT_PROTOCOL_SHA256 = b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77
+REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c
 ```
 
-See `acceptance-reconciliation.md` for the normative mapping to repair-2 acceptance items 16–23.
+The exact materialized corpus contains 240 deterministic-synthetic records, 40 per axis. `materialized-corpus.jsonl.gz` deterministically decompresses to the bound logical JSONL. Gold keys remain in `scoring-keys-A.jsonl` … `scoring-keys-F.jsonl`; prompts serialize only the selected record's `payload`. `corpus-manifest.json` records zero prohibited-source records, zero gold leakage, unique IDs, canonical order, and valid evidence references.
 
-## Package files
-
-- `apertus-aup-resolution.md` — exact legal-artifact binding and disposition evidence.
-- `candidate-manifest.md` — refreshed exact candidate identities, revisions, licensing/access/runtime evidence, and dispositions.
-- `corpus-specification.json` — canonical 240-slot readiness corpus specification and R2 materialization contract.
-- `task-prompts.json` — exact system prompt, six task templates, formatting policy, and answer-state envelope.
-- `protocol-freeze.md` — six-axis equal-treatment/decoding/scoring/resource freeze and digest bindings.
-- `report-schema.json` — canonical future aggregate-report JSON Schema; it requires candidate attempt/completion counts, typed failure counts, exclusions, and negative-result records.
-- `reproducibility-schema.md` — required future run/artifact identity contract.
-- `acceptance-reconciliation.md` — explicit readiness-spec versus later materialized-corpus distinction and acceptance mapping.
-- `execution-authorization-candidate.md` — `FD-MESC-BT-EXEC-1` candidate, explicitly inactive.
-- `readiness-verdict.md` — terminal repair-2 verdict candidate.
-- `docs/adr/0034-backbone-tournament-protocol-freeze.md` — R6 decision record for experiment-defining protocol choices.
+Machine-readable `normalized-output-schema.json`, `parser-contract.json`, `scoring-contract.json`, `protocol-config.json`, and `report-schema.json` close the parser/scoring/tie ambiguities. Remaining exact ties yield `NO_SELECTION`.
 
 ## Non-authority
 
-This result package grants none of the following:
-
-- model-weight download, opening, loading, or access;
-- gated model access request or acceptance;
-- gated terms acceptance;
-- inference or generation;
-- tournament or benchmark execution;
-- B0/B1/B2/B3 or P01-06+ work;
-- Pilot-01 test-content access;
-- PHI, patient, product, telemetry, or credentialed clinical data;
-- training, SFT, QLoRA, RL, retrieval, fallback substitution, or quantization change;
-- challenger population;
-- MCRL, AMGE, audio, biosignal, or donor runtime implementation;
-- publication, clinical, or production claims.
-
-Until this exact package passes exact-head review/checks, is merged with expected-head protection, and is post-merge mechanically verified, the prior canonical state remains controlling and repair-2 must not be described as terminally consumed.
+No model was downloaded, opened, loaded, queried, ranked, trained, or used for retrieval. No gated access or terms were requested/accepted. `FD-MESC-BT-EXEC-1` remains inactive.
