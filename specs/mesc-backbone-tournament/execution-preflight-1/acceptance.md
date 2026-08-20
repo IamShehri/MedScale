@@ -191,14 +191,16 @@ No other path belongs to the activation-receipt preimage. Missing, reordered, du
 
 ### F.2 Mutually exclusive replay-state predicates and exhaustive result-ref discovery
 
-The only permitted result-ref namespace is:
+The only permitted result-ref prefix and full ref identity are:
 
 ```text
-RESULT_REF_NAMESPACE = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/**
+RESULT_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/
 RESULT_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-result/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 ```
 
-No other branch/ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST exhaustively enumerate every ref under `RESULT_REF_NAMESPACE` from the authoritative Git hosting ref store, consuming every page/cursor until completeness is mechanically proven. A failed, permission-limited, truncated, partially paginated, or otherwise non-exhaustive enumeration => `BLOCKED`. Any malformed or unexpected ref under the namespace => `BLOCKED`. Any exact `RESULT_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, whether or not a PR exists.
+`RESULT_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under the result prefix iff its full ref name starts with that exact prefix. The only well-formed descendant has exactly two non-empty path segments after the prefix: `<AUTHORIZATION_MERGE_SHA>` MUST be 40 lowercase hexadecimal characters and `<ACTIVATION_RECEIPT_ID>` MUST be 64 lowercase hexadecimal characters. Any other descendant ref under `RESULT_REF_PREFIX` => `BLOCKED`.
+
+No other branch/ref may represent this authorization episode. Before classifying the authorization as `UNUSED`, the worker MUST exhaustively enumerate every ref whose full name starts with `RESULT_REF_PREFIX` from the authoritative Git hosting ref store, consuming every page/cursor until completeness is mechanically proven. A failed, permission-limited, truncated, partially paginated, or otherwise non-exhaustive enumeration => `BLOCKED`. Any malformed or unexpected descendant ref => `BLOCKED`. Any exact `RESULT_REF` for this authorization/receipt is replay evidence and prevents `UNUSED`, whether or not a PR exists.
 
 State is evaluated with this precedence: canonical terminal receipt → matching in-progress evidence → claim-only evidence → unused. Conflicting or ambiguous evidence overrides all normal states and is `BLOCKED`.
 
@@ -214,15 +216,18 @@ State is evaluated with this precedence: canonical terminal receipt → matching
 
 ### F.3 Storage-protected atomic claim before any frozen-content read
 
-Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, exhaustively enumerate `RESULT_REF_NAMESPACE`, and search canonical history plus open/closed result-PR metadata for replay evidence. Do **not** read any Repair-2 blob contents. Failure to prove complete result-ref enumeration => `BLOCKED` before claim creation.
+Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry, the expected path→blob IDs, derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs, exhaustively enumerate all refs whose full names start with `RESULT_REF_PREFIX`, and search canonical history plus open/closed result-PR metadata for replay evidence. Do **not** read any Repair-2 blob contents. Failure to prove complete result-ref enumeration => `BLOCKED` before claim creation.
 
-Before creating the claim, mechanically verify `CLAIM_REF_PROTECTION = PASS` at the Git hosting/storage boundary for this exact namespace:
+Before creating the claim, define and mechanically verify `CLAIM_REF_PROTECTION = PASS` at the Git hosting/storage boundary for:
 
 ```text
-refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/**
+CLAIM_REF_PREFIX = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/
+CLAIM_REF = refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
 ```
 
-The protection must be a repository ruleset, server-side hook, or equivalent durable control that is already effective and that, for this claim namespace:
+`CLAIM_REF_PREFIX` is a literal ref-name prefix, never a glob. A ref is under the claim prefix iff its full ref name starts with that exact prefix. The only well-formed descendant has exactly two non-empty path segments after the prefix, with the same exact 40-lowercase-hex authorization SHA and 64-lowercase-hex receipt-ID shape. Any malformed/unexpected descendant is `BLOCKED`. The protection must cover every ref whose full name starts with `CLAIM_REF_PREFIX`.
+
+The protection must be a repository ruleset, server-side hook, or equivalent durable control that is already effective and that, for this claim prefix:
 
 1. permits the controlled initial ref creation required by this episode;
 2. denies every subsequent ref update, including ordinary fast-forward updates and force updates;
@@ -232,13 +237,7 @@ The protection must be a repository ruleset, server-side hook, or equivalent dur
 
 Record the exact protection mechanism identity and observed enforcement facts in `activation-receipt.json` and carry them into `consumption-receipt.json`. If no such durable storage-boundary protection can be proven, do not create a claim and terminate `BLOCKED` before any frozen-content read.
 
-Then atomically create exactly one claim ref:
-
-```text
-refs/heads/governance/fd-mesc-bt-exec-1-preflight-claim/<AUTHORIZATION_MERGE_SHA>/<ACTIVATION_RECEIPT_ID>
-```
-
-The claim ref MUST use create-only semantics, only if absent, and MUST point exactly to `AUTHORIZATION_MERGE_SHA`. Creation failure because the ref already exists means another worker/episode already claimed the authorization: stop immediately without changing the ref or starting audit work.
+Then atomically create exactly `CLAIM_REF`. The claim ref MUST use create-only semantics, only if absent, and MUST point exactly to `AUTHORIZATION_MERGE_SHA`. Creation failure because the ref already exists means another worker/episode already claimed the authorization: stop immediately without changing the ref or starting audit work.
 
 Immediately after creation, re-read the claim ref and protection control. Any missing/changed target or protection drift is `BLOCKED`. Updating, force-updating, retargeting, deleting, or recreating the claim is prohibited. If a claim is ever observed deleted or changed after creation, the episode can never be classified `UNUSED`; the observing worker must preserve durable `BLOCKED` evidence in its result package/terminal receipt and stop.
 
