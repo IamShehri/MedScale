@@ -61,14 +61,18 @@ Every frozen input above is mandatory. `acceptance.md` defines the exact byte/di
 
 ## Preflight result binding
 
-A successful episode must create a canonical `preflight-result-manifest.json` that binds the exact canonical authorization input identity and the exact SHA-256 of all four core outputs:
+A successful episode must create a canonical `preflight-result-manifest.json` that binds the exact canonical authorization input identity and the exact path, SHA-256, and byte length of every material result artifact.
+
+The four unconditional core outputs are:
 
 - `r2-provenance-audit.json`;
 - `corpus-conformance-audit.json`;
 - `execution-binding-inventory.md`;
 - `preflight-verdict.md`.
 
-The manifest uses the non-circular binding-core construction defined in `acceptance.md`. The verdict must reference that binding-core SHA-256. A separate `consumption-receipt.json` binds the authorization package/head and final result-manifest SHA-256; it is not part of the manifest's four-output hash set and therefore creates no digest cycle.
+If `FD-MESC-BT-EXEC-1-CANDIDATE-V2` is produced, `execution-authorization-candidate.md` is a conditional fifth bound result artifact: its exact path, SHA-256, and byte length must be included in the non-circular manifest binding defined in `acceptance.md`. A successor candidate whose bytes are not manifest-bound is invalid and must not be adopted.
+
+The verdict must reference the binding-core SHA-256. A separate `consumption-receipt.json` binds the authorization package/head and final result-manifest SHA-256; it is outside the manifest artifact set and therefore creates no digest cycle.
 
 ## Hard boundary
 

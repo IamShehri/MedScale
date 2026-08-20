@@ -48,34 +48,39 @@ Without model access:
 
 ## Phase 5 — Complete result-package binding
 
-Create the four core outputs:
+Create the four unconditional core outputs:
 
 1. `r2-provenance-audit.json`;
 2. `corpus-conformance-audit.json`;
 3. `execution-binding-inventory.md`;
 4. `preflight-verdict.md`.
 
-Then bind them without a digest cycle:
+Before constructing the manifest binding core, determine whether a successor candidate is provisionally eligible under `acceptance.md`. If eligible, render exactly one `FD-MESC-BT-EXEC-1-CANDIDATE-V2` at `execution-authorization-candidate.md`, normalize its Markdown bytes exactly as specified, and compute its exact SHA-256 and byte length. If not eligible, no successor file may exist and `successor_candidate = null`.
+
+Then bind the result without a digest cycle:
 
 1. hash both canonical audit files and the exact execution-binding inventory bytes;
-2. build the exact `manifest_binding_core` defined in `acceptance.md`, binding authorization merge SHA/tree, all frozen Repair-2 input digests, the three known output paths/hashes, the verdict path, and successor candidate identity/path;
+2. build the exact `manifest_binding_core` defined in `acceptance.md`, binding authorization merge SHA/tree, all frozen Repair-2 input digests, the three known output paths/hashes, the verdict path, and either the exact successor-candidate id/path/SHA-256/byte-length object or `null`;
 3. compute `MANIFEST_BINDING_CORE_SHA256` over the canonical binding-core JSON bytes;
 4. generate `preflight-verdict.md` containing that exact core hash and terminal state, then compute its full-file SHA-256;
-5. generate canonical `preflight-result-manifest.json` containing the full binding core plus exact path/SHA-256/byte-length entries for **all four** core outputs;
-6. compute the full manifest SHA-256 externally; do not insert it into the manifest itself;
-7. generate `consumption-receipt.json` with the matching activation receipt identity, `state = CONSUMED`, and exact final result-manifest SHA-256;
-8. publish the final manifest SHA-256 in the result PR description as an independently reviewable binding.
+5. generate canonical `preflight-result-manifest.json` containing the full binding core plus exact path/SHA-256/byte-length entries for all four unconditional core outputs and the successor candidate when present;
+6. if any later binding, receipt, or acceptance check forces `BLOCKED`, remove any provisionally rendered successor, set `successor_candidate = null`, and rebuild the core, verdict, and manifest; stale hashes are invalid;
+7. compute the full manifest SHA-256 externally; do not insert it into the manifest itself;
+8. generate `consumption-receipt.json` with the matching activation receipt identity, `state = CONSUMED`, and exact final result-manifest SHA-256 only for a successful result package;
+9. publish the final manifest SHA-256 in the result PR description as an independently reviewable binding.
 
-Any edit to any core output must change the manifest binding and invalidate stale evidence.
+Any edit to any bound result artifact, including a present successor candidate, must change the manifest binding and invalidate stale evidence.
 
 ## Phase 6 — Single successor execution-authorization candidate
 
-Only if all preflight acceptance sections pass, generate exactly one successor candidate:
+A successor candidate is permitted only on the provisional ready path and only through the bound construction in Phase 5:
 
 ```text
 CANDIDATE_ID = FD-MESC-BT-EXEC-1-CANDIDATE-V2
 AUTHORITATIVE_PATH = specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md
 ```
+
+A successful result may contain exactly one such candidate, and its exact bytes must be bound by `preflight-result-manifest.json`. A blocked result must contain no successor candidate and must bind `successor_candidate = null`.
 
 The prior `readiness-repair-2-result/execution-authorization-candidate.md` is immutable historical seed evidence and is superseded only after the V2 result package is canonically merged and post-merge verified. The successor remains inactive and grants no execution authority.
 
