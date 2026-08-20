@@ -2,7 +2,9 @@
 
 Status: **NORMATIVE RESULT-PACKAGE RECONCILIATION CANDIDATE**
 
-The specific Repair-2 contract requires a frozen R2-compatible corpus (item 16) and exact corpus count/digest (item 17). This package therefore materializes the corpus during readiness without executing it.
+The specific Repair-2 contract requires a frozen R2-compatible corpus (item 16) and exact corpus count/digest (item 17). The activated Repair-2 founder authorization explicitly permits completing that corpus and creating its digest during this episode after the roster gate passes. This package therefore materializes the deterministic-synthetic corpus during readiness **without executing it**.
+
+This is not execution authority. A future `FD-MESC-BT-EXEC-1` must use the same frozen corpus identity, re-attest its bytes, and bind deterministic R2-provenance and full spec/manifest-conformance audit artifacts before any prompt serialization. It may not substitute another corpus under the same protocol ID.
 
 ```text
 CORPUS_SPEC_SHA256 = 49f554d57e29da4b1d04223d43f1630731e5f8c9b72e7a1e15f959e38c00643b
@@ -15,10 +17,11 @@ TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1c
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
 NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
 PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
-SCORING_CONTRACT_SHA256 = d02f84cdc6c6609f795a909a7d4878d9193f47bdcbcb1719f9645ac7e258a63f
-PROTOCOL_CONFIG_SHA256 = 01bd6fdfbf5cfb883195c1aac9d05da7dd34f7a507ce8e81db201f591ae265b6
-PROMPT_PROTOCOL_SHA256 = b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77
-REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c
+REPORT_VALIDATION_CONTRACT_SHA256 = f02e0217d5cc8120a0047b6a4d71456452d598a4b948331c536e76ca6dc3118e
+SCORING_CONTRACT_SHA256 = 8df9d1ef50ca5f56a38f68e85b1fec636b1386d7e94e96f521fb3327e4ef3e5f
+PROTOCOL_CONFIG_SHA256 = 9648deca4d7ae607d3d264c44e641d54982e670eb763638594b2d6d004fb7046
+PROMPT_PROTOCOL_SHA256 = bc5d85125c942695d8c191920a635c3cea28a68d31e3fe6de1092dd42c8bc92a
+REPORT_SCHEMA_SHA256 = 93b8251fd5c7f650bd806aa144c62a7c149720af848a74acbd0127f488384ac9
 ```
 
 | Acceptance item | Bound artifact |
@@ -28,10 +31,10 @@ REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d7
 | 18 | `task-prompts.json`, `normalized-output-schema.json`, `parser-contract.json`, `protocol-config.json` |
 | 19 | `scoring-contract.json` + `scoring-keys-A.jsonl` … `scoring-keys-F.jsonl` |
 | 20 | `scoring-contract.json`, `protocol-config.json`, ADR-0034 |
-| 21 | `protocol-freeze.md`, `reproducibility-schema.md`, `report-schema.json` |
-| 22 | normalized/parser/reproducibility/report contracts |
-| 23 | prompt/protocol `b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77`; report schema `1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c` |
+| 21 | `protocol-freeze.md`, `reproducibility-schema.md`, `report-schema.json`, `report-validation-contract.json` |
+| 22 | normalized/parser/reproducibility/report/validator contracts, including exact-binding, accounting, uniqueness, gate-recomputation, and role-selection invariants |
+| 23 | prompt/protocol `bc5d85125c942695d8c191920a635c3cea28a68d31e3fe6de1092dd42c8bc92a`; report schema `93b8251fd5c7f650bd806aa144c62a7c149720af848a74acbd0127f488384ac9`; report validator `f02e0217d5cc8120a0047b6a4d71456452d598a4b948331c536e76ca6dc3118e` |
 
-Only `payload` is candidate input; gold keys never enter prompts. Parser failures, schema failures, per-item scoring, axis aggregation, role gates, and terminal exact-tie `NO_SELECTION` are deterministic and pre-output.
+Only `payload` is candidate input; gold keys never enter prompts. Parser failures, schema failures, per-item scoring, axis aggregation, gate recomputation, role selection, and terminal exact-tie `NO_SELECTION` are deterministic and pre-output.
 
-This closes readiness only. It does not activate model access or `FD-MESC-BT-EXEC-1`.
+This closes readiness only after canonical merge/post-merge verification. It does not activate model access or `FD-MESC-BT-EXEC-1`.

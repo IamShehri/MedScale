@@ -15,13 +15,29 @@ TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1c
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
 NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
 PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
-SCORING_CONTRACT_SHA256 = d02f84cdc6c6609f795a909a7d4878d9193f47bdcbcb1719f9645ac7e258a63f
-PROTOCOL_CONFIG_SHA256 = 01bd6fdfbf5cfb883195c1aac9d05da7dd34f7a507ce8e81db201f591ae265b6
-PROMPT_PROTOCOL_SHA256 = b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77
-REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c
+REPORT_VALIDATION_CONTRACT_SHA256 = f02e0217d5cc8120a0047b6a4d71456452d598a4b948331c536e76ca6dc3118e
+SCORING_CONTRACT_SHA256 = 8df9d1ef50ca5f56a38f68e85b1fec636b1386d7e94e96f521fb3327e4ef3e5f
+PROTOCOL_CONFIG_SHA256 = 9648deca4d7ae607d3d264c44e641d54982e670eb763638594b2d6d004fb7046
+PROMPT_PROTOCOL_SHA256 = bc5d85125c942695d8c191920a635c3cea28a68d31e3fe6de1092dd42c8bc92a
+REPORT_SCHEMA_SHA256 = 93b8251fd5c7f650bd806aa144c62a7c149720af848a74acbd0127f488384ac9
 ```
 
-Before activation it must additionally bind: exact canonical MESC commit/tree; selected admitted revisions; tokenizer/processor/custom-code revisions; exact hardware/provider/runtime/precision state; explicit founder authorization for any gated-access request/terms acceptance; bounded run attempts; artifact destinations; exact-head CI/CodeQL; fresh independent review; zero unresolved threads; Ready/Merge gates; and post-merge verification.
+## Mandatory pre-activation bindings
+
+Before activation it must bind all of the following, fail-closed:
+
+1. exact canonical MESC commit/tree;
+2. the selected subset (>=2 distinct) of the four admitted candidate IDs with their exact immutable revisions, plus tokenizer/processor/custom-code revisions;
+3. exact hardware/provider/runtime/precision state and non-negative numeric peak-VRAM/latency measurement capability required by the frozen tie policy;
+4. explicit Founder authorization for any gated-access request or terms acceptance;
+5. bounded run attempts, artifact destinations, and exact raw/normalized evidence identities;
+6. the already-frozen corpus storage/logical/count/spec/manifest identities above — **no corpus substitution or rematerialization**;
+7. a deterministic **R2 provenance audit artifact** with `RESULT=PASS` and its SHA-256, proving the frozen source/prohibition and payload/gold-separation constraints;
+8. a deterministic **corpus specification/manifest conformance audit artifact** with `RESULT=PASS` and its SHA-256, proving all 240 IDs/order/axes/archetypes/difficulty bands/answer-state rules/task-template bindings/payload integrity/R2 constraints;
+9. `MESC-BT-REPORT-VALIDATION-V1` and the exact report-schema digest above;
+10. exact-head CI/CodeQL, fresh independent review, zero unresolved blocking threads, Ready/post-Ready gates, expected-head merge protection, and post-merge verification.
+
+Both corpus audits must PASS **before any candidate prompt serialization or model access**. Infrastructure retries are attempt-level evidence only; every corpus item has one terminal disposition.
 
 Current state:
 

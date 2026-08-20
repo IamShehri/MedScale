@@ -17,13 +17,16 @@ TASK_PROMPT_BUNDLE_SHA256 = 54d9da5cf3dad58c0bf9fb28761c15d8f82568013895b8467f1c
 SYSTEM_PROMPT_SHA256 = 02bb1a1fe70036c5d5299d6654618a2734aa03550506d1b023904cefc88ba867
 NORMALIZED_OUTPUT_SCHEMA_SHA256 = 3e0a1523af45a61db77e3287a3333361fa26411f521321bbef0804dec7a63ed4
 PARSER_CONTRACT_SHA256 = 9905096b491ddc3bce2b5d668c1f8726f638dde9dba383ac1bb755f1b6b42071
-SCORING_CONTRACT_SHA256 = d02f84cdc6c6609f795a909a7d4878d9193f47bdcbcb1719f9645ac7e258a63f
-PROTOCOL_CONFIG_SHA256 = 01bd6fdfbf5cfb883195c1aac9d05da7dd34f7a507ce8e81db201f591ae265b6
-PROMPT_PROTOCOL_SHA256 = b93fbc84ce3742410074727850f7d69dd5df4af0b3d8a56933381f641592bf77
-REPORT_SCHEMA_SHA256 = 1f819807b8f785602ba04a0130cc6922c056a5933598a8eddc6af41d765c770c
+REPORT_VALIDATION_CONTRACT_SHA256 = f02e0217d5cc8120a0047b6a4d71456452d598a4b948331c536e76ca6dc3118e
+SCORING_CONTRACT_SHA256 = 8df9d1ef50ca5f56a38f68e85b1fec636b1386d7e94e96f521fb3327e4ef3e5f
+PROTOCOL_CONFIG_SHA256 = 9648deca4d7ae607d3d264c44e641d54982e670eb763638594b2d6d004fb7046
+PROMPT_PROTOCOL_SHA256 = bc5d85125c942695d8c191920a635c3cea28a68d31e3fe6de1092dd42c8bc92a
+REPORT_SCHEMA_SHA256 = 93b8251fd5c7f650bd806aa144c62a7c149720af848a74acbd0127f488384ac9
 ```
 
-Acceptance items 16–23 are now bound by concrete synthetic corpus bytes/count, separate gold keys, prompts, strict parser/normalized schema, deterministic scoring/gates/tie result, accounting/reproducibility contracts, protocol digest, and report-schema digest.
+Acceptance items 16–23 are bound by concrete synthetic corpus bytes/count, separate gold keys, prompts, strict parser/normalized schema, deterministic scoring/gates/tie result, normative cross-record report validation, accounting/reproducibility contracts, protocol digest, and report-schema digest.
+
+The specific Repair-2 authorization permits the materialized deterministic-synthetic corpus to be frozen during readiness. This is not execution authority. `FD-MESC-BT-EXEC-1` must re-attest the same corpus and additionally bind PASS R2-provenance and full spec/manifest-conformance audit artifacts before prompt serialization.
 
 If and only if this exact result head passes exact-head CI/CodeQL, fresh independent exact-head review, zero unresolved blocking threads, Ready/post-Ready gates, expected-head merge, and post-merge verification, record:
 
@@ -35,6 +38,8 @@ BACKBONE_TOURNAMENT_EXECUTION = NOT_AUTHORIZED
 MODEL_WEIGHT_ACCESS = NOT_AUTHORIZED
 GATED_ACCESS_REQUEST_OR_ACCEPTANCE = NOT_AUTHORIZED
 INFERENCE = NOT_AUTHORIZED
+TRAINING = NOT_AUTHORIZED
+RETRIEVAL = NOT_AUTHORIZED
 ```
 
 No model access, inference, generation, tournament execution, training, retrieval, Pilot-01 inspection, PHI/patient/product/telemetry data, challenger addition, or downstream implementation occurred.
