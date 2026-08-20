@@ -227,7 +227,7 @@ State is evaluated with this precedence: canonical terminal receipt → matching
 
 `ISSUED` and `IN_PROGRESS` are therefore disjoint: publication/creation of any matching activation-receipt/result-ref/result-PR evidence moves the logical state from claim-only `ISSUED` to `IN_PROGRESS`. A terminal receipt supersedes both. Any state other than proven `UNUSED` => reject reuse.
 
-### F.3 Storage-protected atomic claim and protected result-ref lifecycle before any frozen-content read
+### F.3 Storage-protected atomic claim and non-self-referential protected result-ref lifecycle before any frozen-content read
 
 Before claim creation, perform only the metadata operations permitted by the execution-order rule: verify canonical authorization/Repair-2 commit/tree ancestry and expected path→blob IDs; derive `ACTIVATION_RECEIPT_ID` from the four authorization-package blob IDs; complete both authoritative ref-prefix enumerations; complete the full canonical-history traversal; complete the full open+closed/merged PR enumeration; validate every discovered ref shape and every existing exact claim/result-ref target against this contract; and classify replay state. Do **not** read any Repair-2 blob contents. Failure to prove completeness or integrity of any replay search/target => `BLOCKED` before claim creation.
 
@@ -251,31 +251,33 @@ Before creating either episode ref, mechanically verify storage-boundary protect
 3. denies force updates, non-fast-forward/sideways retargets, deletion, recreation, and updates by any other principal;
 4. requires every new target to remain a descendant of `AUTHORIZATION_MERGE_SHA` on the single episode result lineage;
 5. remains effective through terminal result construction and canonical adoption; and
-6. after the exact terminal result commit is published, enters a frozen state that denies every further update and deletion.
+6. after the exact terminal receipt commit is published, enters a frozen state that denies every further update and deletion.
 
 Record the exact claim/result protection mechanism identities and observed enforcement facts in `activation-receipt.json` and carry them into `consumption-receipt.json`. If either protection cannot be proven, do not create the claim and terminate `BLOCKED` before any frozen-content read.
 
 Then atomically create exactly `CLAIM_REF`. The claim ref MUST use create-only semantics, only if absent, and MUST point exactly to `AUTHORIZATION_MERGE_SHA`. Creation failure because the ref already exists means another worker/episode already claimed the authorization: stop immediately without changing the ref or starting audit work.
 
-Immediately after creation, re-read the claim ref and both protection controls. Any missing/changed claim target or protection drift is `BLOCKED`. Updating, force-updating, retargeting, deleting, or recreating the claim is prohibited. If a claim is ever observed deleted or changed after creation, the episode can never be classified `UNUSED`; the observing worker must preserve durable `BLOCKED` evidence in its result package/terminal receipt and stop.
+Immediately after creation, re-read the claim ref and both protection controls. Any missing/changed claim target or protection drift is `BLOCKED`. Updating, force-updating, retargeting, deleting, or recreating the claim is prohibited. If a claim is ever observed deleted or changed after creation, the episode can never be classified `UNUSED`; the observing worker must preserve durable `BLOCKED` evidence if possible and stop. Absence of a terminal receipt never restores `UNUSED` after a claim has existed.
 
 After successful claim creation and re-verification, atomically create exactly `RESULT_REF` with create-only semantics at `AUTHORIZATION_MERGE_SHA`. Creation failure because `RESULT_REF` already exists => `BLOCKED` and no frozen content may be read. Immediately re-read `RESULT_REF` and `RESULT_REF_PROTECTION`; any unreadable/mismatched initial target or protection drift => `BLOCKED`.
 
 The only permitted `RESULT_REF` update sequence is then:
 
-1. construct the activation commit from the current result-ref target; it may add only the episode bootstrap/result metadata required to publish the matching `activation-receipt.json` and must not contain any frozen Repair-2 content read or derived-content result;
-2. atomically fast-forward `RESULT_REF` from exactly `AUTHORIZATION_MERGE_SHA` to that activation commit using expected-old-target protection;
-3. re-read the ref and require the exact activation commit target; only after this succeeds is activation receipt publication complete and frozen Repair-2 content access permitted;
-4. later episode result commits may advance `RESULT_REF` only by the same expected-old-target, ordinary-fast-forward rule on that single lineage; and
-5. the final permitted update is to the exact terminal result commit containing the final package and matching terminal receipt; after re-reading that exact target, `RESULT_REF` is frozen against every later update/delete through and after canonical result adoption.
+1. Construct `activation-receipt.json` and an activation commit whose **single parent is exactly `AUTHORIZATION_MERGE_SHA`**. The receipt may record `result_ref_activation_parent = AUTHORIZATION_MERGE_SHA`, but it MUST NOT contain the SHA of the activation commit that contains it. The activation commit may add only the episode bootstrap/result metadata required to publish that receipt and must not contain any frozen Repair-2 content read or derived-content result.
+2. After the activation commit object exists and its SHA is therefore known, atomically fast-forward `RESULT_REF` from exactly `AUTHORIZATION_MERGE_SHA` to that commit using expected-old-target protection.
+3. Re-read `RESULT_REF`; require it to equal the exact observed activation commit SHA; inspect that commit and require its single parent to equal `AUTHORIZATION_MERGE_SHA` and its tree to contain the exact expected activation-receipt bytes. Only after this succeeds is activation receipt publication complete and frozen Repair-2 content access permitted. The observed activation commit SHA is thereafter `RESULT_REF_ACTIVATION_COMMIT` and may be recorded in later artifacts because it is no longer self-referential.
+4. Later episode result commits may advance `RESULT_REF` only by the same expected-old-target, ordinary-fast-forward rule on that single lineage.
+5. When result artifacts are byte-final for a terminal outcome, construct `TERMINAL_CONTENT_COMMIT` on the current result lineage. It contains the final result package and final `preflight-result-manifest.json` but **does not contain `consumption-receipt.json`**. After the commit object exists, its SHA is known; atomically fast-forward `RESULT_REF` to it and re-read the exact target.
+6. Construct `consumption-receipt.json` binding the already-known `RESULT_REF_ACTIVATION_COMMIT`, `TERMINAL_CONTENT_COMMIT`, final manifest SHA-256, claim/ref identities, protections, and terminal state. Then construct `TERMINAL_RECEIPT_COMMIT` as the direct child of `TERMINAL_CONTENT_COMMIT`; relative to its parent it may add only `consumption-receipt.json` and may not alter any bound result artifact. The receipt MUST NOT contain the SHA of `TERMINAL_RECEIPT_COMMIT` itself.
+7. After `TERMINAL_RECEIPT_COMMIT` exists and its SHA is known, atomically fast-forward `RESULT_REF` from exactly `TERMINAL_CONTENT_COMMIT` to `TERMINAL_RECEIPT_COMMIT` using expected-old-target protection; re-read and inspect the exact commit/parent/tree relation; then freeze `RESULT_REF` against every later update/delete through and after canonical result adoption. The observed receipt-commit SHA is external terminal-ref evidence and is recorded in the result PR description, not inside its own receipt.
 
-Any skipped expected-old-target check, unexpected updater, force/non-fast-forward update, deletion/recreation, unreadable target, ancestry break, or observed target that cannot be reconciled with this exact sequence => `BLOCKED` and permanently prevents `UNUSED`.
+Any skipped expected-old-target check, unexpected updater, force/non-fast-forward update, deletion/recreation, unreadable target, ancestry break, self-referential commit-SHA field, receipt/content mutation outside the permitted closure steps, or observed target that cannot be reconciled with this exact sequence => `BLOCKED` and permanently prevents `UNUSED`.
 
-The activation receipt must reproduce the receipt preimage and `ACTIVATION_RECEIPT_ID`, record the exact `claim_ref` and target, record `result_ref = RESULT_REF`, `result_ref_activation_target = <activation commit SHA>`, both verified protection mechanism identities/enforcement facts, `state = IN_PROGRESS`, and `content_read_started = false`. The receipt-state field is the replay state after receipt publication; it is therefore `IN_PROGRESS`, not `ISSUED`. Only after the protected activation fast-forward is re-read successfully may Section A content verification and Sections C–D begin. `content_read_started = false` records the issuance-time fact and is not a separate replay state.
+The activation receipt must reproduce the receipt preimage and `ACTIVATION_RECEIPT_ID`, record the exact `claim_ref` and target, record `result_ref = RESULT_REF`, `result_ref_activation_parent = AUTHORIZATION_MERGE_SHA`, both verified protection mechanism identities/enforcement facts, `state = IN_PROGRESS`, and `content_read_started = false`. It MUST NOT record its containing activation commit SHA. The receipt-state field is the replay state after receipt publication; it is therefore `IN_PROGRESS`, not `ISSUED`. Only after the protected activation fast-forward is re-read and structurally verified may Section A content verification and Sections C–D begin. `content_read_started = false` records the issuance-time fact and is not a separate replay state.
 
-### F.4 Terminal receipt and terminal result-ref freeze for both outcomes
+### F.4 Non-self-referential terminal receipt and terminal result-ref freeze
 
-Every claimed episode must terminate with `consumption-receipt.json` outside the result-manifest artifact set. It is canonical JSON under Section B and contains exactly:
+A claimed episode that reaches terminal-package construction must close with `consumption-receipt.json` outside the result-manifest artifact set. It is canonical JSON under Section B and contains exactly:
 
 - `receipt_version = MESC-BT-PREFLIGHT-TERMINAL-RECEIPT-V1`;
 - `activation_receipt_id`;
@@ -284,20 +286,29 @@ Every claimed episode must terminate with `consumption-receipt.json` outside the
 - `claim_ref_target`;
 - `claim_ref_protection` containing the exact protection mechanism identity and terminal re-verification facts;
 - `result_ref`;
-- `result_ref_activation_target`;
-- `result_ref_terminal_target`;
-- `result_ref_protection` containing the exact protection mechanism identity, permitted-lifecycle evidence, frozen-state identity, and terminal re-verification facts;
+- `result_ref_activation_commit`, equal to the already-observed activation commit SHA;
+- `result_ref_terminal_content_commit`, equal to the already-observed `TERMINAL_CONTENT_COMMIT` SHA;
+- `result_ref_protection` containing the exact protection mechanism identity, permitted-lifecycle evidence, and terminal re-verification facts required before freeze;
 - `preflight_result_manifest_sha256`;
 - `terminal_state`, exactly `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION` or `BLOCKED`;
 - `state`, exactly `CONSUMED` when `terminal_state = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`, otherwise exactly `BLOCKED`.
 
-Before the terminal receipt is considered valid, the worker MUST re-read `CLAIM_REF`, `RESULT_REF`, and both protections. `CLAIM_REF` must still point exactly to `AUTHORIZATION_MERGE_SHA`. `RESULT_REF` must be readable, must point exactly to `result_ref_terminal_target`, that terminal target must be a permitted fast-forward descendant of `AUTHORIZATION_MERGE_SHA` on the single episode lineage, and result-ref frozen protection must already deny all further update/delete. Any mismatch => `BLOCKED`.
+The terminal receipt MUST NOT contain `TERMINAL_RECEIPT_COMMIT` or any other field whose value would be the SHA of the commit containing that receipt.
 
-A successful package therefore records `state = CONSUMED`; a blocked package records `state = BLOCKED`. Both bind the exact final manifest SHA-256 and matching activation identity. The terminal receipt is not included in the manifest hash set, avoiding a digest cycle.
+Terminal closure is mechanically verified in this order:
 
-Canonical merge of the result package is the durable terminal-state transition. The protected claim ref remains permanent in either outcome, and the frozen `RESULT_REF` remains permanent at its exact terminal result target. A claimed episode that cannot publish a terminal result remains burned/non-reusable; any later evidence of the claim, result ref, or activation receipt prevents `UNUSED`. It requires a new separately reviewed Founder authorization rather than a restart.
+1. before creating the receipt, re-read `CLAIM_REF`, `RESULT_REF`, and both protections; `CLAIM_REF` must still point exactly to `AUTHORIZATION_MERGE_SHA`, while `RESULT_REF` must point exactly to the already-created `TERMINAL_CONTENT_COMMIT` and that commit must be a permitted descendant on the single episode lineage;
+2. create the canonical receipt binding that already-known content commit and final manifest SHA-256;
+3. create `TERMINAL_RECEIPT_COMMIT` as a direct child of `TERMINAL_CONTENT_COMMIT`, with the tree delta limited exactly to adding `consumption-receipt.json` and no changes to any bound result artifact;
+4. fast-forward `RESULT_REF` from exactly `TERMINAL_CONTENT_COMMIT` to `TERMINAL_RECEIPT_COMMIT` using expected-old-target semantics;
+5. re-read `RESULT_REF`, require the exact observed receipt-commit SHA, require that commit's single parent to equal `result_ref_terminal_content_commit`, re-verify the receipt bytes and all bound result artifacts, then activate the terminal frozen protection that denies all further result-ref update/delete; and
+6. record the external observed `TERMINAL_RECEIPT_COMMIT` SHA and final manifest SHA-256 in the result PR description for independent verification.
 
-Missing/mismatched protection, claim, result ref, activation receipt, terminal receipt, manifest digest, lifecycle evidence, or state correspondence => `BLOCKED`.
+A successful package therefore records `state = CONSUMED`; a blocked package records `state = BLOCKED`. Both bind the exact final manifest SHA-256 and matching activation identity without any commit-SHA self-reference. The terminal receipt is not included in the manifest hash set.
+
+Canonical merge of the result package is the durable terminal-state transition. The protected claim ref remains permanent in either outcome, and the frozen `RESULT_REF` remains permanent at the externally observed `TERMINAL_RECEIPT_COMMIT`. A claimed episode that cannot reach terminal receipt closure remains burned/non-reusable: the permanent claim, any result ref, activation receipt, PR evidence, or historical evidence prevents `UNUSED`. It requires a new separately reviewed Founder authorization rather than a restart; a terminal receipt is not required to prove that such an interrupted claimed episode is non-reusable.
+
+Missing/mismatched protection, claim, result ref, activation receipt, terminal receipt when terminal closure was reached, manifest digest, lifecycle evidence, parent/tree closure relation, or state correspondence => `BLOCKED`.
 
 ## G. Remaining execution-binding inventory and single successor candidate
 
