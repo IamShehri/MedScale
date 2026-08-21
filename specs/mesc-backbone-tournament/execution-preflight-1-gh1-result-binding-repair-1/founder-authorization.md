@@ -75,7 +75,17 @@ The repair PR must remain Draft until all are true on one unchanged exact head:
 
 After Draft gates, mark Ready only if explicitly authorized, then perform fresh post-Ready exact-head reconciliation. Merge only with exact `expected_head_sha`.
 
-Immediately after any permitted repair merge, recognize repair authority only if canonical `main` equals the returned repair merge SHA, the tree and ordered parents are exact, the path delta is exactly the reviewed four repair files, reviewed bytes match, fresh replay has no GH1 conflict, and the authoritative hosting verification object for the repair merge satisfies exactly:
+Immediately after any permitted repair merge, recognize repair authority only if **all** of the following hold in one fresh post-merge snapshot:
+
+1. canonical `main` equals the returned repair merge SHA;
+2. the merge tree and ordered parents are exact;
+3. the path delta is exactly the reviewed four repair files and reviewed bytes match canonical bytes;
+4. complete open + closed/merged PR replay under normative `acceptance.md` Section B returns exactly `GH1_SELECTED_ACTIVATION_PRS = 1`, `GH1_SELECTED_RESULT_PRS = 0`, and `GH1_RESERVED_RESULT_NAMESPACE_CONFLICTS = 0`;
+5. `GH1_RESULT_ROOT_ON_MAIN = ABSENT`;
+6. `GH1_TERMINAL_RECEIPT_ON_MAIN = ABSENT`;
+7. `GH1_RESULT_MERGE = ABSENT`;
+8. `GH1_ADOPTION_RECORD = ABSENT`;
+9. the authoritative hosting verification object for the repair merge satisfies exactly:
 
 ```text
 verification.verified = true
@@ -83,6 +93,8 @@ verification.reason = valid
 verification.signature = NON_NULL_SOURCE_TEXT
 verification.payload = NON_NULL_SOURCE_TEXT
 ```
+
+Any failure above blocks repair authority and forbids GH2 activation.
 
 Any new commit invalidates all stale exact-head evidence.
 
