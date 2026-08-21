@@ -302,9 +302,17 @@ GH2_SUCCESSOR_PATH = <GH2_RESULT_ROOT>execution-authorization-candidate.md
 
 It may exist only if inherited Sections A-D PASS and the execution-binding inventory is complete under K.1. It grants no execution authority.
 
-### K.1 Complete execution-binding inventory
+### K.1 Canonical execution-binding inventory bytes
 
-`execution-binding-inventory.md` is UTF-8 without BOM, LF line endings, and exactly one final LF. It is complete only if it truthfully contains every exact label below exactly once, each with status exactly `BOUND` or `UNBOUND`:
+`execution-binding-inventory.md` is manifest-bound and therefore has one canonical byte grammar. It MUST be UTF-8 without BOM, use LF (`0x0a`) only, contain no CR, and end with exactly one final LF.
+
+The file contains **exactly 16 non-empty lines** and no other bytes. Line 1 is exactly:
+
+```text
+MESC-BT-PREFLIGHT-GH2-EXECUTION-BINDING-INVENTORY-V1
+```
+
+Lines 2-16 correspond in exactly this order to:
 
 ```text
 CANONICAL_CODE_SHA_TREE
@@ -324,9 +332,43 @@ REPORT_SCHEMA_BINDING
 LATER_EXACT_HEAD_EXECUTION_AUTHORIZATION_GATES
 ```
 
-For each label the file must also state either an exact bound value/evidence identity or, when `UNBOUND`, a specific statement that the item remains a blocker for future tournament execution. No label may be omitted, duplicated, marked `UNKNOWN`, `N/A`, `PASS` in place of binding status, or silently inferred.
+Each of lines 2-16 has exactly four tab-separated fields and exactly three U+0009 TAB separators, with no leading/trailing whitespace:
 
-`UNBOUND` items do not make successful inherited A-D corpus/provenance audits false and do not prevent a provisional inactive GH2 successor. They remain execution blockers and must be preserved as such by that successor. The inventory itself grants no execution authority.
+```text
+<LABEL><TAB><STATUS><TAB><VALUE_JSON><TAB><BLOCKER_JSON>
+```
+
+Normative field grammar:
+
+- `<LABEL>` is the exact label assigned to that line by the ordered list above.
+- `<STATUS>` is exactly `BOUND` or `UNBOUND`.
+- `<VALUE_JSON>` is either `null` or one canonical JSON string token using inherited JSON string escaping; its decoded string MUST be non-empty and MUST NOT contain U+0009, U+000A, or U+000D.
+- `<BLOCKER_JSON>` follows the same token grammar.
+- For `BOUND`: `<VALUE_JSON>` MUST be a non-empty JSON string and `<BLOCKER_JSON>` MUST be literal `null`.
+- For `UNBOUND`: `<VALUE_JSON>` MUST be literal `null`; `<BLOCKER_JSON>` MUST be a non-empty JSON string whose decoded value begins exactly `BLOCKED_FOR_FUTURE_TOURNAMENT_EXECUTION: ` and contains at least one character after that prefix.
+
+No blank line, comment, Markdown heading, fence, duplicate label, omitted label, reordered label, alternate separator, extra tab, extra field, `UNKNOWN`, `N/A`, `PASS` status alias, trailing spaces, or extra text is permitted. Parsing then canonical reserialization under this grammar MUST reproduce the original bytes exactly or the artifact is `BLOCKED`.
+
+`UNBOUND` items do not make successful inherited A-D corpus/provenance audits false and do not prevent a provisional inactive GH2 successor. They remain future execution blockers. The inventory itself grants no execution authority.
+
+### K.2 Canonical conditional successor bytes
+
+If `GH2_SUCCESSOR_PATH` exists, it is manifest-bound and MUST be UTF-8 without BOM, LF only, exactly one final LF, no CR, and exactly these eight lines in this order with no spaces around `=` and no extra text:
+
+```text
+record_version=MESC-BT-PREFLIGHT-GH2-SUCCESSOR-CANDIDATE-V1
+candidate_id=FD-MESC-BT-EXEC-1-CANDIDATE-GH2-V1
+source_decision_id=FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+repair_authorization_merge_sha=<REPAIR_AUTHORIZATION_MERGE_SHA>
+activation_receipt_id=<GH2_ACTIVATION_RECEIPT_ID>
+activation_merge_sha=<GH2_ACTIVATION_MERGE_SHA>
+state=DRAFT_INACTIVE_NOT_AUTHORIZED
+execution_authority=NONE
+```
+
+The three placeholder values MUST equal the active GH2 episode identities exactly. Any alternate representation, line order, whitespace, extra commentary, or missing/extra line => `BLOCKED`.
+
+### K.3 Manifest binding core and canonical verdict bytes
 
 `manifest_binding_core` is canonical JSON with exactly these top-level keys:
 
@@ -354,11 +396,25 @@ For each label the file must also state either an exact bound value/evidence ide
 
 `verdict_path = <GH2_RESULT_ROOT>preflight-verdict.md`.
 
-`successor_candidate` is null or contains exactly `id`, `path`, `sha256`, `byte_length` with the GH2 successor identity above.
+`successor_candidate` is null or contains exactly `id`, `path`, `sha256`, `byte_length` with the GH2 successor identity and canonical bytes above.
 
 Compute `MANIFEST_BINDING_CORE_SHA256 = SHA256(canonical_manifest_binding_core_bytes)`.
 
-`preflight-verdict.md` is UTF-8 without BOM, LF line endings, exactly one final LF, and must contain the exact decision ID, repair SHA/tree, activation receipt ID, activation merge SHA, manifest ID, binding-core SHA-256, and terminal state.
+`preflight-verdict.md` is manifest-bound and MUST be UTF-8 without BOM, LF only, exactly one final LF, no CR, and exactly these nine lines in this order, with no spaces around `=` and no extra text:
+
+```text
+record_version=MESC-BT-PREFLIGHT-GH2-VERDICT-V1
+decision_id=FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+repair_authorization_merge_sha=<REPAIR_AUTHORIZATION_MERGE_SHA>
+repair_authorization_merge_tree=<REPAIR_AUTHORIZATION_MERGE_TREE>
+activation_receipt_id=<GH2_ACTIVATION_RECEIPT_ID>
+activation_merge_sha=<GH2_ACTIVATION_MERGE_SHA>
+manifest_id=MESC-BT-PREFLIGHT-GH2-RESULT-MANIFEST-V1
+manifest_binding_core_sha256=<MANIFEST_BINDING_CORE_SHA256>
+terminal_state=<TERMINAL_STATE>
+```
+
+`<TERMINAL_STATE>` is exactly `BLOCKED` or `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`; all other placeholders MUST equal the active episode/binding identities exactly. Parsing then canonical reserialization MUST reproduce the original verdict bytes exactly. Alternate order, whitespace, duplicate/omitted/extra line, comment, heading, fence, or free text => `BLOCKED`.
 
 `preflight-result-manifest.json` is canonical JSON with exactly:
 
@@ -367,7 +423,7 @@ Compute `MANIFEST_BINDING_CORE_SHA256 = SHA256(canonical_manifest_binding_core_b
 - `manifest_binding_core_sha256`;
 - `artifacts`.
 
-Its `artifacts` map contains exact `path`, `sha256`, `byte_length` for the two audits, inventory, verdict, and conditional successor iff non-null. It excludes `consumption-receipt.json` and its own digest. Any later blocker removes a provisional successor and rebuilds the package before terminal content freeze.
+Its `artifacts` map contains exact `path`, `sha256`, `byte_length` for the two audits, inventory, verdict, and conditional successor iff non-null. It excludes `consumption-receipt.json` and its own digest. Every listed digest/length MUST equal the exact artifact bytes at `TERMINAL_CONTENT_COMMIT`. Any later blocker removes a provisional successor and rebuilds the package before terminal content freeze.
 
 ## L. GH2 terminal receipt
 
@@ -384,6 +440,26 @@ Its `artifacts` map contains exact `path`, `sha256`, `byte_length` for the two a
 - `terminal_state`;
 - `state`.
 
+All receipt values are equality-bound, not descriptive fields. Validation MUST prove:
+
+```text
+decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+repair_authorization_merge_sha = REPAIR_AUTHORIZATION_MERGE_SHA
+repair_authorization_merge_tree = REPAIR_AUTHORIZATION_MERGE_TREE
+activation_receipt_id = GH2_ACTIVATION_RECEIPT_ID
+activation_merge_sha = GH2_ACTIVATION_MERGE_SHA
+terminal_content_commit = TERMINAL_CONTENT_COMMIT
+preflight_result_manifest_sha256 = SHA256(exact <GH2_RESULT_ROOT>preflight-result-manifest.json bytes at TERMINAL_CONTENT_COMMIT)
+```
+
+Additionally:
+
+1. `TERMINAL_CONTENT_COMMIT` MUST be the exact final non-receipt result commit whose tree contains the manifest-bound bytes validated in Section K;
+2. `TERMINAL_RECEIPT_COMMIT` MUST have exactly one parent equal to `TERMINAL_CONTENT_COMMIT`;
+3. `TERMINAL_RECEIPT_COMMIT` may create only `<GH2_RESULT_ROOT>consumption-receipt.json` and MUST change no other path or byte;
+4. every non-receipt result artifact at `TERMINAL_RECEIPT_COMMIT` MUST be byte-identical to its bytes at `TERMINAL_CONTENT_COMMIT`;
+5. the receipt's `preflight_result_manifest_sha256` MUST also equal the SHA-256 of those unchanged manifest bytes at `TERMINAL_RECEIPT_COMMIT`.
+
 Ready pairing is exactly:
 
 ```text
@@ -398,13 +474,13 @@ terminal_state = BLOCKED
 state = BLOCKED
 ```
 
-The receipt contains no containing receipt-commit SHA, future result merge SHA, or self digest.
+The receipt contains no containing receipt-commit SHA, future result merge SHA, or self digest. Define `TERMINAL_RECEIPT_SHA256 = SHA256(exact canonical consumption-receipt.json bytes at TERMINAL_RECEIPT_COMMIT)` for later adoption binding.
 
 ## M. Result merge and canonical adoption
 
-The result PR uses exact `GH2_RESULT_HEAD`, base `main`, same repository.
+The result PR uses exact `GH2_RESULT_HEAD`, base `main`, same repository. Its reviewed head MUST equal `TERMINAL_RECEIPT_COMMIT`.
 
-Before merge require: exactly one selected GH2 activation PR and one selected GH2 result PR; zero reserved conflicts; activation bytes unchanged; complete Section J graph/immutability proof; exact Section K/L bindings; final-review `main` to result head changes only GH2 result allowlist paths; exact-head CI and CodeQL PASS; fresh independent exact-head governance review with no blocker; unresolved blocking threads 0; unchanged final-review main/head; expected-head merge.
+Before result merge require: exactly one selected GH2 activation PR and one selected GH2 result PR; zero reserved conflicts; activation bytes unchanged; complete Section J graph/immutability proof; exact Section K/L bindings; final-review `main` to result head changes only GH2 result allowlist paths; exact-head CI and CodeQL PASS; fresh independent exact-head governance review with no blocker; unresolved blocking threads 0; unchanged final-review main/head; expected-head merge.
 
 After GitHub reports result-PR merge success, evaluate every post-result-merge predicate below whether it passes or fails. A failed predicate does not permit terminal authority; it must be represented deterministically in the adoption verification record rather than silently preventing the record from existing.
 
@@ -427,11 +503,40 @@ fresh replay reserved GH2 namespace conflict count equals 0       -> GH2-RM-12_R
 
 `EXPECTED_FAILED_CHECKS` is exactly the lexical sort of the failure code for every failed predicate above, with no omission, addition, alias, duplicate, or alternate code. `failed_checks` in the record MUST equal `EXPECTED_FAILED_CHECKS` byte-for-byte after canonical JSON serialization.
 
-Create one adoption-verification candidate record for the returned result merge SHA, regardless of whether `EXPECTED_FAILED_CHECKS` is empty, at exactly:
+### M.1 Exact adoption identity and PR selector
+
+For the returned result merge SHA define exactly:
 
 ```text
-specs/mesc-backbone-tournament/execution-preflight-1-gh2-adoption/<RESULT_MERGE_SHA>/canonical-adoption-verification.json
+GH2_ADOPTION_PR_AUTH_PREFIX = governance/fd-mesc-bt-exec-1-preflight-gh2-adoption/<REPAIR_AUTHORIZATION_MERGE_SHA>/<GH2_ACTIVATION_RECEIPT_ID>/
+GH2_ADOPTION_HEAD = governance/fd-mesc-bt-exec-1-preflight-gh2-adoption/<REPAIR_AUTHORIZATION_MERGE_SHA>/<GH2_ACTIVATION_RECEIPT_ID>/<RESULT_MERGE_SHA>
+GH2_ADOPTION_RECORD_PATH = specs/mesc-backbone-tournament/execution-preflight-1-gh2-adoption/<RESULT_MERGE_SHA>/canonical-adoption-verification.json
 ```
+
+A PR is the selected GH2 adoption PR iff base repository full name=`TheHalfMoon/MESC`, base ref=`main`, head repository full name=`TheHalfMoon/MESC`, and retained head ref exactly=`GH2_ADOPTION_HEAD`; PR state/title/labels/author/reviews are not selectors.
+
+Any PR whose head repository is exactly `TheHalfMoon/MESC` and whose retained head ref begins with `GH2_ADOPTION_PR_AUTH_PREFIX` but is not the exact selected adoption PR is a reserved adoption conflict, including sibling/malformed suffixes, extra segments, or wrong base repo/ref. Deleted branches do not erase retained PR identity.
+
+Before opening the adoption PR require:
+
+```text
+GH2_SELECTED_ADOPTION_PRS = 0
+GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0
+GH2_ADOPTION_RECORD_PATH_ON_MAIN = ABSENT
+```
+
+The adoption branch starts from exactly `RESULT_MERGE_SHA`. After publication and immediately before adoption merge require:
+
+```text
+GH2_SELECTED_ADOPTION_PRS = 1
+GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0
+```
+
+Any selected-count or reserved-conflict mismatch => `BLOCKED` and no adoption merge.
+
+### M.2 Canonical adoption record value bindings
+
+Create exactly one adoption-verification candidate record at `GH2_ADOPTION_RECORD_PATH`, regardless of whether `EXPECTED_FAILED_CHECKS` is empty.
 
 The record is canonical JSON with exactly these top-level keys:
 
@@ -453,12 +558,36 @@ The record is canonical JSON with exactly these top-level keys:
 - `failed_checks`;
 - `outcome`.
 
-`ordered_parents` stores the actual authoritative ordered parent array observed for the returned result merge. `result_package_artifacts` is the complete lexical-path-ordered array of all reviewed GH2 result files, each object containing exactly `path`, `sha256`, `byte_length`.
+Every identity/value is mechanically equality-bound as follows:
+
+```text
+decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+repair_authorization_merge_sha = REPAIR_AUTHORIZATION_MERGE_SHA
+repair_authorization_merge_tree = REPAIR_AUTHORIZATION_MERGE_TREE
+activation_receipt_id = GH2_ACTIVATION_RECEIPT_ID
+activation_merge_sha = GH2_ACTIVATION_MERGE_SHA
+result_merge_sha = authoritative returned RESULT_MERGE_SHA
+result_merge_tree = authoritative tree of RESULT_MERGE_SHA
+ordered_parents = authoritative ordered parent array of RESULT_MERGE_SHA
+reviewed_result_head_sha = REVIEWED_RESULT_HEAD_SHA = TERMINAL_RECEIPT_COMMIT
+preflight_result_manifest_sha256 = SHA256(exact reviewed preflight-result-manifest.json bytes)
+terminal_receipt_commit = TERMINAL_RECEIPT_COMMIT
+terminal_receipt_sha256 = TERMINAL_RECEIPT_SHA256
+```
+
+Further required graph/byte predicates:
+
+1. `TERMINAL_RECEIPT_COMMIT` has exactly one parent equal to `TERMINAL_CONTENT_COMMIT`;
+2. `REVIEWED_RESULT_HEAD_SHA` equals `TERMINAL_RECEIPT_COMMIT`;
+3. the result merge's ordered second parent equals `REVIEWED_RESULT_HEAD_SHA` when `GH2-RM-02` passes;
+4. `preflight_result_manifest_sha256` equals the SHA-256 of exact manifest bytes at `TERMINAL_CONTENT_COMMIT`, `TERMINAL_RECEIPT_COMMIT`, reviewed result head, and merged canonical result path when `GH2-RM-09` passes;
+5. `terminal_receipt_sha256` equals SHA-256 of exact receipt bytes at `TERMINAL_RECEIPT_COMMIT`, reviewed result head, and merged canonical result path when `GH2-RM-09` passes;
+6. `result_package_artifacts` is the complete lexical-path-ordered array of every reviewed GH2 result file present at `REVIEWED_RESULT_HEAD_SHA`, including `consumption-receipt.json`; each object contains exactly `path`, `sha256`, `byte_length`, and each digest/length equals the exact reviewed bytes and, when `GH2-RM-09` passes, the merged canonical bytes.
 
 `merge_signature_verification` contains exactly `verified`, `reason`, `signature_sha256`, `payload_sha256`:
 
-- `verified` is the authoritative hosting `verification.verified` boolean;
-- `reason` is the authoritative hosting `verification.reason` string;
+- `verified` equals authoritative hosting `verification.verified` for `RESULT_MERGE_SHA`;
+- `reason` equals authoritative hosting `verification.reason` for `RESULT_MERGE_SHA`;
 - `signature_sha256 = null` iff authoritative `verification.signature` is null, otherwise `SHA256(UTF8(exact verification.signature source text))` with no normalization;
 - `payload_sha256 = null` iff authoritative `verification.payload` is null, otherwise `SHA256(UTF8(exact verification.payload source text))` with no normalization.
 
@@ -469,9 +598,23 @@ The record is canonical JSON with exactly these top-level keys:
 - if `failed_checks` is non-empty, `outcome = BLOCKED`;
 - if `failed_checks = []`, `outcome` equals exactly the terminal receipt `terminal_state` (`BLOCKED` or `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`).
 
-The adoption-record PR must have an exact one-file create-only delta relative to its exact final-review base, exact-head CI/CodeQL, fresh independent exact-head review with no blocker, zero unresolved blocking threads, unchanged base/head, expected-head merge, and post-merge SHA/tree/ordered-parent/path/signature/byte verification.
+### M.3 Adoption merge and post-merge replay
 
-If the adoption record reports any non-empty `failed_checks`, canonical publication records a failed result-merge verification only; GH2 remains non-terminal/non-authoritative for execution and no replacement attempt may reuse the same GH2 episode. If `failed_checks=[]`, only a fully verified canonical merge of that exact adoption record may make the receipt terminal state canonical.
+The adoption-record PR must have an exact one-file create-only base-to-head delta at `GH2_ADOPTION_RECORD_PATH`, exact-head CI/CodeQL, fresh independent exact-head review with no blocker, zero unresolved blocking threads, unchanged final-review base/head, `GH2_SELECTED_ADOPTION_PRS = 1`, `GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0`, and expected-head merge.
+
+After GitHub reports adoption merge success, mechanically require all of:
+
+1. canonical `main` equals the returned adoption merge SHA;
+2. ordered parents are exactly `[PREMERGE_MAIN_SHA, REVIEWED_ADOPTION_HEAD_SHA]`;
+3. premerge-main to adoption-merge changed paths equal exactly `GH2_ADOPTION_RECORD_PATH`;
+4. canonical adoption-record bytes equal reviewed exact-head bytes;
+5. authoritative adoption-merge `verification.verified=true`, `verification.reason=valid`, `verification.signature` non-null source text, and `verification.payload` non-null source text;
+6. fresh complete PR replay returns `GH2_SELECTED_ADOPTION_PRS = 1` and `GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0`;
+7. no second adoption record exists for the same `RESULT_MERGE_SHA`.
+
+Any failed adoption-merge predicate means the adoption is not canonically terminal and the GH2 episode grants no execution authority.
+
+If the canonical adoption record reports any non-empty `failed_checks`, canonical publication records a failed result-merge verification only; GH2 remains non-terminal/non-authoritative for execution and no replacement attempt may reuse the same GH2 episode. If `failed_checks=[]`, only a fully verified canonical merge of that exact adoption record under M.3 may make the receipt terminal state canonical.
 
 ## N. Hard stop
 
