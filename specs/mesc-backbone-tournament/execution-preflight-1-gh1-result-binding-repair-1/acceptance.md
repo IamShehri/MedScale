@@ -146,7 +146,13 @@ GH2_REPAIR_DECISION_ID = FD-MESC-BT-EXEC-1-PREFLIGHT-GH1-RESULT-BINDING-REPAIR-1
 3. `specs/mesc-backbone-tournament/execution-preflight-1-gh1-result-binding-repair-1/founder-authorization.md`;
 4. `specs/mesc-backbone-tournament/execution-preflight-1-gh1-result-binding-repair-1/plan.md`.
 
-Unknown, missing, duplicate, extra, reordered, malformed, or mismatched entries => `BLOCKED`.
+The `git_blob_sha` values are **derived evidence, never caller-selected values**. After the repair merge is returned and verified, read the authoritative Git tree for `repair_authorization_merge_sha`; for each ordered path above, resolve the exact blob entry and require:
+
+```text
+repair_package_files[i].git_blob_sha = authoritative Git blob SHA for repair_package_files[i].path at repair_authorization_merge_sha
+```
+
+All four paths MUST resolve to regular Git blobs, and the exact blob bytes at the verified repair merge MUST equal the reviewed exact-head bytes for the corresponding path. Construct `repair_package_files` only from these verified path/blob pairs. Only after all four equality predicates pass may canonical receipt-preimage bytes be serialized and `GH2_ACTIVATION_RECEIPT_ID` be computed. Unknown, missing, duplicate, extra, reordered, malformed, caller-supplied, unresolved, or mismatched path/blob entries => `BLOCKED`.
 
 A verified repair merge has exactly this governance effect:
 
@@ -195,6 +201,12 @@ The GH2 activation PR adds exactly two new canonical JSON files and no other pat
 
 The final field is scoped only to the new GH2 episode. It does not deny or rewrite the valid historical GH1 post-activation bounded read recorded in Section B.
 
+Define:
+
+```text
+CLAIM_RECORD_SHA256 = SHA256(exact canonical claim-record.json bytes)
+```
+
 `activation-receipt.json` has exactly:
 
 - `receipt_version = MESC-BT-PREFLIGHT-GH2-ACTIVATION-V1`;
@@ -209,14 +221,28 @@ The final field is scoped only to the new GH2 episode. It does not deny or rewri
 
 The final field is scoped only to content access under GH2 authority.
 
-Both use inherited canonical JSON, reject duplicate keys, and contain no containing/future commit SHA or self digest.
+Both files use inherited canonical JSON, reject duplicate keys, and contain no containing/future commit SHA or self digest. Their semantic values are equality-bound, not descriptive. Before the activation package can pass require all of:
+
+```text
+claim-record.json.decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+claim-record.json.repair_authorization_merge_sha = REPAIR_AUTHORIZATION_MERGE_SHA
+claim-record.json.repair_authorization_merge_tree = REPAIR_AUTHORIZATION_MERGE_TREE
+claim-record.json.activation_receipt_id = GH2_ACTIVATION_RECEIPT_ID
+activation-receipt.json.decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+activation-receipt.json.repair_authorization_merge_sha = REPAIR_AUTHORIZATION_MERGE_SHA
+activation-receipt.json.repair_authorization_merge_tree = REPAIR_AUTHORIZATION_MERGE_TREE
+activation-receipt.json.activation_receipt_id = GH2_ACTIVATION_RECEIPT_ID
+activation-receipt.json.claim_record_sha256 = CLAIM_RECORD_SHA256
+```
+
+`CLAIM_RECORD_SHA256` MUST be recomputed from the exact reviewed canonical claim-record bytes and again from canonical merged claim-record bytes after activation merge; both values must equal the activation receipt field. Any identity mismatch or cross-file hash mismatch => `BLOCKED`.
 
 ## G. GH2 activation merge gate
 
 Before any frozen Repair-2 content access performed under GH2 authority require all on one exact reviewed head:
 
 1. activation delta exactly the two create-only paths in Section F;
-2. exact canonical JSON bytes validate;
+2. exact canonical JSON bytes validate and every Section F equality/cross-file hash predicate passes;
 3. replay finds exactly one selected GH2 activation PR, zero selected GH2 result PRs, zero reserved conflicts;
 4. canonical `main` equals exact final-review premerge SHA;
 5. activation head equals exact reviewed head;
@@ -229,7 +255,7 @@ Before any frozen Repair-2 content access performed under GH2 authority require 
 12. ordered parents are exactly `[PREMERGE_MAIN_SHA, REVIEWED_ACTIVATION_HEAD_SHA]`;
 13. merge tree/path delta contains exactly the two activation paths;
 14. hosting verification is `verified=true`, `reason=valid`, and source signature/payload are non-null;
-15. canonical activation file bytes equal reviewed bytes;
+15. canonical activation file bytes equal reviewed bytes, and the canonical merged claim-record SHA-256 still equals `activation-receipt.json.claim_record_sha256`;
 16. fresh replay finds no concurrent GH2 conflict.
 
 Only after item 16:
@@ -503,13 +529,22 @@ fresh replay reserved GH2 namespace conflict count equals 0       -> GH2-RM-12_R
 
 `EXPECTED_FAILED_CHECKS` is exactly the lexical sort of the failure code for every failed predicate above, with no omission, addition, alias, duplicate, or alternate code. `failed_checks` in the record MUST equal `EXPECTED_FAILED_CHECKS` byte-for-byte after canonical JSON serialization.
 
-### M.1 Exact adoption identity and PR selector
-
-For the returned result merge SHA define exactly:
+Immediately **after all twelve result-merge predicates have been evaluated** and before constructing any adoption branch, read canonical `main` again and freeze:
 
 ```text
-GH2_ADOPTION_PR_AUTH_PREFIX = governance/fd-mesc-bt-exec-1-preflight-gh2-adoption/<REPAIR_AUTHORIZATION_MERGE_SHA>/<GH2_ACTIVATION_RECEIPT_ID>/
-GH2_ADOPTION_HEAD = governance/fd-mesc-bt-exec-1-preflight-gh2-adoption/<REPAIR_AUTHORIZATION_MERGE_SHA>/<GH2_ACTIVATION_RECEIPT_ID>/<RESULT_MERGE_SHA>
+ADOPTION_PREMERGE_MAIN_SHA = exact canonical main SHA observed after result-merge evaluation
+ADOPTION_PREMERGE_MAIN_TREE = exact tree of ADOPTION_PREMERGE_MAIN_SHA
+```
+
+This capture is mandatory whether `GH2-RM-01` passed or failed. It is the publication base for the adoption verification record and is intentionally independent of ancestry from `RESULT_MERGE_SHA`. If canonical `main` cannot be read with an authoritative SHA/tree, adoption publication is `BLOCKED`; do not fabricate a base. If `main` moves after this capture but before adoption PR issuance, discard the unpublished adoption branch candidate, repeat only the canonical-main capture, derive a new adoption head identity from the new captured SHA, and re-render the adoption record with that new exact base. The immutable result-merge predicate outcomes and `RESULT_MERGE_SHA` do not change. Once an adoption PR is issued, any base drift is fail-closed and no alternate PR may be issued in the same GH2 episode.
+
+### M.1 Exact adoption identity and PR selector
+
+For the returned result merge SHA and frozen adoption publication base define exactly:
+
+```text
+GH2_ADOPTION_PR_AUTH_PREFIX = governance/fd-mesc-bt-exec-1-preflight-gh2-adoption/<REPAIR_AUTHORIZATION_MERGE_SHA>/<GH2_ACTIVATION_RECEIPT_ID>/<RESULT_MERGE_SHA>/
+GH2_ADOPTION_HEAD = governance/fd-mesc-bt-exec-1-preflight-gh2-adoption/<REPAIR_AUTHORIZATION_MERGE_SHA>/<GH2_ACTIVATION_RECEIPT_ID>/<RESULT_MERGE_SHA>/<ADOPTION_PREMERGE_MAIN_SHA>
 GH2_ADOPTION_RECORD_PATH = specs/mesc-backbone-tournament/execution-preflight-1-gh2-adoption/<RESULT_MERGE_SHA>/canonical-adoption-verification.json
 ```
 
@@ -520,19 +555,25 @@ Any PR whose head repository is exactly `TheHalfMoon/MESC` and whose retained he
 Before opening the adoption PR require:
 
 ```text
+canonical main = ADOPTION_PREMERGE_MAIN_SHA
+canonical main tree = ADOPTION_PREMERGE_MAIN_TREE
 GH2_SELECTED_ADOPTION_PRS = 0
 GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0
 GH2_ADOPTION_RECORD_PATH_ON_MAIN = ABSENT
 ```
 
-The adoption branch starts from exactly `RESULT_MERGE_SHA`. After publication and immediately before adoption merge require:
+The adoption branch starts from exactly `ADOPTION_PREMERGE_MAIN_SHA`, **not** from `RESULT_MERGE_SHA`. This rule applies in both passing and failing result-merge verification cases and guarantees that the proposed adoption-record PR can have a one-file delta against the actual canonical publication base even if the returned result merge is not an ancestor of canonical `main`.
+
+After publication and immediately before adoption merge require:
 
 ```text
 GH2_SELECTED_ADOPTION_PRS = 1
 GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0
+canonical main = ADOPTION_PREMERGE_MAIN_SHA
+canonical main tree = ADOPTION_PREMERGE_MAIN_TREE
 ```
 
-Any selected-count or reserved-conflict mismatch => `BLOCKED` and no adoption merge.
+Any selected-count, reserved-conflict, or base mismatch => `BLOCKED` and no adoption merge.
 
 ### M.2 Canonical adoption record value bindings
 
@@ -550,6 +591,8 @@ The record is canonical JSON with exactly these top-level keys:
 - `result_merge_tree`;
 - `ordered_parents`;
 - `reviewed_result_head_sha`;
+- `adoption_premerge_main_sha`;
+- `adoption_premerge_main_tree`;
 - `preflight_result_manifest_sha256`;
 - `result_package_artifacts`;
 - `terminal_receipt_commit`;
@@ -570,6 +613,8 @@ result_merge_sha = authoritative returned RESULT_MERGE_SHA
 result_merge_tree = authoritative tree of RESULT_MERGE_SHA
 ordered_parents = authoritative ordered parent array of RESULT_MERGE_SHA
 reviewed_result_head_sha = REVIEWED_RESULT_HEAD_SHA = TERMINAL_RECEIPT_COMMIT
+adoption_premerge_main_sha = ADOPTION_PREMERGE_MAIN_SHA
+adoption_premerge_main_tree = ADOPTION_PREMERGE_MAIN_TREE
 preflight_result_manifest_sha256 = SHA256(exact reviewed preflight-result-manifest.json bytes)
 terminal_receipt_commit = TERMINAL_RECEIPT_COMMIT
 terminal_receipt_sha256 = TERMINAL_RECEIPT_SHA256
@@ -582,7 +627,8 @@ Further required graph/byte predicates:
 3. the result merge's ordered second parent equals `REVIEWED_RESULT_HEAD_SHA` when `GH2-RM-02` passes;
 4. `preflight_result_manifest_sha256` equals the SHA-256 of exact manifest bytes at `TERMINAL_CONTENT_COMMIT`, `TERMINAL_RECEIPT_COMMIT`, reviewed result head, and merged canonical result path when `GH2-RM-09` passes;
 5. `terminal_receipt_sha256` equals SHA-256 of exact receipt bytes at `TERMINAL_RECEIPT_COMMIT`, reviewed result head, and merged canonical result path when `GH2-RM-09` passes;
-6. `result_package_artifacts` is the complete lexical-path-ordered array of every reviewed GH2 result file present at `REVIEWED_RESULT_HEAD_SHA`, including `consumption-receipt.json`; each object contains exactly `path`, `sha256`, `byte_length`, and each digest/length equals the exact reviewed bytes and, when `GH2-RM-09` passes, the merged canonical bytes.
+6. `result_package_artifacts` is the complete lexical-path-ordered array of every reviewed GH2 result file present at `REVIEWED_RESULT_HEAD_SHA`, including `consumption-receipt.json`; each object contains exactly `path`, `sha256`, `byte_length`, and each digest/length equals the exact reviewed bytes and, when `GH2-RM-09` passes, the merged canonical bytes;
+7. `ADOPTION_PREMERGE_MAIN_SHA` / tree are re-read immediately before PR publication and MUST still match canonical `main` exactly.
 
 `merge_signature_verification` contains exactly `verified`, `reason`, `signature_sha256`, `payload_sha256`:
 
@@ -600,17 +646,18 @@ Further required graph/byte predicates:
 
 ### M.3 Adoption merge and post-merge replay
 
-The adoption-record PR must have an exact one-file create-only base-to-head delta at `GH2_ADOPTION_RECORD_PATH`, exact-head CI/CodeQL, fresh independent exact-head review with no blocker, zero unresolved blocking threads, unchanged final-review base/head, `GH2_SELECTED_ADOPTION_PRS = 1`, `GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0`, and expected-head merge.
+The adoption-record PR must have an exact one-file create-only `ADOPTION_PREMERGE_MAIN_SHA`-to-reviewed-head delta at `GH2_ADOPTION_RECORD_PATH`, exact-head CI/CodeQL, fresh independent exact-head review with no blocker, zero unresolved blocking threads, unchanged final-review base/head, `GH2_SELECTED_ADOPTION_PRS = 1`, `GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0`, and expected-head merge.
 
 After GitHub reports adoption merge success, mechanically require all of:
 
 1. canonical `main` equals the returned adoption merge SHA;
-2. ordered parents are exactly `[PREMERGE_MAIN_SHA, REVIEWED_ADOPTION_HEAD_SHA]`;
-3. premerge-main to adoption-merge changed paths equal exactly `GH2_ADOPTION_RECORD_PATH`;
-4. canonical adoption-record bytes equal reviewed exact-head bytes;
-5. authoritative adoption-merge `verification.verified=true`, `verification.reason=valid`, `verification.signature` non-null source text, and `verification.payload` non-null source text;
-6. fresh complete PR replay returns `GH2_SELECTED_ADOPTION_PRS = 1` and `GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0`;
-7. no second adoption record exists for the same `RESULT_MERGE_SHA`.
+2. ordered parents are exactly `[ADOPTION_PREMERGE_MAIN_SHA, REVIEWED_ADOPTION_HEAD_SHA]`;
+3. `ADOPTION_PREMERGE_MAIN_SHA` tree equals recorded `adoption_premerge_main_tree`;
+4. `ADOPTION_PREMERGE_MAIN_SHA` to adoption-merge changed paths equal exactly `GH2_ADOPTION_RECORD_PATH`;
+5. canonical adoption-record bytes equal reviewed exact-head bytes;
+6. authoritative adoption-merge `verification.verified=true`, `verification.reason=valid`, `verification.signature` non-null source text, and `verification.payload` non-null source text;
+7. fresh complete PR replay returns `GH2_SELECTED_ADOPTION_PRS = 1` and `GH2_RESERVED_ADOPTION_NAMESPACE_CONFLICTS = 0`;
+8. no second adoption record exists for the same `RESULT_MERGE_SHA`.
 
 Any failed adoption-merge predicate means the adoption is not canonically terminal and the GH2 episode grants no execution authority.
 
