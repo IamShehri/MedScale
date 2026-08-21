@@ -94,7 +94,9 @@ After this repair package is canonically merged and post-merge verified, derive 
 3. `specs/mesc-backbone-tournament/execution-preflight-1-hosting-repair-1/founder-authorization.md`;
 4. `specs/mesc-backbone-tournament/execution-preflight-1-hosting-repair-1/plan.md`.
 
-Missing, reordered, duplicated, extra, or mismatched path/blob entries => `BLOCKED`.
+For each array element, `path` is the exact repository-relative UTF-8 NFC string shown above and `git_blob_sha` is exactly 40 lowercase hexadecimal characters naming that path's Git blob in the canonical repair merge tree. Unknown, missing, duplicate, or extra object keys are forbidden.
+
+Missing, reordered, duplicated, extra, malformed, or mismatched path/blob entries => `BLOCKED`.
 
 ## D. GitHub-native deterministic identities
 
@@ -225,6 +227,8 @@ The activation branch/PR is staging only. Frozen Repair-2 content remains forbid
 14. hosting merge verification reports `verified = true`, `reason = valid`, with non-null source `verification.signature` and `verification.payload`;
 15. `GH1_CLAIM_RECORD_PATH` and `GH1_ACTIVATION_RECEIPT_PATH` exist on canonical `main` with exact reviewed bytes; and
 16. a fresh complete PR replay check finds no unexpected concurrent GH1 activation/result conflict.
+
+`expected_head_sha` binds the reviewed PR head, not the base branch. Therefore no authority is recognized merely because GitHub reports merge success. The exact `PREMERGE_MAIN_SHA` is independently bound by item 12 after the merge. If a concurrent base movement causes the actual first parent to differ, item 12 fails, GH1 is burned/non-authoritative, frozen-content access remains forbidden, and a separately reviewed Founder repair is required. This fail-closed rule is the base-race safety boundary; it does not claim that GitHub's merge API supplies a pre-mutation base-SHA compare-and-swap.
 
 Only after item 16 passes does state become:
 
@@ -449,6 +453,8 @@ Before result merge require all of these on one exact final head:
 17. hosting merge verification reports `verified = true`, `reason = valid`, with non-null source `verification.signature` and `verification.payload`; and
 18. fresh replay finds no conflicting GH1 activation/result PR record.
 
+As in Section G, `expected_head_sha` does not bind the base branch. Canonical result authority begins only after item 18, including the exact ordered-parent check in item 14. A concurrent base movement that changes the actual first parent causes item 14 to fail; the result merge is then non-authoritative, GH1 remains fail-closed, and a separately reviewed Founder repair is required. No later adoption record may convert such a failed result merge into authority.
+
 Only after item 18 passes is the terminal state canonically adopted. Define returned verified merge SHA/tree as `GH1_RESULT_MERGE_SHA` / `GH1_RESULT_MERGE_TREE`.
 
 A result branch by itself is never canonical authority. Branch deletion after canonical adoption does not remove authority because the verified canonical merge and retained PR record are durable. Any branch movement before merge invalidates exact-head evidence and requires a fresh full review cycle.
@@ -482,10 +488,22 @@ and exactly these top-level keys:
 - `terminal_content_commit`;
 - `preflight_result_manifest_sha256`;
 - `terminal_receipt_sha256` = exact SHA-256 of canonical `consumption-receipt.json` bytes in reviewed result head;
-- `result_package_artifacts` = complete path/SHA-256/byte-length map for every final `GH1_RESULT_ROOT` file including the consumption receipt;
+- `result_package_artifacts` = exact ordered artifact array defined below;
 - `merge_signature_verification` = exact nested object below;
-- `failed_checks` = deterministic lexical array of failed predicates from the closed allowlist below;
+- `failed_checks` = exact deterministic lexical array computed below;
 - `outcome = CANONICAL_ADOPTION_VERIFIED | CANONICAL_ADOPTION_VERIFICATION_FAILED`.
+
+### M.1 Exact `result_package_artifacts` schema
+
+`result_package_artifacts` is an array sorted by `path` using bytewise UTF-8 lexical order. Every element is an object with exactly these keys and no others:
+
+- `path` = exact repository-relative path under `GH1_RESULT_ROOT`;
+- `sha256` = exact 64-lowercase-hex SHA-256 of the full file bytes;
+- `byte_length` = exact non-negative base-10 integer byte length of the full file bytes.
+
+The array contains exactly one element for every final file present under `GH1_RESULT_ROOT` at `REVIEWED_RESULT_HEAD_SHA`: the five unconditional non-receipt outputs, conditional `execution-authorization-candidate.md` iff present, and terminal `consumption-receipt.json`. It contains no duplicate path and no file outside the Section I allowlist. The array's path set, hashes, and byte lengths MUST exactly reproduce the reviewed result head and verified result merge tree.
+
+### M.2 Exact signature evidence object
 
 `merge_signature_verification` contains exactly:
 
@@ -494,32 +512,71 @@ and exactly these top-level keys:
 - `signature_sha256` = SHA-256 of exact hosting `verification.signature` UTF-8 text, or `null` iff hosting source is null;
 - `payload_sha256` = SHA-256 of exact hosting `verification.payload` UTF-8 text, or `null` iff hosting source is null.
 
-A signature PASS requires `verified = true` and both hosting source texts present/non-null; otherwise adoption verification fails.
+A signature PASS requires `verified = true`, `reason = valid`, and both hosting source texts present/non-null with stored digests equal to those exact source texts.
 
-The only permitted `failed_checks` values are:
+### M.3 Closed predicate-to-code mapping
+
+The adoption verifier MUST evaluate every predicate group below independently against source GitHub/repository evidence **before** finalizing the adoption-record bytes. For each group with one or more failed predicates, include that group's code exactly once in `EXPECTED_FAILED_CHECKS`. If several groups fail, include the union of all corresponding codes. Sort the final unique set lexically by code string. No priority, first-failure, or short-circuit rule is permitted.
+
+The closed mapping is:
+
+| Failure code | Predicate group that emits the code |
+| --- | --- |
+| `ACTIVATION_BINDING_MISMATCH` | Any record `repair_authorization_merge_sha`, `repair_authorization_merge_tree`, `activation_receipt_id`, or `activation_merge_sha` differs from the exact canonical repair/activation identities established by Sections C and G, or the canonical activation files do not revalidate byte-for-byte. |
+| `ADOPTION_PATH_ALREADY_EXISTS` | `GH1_ADOPTION_RECORD_PATH` exists on canonical `main` at either required pre-open or premerge absence check. |
+| `ADOPTION_PATH_SHA_MISMATCH` | The `<GH1_RESULT_MERGE_SHA>` path segment, the record `result_merge_sha`, and the mechanically verified canonical result merge SHA are not all identical. |
+| `ADOPTION_PR_SCOPE_INVALID` | The proposed/final adoption PR delta is not exactly one newly created `GH1_ADOPTION_RECORD_PATH`, or includes any modification, deletion, rename, copy, replacement, or unrelated path. |
+| `ADOPTION_RECORD_SCHEMA_INVALID` | The record is not canonical JSON under inherited Section B; has duplicate/unknown/missing/extra top-level or nested keys; has a wrong literal enum/version/decision ID; has a value with wrong JSON type or required hex/path/string format; `result_package_artifacts` violates M.1 structural/order rules; `merge_signature_verification` violates M.2 structural/type rules; `failed_checks` is not a unique lexical string array; or `outcome` is not one of the two permitted literals. |
+| `MANIFEST_BINDING_MISMATCH` | `preflight-result-manifest.json` is absent/malformed; its full-file SHA-256 differs from record `preflight_result_manifest_sha256`; J.2/J.3/J.4 binding-core, verdict, successor, manifest artifact map, or manifest SHA predicates fail; or the record's manifest digest differs from the exact terminal receipt binding. |
+| `RESULT_HEAD_MISMATCH` | The record `reviewed_result_head_sha`, selected result PR head, and exact `TERMINAL_RECEIPT_COMMIT` are not identical, or the reviewed result head is not the exact head qualified by Section L. |
+| `RESULT_MERGE_NOT_CANONICAL` | The record `result_merge_sha` is not the exact merge SHA returned by the Section L merge, that SHA is not the freshly re-read canonical `main` at Section L verification, or the result merge is not the canonical adopted result commit required by L. |
+| `RESULT_MERGE_PARENT_MISMATCH` | The actual result merge ordered parents, record `ordered_parents`, and exact `[PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA]` are not all identical. |
+| `RESULT_MERGE_TREE_MISMATCH` | Record `result_merge_tree` differs from the actual result merge tree, the merge tree does not contain exact reviewed result bytes, or any Section L tree-identity predicate fails. |
+| `RESULT_PACKAGE_ARTIFACT_MISMATCH` | A structurally valid M.1 artifact array has a missing/extra/duplicate/wrong path set, SHA-256, or byte length relative to the final reviewed `GH1_RESULT_ROOT` files or verified result merge tree. Structural M.1 violations also emit `ADOPTION_RECORD_SCHEMA_INVALID`; content/value mismatches emit this code. |
+| `RESULT_PATH_SCOPE_INVALID` | Any final-review-main→reviewed-head or premerge-main→result-merge changed path violates Section I/L result-root allowlist/scope predicates. |
+| `SIGNATURE_EVIDENCE_INVALID` | Hosting verification source object is missing/malformed; source `verification.signature` or `verification.payload` is null; or stored `signature_sha256`/`payload_sha256` does not equal the SHA-256 of the exact non-null source text. |
+| `SIGNATURE_NOT_VERIFIED` | Hosting `verification.verified != true` or `verification.reason != valid`. This code is independent of `SIGNATURE_EVIDENCE_INVALID`; both are emitted when both predicate groups fail. |
+| `TERMINAL_RECEIPT_MISMATCH` | The record `terminal_content_commit` is not the direct parent bound by K; `terminal_receipt_sha256` differs from exact canonical receipt bytes; receipt decision/repair/activation/manifest/terminal-state/state fields fail K; the receipt commit relation fails Section I; or the record's terminal/receipt bindings disagree with the reviewed result head. |
+
+The only permitted failure-code values are therefore exactly:
 
 ```text
 ACTIVATION_BINDING_MISMATCH
 ADOPTION_PATH_ALREADY_EXISTS
 ADOPTION_PATH_SHA_MISMATCH
+ADOPTION_PR_SCOPE_INVALID
+ADOPTION_RECORD_SCHEMA_INVALID
 MANIFEST_BINDING_MISMATCH
 RESULT_HEAD_MISMATCH
 RESULT_MERGE_NOT_CANONICAL
 RESULT_MERGE_PARENT_MISMATCH
 RESULT_MERGE_TREE_MISMATCH
+RESULT_PACKAGE_ARTIFACT_MISMATCH
 RESULT_PATH_SCOPE_INVALID
 SIGNATURE_EVIDENCE_INVALID
 SIGNATURE_NOT_VERIFIED
 TERMINAL_RECEIPT_MISMATCH
 ```
 
-The array is the complete failed-predicate set in lexical order with no aliases or unknown values. `outcome = CANONICAL_ADOPTION_VERIFIED` iff `failed_checks = []` and every record field revalidates.
+`EXPECTED_FAILED_CHECKS` is the complete lexical union produced by M.3. The published record's `failed_checks` MUST equal `EXPECTED_FAILED_CHECKS` byte-for-byte after canonical JSON serialization. Missing, extra, duplicate, unknown, out-of-order, or incorrectly mapped codes invalidate the record; this meta-validation does not recursively add a code to `failed_checks`, because doing so would create a self-referential failure set. An invalid `failed_checks` field means the proposed adoption record MUST NOT be merged and `CANONICAL_ADOPTION_VERIFIED` cannot pass.
+
+`outcome` is a deterministic function of `EXPECTED_FAILED_CHECKS`:
+
+```text
+EXPECTED_FAILED_CHECKS = []
+=> outcome = CANONICAL_ADOPTION_VERIFIED
+
+EXPECTED_FAILED_CHECKS != []
+=> outcome = CANONICAL_ADOPTION_VERIFICATION_FAILED
+```
+
+A published `outcome` that differs from this function invalidates the record and MUST NOT be merged; it likewise does not recursively add a code.
 
 Immediately before opening the adoption PR and again immediately before its merge, `GH1_ADOPTION_RECORD_PATH` MUST be absent from canonical `main`. The path's `<GH1_RESULT_MERGE_SHA>` segment must exactly equal the record's and mechanically verified result merge SHA.
 
 The adoption PR changes exactly one repository path, `GH1_ADOPTION_RECORD_PATH`, as a newly added file. No modification/deletion/rename/copy/replacement/unrelated addition is permitted. Require exact-head CI/CodeQL/fresh independent review/zero blocking threads, unchanged final-review `main`, merge with exact `expected_head_sha`, and post-merge SHA/tree/ordered-parent/signature/path verification.
 
-`CANONICAL_ADOPTION_VERIFIED = PASS` only after the adoption record itself is present on canonical `main` with `outcome = CANONICAL_ADOPTION_VERIFIED` and all fields revalidate. The adoption record never changes GH1 result bytes or grants tournament execution authority.
+`CANONICAL_ADOPTION_VERIFIED = PASS` only after the adoption record itself is present on canonical `main` with `outcome = CANONICAL_ADOPTION_VERIFIED`, `failed_checks = []`, and all record fields revalidate against source evidence. The adoption record never changes GH1 result bytes or grants tournament execution authority.
 
 ## N. Absolute non-authority boundary
 
