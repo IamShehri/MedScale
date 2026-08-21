@@ -52,7 +52,8 @@ Worker-state evidence recorded by this repair is:
 
 ```text
 GH1_FROZEN_REPAIR2_CONTENT_ACCESS = PERFORMED_AFTER_VALID_ACTIVATION
-GH1_SCIENTIFIC_AUDIT_WORK = PERFORMED_NO_MODEL
+GH1_BOUNDED_SCIENTIFIC_INSPECTION = PERFORMED_NO_MODEL
+GH1_SCIENTIFIC_AUDIT_ARTIFACTS = NOT_PUBLISHED
 GH1_MODEL_WEIGHT_ACCESS = NOT_PERFORMED
 GH1_GATED_ACCESS_REQUEST_OR_ACCEPTANCE = NOT_PERFORMED
 GH1_PROMPT_SERIALIZATION_TO_MODEL = NOT_PERFORMED
@@ -160,7 +161,9 @@ The GH2 activation PR adds exactly two new canonical JSON files and no other pat
 - `superseded_activation_merge_sha = 4e259767a86c74a26967e0f19598a1f84a987df4`;
 - `supersession_reason = RESULT_BINDING_SCHEMA_UNDERDEFINED`;
 - `claim_mode = CANONICAL_MAIN_MERGE`;
-- `frozen_content_read_before_gh2_activation = false`.
+- `gh2_episode_frozen_content_read_before_activation = false`.
+
+The final field is scoped only to the new GH2 episode. It does not deny or rewrite the valid historical GH1 post-activation bounded read recorded in Section B.
 
 `activation-receipt.json` has exactly:
 
@@ -172,13 +175,15 @@ The GH2 activation PR adds exactly two new canonical JSON files and no other pat
 - `claim_record_sha256`;
 - `inherited_acceptance_blob_sha = 7c5ae9fadaa639d2d43b6cb8051d91f01fb7d1cf`;
 - `state = IN_PROGRESS`;
-- `content_read_started = false`.
+- `gh2_episode_content_read_started = false`.
+
+The final field is scoped only to content access under GH2 authority.
 
 Both use inherited canonical JSON, reject duplicate keys, and contain no containing/future commit SHA or self digest.
 
 ## G. GH2 activation merge gate
 
-Before any GH2 frozen Repair-2 content access require all on one exact reviewed head:
+Before any frozen Repair-2 content access performed under GH2 authority require all on one exact reviewed head:
 
 1. activation delta exactly the two create-only paths in Section F;
 2. exact canonical JSON bytes validate;
@@ -205,7 +210,7 @@ GH2_ACTIVATION = CANONICAL
 FROZEN_REPAIR2_CONTENT_ACCESS = AUTHORIZED_FOR_BOUNDED_GH2_PREFLIGHT_ONLY
 ```
 
-Any failure burns GH2 and requires a separate Founder repair. No pre-activation frozen-content read is permitted.
+Any failure burns GH2 and requires a separate Founder repair. No GH2-episode pre-activation frozen-content read is permitted.
 
 Define the verified merge as `GH2_ACTIVATION_MERGE_SHA` / `GH2_ACTIVATION_MERGE_TREE`.
 
@@ -265,7 +270,33 @@ GH2_SUCCESSOR_ID = FD-MESC-BT-EXEC-1-CANDIDATE-GH2-V1
 GH2_SUCCESSOR_PATH = <GH2_RESULT_ROOT>execution-authorization-candidate.md
 ```
 
-It may exist only if inherited Sections A-D PASS and the execution-binding inventory truthfully records every remaining execution requirement. It grants no execution authority.
+It may exist only if inherited Sections A-D PASS and the execution-binding inventory is complete under K.1. It grants no execution authority.
+
+### K.1 Complete execution-binding inventory
+
+`execution-binding-inventory.md` is UTF-8 without BOM, LF line endings, and exactly one final LF. It is complete only if it truthfully contains every exact label below exactly once, each with status exactly `BOUND` or `UNBOUND`:
+
+```text
+CANONICAL_CODE_SHA_TREE
+SELECTED_CANDIDATE_SUBSET
+CANDIDATE_MODEL_REVISIONS
+TOKENIZER_PROCESSOR_CUSTOM_CODE_REVISIONS
+HARDWARE_PROVIDER_RUNTIME_PRECISION
+PEAK_VRAM_MEASUREMENT_CAPABILITY
+LATENCY_MEASUREMENT_CAPABILITY
+GATED_ACCESS_AUTHORIZATION
+BOUNDED_RUN_ATTEMPTS
+ARTIFACT_DESTINATIONS
+R2_PROVENANCE_AUDIT_SHA256
+CORPUS_CONFORMANCE_AUDIT_SHA256
+REPORT_VALIDATION_CONTRACT_BINDING
+REPORT_SCHEMA_BINDING
+LATER_EXACT_HEAD_EXECUTION_AUTHORIZATION_GATES
+```
+
+For each label the file must also state either an exact bound value/evidence identity or, when `UNBOUND`, a specific statement that the item remains a blocker for future tournament execution. No label may be omitted, duplicated, marked `UNKNOWN`, `N/A`, `PASS` in place of binding status, or silently inferred.
+
+`UNBOUND` items do not make successful inherited A-D corpus/provenance audits false and do not prevent a provisional inactive GH2 successor. They remain execution blockers and must be preserved as such by that successor. The inventory itself grants no execution authority.
 
 `manifest_binding_core` is canonical JSON with exactly these top-level keys:
 
@@ -345,9 +376,28 @@ The result PR uses exact `GH2_RESULT_HEAD`, base `main`, same repository.
 
 Before merge require: exactly one selected GH2 activation PR and one selected GH2 result PR; zero reserved conflicts; activation bytes unchanged; complete Section J graph/immutability proof; exact Section K/L bindings; final-review `main` to result head changes only GH2 result allowlist paths; exact-head CI and CodeQL PASS; fresh independent exact-head governance review with no blocker; unresolved blocking threads 0; unchanged final-review main/head; expected-head merge.
 
-After merge require canonical main equals returned result merge; ordered parents exactly `[PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA]`; exact tree/path scope; hosting verification `verified=true`, `reason=valid`, non-null signature/payload; merged result bytes identical to reviewed head; fresh replay still exactly one activation and result PR with zero conflicts.
+After GitHub reports result-PR merge success, evaluate every post-result-merge predicate below whether it passes or fails. A failed predicate does not permit terminal authority; it must be represented deterministically in the adoption verification record rather than silently preventing the record from existing.
 
-Only then create one create-only adoption PR containing exactly one new path:
+The closed total predicate-to-failure-code mapping is:
+
+```text
+canonical main equals returned result merge SHA                  -> GH2-RM-01_CANONICAL_MAIN_EQUALS_RETURNED_RESULT_MERGE
+ordered parents equal [PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA] -> GH2-RM-02_ORDERED_PARENTS_MATCH
+result merge tree equals expected reviewed merge tree             -> GH2-RM-03_RESULT_MERGE_TREE_MATCH
+premerge-main to result-merge changed paths stay in GH2 allowlist -> GH2-RM-04_RESULT_MERGE_PATH_SCOPE
+verification.verified is true                                     -> GH2-RM-05_MERGE_VERIFICATION_VERIFIED
+verification.reason is exactly valid                              -> GH2-RM-06_MERGE_VERIFICATION_REASON_VALID
+verification.signature source text is non-null                    -> GH2-RM-07_SIGNATURE_SOURCE_PRESENT
+verification.payload source text is non-null                      -> GH2-RM-08_PAYLOAD_SOURCE_PRESENT
+merged GH2 result artifact bytes equal reviewed exact-head bytes  -> GH2-RM-09_MERGED_RESULT_BYTES_MATCH_REVIEWED_HEAD
+fresh replay selected GH2 activation PR count equals 1            -> GH2-RM-10_REPLAY_SELECTED_ACTIVATION_COUNT
+fresh replay selected GH2 result PR count equals 1                -> GH2-RM-11_REPLAY_SELECTED_RESULT_COUNT
+fresh replay reserved GH2 namespace conflict count equals 0       -> GH2-RM-12_REPLAY_RESERVED_CONFLICTS_ZERO
+```
+
+`EXPECTED_FAILED_CHECKS` is exactly the lexical sort of the failure code for every failed predicate above, with no omission, addition, alias, duplicate, or alternate code. `failed_checks` in the record MUST equal `EXPECTED_FAILED_CHECKS` byte-for-byte after canonical JSON serialization.
+
+Create one adoption-verification candidate record for the returned result merge SHA, regardless of whether `EXPECTED_FAILED_CHECKS` is empty, at exactly:
 
 ```text
 specs/mesc-backbone-tournament/execution-preflight-1-gh2-adoption/<RESULT_MERGE_SHA>/canonical-adoption-verification.json
@@ -373,9 +423,25 @@ The record is canonical JSON with exactly these top-level keys:
 - `failed_checks`;
 - `outcome`.
 
-`ordered_parents` equals exactly `[PREMERGE_MAIN_SHA, REVIEWED_RESULT_HEAD_SHA]`. `result_package_artifacts` is the complete lexical-path-ordered array of all reviewed GH2 result files, each object containing exactly `path`, `sha256`, `byte_length`. `merge_signature_verification` contains exactly `verified`, `reason`, `signature_sha256`, `payload_sha256`, with SHA-256 values derived from the non-null authoritative source texts. `failed_checks` is `[]` only if every post-result-merge predicate passes; otherwise it contains lexically sorted deterministic predicate IDs and `outcome = BLOCKED`. If `failed_checks=[]`, `outcome` equals the receipt terminal state.
+`ordered_parents` stores the actual authoritative ordered parent array observed for the returned result merge. `result_package_artifacts` is the complete lexical-path-ordered array of all reviewed GH2 result files, each object containing exactly `path`, `sha256`, `byte_length`.
 
-The adoption PR itself must have an exact one-file create-only delta, exact-head CI/CodeQL/review gates, expected-head merge, and post-merge verification. Only after that merge may GH2 be reported canonically terminal.
+`merge_signature_verification` contains exactly `verified`, `reason`, `signature_sha256`, `payload_sha256`:
+
+- `verified` is the authoritative hosting `verification.verified` boolean;
+- `reason` is the authoritative hosting `verification.reason` string;
+- `signature_sha256 = null` iff authoritative `verification.signature` is null, otherwise `SHA256(UTF8(exact verification.signature source text))` with no normalization;
+- `payload_sha256 = null` iff authoritative `verification.payload` is null, otherwise `SHA256(UTF8(exact verification.payload source text))` with no normalization.
+
+`failed_checks` equals exact `EXPECTED_FAILED_CHECKS`.
+
+`outcome` is deterministic:
+
+- if `failed_checks` is non-empty, `outcome = BLOCKED`;
+- if `failed_checks = []`, `outcome` equals exactly the terminal receipt `terminal_state` (`BLOCKED` or `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`).
+
+The adoption-record PR must have an exact one-file create-only delta relative to its exact final-review base, exact-head CI/CodeQL, fresh independent exact-head review with no blocker, zero unresolved blocking threads, unchanged base/head, expected-head merge, and post-merge SHA/tree/ordered-parent/path/signature/byte verification.
+
+If the adoption record reports any non-empty `failed_checks`, canonical publication records a failed result-merge verification only; GH2 remains non-terminal/non-authoritative for execution and no replacement attempt may reuse the same GH2 episode. If `failed_checks=[]`, only a fully verified canonical merge of that exact adoption record may make the receipt terminal state canonical.
 
 ## N. Hard stop
 
