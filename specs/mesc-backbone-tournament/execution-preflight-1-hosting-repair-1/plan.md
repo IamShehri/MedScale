@@ -6,27 +6,27 @@ Date: 2026-08-21
 
 ## Objective
 
-Replace the unexecutable GitHub.com ref-protection lifecycle in canonical `FD-MESC-BT-EXEC-1-PREFLIGHT` with a GitHub-native canonical-merge lifecycle while preserving every scientific/content/no-model safety boundary.
+Replace the unexecutable exact-target protected-ref lifecycle in canonical `FD-MESC-BT-EXEC-1-PREFLIGHT` with a GitHub.com-native canonical-merge lifecycle while preserving every scientific/content/no-model safety boundary.
 
-This plan is docs/governance only. It must not read frozen Repair-2 content, create the old claim/result refs, access models, or execute the tournament.
+This plan is docs/governance only. It must not read frozen Repair-2 content, create the old claim/result refs, access models/providers, or execute the tournament.
 
-## Live starting point
+## Exact starting point
 
 ```text
-CANONICAL_MAIN = d1c33ed61f69cd996453e1b50a6dfd8ce14509e6
-CANONICAL_TREE = 6104a8a95f0a688ff30b3ca8bd45a18b601eab70
+CANONICAL_MAIN_AT_REPAIR_OPEN = d1c33ed61f69cd996453e1b50a6dfd8ce14509e6
+CANONICAL_TREE_AT_REPAIR_OPEN = 6104a8a95f0a688ff30b3ca8bd45a18b601eab70
 PR_131 = MERGED_CANONICAL
-OLD_EPISODE = NOT_STARTED
-OLD_CLAIM_REF = NOT_CREATED
-OLD_RESULT_REF = NOT_CREATED
+OLD_DECISION = FD-MESC-BT-EXEC-1-PREFLIGHT
+OLD_ACTIVATION = NOT_PERFORMED
 OLD_FROZEN_CONTENT_ACCESS = NOT_PERFORMED
+BACKBONE_TOURNAMENT_EXECUTION = NOT_STARTED
 ```
 
-The repair branch must be created from the exact canonical main above unless live truth moves first, in which case rebase-by-recreation or destructive history rewriting is forbidden; instead reconcile from the new canonical base using ordinary history-preserving commits.
+Live GitHub/canonical truth always overrides this recorded opening snapshot.
 
-## Repair package
+## Repair package scope
 
-Create exactly four new files under:
+The cumulative repair PR delta must contain exactly four new files under:
 
 ```text
 specs/mesc-backbone-tournament/execution-preflight-1-hosting-repair-1/
@@ -39,100 +39,199 @@ Files:
 3. `founder-authorization.md`
 4. `plan.md`
 
-Do not modify the four original PR #131 authorization files. Do not modify frozen Repair-2 paths, source code, runtime code, tests, dependencies, workflows, model configuration, or model artifacts.
+Do not modify original PR #131 authorization files, frozen Repair-2 paths, source/runtime code, tests, dependencies, workflows, model configuration, or model artifacts.
 
-## Draft review sequence
+## Draft qualification sequence
 
-1. Verify exact canonical `main` and tree immediately before branch creation.
-2. Create one repair commit containing only the four new governance files.
-3. Open a **Draft** PR to `main`.
-4. Verify changed paths are exactly the four repair files.
-5. Verify PR base/head SHAs and mergeability.
-6. Wait for exact-head CI and CodeQL results; no Ready transition on pending/failure.
-7. Obtain a fresh independent exact-head governance review in Draft.
-8. Resolve every blocking review thread by history-preserving repair commits only.
-9. Any repair commit invalidates prior exact-head review evidence.
-10. When Draft gates are green, mark Ready.
-11. Obtain any required post-Ready exact-head review on the unchanged head.
-12. Reverify CI, CodeQL, unresolved threads, `main`, and exact head.
-13. Merge only with `expected_head_sha` equal to the exact fully reviewed head.
-14. Verify canonical merge SHA/tree/ordered parents/signature and exact four-path tree delta.
+1. Re-read canonical `main`, PR #133 base/head, changed paths, old-episode observable state, and exact inherited PR #131 blobs.
+2. Keep PR #133 Draft while any exact-head automation or independent review is pending/failing.
+3. Require cumulative base→head changed paths to remain exactly the four repair files.
+4. Require exact-head CI PASS and exact-head CodeQL PASS.
+5. Request fresh independent exact-head governance review in Draft.
+6. Treat every material correctness/security/governance/determinism finding as blocking until repaired or proven stale against newer exact-head text.
+7. Repair only by ordinary history-preserving commits; no force-push, destructive reset/rebase, or history rewrite.
+8. Every new commit invalidates earlier exact-head CI/review evidence.
+9. Resolve/outdate all blocking review threads only after the current exact head mechanically contains the repair.
+10. Re-run CI/CodeQL and fresh exact-head review on the unchanged repaired head.
+11. Mark Ready only when Draft gates are all proven and `main`/head remain stable.
+12. Perform a fresh post-Ready exact-head reconciliation; Draft reviews alone do not authorize merge.
+13. Immediately before merge reverify exact head, exact main, exact four-path scope, CI, CodeQL, reviews, zero blocking threads, and old-decision revalidation.
+14. Merge only with `expected_head_sha = <fully reviewed exact repair head>`.
+15. Re-read canonical `main`; verify returned merge SHA/tree/ordered parents/path delta/signature evidence.
+16. Stop after repair merge verification unless the Founder separately instructs continuation into GH1 activation qualification.
 
-No merge occurs merely because this plan exists.
+## Review finding reconciliation requirements
 
-## Mandatory external hosting finding preserved in the PR
+Any review finding that changes result identity or result tree scope must be reflected consistently in **all** governance documents that describe those semantics.
 
-The PR description must state the exact reason for the repair:
+The single normative lifecycle contract is `acceptance.md`. `README.md`, `founder-authorization.md`, and this plan must reference the same exact active identity and result-scope rules; no sibling document may retain vague old wording that allows a second interpretation.
 
-- GitHub.com repository rulesets support restricting matching ref creation/update/deletion based on bypass eligibility;
-- the native `creation` rule does not express an exact required initial target OID;
-- GitHub pre-receive hooks capable of old/new/ref predicate enforcement are documented for GitHub Enterprise Server, not ordinary GitHub.com repositories;
-- therefore the original exact-target storage-boundary predicate was not proven and was correctly blocked before claim creation.
+## Canonical effect after repair merge
 
-The repair must not claim that the original protection gate passed.
+Only after successful repair post-merge verification:
 
-## Replacement lifecycle after repair merge
+```text
+FD-MESC-BT-EXEC-1-PREFLIGHT = SUPERSEDED_NONREUSABLE
+OLD_CLAIM_REF_CREATION = PERMANENTLY_FORBIDDEN
+OLD_RESULT_REF_CREATION = PERMANENTLY_FORBIDDEN
+FD-MESC-BT-EXEC-1-PREFLIGHT-GH1 = AUTHORIZED_NOT_STARTED
+```
 
-If and only if this repair is canonically merged and verified:
+The repair merge itself does not start GH1 and does not authorize Repair-2 frozen-content access.
+
+## GH1 inheritance map
+
+The exact old acceptance blob is:
+
+```text
+7c5ae9fadaa639d2d43b6cb8051d91f01fb7d1cf
+```
+
+GH1 inherits only old Sections A–D scientific/content rules. Old Section E result binding and old Sections F onward ref/CAS/result/adoption lifecycle are superseded.
+
+Active GH1 fields are defined only by repair `acceptance.md` Sections C–M:
+
+```text
+decision = FD-MESC-BT-EXEC-1-PREFLIGHT-GH1
+authorization = canonical repair merge SHA/tree
+activation = GH1_ACTIVATION_RECEIPT_ID + verified activation merge SHA
+result root = GH1_RESULT_ROOT
+manifest = MESC-BT-PREFLIGHT-GH1-RESULT-MANIFEST-V1
+successor = FD-MESC-BT-EXEC-1-CANDIDATE-GH1-V1
+consumption receipt = MESC-BT-PREFLIGHT-GH1-CONSUMPTION-V1
+adoption record = MESC-BT-PREFLIGHT-GH1-CANONICAL-ADOPTION-V1
+```
+
+Old decision/authorization identity is historical provenance only inside `inherited_contract`.
+
+## GH1 continuation plan after separate Founder instruction
 
 ### 1. Derive GH1 receipt identity
 
-Use the repair merge SHA/tree and exact four repair-package blob identities under the canonical serialization rule in `acceptance.md`.
+From the verified repair merge SHA/tree and exact four repair-package blob identities, derive `GH1_ACTIVATION_RECEIPT_ID` exactly as `acceptance.md` C specifies.
 
-### 2. Reprove superseded episode is unstarted
+### 2. Metadata-only replay
 
-Re-enumerate complete PR population and exact old reserved identities using metadata only. Any old claim/result/activation evidence blocks GH1.
+Before activation candidate creation, enumerate the complete PR population and reserved GH1 namespaces under `acceptance.md` E. No frozen Repair-2 content read is permitted.
 
-### 3. Construct GH1 activation candidate
+### 3. Activation candidate
 
-Create deterministic activation branch and same-repository PR with exactly two new canonical JSON paths: claim record + activation receipt. No Repair-2 content read.
+Create the deterministic activation branch/PR with exactly two create-only canonical JSON paths:
 
-### 4. Exact-head activation qualification
+```text
+GH1_CLAIM_RECORD_PATH
+GH1_ACTIVATION_RECEIPT_PATH
+```
 
-Require exact-head CI/CodeQL/review, unchanged `main`, replay recheck, zero namespace conflict, and expected-head merge.
+The PR/branch is staging only.
 
-### 5. Post-merge activation verification
+### 4. Exact-head activation qualification and merge
 
-Verify returned merge became canonical `main`, verify tree/ordered parents/signature and exact reviewed activation files. Only then may frozen Repair-2 content be read for the bounded audit.
+Require every `acceptance.md` G predicate: exact two-path delta, valid canonical JSON, complete replay, unchanged final-review main, exact reviewed head, CI/CodeQL, fresh independent review, zero blocking threads, expected-head merge, and post-merge SHA/tree/ordered-parent/path/signature/replay verification.
 
-### 6. Execute inherited no-model audits
+Only a fully verified canonical activation merge authorizes the bounded Repair-2 content read.
 
-Perform only the exact inherited provenance/conformance/input-digest/package checks. Do not execute or call any model/provider.
+### 5. Inherited no-model scientific audit
 
-### 7. Build deterministic GH1 result PR
+Execute only old acceptance Sections A–D checks. Do not use old Section E manifest identity. Do not execute/call any model/provider.
 
-Produce inherited result package under the GH1 result root. Finalize terminal-content commit, then one direct child terminal-receipt commit.
+### 6. GH1 result lineage — normative tree/commit scope
 
-### 8. Exact-head result qualification and merge
+**`acceptance.md` Section I is mandatory and normative.** The result branch starts exactly at `GH1_ACTIVATION_MERGE_SHA`.
 
-Require exact-head CI/CodeQL/fresh independent review/zero blocking threads/unchanged main. Merge with expected-head SHA and mechanically post-verify.
+The only permitted result-root paths are:
 
-### 9. Create canonical adoption verification record
+```text
+<GH1_RESULT_ROOT>r2-provenance-audit.json
+<GH1_RESULT_ROOT>corpus-conformance-audit.json
+<GH1_RESULT_ROOT>execution-binding-inventory.md
+<GH1_RESULT_ROOT>preflight-verdict.md
+<GH1_RESULT_ROOT>preflight-result-manifest.json
+<GH1_RESULT_ROOT>execution-authorization-candidate.md   # conditional
+<GH1_RESULT_ROOT>consumption-receipt.json              # terminal-only
+```
 
-One create-only path, one exact-head PR, expected-head merge, post-merge verification.
+Every result-lineage commit must satisfy all of these:
+
+- exactly one parent;
+- first result parent exactly `GH1_ACTIVATION_MERGE_SHA`;
+- each later parent exactly the immediately preceding valid result target;
+- no merge commit;
+- no changed path outside `GH1_RESULT_ROOT`;
+- no changed path outside the allowlist;
+- activation files unchanged;
+- frozen Repair-2 paths unchanged;
+- no consumption receipt before terminal-receipt commit;
+- no force-push/non-fast-forward/sideways retarget.
+
+Intermediate commits may add/update only the six non-receipt allowlisted artifacts while building the package. The conditional successor may be removed only for a required blocked-package rebuild.
+
+`TERMINAL_CONTENT_COMMIT` freezes every manifest-bound non-receipt artifact. No add/update/delete/rename/replacement of those bytes is permitted afterward.
+
+`TERMINAL_RECEIPT_COMMIT` must be the direct child of terminal-content, have exactly one parent, and its only tree delta is creation of `consumption-receipt.json`. No later result-lineage commit is allowed before canonical result adoption.
+
+Immediately before result merge, exact final-review main→reviewed-head diff must contain only the allowed GH1 result-root paths. Any unrelated path is a blocker.
+
+### 7. Exact GH1 package binding
+
+Construct only the GH1-specific package in `acceptance.md` J–K:
+
+- active GH1 manifest identity;
+- exact `inherited_contract` historical provenance object;
+- unchanged frozen-input digest map from old Section E;
+- exact three-artifact binding core;
+- GH1 verdict binding;
+- GH1 result manifest;
+- conditional GH1 successor;
+- non-self-referential terminal consumption receipt.
+
+No old result manifest ID, old result root, old receipt identity, or old adoption schema may be substituted.
+
+### 8. Exact-head result merge
+
+Require every `acceptance.md` L predicate. Merge only the exact reviewed terminal-receipt head using `expected_head_sha`; post-verify result merge SHA/tree/ordered parents/path scope/signature and replay.
+
+Canonical premerge-main→result-merge path delta must contain no path outside the reviewed GH1 result allowlist.
+
+### 9. Create-only adoption record
+
+Publish exactly one record under the merge-SHA-qualified GH1 adoption path using exact version:
+
+```text
+MESC-BT-PREFLIGHT-GH1-CANONICAL-ADOPTION-V1
+```
+
+Require the complete schema/failure-code/path/one-file-PR/post-merge predicates from `acceptance.md` M.
 
 ### 10. Stop
 
-If terminal state is ready, report only `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`. Do not start tournament execution. A separate Founder authorization is mandatory.
+If the terminal state is ready, report only:
 
-## Fail-closed handling
+```text
+PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION
+```
+
+Do not start tournament execution. Separate Founder execution authorization is mandatory.
+
+## Fail-closed rules
 
 At every stage:
 
-- changed `main` => re-read and reconcile; never assume;
-- changed PR head => invalidate stale review evidence;
+- changed canonical `main` => re-read and reconcile; never assume;
+- changed PR head => invalidate all stale exact-head evidence;
 - incomplete PR enumeration => `BLOCKED`;
 - conflicting reserved PR => `BLOCKED`;
-- unexpected path => `BLOCKED`;
-- failed signature/tree/parent verification => `BLOCKED`;
-- any old episode claim/result evidence => `BLOCKED`;
-- any frozen-content read before verified GH1 activation merge => `BLOCKED`;
+- unexpected repository path => `BLOCKED`;
+- result graph/parent/allowlist/immutability violation => `BLOCKED`;
+- result identity/schema ambiguity => `BLOCKED`;
+- failed signature/tree/parent/path verification => `BLOCKED`;
+- frozen-content read before verified GH1 activation merge => protocol violation and `BLOCKED`;
 - any model/provider interaction => protocol violation and immediate stop;
 - any force-push/destructive history rewriting => protocol violation and immediate stop.
 
-## Terminal report for this repair PR
+## Terminal repair report
 
-Before any repair merge, report at minimum:
+Before any repair merge report at minimum:
 
 ```text
 REPAIR_DECISION_ID
@@ -141,24 +240,24 @@ LIVE_MAIN_TREE
 REPAIR_PR_NUMBER
 REPAIR_HEAD_SHA
 REPAIR_HEAD_TREE
-CHANGED_PATHS
+CUMULATIVE_CHANGED_PATHS
 CI_STATUS
 CODEQL_STATUS
 INDEPENDENT_REVIEW_STATUS
 UNRESOLVED_BLOCKING_THREADS
-OLD_EPISODE_REVALIDATION
+OLD_DECISION_REVALIDATION
 MERGE_AUTHORIZED = YES|NO
 ```
 
-After a permitted merge, additionally report:
+After a permitted repair merge additionally report:
 
 ```text
 REPAIR_MERGE_SHA
 REPAIR_MERGE_TREE
 ORDERED_PARENTS
 MERGE_SIGNATURE_VERIFICATION
-FD-MESC-BT-EXEC-1-PREFLIGHT = SUPERSEDED_UNSTARTED
+FD-MESC-BT-EXEC-1-PREFLIGHT = SUPERSEDED_NONREUSABLE
 FD-MESC-BT-EXEC-1-PREFLIGHT-GH1 = AUTHORIZED_NOT_STARTED
 ```
 
-Stop after repair merge verification unless the Founder separately instructs continuation into GH1 activation qualification.
+Then stop unless the Founder separately authorizes continuation into GH1 activation qualification.
