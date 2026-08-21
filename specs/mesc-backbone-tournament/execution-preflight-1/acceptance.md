@@ -77,7 +77,6 @@ Any missing path, blob identity, digest reproduction, derivation proof, or execu
 `MESC-BT-PREFLIGHT-CANONICAL-JSON-V1` applies to both audit files and every preflight canonical JSON preimage or artifact that invokes this section, including activation/terminal receipts and result-manifest objects.
 
 Before canonicalization, every parsed JSON object MUST reject duplicate member names at every nesting level. Duplicate member names are invalid; no first-wins, last-wins, merge, or parser-dependent behavior is permitted. Detection of any duplicate member name => `BLOCKED` before serialization or SHA-256 computation.
-
 Canonical serialization is one RFC 8259 JSON object using:
 
 - UTF-8 encoding without BOM;
@@ -451,7 +450,7 @@ The closed `failed_checks` allowlist and predicate mapping are:
 | `TERMINAL_RECEIPT_SHA256_MISMATCH` | the canonical `consumption-receipt.json` bytes are unreadable or hash differently from `terminal_receipt_sha256` |
 | `TERMINAL_RESULT_REF_PROTECTION_FAILED` | terminal result-ref protection identity/version/target cannot be revalidated, or `terminal_frozen` / `no_configured_bypass` is not exactly `true` |
 
-If an external predicate cannot be evaluated because required authoritative evidence is missing/unreadable, that predicate fails and its code MUST be included. For signature evidence specifically, the mapping is exhaustive and deterministic: an unreadable/malformed verification object includes both `MERGE_SIGNATURE_EVIDENCE_INVALID` and `MERGE_SIGNATURE_NOT_VERIFIED`; a well-formed object with `verified = true` and either `signature = null` or `payload = null` includes `MERGE_SIGNATURE_EVIDENCE_INVALID` but not `MERGE_SIGNATURE_NOT_VERIFIED`; and a well-formed unsigned object with `verified = false`, `reason = "unsigned"`, `signature = null`, and `payload = null` includes `MERGE_SIGNATURE_NOT_VERIFIED` but not `MERGE_SIGNATURE_EVIDENCE_INVALID`.
+If an external predicate cannot be evaluated because required authoritative evidence is missing/unreadable, that predicate fails and its code MUST be included. For signature evidence specifically, the mapping is exhaustive and deterministic: an unreadable/malformed hosting verification object includes both `MERGE_SIGNATURE_EVIDENCE_INVALID` and `MERGE_SIGNATURE_NOT_VERIFIED`; a well-formed hosting verification object with `verified = true` and either authoritative source value `verification.signature = null` or `verification.payload = null` includes `MERGE_SIGNATURE_EVIDENCE_INVALID` but not `MERGE_SIGNATURE_NOT_VERIFIED`; and a well-formed unsigned hosting verification object with `verified = false`, `reason = "unsigned"`, `verification.signature = null`, and `verification.payload = null` includes `MERGE_SIGNATURE_NOT_VERIFIED` but not `MERGE_SIGNATURE_EVIDENCE_INVALID`.
 
 Canonical unsigned signature-evidence fixture under Section B is exactly:
 
@@ -462,70 +461,3 @@ Canonical unsigned signature-evidence fixture under Section B is exactly:
 Structural errors in the adoption record itself—unknown/missing/duplicate keys, malformed JSON, or noncanonical serialization—and later adoption-record publication/path/tree-scope errors are validation failures outside this closed self-contained `failed_checks` set; they make PASS unavailable rather than inventing additional failure codes inside the record. Unknown failure codes, a missing required code for a failed predicate, or an extra code for a passing predicate => validation failure and PASS is unavailable.
 
 Unknown, missing, or duplicate keys in `terminal_result_ref_protection` or `merge_signature_verification`, malformed artifact entries, invalid signature null/text representation, a non-deterministic or incorrectly mapped `failed_checks` array, or any value that does not mechanically revalidate => validation failure and PASS is unavailable.
-
-After result-package merge, mechanically re-read the returned merge commit and all bound evidence and construct the exact adoption record. Its publication PR has an **exact create-only tree contract**:
-
-1. substitute `<RESULT_MERGE_SHA>` in `ADOPTION_RECORD_PATH` with the exact `result_merge_sha` value in the record, which MUST also equal the mechanically verified canonical result merge SHA;
-2. immediately before opening the adoption-verification PR, and again immediately before merging it, prove that this exact `ADOPTION_RECORD_PATH` is absent from canonical premerge `main`;
-3. the adoption-verification PR/head/tree delta MUST contain exactly one changed repository path: `ADOPTION_RECORD_PATH`, with status **added/create-only**;
-4. zero other additions, modifications, deletions, renames, copies, replacements, or changes to any pre-existing path are permitted; and
-5. a pre-existing target path, path-SHA mismatch, non-create-only status, or any additional tree change => validation failure and PASS is unavailable.
-
-Review that exact one-path create-only head and merge it with expected-head protection. The adoption-record path is outside `RESULT_ROOT`; the PR MUST NOT move `RESULT_REF`, rewrite `consumption-receipt.json`, or mutate any result-package byte.
-
-`CANONICAL_ADOPTION_VERIFIED = PASS` is usable only when the adoption-record file is present on canonical `main`, has `outcome = CANONICAL_ADOPTION_VERIFIED`, and every field revalidates against the canonical result merge, reviewed result head, ordered parents, merge tree/signature evidence, final manifest/artifact digests, claim/result refs, terminal target, and terminal protection. Missing record, noncanonical record PR, missing/unreadable field, digest/signature mismatch, failed revalidation, or `outcome = CANONICAL_ADOPTION_VERIFICATION_FAILED` makes PASS unavailable and keeps the successor candidate inactive/unusable.
-
-Any later execution authorization MUST reference the adoption-record merge SHA/tree and exact `ADOPTION_RECORD_PATH`, canonical Git blob SHA, and full-file SHA-256; it MUST re-read/re-hash/revalidate the record and still require its own separately reviewed Founder authorization. The record is evidence only and cannot create execution authority by itself. Thus a post-merge verification failure can never turn a merged `CONSUMED` preflight receipt into execution authority.
-
-Missing/mismatched server protection, claim, result ref, activation receipt, canonical terminal receipt when terminal closure is asserted, manifest digest, lifecycle/CAS evidence, graph/tree relation, final freeze, adoption record, or state correspondence => the package is not valid for canonical execution authorization.
-
-## G. Remaining execution-binding inventory and single successor candidate
-
-The result must explicitly report the status of every `FD-MESC-BT-EXEC-1` mandatory pre-activation binding:
-
-- exact canonical code SHA/tree;
-- selected candidate subset (`>=2` distinct) — may remain `UNBOUND` in preflight;
-- tokenizer/processor/custom-code revisions;
-- exact hardware/provider/runtime/precision identity — may remain `UNBOUND` in preflight;
-- peak-VRAM and latency measurement capability;
-- gated-access authorization status;
-- bounded run attempts and artifact destinations;
-- audit artifact SHA-256 values;
-- exact report-validation/report-schema bindings;
-- later exact-head CI/review/merge gates.
-
-An `UNBOUND` execution item must remain explicitly blocking for execution; it does not make a successful corpus audit false.
-
-The successor-candidate lifecycle is exactly:
-
-1. provisional rendering is allowed only under Section E after Sections A–D PASS and inventory readiness checks;
-2. provisional bytes exist only to compute the Section E manifest binding and grant no authority;
-3. `FD-MESC-BT-EXEC-1-CANDIDATE-V2` becomes a valid preflight output only if Sections A–G all pass and the terminal package is `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`;
-4. any later failure requires removal of the provisional file, `successor_candidate = null`, and deterministic rebuild of the blocked binding package.
-
-The only permitted successor identity/path is:
-
-```text
-CANDIDATE_ID = FD-MESC-BT-EXEC-1-CANDIDATE-V2
-AUTHORITATIVE_PATH = specs/mesc-backbone-tournament/execution-preflight-1-result/execution-authorization-candidate.md
-```
-
-The older `readiness-repair-2-result/execution-authorization-candidate.md` remains immutable historical seed evidence and is superseded only after the V2 result package is canonically merged and the canonical adoption record revalidates to `CANONICAL_ADOPTION_VERIFIED = PASS`. No two candidate records may simultaneously claim current authority.
-
-## H. Terminal state
-
-The preflight may conclude:
-
-```text
-PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION
-```
-
-only when Sections A–G pass and every remaining execution blocker is truthfully recorded.
-
-Otherwise a canonically closed terminal package may conclude:
-
-```text
-BLOCKED
-```
-
-An interrupted/burned episode that cannot canonically close remains non-reusable as `ISSUED` or `IN_PROGRESS`; it must not fabricate a terminal state. Neither a ready, blocked, nor interrupted preflight authorizes model access or execution. Only a separately reviewed and canonically adopted `FD-MESC-BT-EXEC-1` authorization, with a referenced and revalidated canonical adoption record, can do that.
