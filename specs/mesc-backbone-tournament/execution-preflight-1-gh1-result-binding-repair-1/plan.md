@@ -10,13 +10,16 @@ Date: 2026-08-21
 
 Before any repair mutation or merge decision:
 
-- re-read canonical `main` SHA/tree/signature;
+- require canonical `main` SHA exactly `4e259767a86c74a26967e0f19598a1f84a987df4` and tree exactly `c487c5a70abf865b364c96de1aa8c18da7bf6602`;
+- require the authoritative hosting verification object for that activation merge to have `verification.verified=true`, `verification.reason=valid`, `verification.signature` non-null source text, and `verification.payload` non-null source text;
 - re-read PR #134 structural identity and activation head;
-- enumerate complete PR population and confirm one selected GH1 activation PR and zero selected GH1 result PRs;
+- enumerate the complete open + closed/merged PR population and apply the exact selected-GH1-result and reserved-conflict rules from normative `acceptance.md` Section B;
+- require exactly one selected GH1 activation PR, zero selected GH1 result PRs, and `GH1_RESERVED_RESULT_NAMESPACE_CONFLICTS = 0`;
 - confirm no GH1 result root, terminal receipt, result merge, or adoption record on canonical main;
-- confirm the governing repair-1 acceptance blob remains `2d0c9765d22b435cd8e57d13e7d5972e9a095b40`;
-- confirm the inherited old acceptance blob remains `7c5ae9fadaa639d2d43b6cb8051d91f01fb7d1cf`;
-- verify the defect directly: GH1 requires exact inherited map object while old Section E supplies no literal JSON object/keyset.
+- confirm the **historical GH1 hosting-repair** acceptance blob remains `2d0c9765d22b435cd8e57d13e7d5972e9a095b40`;
+- confirm the inherited old preflight acceptance blob remains `7c5ae9fadaa639d2d43b6cb8051d91f01fb7d1cf`;
+- read the current result-binding-repair `acceptance.md` blob SHA externally from the exact repair head and keep it distinct from both historical blob identities;
+- verify the defect directly: historical GH1 hosting-repair J.2 requires an exact inherited map object while old Section E supplies no literal JSON object/keyset.
 
 Any current contradictory evidence => stop and reassess.
 
@@ -41,8 +44,9 @@ Require on the unchanged repair head:
 - CodeQL PASS;
 - fresh independent exact-head governance review with no blocker;
 - zero unresolved blocking review threads;
-- canonical `main` and repair head unchanged;
-- replay still one GH1 activation PR, zero GH1 result PRs, zero reserved conflict;
+- canonical `main` still exactly `4e259767a86c74a26967e0f19598a1f84a987df4` / tree `c487c5a70abf865b364c96de1aa8c18da7bf6602` and repair head unchanged;
+- authoritative activation-merge hosting verification still satisfies `verified=true`, `reason=valid`, non-null source `signature`, and non-null source `payload`;
+- complete replay still returns one GH1 activation PR, zero GH1 result PRs, and zero reserved result-namespace conflicts under the exact Section B selector;
 - no GH1 result artifact appeared concurrently.
 
 Every repair commit invalidates earlier exact-head evidence.
@@ -59,9 +63,9 @@ Immediately verify:
 - ordered parents are exactly `[PREMERGE_MAIN_SHA, REVIEWED_REPAIR_HEAD_SHA]`;
 - merge tree is expected;
 - premerge-main to merge delta is exactly the four repair files;
-- hosting verification is valid with non-null signature and payload;
+- the authoritative repair-merge hosting verification object has `verification.verified=true`, `verification.reason=valid`, `verification.signature` non-null source text, and `verification.payload` non-null source text;
 - the four repair blobs on canonical main equal the reviewed head;
-- fresh PR replay still has no GH1 result conflict.
+- fresh complete PR replay still has exactly one historical GH1 activation PR, zero GH1 result PRs, and zero reserved GH1 result conflicts.
 
 Only then record:
 
@@ -82,7 +86,7 @@ After separate continuation instruction:
 4. keep Draft until exact-head CI, CodeQL, fresh independent review, zero blockers, and stable main/head;
 5. Ready only after explicit Founder instruction and fresh post-Ready review;
 6. merge with expected-head protection;
-7. verify canonical merge SHA/tree/parents/path/signature/bytes/replay;
+7. verify canonical merge SHA/tree/parents/path/hosting-verification fields/bytes/replay;
 8. only then permit GH2 frozen Repair-2 content access.
 
 No model/provider interaction is allowed.
@@ -103,7 +107,7 @@ Earlier GH1 audit observations are not reused as GH2 artifact authority.
 
 ## Phase 7 — GH2 execution-binding inventory
 
-Without model access, truthfully record every future execution prerequisite, including:
+Without model access, truthfully record every exact label and `BOUND|UNBOUND` status required by normative `acceptance.md` K.1, including:
 
 - selected candidate subset status;
 - exact candidate/tokenizer/processor/custom-code revisions;
@@ -111,10 +115,11 @@ Without model access, truthfully record every future execution prerequisite, inc
 - peak-VRAM and latency measurement capability;
 - gated-access authorization status;
 - bounded attempts and artifact destinations;
+- R2 provenance and corpus-conformance audit SHA-256 identities;
 - report-validation/report-schema bindings;
 - later exact-head execution-authorization gates.
 
-Items may remain `UNBOUND`; they remain blockers for tournament execution but do not invalidate successful corpus preflight audits.
+Items may remain `UNBOUND`; they remain blockers for tournament execution but do not invalidate successful corpus preflight audits or themselves grant authority.
 
 ## Phase 8 — GH2 deterministic result package
 
@@ -141,9 +146,9 @@ Open the exact structurally selected GH2 result PR only after the terminal-recei
 
 Require exact-head CI/CodeQL, fresh independent review, zero blocking threads, stable main/head, complete graph/binding/receipt proof, and expected-head merge.
 
-Post-verify result merge SHA/tree/ordered parents/path/signature/bytes/replay.
+Post-verify the result merge using the closed predicate→failure-code mapping in normative `acceptance.md` Section M, including exact SHA/tree/ordered parents/path scope/hosting verification source fields/bytes/replay.
 
-Then create exactly one create-only adoption record PR under the result-merge-qualified GH2 adoption path. Require exact one-file scope, exact schema, exact-head gates, expected-head merge, and post-merge verification.
+Then create exactly one create-only adoption record PR under the result-merge-qualified GH2 adoption path. Require exact one-file scope, exact schema, exact-head gates, expected-head merge, and post-merge verification. A non-empty deterministic `failed_checks` set records failed result-merge verification and grants no terminal authority.
 
 ## Phase 10 — Stop
 
