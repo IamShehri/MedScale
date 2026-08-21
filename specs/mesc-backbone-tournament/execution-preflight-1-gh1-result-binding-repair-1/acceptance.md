@@ -15,7 +15,7 @@ PRE_REPAIR_MAIN_SHA = 4e259767a86c74a26967e0f19598a1f84a987df4
 PRE_REPAIR_MAIN_TREE = c487c5a70abf865b364c96de1aa8c18da7bf6602
 GH1_REPAIR_AUTHORIZATION_MERGE_SHA = 9d66538b96794429e29b7baa0c58dfa60a408cb7
 GH1_REPAIR_AUTHORIZATION_MERGE_TREE = b80aceddcb7082fa8af8c40c34e4228c6e8f6a35
-GH1_REPAIR1_ACCEPTANCE_BLOB_SHA = 2d0c9765d22b435cd8e57d13e7d5972e9a095b40
+HISTORICAL_GH1_HOSTING_REPAIR_ACCEPTANCE_BLOB_SHA = 2d0c9765d22b435cd8e57d13e7d5972e9a095b40
 INHERITED_ACCEPTANCE_BLOB_SHA = 7c5ae9fadaa639d2d43b6cb8051d91f01fb7d1cf
 GH1_ACTIVATION_RECEIPT_ID = 6c3bb9a5e8b55c4bd3b9be81e59629dd9e257d4a1eb3a6d0e99dcaf00be9947c
 GH1_ACTIVATION_HEAD_SHA = 8d525730705351afffc8ca67940e2cc50df9632a
@@ -23,10 +23,12 @@ GH1_ACTIVATION_MERGE_SHA = 4e259767a86c74a26967e0f19598a1f84a987df4
 GH1_ACTIVATION_MERGE_TREE = c487c5a70abf865b364c96de1aa8c18da7bf6602
 ```
 
+`HISTORICAL_GH1_HOSTING_REPAIR_ACCEPTANCE_BLOB_SHA` names only the already-canonical `execution-preflight-1-hosting-repair-1/acceptance.md` blob that defined GH1. It MUST NOT be interpreted as the acceptance blob of this current result-binding-repair PR. The current result-binding-repair acceptance blob is the Git blob SHA of **this file** at the exact reviewed PR head; reviewers/workers MUST read and record that SHA externally from Git metadata at every exact-head gate. It is deliberately not embedded in this file because doing so would create a self-referential blob identity.
+
 The defect is mechanically established only if all are true:
 
-1. repair-1 J.2 requires `frozen_input_digest_map` to preserve exactly the old Section E key/value object;
-2. the exact inherited old Section E requires an "exact Repair-2 frozen input digest map" but defines no literal JSON object, no exact member names, no member count, and no mapping from frozen constants to JSON keys;
+1. historical GH1 hosting-repair Section J.2 at `HISTORICAL_GH1_HOSTING_REPAIR_ACCEPTANCE_BLOB_SHA` requires `frozen_input_digest_map` to preserve exactly the old Section E key/value object;
+2. the exact inherited old Section E at `INHERITED_ACCEPTANCE_BLOB_SHA` requires an "exact Repair-2 frozen input digest map" but defines no literal JSON object, no exact member names, no member count, and no mapping from frozen constants to JSON keys;
 3. repository code/search and the retained PR history reveal no canonical result artifact that supplies that missing object;
 4. zero structurally selected GH1 result PRs exist and no GH1 result root exists on canonical `main`;
 5. no valid GH1 result package has already made a different representation canonical.
@@ -35,18 +37,46 @@ Any contrary canonical evidence => stop and reassess; this repair must not merge
 
 ## B. GH1 post-activation fail-closed state
 
-Before this repair may become Ready and again immediately before merge, mechanically verify:
+Before this repair may become Ready and again immediately before merge, mechanically verify **all** predicates in this section in one fresh snapshot.
+
+Canonical `main` MUST equal the exact pre-repair activation state:
+
+```text
+PRE_REPAIR_MAIN_SHA = 4e259767a86c74a26967e0f19598a1f84a987df4
+PRE_REPAIR_MAIN_TREE = c487c5a70abf865b364c96de1aa8c18da7bf6602
+```
+
+The GH1 result-PR identities used for complete replay/conflict classification are exactly:
+
+```text
+GH1_RESULT_PR_AUTH_PREFIX = governance/fd-mesc-bt-exec-1-preflight-gh1-result/9d66538b96794429e29b7baa0c58dfa60a408cb7/
+GH1_RESULT_PR_HEAD_REF = governance/fd-mesc-bt-exec-1-preflight-gh1-result/9d66538b96794429e29b7baa0c58dfa60a408cb7/6c3bb9a5e8b55c4bd3b9be81e59629dd9e257d4a1eb3a6d0e99dcaf00be9947c
+```
+
+Enumerate the complete open + closed/merged PR population. A PR is a selected GH1 result PR iff base repository full name=`TheHalfMoon/MESC`, base ref=`main`, head repository full name=`TheHalfMoon/MESC`, and retained head ref exactly=`GH1_RESULT_PR_HEAD_REF`; PR state/title/labels/author/reviews are not selectors. Independently, any PR whose head repository is exactly `TheHalfMoon/MESC` and whose retained head ref begins with `GH1_RESULT_PR_AUTH_PREFIX` is in the reserved current-authorization result namespace. Such a PR is valid only if it also satisfies the exact selected-result predicate; every sibling suffix, malformed suffix, extra segment, wrong base repo/ref, or otherwise non-current structure is a reserved conflict even if its branch was deleted.
+
+The exact replay/state result MUST be:
 
 ```text
 GH1_SELECTED_ACTIVATION_PRS = 1
 GH1_SELECTED_RESULT_PRS = 0
+GH1_RESERVED_RESULT_NAMESPACE_CONFLICTS = 0
 GH1_RESULT_ROOT_ON_MAIN = ABSENT
 GH1_TERMINAL_RECEIPT_ON_MAIN = ABSENT
 GH1_RESULT_MERGE = ABSENT
 GH1_ADOPTION_RECORD = ABSENT
 ```
 
-The retained selected activation PR must be PR #134 with exact head `8d525730705351afffc8ca67940e2cc50df9632a`, and canonical activation merge must remain `4e259767a86c74a26967e0f19598a1f84a987df4` with tree `c487c5a70abf865b364c96de1aa8c18da7bf6602` and verified signature/payload.
+The retained selected activation PR must be PR #134 with exact head `8d525730705351afffc8ca67940e2cc50df9632a`. Canonical `main` must still be activation merge `4e259767a86c74a26967e0f19598a1f84a987df4` with exact tree `c487c5a70abf865b364c96de1aa8c18da7bf6602`, and the authoritative hosting verification object for that merge MUST satisfy all four field-level predicates:
+
+```text
+verification.verified = true
+verification.reason = valid
+verification.signature = NON_NULL_SOURCE_TEXT
+verification.payload = NON_NULL_SOURCE_TEXT
+```
+
+Any main SHA/tree drift, incomplete PR enumeration, unreadable selector field, selected-result PR, reserved result conflict, or failed hosting-verification predicate => `BLOCKED`; this repair MUST NOT become Ready or merge.
 
 Worker-state evidence recorded by this repair is:
 
@@ -82,9 +112,9 @@ Existing GH1 activation records remain immutable historical evidence.
 
 The following proof is normative:
 
-1. repair-1 Section I requires first GH1 result commit parent exactly `GH1_ACTIVATION_MERGE_SHA`;
+1. historical GH1 hosting-repair Section I requires first GH1 result commit parent exactly `GH1_ACTIVATION_MERGE_SHA`;
 2. every GH1 result-lineage commit may change only the GH1 result-root allowlist;
-3. repair-1 Section L requires the final premerge-main to reviewed-result-head changed-path set to contain only that result allowlist;
+3. historical GH1 hosting-repair Section L requires the final premerge-main to reviewed-result-head changed-path set to contain only that result allowlist;
 4. a canonical clarification merged to `main` after activation would not be present in a result branch rooted at the activation merge and therefore would appear as an unrelated path difference;
 5. inserting that clarification into the result lineage would itself violate the result allowlist.
 
