@@ -76,13 +76,7 @@ def test_duplicate_path_member_is_rejected() -> None:
 
 
 def test_duplicate_git_blob_member_is_rejected() -> None:
-    duplicate = (
-        "{"
-        f'"git_blob_sha":"{_SHA_A}",'
-        f'"git_blob_sha":"{_SHA_B}",'
-        '"path":"a.py"'
-        "}"
-    )
+    duplicate = f'{{"git_blob_sha":"{_SHA_A}","git_blob_sha":"{_SHA_B}","path":"a.py"}}'
     with pytest.raises(
         ExecutorAllowlistDuplicateMemberError,
         match="git_blob_sha",
