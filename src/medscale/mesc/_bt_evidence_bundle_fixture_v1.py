@@ -36,7 +36,7 @@ CANDIDATE_KEYS: Final[tuple[CandidateKey, ...]] = (
 )
 
 _PATH_COMPONENT_RE: Final = re.compile(r"^[A-Za-z0-9._-]+$")
-_RETRYABLE: Final = frozenset({"timeout", "infrastructure_error"})
+_RETRYABLE: Final = frozenset({"infrastructure_error"})
 _ALLOWED_DISPOSITIONS: Final = frozenset(
     {"success", "timeout", "infrastructure_error", "terminal_error"}
 )
@@ -317,7 +317,9 @@ def _validate_attempt_sequence(
     if actual_numbers != expected_numbers:
         raise FixtureEvidenceBlockedError("attempt numbers must be unique and contiguous from one")
     if len(ordered) == 2 and ordered[0].disposition not in _RETRYABLE:
-        raise FixtureEvidenceBlockedError("second attempt requires a retryable first disposition")
+        raise FixtureEvidenceBlockedError(
+            "second attempt requires infrastructure_error as the first disposition"
+        )
     return ordered
 
 
