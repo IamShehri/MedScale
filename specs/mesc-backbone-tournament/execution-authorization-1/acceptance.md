@@ -217,7 +217,9 @@ EXECUTOR_PATHS_AND_BLOB_SHAS = <complete reviewed allowlist artifact>
 EXECUTOR_ALLOWLIST_SHA256 = <SHA-256 of exact canonical allowlist artifact bytes>
 ```
 
-The allowlist artifact must enumerate every executable executor/harness path and its exact Git blob SHA. `EXECUTOR_ALLOWLIST_SHA256` must change whenever the executable allowlist or any allowlisted blob identity changes. Unbound executor identity or allowlist => `BLOCKED`.
+`EXECUTOR_PATHS_AND_BLOB_SHAS` is an immutable canonical UTF-8 JSON array. Each entry is an object with exactly the keys `git_blob_sha` and `path`; object keys are serialized lexicographically, entries are sorted ascending by the exact `path` bytes, JSON separators are exactly `,` and `:`, insignificant whitespace is prohibited, and there is no trailing newline. Each `path` is the exact non-empty repository-relative Git path of one reviewed executable/imported executor or harness file, and each `git_blob_sha` must match `^[0-9a-f]{40}$`. Duplicate paths are prohibited. `EXECUTOR_ALLOWLIST_SHA256` is the SHA-256 of those exact canonical artifact bytes and must change whenever the executable allowlist or any allowlisted blob identity changes.
+
+Before activation, mechanically verify that `EXECUTION_CODE_SHA` resolves exactly to `EXECUTION_CODE_TREE`. Then, for every allowlist entry, resolve `path` against that exact commit/tree and require the resolved Git object to exist, be a blob, and have a Git blob SHA exactly equal to the entry's `git_blob_sha`. The independently reviewed executable/imported executor-and-harness path set must equal the allowlist exactly: no reviewed executable path may be absent, no extra allowlist entry may exist, and no executor/harness file outside the allowlist may execute or be imported. Missing paths, duplicate paths, wrong object types, Git blob mismatches, commit/tree mismatches, malformed canonical bytes, allowlist-digest mismatches, extra or omitted executable paths, or inability to reproduce any predicate => `BLOCKED`. The allowlist is therefore bound to `EXECUTION_CODE_SHA`/`EXECUTION_CODE_TREE`; it must never be accepted as independent metadata.
 
 ## E. Runtime/hardware and live telemetry binding
 
@@ -395,11 +397,18 @@ REPOSITORY_RESULT_ROOT = specs/mesc-backbone-tournament/execution-result-1/<ACTI
 
 A separate pre-open `realpath`/containment check is not sufficient. Every directory traversal, directory creation, file creation, and file open under both activation roots must be performed descriptor-relative to a previously opened trusted root directory descriptor using race-safe no-symlink resolution.
 
-On the activation Linux runtime, the normative mechanism is `openat2(2)` with `RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_MAGICLINKS` for path resolution. File creation must additionally use no-follow/exclusive creation semantics appropriate to the operation; directory creation must operate one validated single-segment component at a time relative to a trusted parent descriptor and reopen/verify the created directory descriptor before descending. Absolute paths, empty components, `.`, `..`, slash/backslash within a component, magic links, symlinks, mount escapes, and resolution outside the trusted root are prohibited.
+All generated path components under either activation root must satisfy this normative grammar before any filesystem operation:
+
+```text
+PATH_COMPONENT_REGEX = ^[a-z0-9][a-z0-9._-]{0,127}$
+RELATIVE_PATH = PATH_COMPONENT ( "/" PATH_COMPONENT )*
+```
+
+`PATH_COMPONENT` validation means exact byte validation against `PATH_COMPONENT_REGEX`. Accepted components are lowercase ASCII only. `/` is the only path separator and may appear only between components. Unicode, uppercase ASCII, empty components, `.`, `..`, backslash, NUL, drive prefixes, alternate separators, and any component that fails the regex are invalid. Invalid input must be rejected; it must never be Unicode-normalized, case-folded, lowercased, separator-rewritten, or otherwise transformed into a valid path. Duplicate/collision comparison is exact byte comparison of the already validated ASCII `RELATIVE_PATH`, so no locale-dependent or Unicode case-folding/normalization algorithm participates in the security decision.
+
+On the activation Linux runtime, the normative mechanism is `openat2(2)` with `RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_MAGICLINKS` for path resolution. File creation must additionally use no-follow/exclusive creation semantics appropriate to the operation; directory creation must operate one `PATH_COMPONENT` at a time relative to a trusted parent descriptor and reopen/verify the created directory descriptor before descending. Magic links, symlinks, mount escapes, descriptor/root mismatch, resolution outside the trusted root, a pre-existing exact-byte collision with a different activation artifact, or any race-safe resolution failure => `BLOCKED` before model access.
 
 If the exact runtime cannot provide `openat2` with these resolution guarantees, activation is `BLOCKED` unless a separately reviewed equivalent mechanism proves the same descriptor-relative atomic confinement against TOCTOU races. The executor must never perform a security decision using a check-then-open pathname sequence.
-
-Any Unicode normalization ambiguity, pre-existing collision with a different activation, case-fold collision where relevant, descriptor/root mismatch, or race-safe resolution failure => `BLOCKED` before model access.
 
 The executor must keep frozen inputs read-only and place generated evidence only under the external runtime root during execution.
 
@@ -415,7 +424,7 @@ candidate_id_or_null
 item_id_or_null
 ```
 
-Every manifest `relative_path` must itself be normalized, relative, non-empty, contain no `.` or `..` segment, contain no backslash, satisfy the same single-component validation at each level, and be opened/created only through the race-safe descriptor-relative mechanism in Section I.1; duplicates and case-fold collisions are prohibited.
+Every manifest `relative_path` must satisfy the exact ASCII `RELATIVE_PATH` grammar in Section I.1 byte-for-byte and be opened/created only through that section's race-safe descriptor-relative mechanism. No normalization or case-folding is permitted. Duplicate paths or exact-byte collisions are prohibited.
 
 No output digest may be invented before execution.
 
@@ -431,14 +440,14 @@ A separate execution-activation package is mandatory. It must bind all values le
 2. the selected Founder attestation comment still exists, is unedited, is authored by `TheHalfMoon`, and exactly binds the reviewed authorization head that became the canonical merge's second parent;
 3. unchanged four-candidate set and model revisions;
 4. exact tokenizer/processor/custom-code identities and exact BF16 execution precision for Phi-4, Apertus, and MedGemma plus native MXFP4 for GPT-OSS;
-5. canonical executor implementation SHA/tree/blob allowlist and exact `EXECUTOR_ALLOWLIST_SHA256`;
+5. canonical executor implementation SHA/tree/blob allowlist and exact `EXECUTOR_ALLOWLIST_SHA256`, including proof that `EXECUTION_CODE_SHA` resolves to `EXECUTION_CODE_TREE`, every allowlisted path resolves at that exact commit/tree to the exact recorded Git blob SHA, and the reviewed executable/imported path set equals the allowlist exactly;
 6. exact `PHI_REMOTE_CODE_MANIFEST_SHA256`, executed remote-code set equality, and independent `PASS` security-review artifact;
 7. exact Phi offline/secretless/read-only sandbox qualification artifact `PASS` on the activation runtime;
 8. exact runtime/container/dependency identities;
 9. exact provider/GPU identity;
 10. exact-instance no-model H100 telemetry qualification `PASS`, with `telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256`;
 11. measurement harness implementation and deterministic fixture/self-test evidence;
-12. exact `ACTIVATION_ID` recomputation, regex validation, collision check, and race-safe descriptor-relative artifact-root confinement proof;
+12. exact `ACTIVATION_ID` recomputation, regex validation, exact ASCII path-grammar/collision validation, and race-safe descriptor-relative artifact-root confinement proof;
 13. canonical gated-access Founder decision and human access attestations for both gated models;
 14. both preflight audits remain PASS and digest-identical;
 15. frozen protocol/report/scoring/corpus digests remain unchanged;
