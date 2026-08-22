@@ -13,7 +13,7 @@ import json
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Final, Literal, TypeAlias, cast
+from typing import Final, Literal, TypeAlias
 
 CandidateKey: TypeAlias = Literal[
     "gpt_oss_20b",
@@ -257,7 +257,7 @@ def _group_observations(
 def _validate_candidate_key(value: object) -> CandidateKey:
     if type(value) is not str or value not in CANDIDATE_KEYS:
         raise FixtureEvidenceBlockedError(f"unsupported candidate_key: {value!r}")
-    return cast(CandidateKey, value)
+    return value
 
 
 def _validate_component(value: object, *, field: str) -> str:
@@ -269,26 +269,37 @@ def _validate_component(value: object, *, field: str) -> str:
 
 
 def _validate_observation_scalars(observation: FixtureAttemptObservation) -> None:
-    if type(observation.attempt_number) is not int or observation.attempt_number not in {1, 2}:
+    attempt_number = _require_nonnegative_int(observation.attempt_number, field="attempt_number")
+    if attempt_number not in {1, 2}:
         raise FixtureEvidenceBlockedError("attempt_number must be exactly 1 or 2")
-    for field_name, value in (
-        ("start_monotonic_ns", observation.start_monotonic_ns),
-        ("end_monotonic_ns", observation.end_monotonic_ns),
-        ("elapsed_ns", observation.elapsed_ns),
-    ):
-        if type(value) is not int or value < 0:
-            raise FixtureEvidenceBlockedError(f"{field_name} must be a non-negative integer")
-    if observation.end_monotonic_ns < observation.start_monotonic_ns:
+
+    start_monotonic_ns = _require_nonnegative_int(
+        observation.start_monotonic_ns, field="start_monotonic_ns"
+    )
+    end_monotonic_ns = _require_nonnegative_int(
+        observation.end_monotonic_ns, field="end_monotonic_ns"
+    )
+    elapsed_ns = _require_nonnegative_int(observation.elapsed_ns, field="elapsed_ns")
+    if end_monotonic_ns < start_monotonic_ns:
         raise FixtureEvidenceBlockedError("end_monotonic_ns precedes start_monotonic_ns")
-    if observation.elapsed_ns != observation.end_monotonic_ns - observation.start_monotonic_ns:
+    if elapsed_ns != end_monotonic_ns - start_monotonic_ns:
         raise FixtureEvidenceBlockedError("elapsed_ns does not match monotonic timestamps")
-    if (
-        type(observation.disposition) is not str
-        or observation.disposition not in _ALLOWED_DISPOSITIONS
-    ):
-        raise FixtureEvidenceBlockedError(f"unsupported disposition: {observation.disposition!r}")
-    if observation.raw_response is not None and type(observation.raw_response) is not bytes:
+
+    disposition: object = observation.disposition
+    if type(disposition) is not str or disposition not in _ALLOWED_DISPOSITIONS:
+        raise FixtureEvidenceBlockedError(f"unsupported disposition: {disposition!r}")
+
+    raw_response: object = observation.raw_response
+    if raw_response is not None and type(raw_response) is not bytes:
         raise FixtureEvidenceBlockedError("raw_response must be exact bytes or None")
+
+
+def _require_nonnegative_int(value: object, *, field: str) -> int:
+    if type(value) is not int:
+        raise FixtureEvidenceBlockedError(f"{field} must be a non-negative integer")
+    if value < 0:
+        raise FixtureEvidenceBlockedError(f"{field} must be a non-negative integer")
+    return value
 
 
 def _validate_attempt_sequence(
