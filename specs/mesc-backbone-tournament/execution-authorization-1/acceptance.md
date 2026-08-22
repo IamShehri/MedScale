@@ -77,7 +77,7 @@ Before this authorization PR may become Ready, and again immediately before merg
 8. fresh independent exact-head governance/security review reports no blocker;
 9. unresolved blocking review threads = 0;
 10. the PR delta is confined to this execution-authorization package;
-11. merge uses exact expected-head protection and is followed by SHA/tree/ordered-parent/hosting-signature/path/byte/account verification.
+11. merge uses exact expected-head protection and is followed by SHA/tree/ordered-parent/hosting-signature/path/byte/attestation verification.
 
 Any failure => no canonical conditional authorization.
 
@@ -149,13 +149,14 @@ precision_mode = BF16
 
 BF16 is mandatory for Phi-4 under this authorization. Activation may not substitute FP16, FP32, automatic dtype selection, or a quantized derivative.
 
-Because `trust_remote_code=true` executes externally sourced Python, immutable revision/hash binding is necessary but not sufficient. Before activation require a canonical `PHI_REMOTE_CODE_SECURITY_REVIEW` artifact that:
+Because `trust_remote_code=true` executes externally sourced Python, immutable revision/hash binding is necessary but not sufficient. Before activation require a canonical `PHI_REMOTE_CODE_MANIFEST` and `PHI_REMOTE_CODE_SECURITY_REVIEW` such that:
 
-- enumerates every executable remote-code file by repository-relative path, Git blob SHA when available, SHA-256, and byte length;
-- proves the executed file set equals the reviewed allowlist exactly, with no additional dynamically fetched or imported remote file;
-- records an independent security-review disposition of `PASS` for every allowlisted executable file and for the complete import graph reachable from those files;
-- records `PHI_REMOTE_CODE_SECURITY_REVIEW_SHA256` for the exact review artifact;
-- fails closed if any executed file, import, digest, or review disposition differs from the allowlist.
+- `PHI_REMOTE_CODE_MANIFEST` enumerates every executable remote-code file by repository-relative path, Git blob SHA when available, SHA-256, and byte length;
+- `PHI_REMOTE_CODE_MANIFEST_SHA256` is the SHA-256 of the exact canonical manifest bytes;
+- the executed file set equals the manifest exactly, with no additional dynamically fetched or imported remote file;
+- `PHI_REMOTE_CODE_SECURITY_REVIEW` explicitly binds `PHI_REMOTE_CODE_MANIFEST_SHA256` and records an independent security-review disposition of `PASS` for every manifest file and for the complete import graph reachable from those files;
+- `PHI_REMOTE_CODE_SECURITY_REVIEW_SHA256` is the SHA-256 of the exact security-review artifact bytes;
+- any executed file, import, digest, manifest, or review disposition mismatch => `BLOCKED`.
 
 Phi model execution must occur in a dedicated model process with all of these controls active before any remote-code import or model load:
 
@@ -212,10 +213,11 @@ Define at activation:
 ```text
 EXECUTION_CODE_SHA = <exact canonical commit containing reviewed executor>
 EXECUTION_CODE_TREE = <exact tree>
-EXECUTOR_PATHS_AND_BLOB_SHAS = <complete reviewed allowlist>
+EXECUTOR_PATHS_AND_BLOB_SHAS = <complete reviewed allowlist artifact>
+EXECUTOR_ALLOWLIST_SHA256 = <SHA-256 of exact canonical allowlist artifact bytes>
 ```
 
-Unbound executor identity => `BLOCKED`.
+The allowlist artifact must enumerate every executable executor/harness path and its exact Git blob SHA. `EXECUTOR_ALLOWLIST_SHA256` must change whenever the executable allowlist or any allowlisted blob identity changes. Unbound executor identity or allowlist => `BLOCKED`.
 
 ## E. Runtime/hardware and live telemetry binding
 
@@ -350,8 +352,10 @@ authorization_merge_tree
 decision_id
 execution_code_sha
 execution_code_tree
+executor_allowlist_sha256
 founder_attestation_comment_id
 gated_access_decision_merge_sha
+phi_remote_code_manifest_sha256
 phi_remote_code_security_review_sha256
 phi_sandbox_qualification_sha256
 receipt_version
@@ -359,7 +363,17 @@ runtime_binding_sha256
 telemetry_qualification_sha256
 ```
 
-Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, the exact current-head Founder attestation comment ID selected under Section A.1, canonical gated-access decision merge, exact Phi security-review and sandbox qualification artifact SHA-256 values, exact canonical runtime-binding artifact SHA-256, exact no-model live telemetry qualification SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
+Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, `EXECUTOR_ALLOWLIST_SHA256`, the exact current-head Founder attestation comment ID selected under Section A.1, canonical gated-access decision merge, `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact Phi security-review and sandbox qualification artifact SHA-256 values, exact canonical runtime-binding artifact SHA-256, exact no-model live telemetry qualification SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
+
+The following equality is mandatory and removes any naming ambiguity:
+
+```text
+telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256
+phi_remote_code_manifest_sha256 = PHI_REMOTE_CODE_MANIFEST_SHA256
+phi_remote_code_security_review_sha256 = PHI_REMOTE_CODE_SECURITY_REVIEW_SHA256
+phi_sandbox_qualification_sha256 = PHI_SANDBOX_QUALIFICATION_SHA256
+executor_allowlist_sha256 = EXECUTOR_ALLOWLIST_SHA256
+```
 
 Define canonical activation identity serialization as UTF-8 JSON with object keys sorted lexicographically, separators exactly `,` and `:`, no insignificant whitespace, and no trailing newline. Then:
 
@@ -377,7 +391,15 @@ EXTERNAL_RUNTIME_ROOT = /workspace/mesc-bt-exec-1/<ACTIVATION_ID>/
 REPOSITORY_RESULT_ROOT = specs/mesc-backbone-tournament/execution-result-1/<ACTIVATION_ID>/
 ```
 
-Before creating or opening any output path, the executor must resolve the candidate path without following attacker-controlled symlinks and mechanically prove that the resolved destination remains a strict descendant of its fixed root. Any `..`, slash/backslash, path separator, Unicode normalization ambiguity, symlink escape, collision with a pre-existing different activation, or containment failure => `BLOCKED` before model access.
+### I.1 Race-safe path confinement
+
+A separate pre-open `realpath`/containment check is not sufficient. Every directory traversal, directory creation, file creation, and file open under both activation roots must be performed descriptor-relative to a previously opened trusted root directory descriptor using race-safe no-symlink resolution.
+
+On the activation Linux runtime, the normative mechanism is `openat2(2)` with `RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_MAGICLINKS` for path resolution. File creation must additionally use no-follow/exclusive creation semantics appropriate to the operation; directory creation must operate one validated single-segment component at a time relative to a trusted parent descriptor and reopen/verify the created directory descriptor before descending. Absolute paths, empty components, `.`, `..`, slash/backslash within a component, magic links, symlinks, mount escapes, and resolution outside the trusted root are prohibited.
+
+If the exact runtime cannot provide `openat2` with these resolution guarantees, activation is `BLOCKED` unless a separately reviewed equivalent mechanism proves the same descriptor-relative atomic confinement against TOCTOU races. The executor must never perform a security decision using a check-then-open pathname sequence.
+
+Any Unicode normalization ambiguity, pre-existing collision with a different activation, case-fold collision where relevant, descriptor/root mismatch, or race-safe resolution failure => `BLOCKED` before model access.
 
 The executor must keep frozen inputs read-only and place generated evidence only under the external runtime root during execution.
 
@@ -393,7 +415,7 @@ candidate_id_or_null
 item_id_or_null
 ```
 
-Every manifest `relative_path` must itself be normalized, relative, non-empty, contain no `..` segment, contain no backslash, and resolve strictly beneath `EXTERNAL_RUNTIME_ROOT`; duplicates and case-fold collisions are prohibited.
+Every manifest `relative_path` must itself be normalized, relative, non-empty, contain no `.` or `..` segment, contain no backslash, satisfy the same single-component validation at each level, and be opened/created only through the race-safe descriptor-relative mechanism in Section I.1; duplicates and case-fold collisions are prohibited.
 
 No output digest may be invented before execution.
 
@@ -409,14 +431,14 @@ A separate execution-activation package is mandatory. It must bind all values le
 2. the selected Founder attestation comment still exists, is unedited, is authored by `TheHalfMoon`, and exactly binds the reviewed authorization head that became the canonical merge's second parent;
 3. unchanged four-candidate set and model revisions;
 4. exact tokenizer/processor/custom-code identities and exact BF16 execution precision for Phi-4, Apertus, and MedGemma plus native MXFP4 for GPT-OSS;
-5. canonical executor implementation SHA/tree/blob allowlist;
-6. exact Phi remote-code executable allowlist and independent `PASS` security-review artifact;
+5. canonical executor implementation SHA/tree/blob allowlist and exact `EXECUTOR_ALLOWLIST_SHA256`;
+6. exact `PHI_REMOTE_CODE_MANIFEST_SHA256`, executed remote-code set equality, and independent `PASS` security-review artifact;
 7. exact Phi offline/secretless/read-only sandbox qualification artifact `PASS` on the activation runtime;
 8. exact runtime/container/dependency identities;
 9. exact provider/GPU identity;
-10. exact-instance no-model H100 telemetry qualification `PASS` and artifact SHA-256;
+10. exact-instance no-model H100 telemetry qualification `PASS`, with `telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256`;
 11. measurement harness implementation and deterministic fixture/self-test evidence;
-12. exact `ACTIVATION_ID` recomputation, regex validation, collision check, and artifact-root containment proof;
+12. exact `ACTIVATION_ID` recomputation, regex validation, collision check, and race-safe descriptor-relative artifact-root confinement proof;
 13. canonical gated-access Founder decision and human access attestations for both gated models;
 14. both preflight audits remain PASS and digest-identical;
 15. frozen protocol/report/scoring/corpus digests remain unchanged;
@@ -425,7 +447,7 @@ A separate execution-activation package is mandatory. It must bind all values le
 18. unresolved blocking threads = 0;
 19. Ready then fresh post-Ready reconciliation;
 20. expected-head merge;
-21. post-merge canonical SHA/tree/ordered-parent/hosting-signature/path/byte/account verification.
+21. post-merge canonical SHA/tree/ordered-parent/hosting-signature/path/byte/attestation verification.
 
 Only after all twenty-one pass may activation state become:
 
@@ -457,13 +479,11 @@ CANONICAL_MAIN = unchanged final-review base
 
 Then mark Ready and perform a fresh reconciliation. Merge only using the fully reviewed expected head SHA.
 
-The GitHub hosting signature is an integrity/authenticity signal for GitHub's merge infrastructure; it is **not** treated as the Founder signature. Founder authorization is authenticated separately by Section A.1. After merge require all of the following:
+The GitHub hosting signature is an integrity/authenticity signal for GitHub's merge infrastructure; it is **not** treated as the Founder signature. Founder authorization is authenticated separately by Section A.1. Canonicality therefore does not depend on a specific merge actor login. After merge require all of the following:
 
 - canonical `main` equals the merge SHA returned by GitHub;
 - ordered parents equal `[PREMERGE_MAIN_SHA, REVIEWED_HEAD_SHA]`;
 - merge tree/path scope matches the reviewed candidate and all four package blobs equal reviewed bytes;
-- GitHub commit API `author.login` equals `TheHalfMoon`;
-- GitHub commit API `committer.login` equals `web-flow`;
 - hosting `verification.verified=true` and `verification.reason=valid`;
 - hosting `verification.signature` and `verification.payload` are non-null;
 - the selected `FOUNDER_ATTESTATION_COMMENT_ID` still exists with exact author/body/head and remains unedited;
