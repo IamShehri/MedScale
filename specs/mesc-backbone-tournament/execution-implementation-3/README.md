@@ -25,7 +25,8 @@ The fixture evidence compiler/verifier provides:
 - the exact four Section C candidate keys and deterministic candidate-major order;
 - an exact expected-item matrix supplied by the caller, without reading frozen corpus bytes;
 - one or two attempts per candidate/item pair, with contiguous attempt numbering;
-- second-attempt admission only after `timeout` or `infrastructure_error`;
+- second-attempt admission only after `infrastructure_error`; `timeout` is terminal and cannot
+  justify a second-attempt record;
 - monotonic timestamp validation and exact `elapsed_ns = end - start` enforcement;
 - successful-attempt raw-response byte presence;
 - raw responses emitted as separate immutable `.bin` artifacts rather than embedded in ledgers;
