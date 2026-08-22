@@ -91,13 +91,10 @@ def test_qualification_computes_aggregate_peak_and_hash() -> None:
 def test_deterministic_process_input_order() -> None:
     qualification = _qualification()
     reversed_frames = tuple(
-        replace(frame, processes=tuple(reversed(frame.processes)))
-        for frame in qualification.frames
+        replace(frame, processes=tuple(reversed(frame.processes))) for frame in qualification.frames
     )
     first = qualify_fixture_telemetry(qualification)
-    second = qualify_fixture_telemetry(
-        replace(qualification, frames=reversed_frames)
-    )
+    second = qualify_fixture_telemetry(replace(qualification, frames=reversed_frames))
     assert first == second
 
 
@@ -108,9 +105,7 @@ def test_sampling_interval_over_100_ms_blocks() -> None:
 
 def test_boolean_sampling_interval_blocks() -> None:
     with pytest.raises(FixtureTelemetryBlockedError, match="integer"):
-        qualify_fixture_telemetry(
-            replace(_qualification(), sampling_interval_ms=True)
-        )
+        qualify_fixture_telemetry(replace(_qualification(), sampling_interval_ms=True))
 
 
 def test_wrong_gpu_model_blocks() -> None:
@@ -188,9 +183,7 @@ def test_unexpected_compute_process_blocks() -> None:
         _process(100, None, 1000),
         _process(700, None, 1, compute=True),
     )
-    with pytest.raises(
-        FixtureTelemetryBlockedError, match="unexpected GPU compute process"
-    ):
+    with pytest.raises(FixtureTelemetryBlockedError, match="unexpected GPU compute process"):
         qualify_fixture_telemetry(replace(qualification, frames=tuple(frames)))
 
 
@@ -238,16 +231,12 @@ def test_first_frame_after_probe_start_blocks() -> None:
 
 def test_sync_before_terminal_blocks() -> None:
     with pytest.raises(FixtureTelemetryBlockedError, match="synchronization"):
-        qualify_fixture_telemetry(
-            replace(_qualification(), device_sync_completed_ns=149_999_999)
-        )
+        qualify_fixture_telemetry(replace(_qualification(), device_sync_completed_ns=149_999_999))
 
 
 def test_stop_before_sync_blocks() -> None:
     with pytest.raises(FixtureTelemetryBlockedError, match="stop before"):
-        qualify_fixture_telemetry(
-            replace(_qualification(), monitor_stop_ns=174_999_999)
-        )
+        qualify_fixture_telemetry(replace(_qualification(), monitor_stop_ns=174_999_999))
 
 
 def test_last_frame_before_sync_blocks() -> None:
@@ -256,9 +245,7 @@ def test_last_frame_before_sync_blocks() -> None:
         *qualification.frames[:-1],
         replace(qualification.frames[-1], monotonic_ns=174_999_999),
     )
-    with pytest.raises(
-        FixtureTelemetryBlockedError, match="after device synchronization"
-    ):
+    with pytest.raises(FixtureTelemetryBlockedError, match="after device synchronization"):
         qualify_fixture_telemetry(replace(qualification, frames=frames))
 
 
