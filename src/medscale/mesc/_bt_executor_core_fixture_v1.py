@@ -146,9 +146,9 @@ class RetryPolicy:
     def __post_init__(self) -> None:
         if type(self.timeout_ms) is not int or self.timeout_ms <= 0:
             raise FixtureExecutorError("timeout_ms must be a positive integer")
-        allowed = frozenset({"timeout", "infrastructure_error"})
+        allowed = frozenset({"infrastructure_error"})
         if not self.retryable_failure_kinds.issubset(allowed):
-            raise FixtureExecutorError("retryable_failure_kinds contains an unsupported value")
+            raise FixtureExecutorError("only infrastructure_error may be retryable")
         object.__setattr__(self, "retryable_failure_kinds", frozenset(self.retryable_failure_kinds))
 
 
