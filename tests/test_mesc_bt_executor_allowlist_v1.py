@@ -59,9 +59,7 @@ def test_top_level_must_be_array() -> None:
 
 
 def test_duplicate_path_member_is_rejected_before_mapping_creation() -> None:
-    payload = (
-        f'[{{"git_blob_sha":"{_SHA_A}","path":"a.py","path":"b.py"}}]'
-    ).encode("ascii")
+    payload = f'[{{"git_blob_sha":"{_SHA_A}","path":"a.py","path":"b.py"}}]'.encode("ascii")
     with pytest.raises(ExecutorAllowlistDuplicateMemberError, match="path"):
         parse_executor_allowlist(payload)
 
@@ -105,7 +103,11 @@ def test_closed_entry_schema_is_enforced(payload: bytes) -> None:
 )
 def test_path_grammar_is_fail_closed(path: str) -> None:
     payload = (
-        '[{"git_blob_sha":"' + _SHA_A + '","path":"' + path.replace("\\", "\\\\") + '"}]'
+        '[{"git_blob_sha":"'
+        + _SHA_A
+        + '","path":"'
+        + path.replace("\\", "\\\\")
+        + '"}]'
     ).encode("utf-8")
     with pytest.raises(ExecutorAllowlistSchemaError):
         parse_executor_allowlist(payload)
