@@ -14,6 +14,7 @@ from medscale.mesc._bt_executor_core_fixture_v1 import (
     FixtureAttemptFailureError,
     FixtureExecutionItem,
     FixtureExecutorBlockedError,
+    FixtureExecutorError,
     FixtureProjectionError,
     PostGenerationHooks,
     RetryableFailureKind,
@@ -213,30 +214,23 @@ def test_second_retryable_failure_is_terminal_with_no_third_attempt() -> None:
     assert result.postprocess_complete is False
 
 
-def test_timeout_retries_only_when_policy_explicitly_allows_it() -> None:
+def test_timeout_is_terminal_and_cannot_be_declared_retryable() -> None:
+    with pytest.raises(FixtureExecutorError, match="only infrastructure_error"):
+        _policy("timeout")
+
     adapter = FakeAdapter([FixtureAttemptFailureError("timeout"), "ok"])
     result = run_fixture_item(
         item=_item(),
         candidate_key="gpt_oss_20b",
         adapter=adapter,
-        retry_policy=_policy("timeout"),
-        hooks=_hooks(),
-        monotonic_ns=TickClock([0, 1_000_000, 2_000_000, 4_000_000]),
-    )
-    assert result.terminal_disposition == "success"
-    assert len(adapter.calls) == 2
-
-    nonretry_adapter = FakeAdapter([FixtureAttemptFailureError("timeout"), "ok"])
-    nonretry_result = run_fixture_item(
-        item=_item(),
-        candidate_key="gpt_oss_20b",
-        adapter=nonretry_adapter,
         retry_policy=_policy("infrastructure_error"),
         hooks=_hooks(),
         monotonic_ns=TickClock([0, 1_000_000]),
     )
-    assert nonretry_result.terminal_disposition == "timeout"
-    assert len(nonretry_adapter.calls) == 1
+    assert result.terminal_disposition == "timeout"
+    assert result.terminal_item_latency_ms == 1.0
+    assert len(result.attempts) == 1
+    assert len(adapter.calls) == 1
 
 
 def test_terminal_error_never_retries() -> None:
@@ -245,7 +239,7 @@ def test_terminal_error_never_retries() -> None:
         item=_item(),
         candidate_key="gpt_oss_20b",
         adapter=adapter,
-        retry_policy=_policy("timeout", "infrastructure_error"),
+        retry_policy=_policy("infrastructure_error"),
         hooks=_hooks(),
         monotonic_ns=TickClock([0, 1_000_000]),
     )
