@@ -130,7 +130,7 @@ def test_success_without_raw_response_blocks() -> None:
         build_fixture_evidence_bundle(observations, expected_item_ids=("ITEM-001", "ITEM-002"))
 
 
-def test_retry_after_timeout_is_allowed_and_latency_is_summed() -> None:
+def test_only_infrastructure_failure_can_trigger_second_attempt() -> None:
     observations = _matrix(("ITEM-001",))
     observations[0] = _attempt(
         CANDIDATE_KEYS[0],
@@ -138,7 +138,7 @@ def test_retry_after_timeout_is_allowed_and_latency_is_summed() -> None:
         number=1,
         start=100,
         end=300,
-        disposition="timeout",
+        disposition="infrastructure_error",
         raw=None,
     )
     observations.append(
@@ -157,17 +157,43 @@ def test_retry_after_timeout_is_allowed_and_latency_is_summed() -> None:
     assert b'"terminal_item_latency_ns":500' in items
     assert b'"attempt_count":2' in items
 
+    timeout_observations = _matrix(("ITEM-001",))
+    timeout_observations[0] = _attempt(
+        CANDIDATE_KEYS[0],
+        "ITEM-001",
+        number=1,
+        start=100,
+        end=300,
+        disposition="timeout",
+        raw=None,
+    )
+    timeout_observations.append(
+        _attempt(
+            CANDIDATE_KEYS[0],
+            "ITEM-001",
+            number=2,
+            start=400,
+            end=700,
+            disposition="success",
+            raw=b"must-not-be-admitted",
+        )
+    )
+    with pytest.raises(FixtureEvidenceBlockedError, match="requires infrastructure_error"):
+        build_fixture_evidence_bundle(timeout_observations, expected_item_ids=("ITEM-001",))
+
 
 def test_retry_after_success_blocks() -> None:
     observations = _matrix(("ITEM-001",))
     observations.append(_attempt(CANDIDATE_KEYS[0], "ITEM-001", number=2, start=300, end=400))
-    with pytest.raises(FixtureEvidenceBlockedError, match="retryable first disposition"):
+    with pytest.raises(FixtureEvidenceBlockedError, match="requires infrastructure_error"):
         build_fixture_evidence_bundle(observations, expected_item_ids=("ITEM-001",))
 
 
 def test_duplicate_attempt_number_blocks() -> None:
     observations = _matrix(("ITEM-001",))
-    observations[0] = replace(observations[0], disposition="timeout", raw_response=None)
+    observations[0] = replace(
+        observations[0], disposition="infrastructure_error", raw_response=None
+    )
     observations.append(_attempt(CANDIDATE_KEYS[0], "ITEM-001", number=1, disposition="success"))
     with pytest.raises(FixtureEvidenceBlockedError, match="unique and contiguous"):
         build_fixture_evidence_bundle(observations, expected_item_ids=("ITEM-001",))
@@ -175,10 +201,18 @@ def test_duplicate_attempt_number_blocks() -> None:
 
 def test_third_attempt_blocks() -> None:
     observations = _matrix(("ITEM-001",))
-    observations[0] = replace(observations[0], disposition="timeout", raw_response=None)
+    observations[0] = replace(
+        observations[0], disposition="infrastructure_error", raw_response=None
+    )
     observations.extend(
         [
-            _attempt(CANDIDATE_KEYS[0], "ITEM-001", number=2, disposition="timeout", raw=None),
+            _attempt(
+                CANDIDATE_KEYS[0],
+                "ITEM-001",
+                number=2,
+                disposition="infrastructure_error",
+                raw=None,
+            ),
             replace(_attempt(CANDIDATE_KEYS[0], "ITEM-001"), attempt_number=2),
         ]
     )
