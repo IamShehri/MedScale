@@ -49,7 +49,7 @@ class FixtureExecutorError(ValueError):
     """Base class for fixture executor contract violations."""
 
 
-class FixtureExecutorBlocked(FixtureExecutorError):
+class FixtureExecutorBlockedError(FixtureExecutorError):
     """A fail-closed executor condition that must terminate the current operation."""
 
 
@@ -57,7 +57,7 @@ class FixtureProjectionError(FixtureExecutorError):
     """Fixture payload projection is invalid or exposes a prohibited gold key."""
 
 
-class FixtureAttemptFailure(RuntimeError):
+class FixtureAttemptFailureError(RuntimeError):
     """A classified attempt failure emitted by a fixture adapter."""
 
     def __init__(self, kind: AttemptFailureKind) -> None:
@@ -283,7 +283,7 @@ def run_fixture_item(
     """Run one candidate/item fixture through the bounded attempt state machine."""
     candidate = _candidate(candidate_key)
     if getattr(adapter, "fixture_only", None) is not True:
-        raise FixtureExecutorBlocked("adapter must explicitly declare fixture_only=True")
+        raise FixtureExecutorBlockedError("adapter must explicitly declare fixture_only=True")
 
     attempts: list[AttemptEvidence] = []
     for attempt_number in range(1, _MAX_ATTEMPTS + 1):
@@ -305,7 +305,7 @@ def run_fixture_item(
             continue
         return _build_item_result(item, candidate, attempts, postprocess_complete=False)
 
-    raise FixtureExecutorBlocked("attempt state machine exceeded its hard bound")
+    raise FixtureExecutorBlockedError("attempt state machine exceeded its hard bound")
 
 
 def run_fixture_item_across_all_candidates(
@@ -338,12 +338,14 @@ def summarize_candidate_latencies(
     """Require exactly 240 unique item results and compute the frozen median rule."""
     _candidate(candidate_key)
     if len(results) != _TOURNAMENT_ITEM_COUNT:
-        raise FixtureExecutorBlocked("candidate latency summary requires exactly 240 item results")
+        raise FixtureExecutorBlockedError(
+            "candidate latency summary requires exactly 240 item results"
+        )
     if any(result.candidate_key != candidate_key for result in results):
-        raise FixtureExecutorBlocked("candidate latency summary mixes candidate identities")
+        raise FixtureExecutorBlockedError("candidate latency summary mixes candidate identities")
     item_ids = [result.item_id for result in results]
     if len(set(item_ids)) != _TOURNAMENT_ITEM_COUNT:
-        raise FixtureExecutorBlocked("candidate latency summary contains duplicate item IDs")
+        raise FixtureExecutorBlockedError("candidate latency summary contains duplicate item IDs")
     values = tuple(result.terminal_item_latency_ms for result in results)
     median = _median_240(values)
     return CandidateLatencySummary(
@@ -360,7 +362,7 @@ def hash_artifacts(artifacts: Mapping[str, bytes]) -> tuple[ArtifactDigest, ...]
     for path in sorted(validated_paths, key=lambda value: value.encode("ascii")):
         payload = artifacts[path]
         if type(payload) is not bytes:
-            raise FixtureExecutorBlocked(f"artifact {path!r} must be exact bytes")
+            raise FixtureExecutorBlockedError(f"artifact {path!r} must be exact bytes")
         entries.append(ArtifactDigest(path=path, sha256=_sha256(payload), byte_length=len(payload)))
     return tuple(entries)
 
@@ -381,9 +383,9 @@ def _invoke_fixture_attempt(
     try:
         raw_response = adapter.invoke(candidate, item.model_payload, timeout_ms)
         if type(raw_response) is not str:
-            raise FixtureExecutorBlocked("fixture adapter must return a string response")
+            raise FixtureExecutorBlockedError("fixture adapter must return a string response")
         disposition = "success"
-    except FixtureAttemptFailure as error:
+    except FixtureAttemptFailureError as error:
         disposition = error.kind
     except FixtureExecutorError:
         raise
@@ -391,7 +393,7 @@ def _invoke_fixture_attempt(
         unknown_error = error
     end = _read_monotonic_ns(monotonic_ns)
     if end < start:
-        raise FixtureExecutorBlocked("monotonic clock moved backwards")
+        raise FixtureExecutorBlockedError("monotonic clock moved backwards")
     elapsed_ns = end - start
     evidence = AttemptEvidence(
         candidate_key=candidate.key,
@@ -407,7 +409,7 @@ def _invoke_fixture_attempt(
     )
     if unknown_error is not None:
         message = "fixture adapter raised an unclassified exception"
-        raise FixtureExecutorBlocked(message) from unknown_error
+        raise FixtureExecutorBlockedError(message) from unknown_error
     return evidence
 
 
@@ -418,14 +420,14 @@ def _run_post_generation_hooks(
     hooks: PostGenerationHooks,
 ) -> None:
     if raw_response is None:
-        raise FixtureExecutorBlocked("successful attempt is missing its raw response")
+        raise FixtureExecutorBlockedError("successful attempt is missing its raw response")
     try:
         parsed = hooks.parser(raw_response)
         hooks.schema_validator(parsed)
         score = hooks.scorer(parsed, item.gold_payload)
         hooks.report_validator(item.item_id, candidate, parsed, score)
     except Exception as error:
-        raise FixtureExecutorBlocked("post-generation hook chain failed closed") from error
+        raise FixtureExecutorBlockedError("post-generation hook chain failed closed") from error
 
 
 def _build_item_result(
@@ -436,11 +438,13 @@ def _build_item_result(
     postprocess_complete: bool,
 ) -> ItemExecutionResult:
     if not attempts:
-        raise FixtureExecutorBlocked("item result requires at least one attempt")
+        raise FixtureExecutorBlockedError("item result requires at least one attempt")
     terminal = attempts[-1]
     latency_ms = sum(attempt.elapsed_ms for attempt in attempts)
     if not math.isfinite(latency_ms) or latency_ms < 0:
-        raise FixtureExecutorBlocked("terminal item latency is not a non-negative finite number")
+        raise FixtureExecutorBlockedError(
+            "terminal item latency is not a non-negative finite number"
+        )
     return ItemExecutionResult(
         candidate_key=candidate.key,
         item_id=item.item_id,
@@ -457,17 +461,17 @@ def _candidate(candidate_key: CandidateKey) -> CandidateBinding:
     try:
         return _CANDIDATE_BY_KEY[candidate_key]
     except KeyError as error:
-        raise FixtureExecutorBlocked(f"unknown candidate key: {candidate_key!r}") from error
+        raise FixtureExecutorBlockedError(f"unknown candidate key: {candidate_key!r}") from error
 
 
 def _median_240(values: tuple[float, ...]) -> float:
     if len(values) != _TOURNAMENT_ITEM_COUNT:
-        raise FixtureExecutorBlocked("median requires exactly 240 terminal item latencies")
+        raise FixtureExecutorBlockedError("median requires exactly 240 terminal item latencies")
     for value in values:
         if isinstance(value, bool) or not isinstance(value, int | float):
-            raise FixtureExecutorBlocked("latency values must be numeric")
+            raise FixtureExecutorBlockedError("latency values must be numeric")
         if not math.isfinite(value) or value < 0:
-            raise FixtureExecutorBlocked("latency values must be non-negative and finite")
+            raise FixtureExecutorBlockedError("latency values must be non-negative and finite")
     ordered = sorted(float(value) for value in values)
     return (ordered[119] + ordered[120]) / 2.0
 
@@ -476,21 +480,21 @@ def _read_monotonic_ns(clock: MonotonicClock) -> int:
     value = clock()
     if type(value) is not int or value < 0:
         message = "monotonic clock must return a non-negative integer nanosecond value"
-        raise FixtureExecutorBlocked(message)
+        raise FixtureExecutorBlockedError(message)
     return value
 
 
 def _validate_artifact_path(path: object) -> str:
     if type(path) is not str:
-        raise FixtureExecutorBlocked("artifact path must be a string")
+        raise FixtureExecutorBlockedError("artifact path must be a string")
     try:
         path.encode("ascii")
     except UnicodeEncodeError as error:
-        raise FixtureExecutorBlocked("artifact path must be ASCII") from error
+        raise FixtureExecutorBlockedError("artifact path must be ASCII") from error
     if _PATH_RE.fullmatch(path) is None:
-        raise FixtureExecutorBlocked(f"invalid artifact path: {path!r}")
+        raise FixtureExecutorBlockedError(f"invalid artifact path: {path!r}")
     if any(component in {".", ".."} for component in path.split("/")):
-        raise FixtureExecutorBlocked(f"artifact path contains a dot component: {path!r}")
+        raise FixtureExecutorBlockedError(f"artifact path contains a dot component: {path!r}")
     return path
 
 
