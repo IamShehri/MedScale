@@ -164,6 +164,10 @@ Each slash-separated `path` component must be neither `.` nor `..`. Because the 
 
 Before `PHI_REMOTE_CODE_MANIFEST_SHA256` may be accepted, a duplicate-member-rejecting JSON parser must validate the top-level type, exact member set, exact scalar types/formats, path grammar, ordering, and duplicate-path prohibition. The verifier must canonically reserialize the parsed value under the rules above and require byte-for-byte equality with the supplied manifest. Only those validated canonical bytes are hashed. Malformed JSON, duplicate members, wrong scalar types, extra/missing keys, non-canonical serialization, duplicate paths, unresolved Git blobs, digest/length mismatch, or inability to reproduce the bytes => `BLOCKED`.
 
+Every manifest `path` must also resolve in the pinned Phi Git tree as a regular-file blob whose Git tree mode is exactly `100644` or `100755`. Tree mode `120000` (symbolic link), `160000` (gitlink/submodule), `040000` (tree), any non-blob object, or any other non-regular mode => `BLOCKED`.
+
+The trusted acquisition verifier must resolve each acquired runtime Phi code path descriptor-relatively from its approved read-only input root and open it without following symlinks, using `openat2(2)` with `RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_MAGICLINKS` plus `O_RDONLY | O_CLOEXEC | O_NOFOLLOW`, or a separately reviewed equivalent with the same atomic no-symlink guarantee. `fstat` on that exact opened descriptor must report a regular file. The verifier must compute `byte_length` and SHA-256 from that exact opened runtime object and require equality with the canonical manifest before import. The model process must import/execute that same immutable runtime object, or an object whose identity is mechanically proven to be the same verified inode/bytes on an immutable read-only mount immediately before import. Any symlink substitution, non-regular object, mutable alias, object-identity change between verification and import, or inability to prove that the executed bytes are the verified bytes => `BLOCKED`.
+
 The remaining Phi remote-code predicates are:
 
 - `PHI_REMOTE_CODE_MANIFEST_SHA256` is the SHA-256 of the exact validated canonical manifest bytes;
@@ -328,6 +332,26 @@ Apertus and MedGemma remain inaccessible for this execution until a separate can
 
 explicitly identifies the exact two repositories/revisions and the terms/access actions authorized.
 
+Because `FD-MESC-BT-EXEC-1-GATED-ACCESS-1` is a separate Founder authority, its decision text must be authenticated independently from Section A.1. The future gated-access decision package must define:
+
+```text
+GATED_ACCESS_FOUNDER_GITHUB_LOGIN = TheHalfMoon
+GATED_ACCESS_FOUNDER_ATTESTATION_VERSION = MESC-BT-EXEC-1-GATED-ACCESS-1-FOUNDER-ATTESTATION-V1
+GATED_ACCESS_DECISION_PR_NUMBER = <exact PR number adopting the gated-access decision>
+```
+
+After that future gated-access decision's final reviewed head is stable and before that decision may become Ready, require exactly one top-level issue comment on `GATED_ACCESS_DECISION_PR_NUMBER` authored by `TheHalfMoon`, with `created_at=updated_at`, whose body is exactly five LF-separated lines with one final LF:
+
+```text
+MESC-BT-EXEC-1-GATED-ACCESS-1-FOUNDER-ATTESTATION-V1
+PR=<GATED_ACCESS_DECISION_PR_NUMBER>
+HEAD_SHA=<FINAL_REVIEWED_GATED_ACCESS_HEAD_SHA>
+DECISION=APPROVE_GATED_ACCESS_CANONICAL_ADOPTION
+GATED_ACCESS_AUTHORITY=ONLY_EXACT_REVISIONS_AND_ACTIONS_IN_DECISION
+```
+
+`<FINAL_REVIEWED_GATED_ACCESS_HEAD_SHA>` must be the exact 40-lowercase-hex head that is independently reviewed and merged. Capture the immutable numeric comment ID as `GATED_ACCESS_FOUNDER_ATTESTATION_COMMENT_ID`. A head mutation burns that attestation for the new head. Before any access/terms action is treated as authorized, immediately before the gated-access merge, after its merge, and again before execution activation, mechanically verify the comment still exists, is authored by `TheHalfMoon`, remains unedited, matches the exact body/head, and that the gated-access canonical merge's second parent equals the attested reviewed head. Missing, edited, deleted, wrong-author, wrong-head, duplicate matching attestations, or merge/head mismatch => `BLOCKED`.
+
 Credentials, tokens, private keys, and session secrets must never be committed to the repository or copied into governance records.
 
 The separate gated-access decision must define and canonically adopt two immutable, non-secret human access-attestation artifacts before activation. Their exact SHA-256 values remain unbound here and must be fixed only after that decision is canonical:
@@ -343,12 +367,13 @@ Before activation of this four-candidate authorization require:
 
 ```text
 GATED_ACCESS_FOUNDER_DECISION = CANONICAL
+GATED_ACCESS_FOUNDER_ATTESTATION = AUTHENTICATED_EXACT_HEAD
 APERTUS_EXACT_REVISION_ACCESS = ATTESTED
 MEDGEMMA_EXACT_REVISION_ACCESS = ATTESTED
 CREDENTIAL_DISCLOSURE_IN_REPOSITORY = NONE
 ```
 
-If gated access is not separately authorized, either attestation hash is unbound/missing, either attestation is not contained in the pinned decision merge, or the exact access/terms state cannot be verified, activation is `BLOCKED`. A smaller subset requires a separately reviewed Founder amendment; it is not an automatic fallback.
+If gated access is not separately authorized, its exact-head Founder attestation is not authenticated, either attestation hash is unbound/missing, either attestation is not contained in the pinned decision merge, or the exact access/terms state cannot be verified, activation is `BLOCKED`. A smaller subset requires a separately reviewed Founder amendment; it is not an automatic fallback.
 
 ## H. Attempt bounds
 
@@ -384,6 +409,7 @@ execution_code_tree
 executor_allowlist_sha256
 founder_attestation_comment_id
 gated_access_decision_merge_sha
+gated_access_founder_attestation_comment_id
 medgemma_access_attestation_sha256
 phi_remote_code_manifest_sha256
 phi_remote_code_security_review_sha256
@@ -393,13 +419,14 @@ runtime_binding_sha256
 telemetry_qualification_sha256
 ```
 
-Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, `EXECUTOR_ALLOWLIST_SHA256`, the exact current-head Founder attestation comment ID selected under Section A.1, canonical gated-access decision merge, `APERTUS_ACCESS_ATTESTATION_SHA256`, `MEDGEMMA_ACCESS_ATTESTATION_SHA256`, `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact Phi security-review and sandbox qualification artifact SHA-256 values, exact canonical runtime-binding artifact SHA-256, exact no-model live telemetry qualification SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
+Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, `EXECUTOR_ALLOWLIST_SHA256`, the exact current-head Founder attestation comment ID selected under Section A.1, canonical gated-access decision merge, the exact authenticated `GATED_ACCESS_FOUNDER_ATTESTATION_COMMENT_ID`, `APERTUS_ACCESS_ATTESTATION_SHA256`, `MEDGEMMA_ACCESS_ATTESTATION_SHA256`, `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact Phi security-review and sandbox qualification artifact SHA-256 values, exact canonical runtime-binding artifact SHA-256, exact no-model live telemetry qualification SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
 
 The following equality is mandatory and removes any naming ambiguity:
 
 ```text
 apertus_access_attestation_sha256 = APERTUS_ACCESS_ATTESTATION_SHA256
 executor_allowlist_sha256 = EXECUTOR_ALLOWLIST_SHA256
+gated_access_founder_attestation_comment_id = GATED_ACCESS_FOUNDER_ATTESTATION_COMMENT_ID
 medgemma_access_attestation_sha256 = MEDGEMMA_ACCESS_ATTESTATION_SHA256
 phi_remote_code_manifest_sha256 = PHI_REMOTE_CODE_MANIFEST_SHA256
 phi_remote_code_security_review_sha256 = PHI_REMOTE_CODE_SECURITY_REVIEW_SHA256
@@ -407,7 +434,99 @@ phi_sandbox_qualification_sha256 = PHI_SANDBOX_QUALIFICATION_SHA256
 telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256
 ```
 
-Define canonical activation identity serialization as UTF-8 JSON with object keys sorted lexicographically, separators exactly `,` and `:`, no insignificant whitespace, and no trailing newline. A duplicate-member-rejecting parser must require exactly the key set above, exact JSON scalar types required by the activation schema, and byte-for-byte equality after canonical reserialization; duplicate member names, extra/missing keys, or alternate serialization => `BLOCKED`. Then:
+The `identity_preimage` field schema is normative and complete. No field is nullable. Required JSON scalar types and value constraints are exactly:
+
+```text
+apertus_access_attestation_sha256 = JSON string matching ^[0-9a-f]{64}$
+authorization_merge_sha = JSON string matching ^[0-9a-f]{40}$
+authorization_merge_tree = JSON string matching ^[0-9a-f]{40}$
+decision_id = JSON string exactly FD-MESC-BT-EXEC-1-ACTIVATION-1
+execution_code_sha = JSON string matching ^[0-9a-f]{40}$
+execution_code_tree = JSON string matching ^[0-9a-f]{40}$
+executor_allowlist_sha256 = JSON string matching ^[0-9a-f]{64}$
+founder_attestation_comment_id = JSON integer >= 1
+gated_access_decision_merge_sha = JSON string matching ^[0-9a-f]{40}$
+gated_access_founder_attestation_comment_id = JSON integer >= 1
+medgemma_access_attestation_sha256 = JSON string matching ^[0-9a-f]{64}$
+phi_remote_code_manifest_sha256 = JSON string matching ^[0-9a-f]{64}$
+phi_remote_code_security_review_sha256 = JSON string matching ^[0-9a-f]{64}$
+phi_sandbox_qualification_sha256 = JSON string matching ^[0-9a-f]{64}$
+receipt_version = JSON string exactly MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1
+runtime_binding_sha256 = JSON string matching ^[0-9a-f]{64}$
+telemetry_qualification_sha256 = JSON string matching ^[0-9a-f]{64}$
+```
+
+All string values above are ASCII-only and must be serialized using their literal bytes; JSON escape sequences are prohibited. Comment IDs must be serialized as plain base-10 JSON integers with no sign and no leading zero. Duplicate members, alternate scalar types, `null`, extra/missing members, or inability to reproduce the exact scalar representation => `BLOCKED`.
+
+`runtime_binding_sha256` is the SHA-256 of an immutable canonical UTF-8 JSON object named `RUNTIME_BINDING`, with no BOM and no trailing newline. Its complete key set, shown in lexical order, is:
+
+```text
+acceleration_runtime_identities
+base_container_oci_digest
+cuda_runtime_version
+dependency_lock_sha256
+external_runtime_parent_device_id
+external_runtime_parent_inode
+external_runtime_parent_mount_id
+external_runtime_parent_path
+gpu_count
+gpu_model
+gpu_uuid
+nvidia_driver_version
+provider_class
+provider_instance_or_pod_id
+provider_region
+python_version
+pytorch_version
+repository_checkout_root_device_id
+repository_checkout_root_inode
+repository_checkout_root_mount_id
+repository_checkout_root_path
+repository_checkout_sha
+repository_checkout_tree
+repository_result_parent_device_id
+repository_result_parent_inode
+repository_result_parent_mount_id
+sequential_single_gpu_execution
+transformers_identity
+```
+
+Required runtime-binding types and invariants are:
+
+```text
+acceleration_runtime_identities = JSON array with >= 1 unique non-empty ASCII identity strings, sorted by exact bytes
+base_container_oci_digest = JSON string matching ^sha256:[0-9a-f]{64}$
+cuda_runtime_version = non-empty JSON ASCII string
+ dependency_lock_sha256 = JSON string matching ^[0-9a-f]{64}$
+external_runtime_parent_device_id = JSON integer >= 0
+external_runtime_parent_inode = JSON integer >= 0
+external_runtime_parent_mount_id = JSON integer >= 0
+external_runtime_parent_path = JSON string exactly /workspace/mesc-bt-exec-1
+gpu_count = JSON integer exactly 1
+gpu_model = JSON string exactly NVIDIA H100 80GB HBM3
+gpu_uuid = non-empty JSON ASCII string
+nvidia_driver_version = non-empty JSON ASCII string
+provider_class = JSON string exactly RunPod Secure Cloud
+provider_instance_or_pod_id = non-empty JSON ASCII string
+provider_region = non-empty JSON ASCII string
+python_version = non-empty JSON ASCII string
+pytorch_version = non-empty JSON ASCII string
+repository_checkout_root_device_id = JSON integer >= 0
+repository_checkout_root_inode = JSON integer >= 0
+repository_checkout_root_mount_id = JSON integer >= 0
+repository_checkout_root_path = JSON string matching ^/[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$
+repository_checkout_sha = JSON string matching ^[0-9a-f]{40}$
+repository_checkout_tree = JSON string matching ^[0-9a-f]{40}$
+repository_result_parent_device_id = JSON integer >= 0
+repository_result_parent_inode = JSON integer >= 0
+repository_result_parent_mount_id = JSON integer >= 0
+sequential_single_gpu_execution = JSON boolean true
+transformers_identity = non-empty JSON ASCII string
+```
+
+For every runtime-binding string described only as non-empty ASCII, allowed bytes are `0x20` through `0x7e` except `"` and `\`; control characters, non-ASCII bytes, JSON escapes, and empty strings are prohibited. `RUNTIME_BINDING` must use lexically sorted object keys, exact `,` and `:` separators, no insignificant whitespace, and duplicate-member rejection. Its `repository_checkout_sha` must resolve exactly to `repository_checkout_tree`; all Section E runtime/hardware values must equal the corresponding runtime-binding fields. The three recorded `(device_id,inode,mount_id)` triples must be obtained from the exact descriptors established by the Section I.1 bootstrap. A duplicate-member-rejecting parser must validate the exact key set/types/invariants, canonically reserialize, require byte-for-byte equality, and recompute `runtime_binding_sha256`; any mismatch => `BLOCKED`.
+
+Define canonical activation identity serialization as UTF-8 JSON with object keys sorted lexicographically, separators exactly `,` and `:`, no insignificant whitespace, and no trailing newline. A duplicate-member-rejecting parser must require exactly the key set above, the exact scalar schema above, and byte-for-byte equality after canonical reserialization; duplicate member names, extra/missing keys, alternate serialization, or any bound-artifact hash/value mismatch => `BLOCKED`. Before hashing `identity_preimage`, the verifier must independently recompute every referenced Git SHA/tree relation, SHA-256 artifact digest, Founder-attestation comment ID binding, gated-access Founder-attestation binding, and `runtime_binding_sha256` from the exact canonical bytes selected for activation. Then:
 
 ```text
 ACTIVATION_ID = lowercase_hex(SHA256(canonical_json(identity_preimage)))
@@ -425,7 +544,15 @@ REPOSITORY_RESULT_ROOT = specs/mesc-backbone-tournament/execution-result-1/<ACTI
 
 ### I.1 Race-safe path confinement
 
-A separate pre-open `realpath`/containment check is not sufficient. Every directory traversal, directory creation, file creation, and file open under both activation roots must be performed descriptor-relative to a previously opened trusted root directory descriptor using race-safe no-symlink resolution.
+The two activation roots must be bootstrapped before they may be treated as trusted. `RUNTIME_BINDING` must first bind the exact `external_runtime_parent_path=/workspace/mesc-bt-exec-1`, the exact absolute `repository_checkout_root_path`, the checkout SHA/tree, and the descriptor identity triples recorded above.
+
+Starting from a pre-opened descriptor for filesystem `/`, the activation verifier must resolve the bound `external_runtime_parent_path` and `repository_checkout_root_path` one component at a time with descriptor-relative no-symlink/no-magic-link operations. Deliberate mount transitions needed to reach the bound parent/check-out roots are allowed only during this bootstrap stage and only when the final opened descriptors' `(device_id,inode,mount_id)` values exactly equal `RUNTIME_BINDING`; symlinks, magic links, non-directory components, unexpected path components, or descriptor-identity mismatch => `BLOCKED`.
+
+From the verified repository checkout-root descriptor, resolve or create the fixed relative parent `specs/mesc-backbone-tournament/execution-result-1` one validated component at a time. Existing components must be opened without following symlinks and must be directories. A missing final `execution-result-1` directory may be created descriptor-relatively and then immediately reopened and verified. The resulting repository-result-parent descriptor's `(device_id,inode,mount_id)` must equal the values in `RUNTIME_BINDING`. From the verified external-runtime-parent descriptor and repository-result-parent descriptor onward, `RESOLVE_NO_XDEV` is mandatory and no mount transition is permitted.
+
+The final `<ACTIVATION_ID>` directory under each trusted parent must not pre-exist. Create each directory exactly once descriptor-relatively; `EEXIST` or any pre-existing entry => `BLOCKED`. Immediately reopen each new activation root with `openat2(2)` using `RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_XDEV`, require `fstat` to report a directory on the trusted parent's mount, and retain those verified descriptors as the only roots from which descendant operations may proceed. Failure to establish either root descriptor exactly as specified => `BLOCKED` before model access.
+
+A separate pre-open `realpath`/containment check is not sufficient. Every directory traversal, directory creation, file creation, and file open under both activation roots must be performed descriptor-relative to those verified trusted root directory descriptors using race-safe no-symlink resolution.
 
 All generated path components under either activation root must satisfy this normative grammar before any filesystem operation:
 
@@ -475,14 +602,14 @@ A separate execution-activation package is mandatory. It must bind all values le
 3. unchanged four-candidate set and model revisions;
 4. exact tokenizer/processor/custom-code identities and exact BF16 execution precision for Phi-4, Apertus, and MedGemma plus native MXFP4 for GPT-OSS;
 5. canonical executor implementation SHA/tree/blob allowlist and exact `EXECUTOR_ALLOWLIST_SHA256`, including duplicate-member-rejecting parsing, canonical reserialization equality, negative duplicate-member fixture PASS, proof that `EXECUTION_CODE_SHA` resolves to `EXECUTION_CODE_TREE`, every allowlisted path resolves at that exact commit/tree to the exact recorded Git blob SHA, and the reviewed executable/imported path set equals the allowlist exactly;
-6. exact canonical `PHI_REMOTE_CODE_MANIFEST` bytes/schema/parser/reserialization, exact `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact pinned-revision path→Git-blob/SHA-256/byte-length equality, executed remote-code set equality, and independent `PASS` security-review artifact;
+6. exact canonical `PHI_REMOTE_CODE_MANIFEST` bytes/schema/parser/reserialization, exact `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact pinned-revision path→Git-blob/tree-mode/SHA-256/byte-length equality, no-symlink regular-file runtime-object verification, executed remote-code set equality, and independent `PASS` security-review artifact;
 7. exact Phi offline/secretless/read-only sandbox qualification artifact `PASS` on the activation runtime;
-8. exact runtime/container/dependency identities;
+8. exact canonical `RUNTIME_BINDING` bytes/schema/parser/reserialization, exact `runtime_binding_sha256`, exact runtime/container/dependency identities, exact repository checkout SHA/tree, and exact descriptor/bootstrap identity bindings;
 9. exact provider/GPU identity;
 10. exact-instance no-model H100 telemetry qualification `PASS`, with `telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256`;
 11. measurement harness implementation and deterministic fixture/self-test evidence;
-12. exact `ACTIVATION_ID` recomputation, strict identity-preimage parsing, regex validation, exact ASCII path-grammar/collision/no-cross-mount validation, closed filesystem-mutation-surface validation, and race-safe descriptor-relative artifact-root confinement proof;
-13. canonical gated-access Founder decision, exact immutable human access-attestation bytes for both gated models contained in that decision merge, and exact `APERTUS_ACCESS_ATTESTATION_SHA256` / `MEDGEMMA_ACCESS_ATTESTATION_SHA256` bindings in `identity_preimage`;
+12. exact `identity_preimage` scalar-schema validation, recomputation of every bound Git/hash/comment/runtime value, exact `ACTIVATION_ID` recomputation, regex validation, secure two-root bootstrap, exact ASCII path-grammar/collision/no-cross-mount validation, closed filesystem-mutation-surface validation, and race-safe descriptor-relative artifact-root confinement proof;
+13. canonical gated-access Founder decision, its independently authenticated exact-head `GATED_ACCESS_FOUNDER_ATTESTATION_COMMENT_ID`, exact immutable human access-attestation bytes for both gated models contained in that decision merge, and exact `APERTUS_ACCESS_ATTESTATION_SHA256` / `MEDGEMMA_ACCESS_ATTESTATION_SHA256` bindings in `identity_preimage`;
 14. both preflight audits remain PASS and digest-identical;
 15. frozen protocol/report/scoring/corpus digests remain unchanged;
 16. exact-head CI and CodeQL PASS;
@@ -490,7 +617,7 @@ A separate execution-activation package is mandatory. It must bind all values le
 18. unresolved blocking threads = 0;
 19. Ready then fresh post-Ready reconciliation;
 20. expected-head merge;
-21. post-merge canonical SHA/tree/ordered-parent/hosting-signature/path/byte/attestation verification.
+21. post-merge canonical SHA/tree/ordered-parent/hosting-signature/path/byte/attestation verification **and**, from the exact activation receipt and bound artifacts as stored in the canonical activation merge, duplicate-member-rejecting parsing and canonical reserialization, recomputation of `runtime_binding_sha256` and every other bound digest/value, recomputation of `ACTIVATION_ID` from the final canonical `identity_preimage` bytes, exact equality with the receipt's `ACTIVATION_ID`, and exact equality between that ID and both activation-root directory names. Any post-merge mismatch => `BLOCKED`; no model access may begin before this post-merge recomputation passes.
 
 Only after all twenty-one pass may activation state become:
 
