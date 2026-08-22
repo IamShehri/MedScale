@@ -8,6 +8,7 @@ from dataclasses import replace
 import pytest
 
 from medscale.mesc._bt_executor_core_fixture_v1 import (
+    TOURNAMENT_CANDIDATES,
     ArtifactDigest,
     CandidateBinding,
     FixtureAttemptFailureError,
@@ -17,7 +18,6 @@ from medscale.mesc._bt_executor_core_fixture_v1 import (
     PostGenerationHooks,
     RetryableFailureKind,
     RetryPolicy,
-    TOURNAMENT_CANDIDATES,
     build_fixture_item,
     hash_artifacts,
     run_fixture_item,
