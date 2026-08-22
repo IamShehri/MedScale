@@ -19,12 +19,31 @@ GH2_ACTIVATION_RECEIPT_ID = 0454aa7f9511fa2d7a974aeae6c6153c0f56394a353c5e667590
 GH2_PREFLIGHT_RESULT_MANIFEST_SHA256 = 38f6cd08c4aa650e6a110639d3a7b85297c68d454ffcc9139e518fdb3d15ef6d
 GH2_R2_PROVENANCE_AUDIT_SHA256 = a8f6fd8d9c9f60c5a1a2bedc0bbb49182e635772cf50dae1e9e9028a4eb09398
 GH2_CORPUS_CONFORMANCE_AUDIT_SHA256 = 842f2e0dbeaea59087223ddd94c8a95844c8f14822a16e1549e67c0c850c67f2
+GH2_ADOPTION_RECORD_PATH = specs/mesc-backbone-tournament/execution-preflight-1-gh2-adoption/14a2229c184d3ef29b6032d5cb00e11ac28d1413/canonical-adoption-verification.json
+GH2_ADOPTION_RECORD_GIT_BLOB_SHA = ac7d0681daa453bccffea5648d6605c119e0298d
+GH2_ADOPTION_RECORD_SHA256 = 7bd7a2108b2730107a6bbcc0d8eaa915df8047c8158a2652e67b392995a33101
+```
+
+The exact canonical GH2 adoption record above is the only record that may satisfy the preflight-adoption prerequisite. Its bytes must match both the pinned Git blob and SHA-256, and its fields must equal exactly:
+
+```text
+record_version = MESC-BT-PREFLIGHT-GH2-CANONICAL-ADOPTION-V1
+decision_id = FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+activation_receipt_id = 0454aa7f9511fa2d7a974aeae6c6153c0f56394a353c5e6675906ace26b19e94
+result_merge_sha = 14a2229c184d3ef29b6032d5cb00e11ac28d1413
+result_merge_tree = 5ba70940bc1c46e47060c3580be7645ab6f13405
+reviewed_result_head_sha = d71e47742babf2bc342aae6bf0b6b27c87cef80a
+preflight_result_manifest_sha256 = 38f6cd08c4aa650e6a110639d3a7b85297c68d454ffcc9139e518fdb3d15ef6d
+failed_checks = []
+outcome = PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION
+merge_signature_verification.verified = true
+merge_signature_verification.reason = valid
 ```
 
 Before this authorization PR may become Ready, and again immediately before merge, mechanically require:
 
-1. canonical GH2 adoption remains present and revalidates to `PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`;
-2. its adoption record has `failed_checks=[]`;
+1. `GH2_ADOPTION_RECORD_PATH` exists on canonical `main`, its Git blob equals `GH2_ADOPTION_RECORD_GIT_BLOB_SHA`, its exact bytes hash to `GH2_ADOPTION_RECORD_SHA256`, and every pinned field above matches exactly;
+2. that exact adoption record has `failed_checks=[]` and `outcome=PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`;
 3. the two pre-execution audits remain byte-identical and PASS;
 4. canonical `main` has not moved from the PR's final-review base;
 5. exact-head CI PASS;
@@ -99,10 +118,10 @@ model_revision = 93f923e1a7727d1c4f446756212d9d3e8fcc5d81
 processor_id = microsoft/Phi-4-multimodal-instruct
 processor_revision = 93f923e1a7727d1c4f446756212d9d3e8fcc5d81
 trust_remote_code = true
-precision_mode = ACTIVATION_BOUND_PUBLISHER_SUPPORTED_DTYPE
+precision_mode = BF16
 ```
 
-If `trust_remote_code=true`, activation must enumerate, hash, and bind every executed remote-code file from that exact immutable repository revision. Floating code is prohibited.
+BF16 is mandatory for Phi-4 under this authorization. Activation may not substitute FP16, FP32, automatic dtype selection, or a quantized derivative. If `trust_remote_code=true`, activation must enumerate, hash, and bind every executed remote-code file from that exact immutable repository revision. Floating code is prohibited.
 
 ### C.4 MedGemma 1.5 4B IT
 
@@ -258,12 +277,38 @@ A full tournament rerun requires a new Founder decision.
 
 ## I. Artifact destination and identity contract
 
-Activation must bind one immutable `ACTIVATION_ID` and derive exactly:
+The future execution-activation receipt must contain an `identity_preimage` object with exactly these keys:
+
+```text
+authorization_merge_sha
+ authorization_merge_tree
+ decision_id
+ execution_code_sha
+ execution_code_tree
+ gated_access_decision_merge_sha
+ runtime_binding_sha256
+ receipt_version
+```
+
+The leading spaces above are presentation only; the actual JSON keys have no leading whitespace. Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, canonical gated-access decision merge, exact canonical runtime-binding artifact SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
+
+Define canonical activation identity serialization as UTF-8 JSON with object keys sorted lexicographically, separators exactly `,` and `:`, no insignificant whitespace, and no trailing newline. Then:
+
+```text
+ACTIVATION_ID = lowercase_hex(SHA256(canonical_json(identity_preimage)))
+ACTIVATION_ID_REGEX = ^[0-9a-f]{64}$
+```
+
+The activation receipt must store that exact `identity_preimage` and exact `ACTIVATION_ID`. A supplied identifier that does not recompute exactly, does not match `ACTIVATION_ID_REGEX`, or differs by case is invalid. No operator-selected, timestamp-derived, random, path-derived, or mutable identifier is permitted.
+
+Only after successful recomputation and regex validation may paths be derived exactly:
 
 ```text
 EXTERNAL_RUNTIME_ROOT = /workspace/mesc-bt-exec-1/<ACTIVATION_ID>/
 REPOSITORY_RESULT_ROOT = specs/mesc-backbone-tournament/execution-result-1/<ACTIVATION_ID>/
 ```
+
+Before creating or opening any output path, the executor must resolve the candidate path without following attacker-controlled symlinks and mechanically prove that the resolved destination remains a strict descendant of its fixed root. Any `..`, slash/backslash, path separator, Unicode normalization ambiguity, symlink escape, collision with a pre-existing different activation, or containment failure => `BLOCKED` before model access.
 
 The executor must keep frozen inputs read-only and place generated evidence only under the external runtime root during execution.
 
@@ -279,6 +324,8 @@ candidate_id_or_null
 item_id_or_null
 ```
 
+Every manifest `relative_path` must itself be normalized, relative, non-empty, contain no `..` segment, contain no backslash, and resolve strictly beneath `EXTERNAL_RUNTIME_ROOT`; duplicates and case-fold collisions are prohibited.
+
 No output digest may be invented before execution.
 
 Repository promotion is a later, separately reviewed result-adoption operation. Raw/generated artifacts may be promoted only through the exact result contract defined before activation; activation itself must not mutate canonical `main`.
@@ -291,12 +338,12 @@ A separate execution-activation package is mandatory. It must bind all values le
 
 1. this authorization package's canonical merge SHA/tree and exact package blobs;
 2. unchanged four-candidate set and model revisions;
-3. exact tokenizer/processor/custom-code identities;
+3. exact tokenizer/processor/custom-code identities and exact BF16 execution precision for Phi-4, Apertus, and MedGemma plus native MXFP4 for GPT-OSS;
 4. canonical executor implementation SHA/tree/blob allowlist;
 5. exact runtime/container/dependency identities;
 6. exact provider/GPU identity;
 7. measurement harness implementation and deterministic self-test evidence;
-8. artifact destination identity;
+8. exact `ACTIVATION_ID` recomputation, regex validation, collision check, and artifact-root containment proof;
 9. canonical gated-access Founder decision and human access attestations for both gated models;
 10. both preflight audits remain PASS and digest-identical;
 11. frozen protocol/report/scoring/corpus digests remain unchanged;
