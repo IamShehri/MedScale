@@ -333,30 +333,28 @@ def test_runtime_checkout_tree_binding_mismatch_blocks() -> None:
 
 
 @pytest.mark.parametrize(
-    ("field", "replacement"),
+    "changed",
     [
-        ("authorization_merge_sha", SHA_A),
-        ("authorization_merge_tree", SHA_A),
-        ("execution_code_sha", SHA_A),
-        ("execution_code_tree", SHA_B),
-        ("executor_allowlist_sha256", H2),
-        ("founder_attestation_comment_id", 999),
-        ("gated_access_decision_merge_sha", SHA_A),
-        ("gated_access_founder_attestation_comment_id", 999),
-        ("apertus_access_attestation_sha256", H3),
-        ("medgemma_access_attestation_sha256", H4),
-        ("phi_remote_code_manifest_sha256", H5),
-        ("phi_remote_code_security_review_sha256", H6),
-        ("phi_sandbox_qualification_sha256", H7),
-        ("telemetry_qualification_sha256", H1),
+        replace(_independent(), authorization_merge_sha=SHA_A),
+        replace(_independent(), authorization_merge_tree=SHA_A),
+        replace(_independent(), execution_code_sha=SHA_A),
+        replace(_independent(), execution_code_tree=SHA_B),
+        replace(_independent(), executor_allowlist_sha256=H2),
+        replace(_independent(), founder_attestation_comment_id=999),
+        replace(_independent(), gated_access_decision_merge_sha=SHA_A),
+        replace(_independent(), gated_access_founder_attestation_comment_id=999),
+        replace(_independent(), apertus_access_attestation_sha256=H3),
+        replace(_independent(), medgemma_access_attestation_sha256=H4),
+        replace(_independent(), phi_remote_code_manifest_sha256=H5),
+        replace(_independent(), phi_remote_code_security_review_sha256=H6),
+        replace(_independent(), phi_sandbox_qualification_sha256=H7),
+        replace(_independent(), telemetry_qualification_sha256=H1),
     ],
 )
 def test_independent_identity_binding_mismatch_blocks(
-    field: str,
-    replacement: object,
+    changed: IndependentActivationBindings,
 ) -> None:
-    runtime_bytes, identity_bytes, independent = _qualified_inputs()
-    changed = replace(independent, **{field: replacement})
+    runtime_bytes, identity_bytes, _ = _qualified_inputs()
     with pytest.raises(
         FixtureActivationBlockedError,
         match="identity binding mismatch",
