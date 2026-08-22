@@ -1,0 +1,8 @@
+record_version=MESC-BT-PREFLIGHT-GH2-SUCCESSOR-CANDIDATE-V1
+candidate_id=FD-MESC-BT-EXEC-1-CANDIDATE-GH2-V1
+source_decision_id=FD-MESC-BT-EXEC-1-PREFLIGHT-GH2
+repair_authorization_merge_sha=0deaa95583239317eaeeb3cde5642a22e5626a9b
+activation_receipt_id=0454aa7f9511fa2d7a974aeae6c6153c0f56394a353c5e6675906ace26b19e94
+activation_merge_sha=1fb0e6dc5784a72ffa7fc3de7dac5a636e0aa82a
+state=DRAFT_INACTIVE_NOT_AUTHORIZED
+execution_authority=NONE
