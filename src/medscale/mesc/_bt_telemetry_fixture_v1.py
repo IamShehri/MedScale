@@ -207,7 +207,9 @@ def qualify_fixture_telemetry(
 
     peak_vram_mb = peak_bytes / _MIB
     if not math.isfinite(peak_vram_mb) or peak_vram_mb < 0:
-        raise FixtureTelemetryBlockedError("peak_vram_mb must be finite and non-negative")
+        raise FixtureTelemetryBlockedError(
+            "peak_vram_mb must be finite and non-negative"
+        )
 
     document = {
         "controlled_process_peak_bytes": peak_bytes,
@@ -271,7 +273,9 @@ def _controlled_process_tree(
         cursor = pid
         while True:
             if cursor in chain_seen:
-                raise FixtureTelemetryBlockedError("process parent graph contains a cycle")
+                raise FixtureTelemetryBlockedError(
+                    "process parent graph contains a cycle"
+                )
             chain_seen.add(cursor)
             if cursor == root_pid:
                 owned.add(pid)
