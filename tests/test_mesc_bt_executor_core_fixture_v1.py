@@ -8,16 +8,16 @@ from dataclasses import replace
 import pytest
 
 from medscale.mesc._bt_executor_core_fixture_v1 import (
-    TOURNAMENT_CANDIDATES,
     ArtifactDigest,
     CandidateBinding,
-    FixtureAttemptFailure,
+    FixtureAttemptFailureError,
     FixtureExecutionItem,
-    FixtureExecutorBlocked,
+    FixtureExecutorBlockedError,
     FixtureProjectionError,
     PostGenerationHooks,
     RetryPolicy,
     RetryableFailureKind,
+    TOURNAMENT_CANDIDATES,
     build_fixture_item,
     hash_artifacts,
     run_fixture_item,
@@ -176,7 +176,7 @@ def test_success_captures_raw_response_and_runs_hooks_in_strict_order() -> None:
 
 
 def test_one_retry_sums_generation_attempt_latency() -> None:
-    adapter = FakeAdapter([FixtureAttemptFailure("infrastructure_error"), "ok"])
+    adapter = FakeAdapter([FixtureAttemptFailureError("infrastructure_error"), "ok"])
     result = run_fixture_item(
         item=_item(),
         candidate_key="gpt_oss_20b",
@@ -197,8 +197,8 @@ def test_one_retry_sums_generation_attempt_latency() -> None:
 def test_second_retryable_failure_is_terminal_with_no_third_attempt() -> None:
     adapter = FakeAdapter(
         [
-            FixtureAttemptFailure("infrastructure_error"),
-            FixtureAttemptFailure("infrastructure_error"),
+            FixtureAttemptFailureError("infrastructure_error"),
+            FixtureAttemptFailureError("infrastructure_error"),
         ]
     )
     result = run_fixture_item(
@@ -218,7 +218,7 @@ def test_second_retryable_failure_is_terminal_with_no_third_attempt() -> None:
 
 
 def test_timeout_retries_only_when_policy_explicitly_allows_it() -> None:
-    adapter = FakeAdapter([FixtureAttemptFailure("timeout"), "ok"])
+    adapter = FakeAdapter([FixtureAttemptFailureError("timeout"), "ok"])
     result = run_fixture_item(
         item=_item(),
         candidate_key="gpt_oss_20b",
@@ -230,7 +230,7 @@ def test_timeout_retries_only_when_policy_explicitly_allows_it() -> None:
     assert result.terminal_disposition == "success"
     assert len(adapter.calls) == 2
 
-    nonretry_adapter = FakeAdapter([FixtureAttemptFailure("timeout"), "ok"])
+    nonretry_adapter = FakeAdapter([FixtureAttemptFailureError("timeout"), "ok"])
     nonretry_result = run_fixture_item(
         item=_item(),
         candidate_key="gpt_oss_20b",
@@ -244,7 +244,7 @@ def test_timeout_retries_only_when_policy_explicitly_allows_it() -> None:
 
 
 def test_terminal_error_never_retries() -> None:
-    adapter = FakeAdapter([FixtureAttemptFailure("terminal_error"), "ok"])
+    adapter = FakeAdapter([FixtureAttemptFailureError("terminal_error"), "ok"])
     result = run_fixture_item(
         item=_item(),
         candidate_key="gpt_oss_20b",
@@ -260,7 +260,7 @@ def test_terminal_error_never_retries() -> None:
 
 def test_unclassified_adapter_exception_fails_closed() -> None:
     adapter = FakeAdapter([RuntimeError("unexpected")])
-    with pytest.raises(FixtureExecutorBlocked, match="unclassified"):
+    with pytest.raises(FixtureExecutorBlockedError, match="unclassified"):
         run_fixture_item(
             item=_item(),
             candidate_key="gpt_oss_20b",
@@ -272,7 +272,7 @@ def test_unclassified_adapter_exception_fails_closed() -> None:
 
 
 def test_monotonic_clock_regression_is_blocked() -> None:
-    with pytest.raises(FixtureExecutorBlocked, match="backwards"):
+    with pytest.raises(FixtureExecutorBlockedError, match="backwards"):
         run_fixture_item(
             item=_item(),
             candidate_key="gpt_oss_20b",
@@ -285,7 +285,7 @@ def test_monotonic_clock_regression_is_blocked() -> None:
 
 def test_non_fixture_adapter_is_blocked_before_invocation() -> None:
     adapter = LiveLikeAdapter(["ok"])
-    with pytest.raises(FixtureExecutorBlocked, match="fixture_only"):
+    with pytest.raises(FixtureExecutorBlockedError, match="fixture_only"):
         run_fixture_item(
             item=_item(),
             candidate_key="gpt_oss_20b",
@@ -302,7 +302,7 @@ def test_post_generation_failure_is_blocked() -> None:
         raise ValueError("bad output")
 
     hooks = replace(_hooks(), parser=failing_parser)
-    with pytest.raises(FixtureExecutorBlocked, match="hook chain"):
+    with pytest.raises(FixtureExecutorBlockedError, match="hook chain"):
         run_fixture_item(
             item=_item(),
             candidate_key="gpt_oss_20b",
@@ -360,7 +360,7 @@ def test_artifact_hashing_is_sorted_and_exact() -> None:
 
 @pytest.mark.parametrize("path", ["/abs", "a/../b", "a\\b", "ümlaut"])
 def test_artifact_hashing_rejects_invalid_paths(path: str) -> None:
-    with pytest.raises(FixtureExecutorBlocked):
+    with pytest.raises(FixtureExecutorBlockedError):
         hash_artifacts({path: b"x"})
 
 
@@ -391,11 +391,11 @@ def test_latency_summary_rejects_wrong_count_duplicate_and_nonfinite() -> None:
         hooks=_hooks(),
         monotonic_ns=TickClock([0, 1_000_000]),
     )
-    with pytest.raises(FixtureExecutorBlocked, match="240"):
+    with pytest.raises(FixtureExecutorBlockedError, match="240"):
         summarize_candidate_latencies("gpt_oss_20b", (base,))
 
     duplicates = tuple(replace(base, item_id="same") for _ in range(240))
-    with pytest.raises(FixtureExecutorBlocked, match="duplicate"):
+    with pytest.raises(FixtureExecutorBlockedError, match="duplicate"):
         summarize_candidate_latencies("gpt_oss_20b", duplicates)
 
     nonfinite = tuple(
@@ -403,5 +403,5 @@ def test_latency_summary_rejects_wrong_count_duplicate_and_nonfinite() -> None:
         for index in range(240)
     )
     nonfinite = (replace(nonfinite[0], terminal_item_latency_ms=float("inf")), *nonfinite[1:])
-    with pytest.raises(FixtureExecutorBlocked, match="finite"):
+    with pytest.raises(FixtureExecutorBlockedError, match="finite"):
         summarize_candidate_latencies("gpt_oss_20b", nonfinite)
