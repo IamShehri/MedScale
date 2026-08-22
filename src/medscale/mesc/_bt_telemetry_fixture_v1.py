@@ -91,19 +91,11 @@ def qualify_fixture_telemetry(
     """Validate synthetic telemetry and compute a deterministic qualification result."""
     _validate_ascii_identity(qualification.gpu_uuid, field="gpu_uuid")
     if qualification.gpu_model != GPU_MODEL_H100:
-        raise FixtureTelemetryBlockedError(
-            f"gpu_model must be exactly {GPU_MODEL_H100!r}"
-        )
-    _require_exact_positive_int(
-        qualification.sampling_interval_ms, field="sampling_interval_ms"
-    )
+        raise FixtureTelemetryBlockedError(f"gpu_model must be exactly {GPU_MODEL_H100!r}")
+    _require_exact_positive_int(qualification.sampling_interval_ms, field="sampling_interval_ms")
     if qualification.sampling_interval_ms > MAX_SAMPLE_INTERVAL_MS:
-        raise FixtureTelemetryBlockedError(
-            "sampling_interval_ms must be no greater than 100"
-        )
-    _require_exact_positive_int(
-        qualification.controlled_root_pid, field="controlled_root_pid"
-    )
+        raise FixtureTelemetryBlockedError("sampling_interval_ms must be no greater than 100")
+    _require_exact_positive_int(qualification.controlled_root_pid, field="controlled_root_pid")
     for field, value in (
         ("monitor_start_ns", qualification.monitor_start_ns),
         ("model_load_or_probe_start_ns", qualification.model_load_or_probe_start_ns),
@@ -114,9 +106,7 @@ def qualify_fixture_telemetry(
         _require_exact_nonnegative_int(value, field=field)
 
     if qualification.monitor_start_ns > qualification.model_load_or_probe_start_ns:
-        raise FixtureTelemetryBlockedError(
-            "monitoring must start before model/probe start"
-        )
+        raise FixtureTelemetryBlockedError("monitoring must start before model/probe start")
     if qualification.final_terminal_ns > qualification.device_sync_completed_ns:
         raise FixtureTelemetryBlockedError(
             "device synchronization must not precede terminal completion"
@@ -152,14 +142,10 @@ def qualify_fixture_telemetry(
                     "telemetry frame timestamps must be strictly increasing"
                 )
             if frame.monotonic_ns - previous_ts > max_gap_ns:
-                raise FixtureTelemetryBlockedError(
-                    "telemetry frame gap exceeds 100 ms"
-                )
+                raise FixtureTelemetryBlockedError("telemetry frame gap exceeds 100 ms")
         previous_ts = frame.monotonic_ns
 
-        owned_pids = _controlled_process_tree(
-            frame.processes, qualification.controlled_root_pid
-        )
+        owned_pids = _controlled_process_tree(frame.processes, qualification.controlled_root_pid)
         unexpected = tuple(
             item.pid
             for item in frame.processes
@@ -170,9 +156,7 @@ def qualify_fixture_telemetry(
                 f"unexpected GPU compute process detected: {unexpected[0]}"
             )
         aggregate_bytes = sum(
-            item.used_memory_bytes
-            for item in frame.processes
-            if item.pid in owned_pids
+            item.used_memory_bytes for item in frame.processes if item.pid in owned_pids
         )
         peak_bytes = max(peak_bytes, aggregate_bytes)
         frame_documents.append(
@@ -207,9 +191,7 @@ def qualify_fixture_telemetry(
 
     peak_vram_mb = peak_bytes / _MIB
     if not math.isfinite(peak_vram_mb) or peak_vram_mb < 0:
-        raise FixtureTelemetryBlockedError(
-            "peak_vram_mb must be finite and non-negative"
-        )
+        raise FixtureTelemetryBlockedError("peak_vram_mb must be finite and non-negative")
 
     document = {
         "controlled_process_peak_bytes": peak_bytes,
@@ -273,9 +255,7 @@ def _controlled_process_tree(
         cursor = pid
         while True:
             if cursor in chain_seen:
-                raise FixtureTelemetryBlockedError(
-                    "process parent graph contains a cycle"
-                )
+                raise FixtureTelemetryBlockedError("process parent graph contains a cycle")
             chain_seen.add(cursor)
             if cursor == root_pid:
                 owned.add(pid)
@@ -293,12 +273,8 @@ def _validate_process_observation(item: ProcessMemoryObservation) -> None:
         _require_exact_positive_int(item.parent_pid, field="process.parent_pid")
         if item.parent_pid == item.pid:
             raise FixtureTelemetryBlockedError("process may not parent itself")
-    _require_exact_nonnegative_int(
-        item.used_memory_bytes, field="process.used_memory_bytes"
-    )
-    _require_exact_bool(
-        item.is_compute_process, field="process.is_compute_process"
-    )
+    _require_exact_nonnegative_int(item.used_memory_bytes, field="process.used_memory_bytes")
+    _require_exact_bool(item.is_compute_process, field="process.is_compute_process")
 
 
 def _validate_latency_probe(probe: LatencyProbe) -> None:
@@ -311,9 +287,7 @@ def _validate_latency_probe(probe: LatencyProbe) -> None:
     if probe.end_monotonic_ns < probe.start_monotonic_ns:
         raise FixtureTelemetryBlockedError("latency probe end precedes start")
     if probe.elapsed_ns != probe.end_monotonic_ns - probe.start_monotonic_ns:
-        raise FixtureTelemetryBlockedError(
-            "latency probe elapsed_ns does not match timestamps"
-        )
+        raise FixtureTelemetryBlockedError("latency probe elapsed_ns does not match timestamps")
 
 
 def _validate_ascii_identity(value: object, *, field: str) -> str:
@@ -324,9 +298,7 @@ def _validate_ascii_identity(value: object, *, field: str) -> str:
     except UnicodeEncodeError as error:
         raise FixtureTelemetryBlockedError(f"{field} must be ASCII") from error
     if any(byte < 0x20 or byte > 0x7E or byte in {0x22, 0x5C} for byte in encoded):
-        raise FixtureTelemetryBlockedError(
-            f"{field} contains a prohibited ASCII byte"
-        )
+        raise FixtureTelemetryBlockedError(f"{field} contains a prohibited ASCII byte")
     return value
 
 
