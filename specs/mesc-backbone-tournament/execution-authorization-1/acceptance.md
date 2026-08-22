@@ -149,14 +149,29 @@ precision_mode = BF16
 
 BF16 is mandatory for Phi-4 under this authorization. Activation may not substitute FP16, FP32, automatic dtype selection, or a quantized derivative.
 
-Because `trust_remote_code=true` executes externally sourced Python, immutable revision/hash binding is necessary but not sufficient. Before activation require a canonical `PHI_REMOTE_CODE_MANIFEST` and `PHI_REMOTE_CODE_SECURITY_REVIEW` such that:
+Because `trust_remote_code=true` executes externally sourced Python, immutable revision/hash binding is necessary but not sufficient. Before activation require a canonical `PHI_REMOTE_CODE_MANIFEST` and `PHI_REMOTE_CODE_SECURITY_REVIEW`.
 
-- `PHI_REMOTE_CODE_MANIFEST` enumerates every executable remote-code file by repository-relative path, Git blob SHA when available, SHA-256, and byte length;
-- `PHI_REMOTE_CODE_MANIFEST_SHA256` is the SHA-256 of the exact canonical manifest bytes;
+`PHI_REMOTE_CODE_MANIFEST` is an immutable canonical UTF-8 JSON array with no BOM and no trailing newline. The top level must be an array. Every entry must be an object with exactly the four keys `byte_length`, `git_blob_sha`, `path`, and `sha256`; duplicate JSON member names are invalid. The required scalar types and formats are:
+
+```text
+byte_length = JSON integer >= 0, serialized as plain base-10 digits
+path = JSON string matching ^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$
+git_blob_sha = JSON string matching ^[0-9a-f]{40}$
+sha256 = JSON string matching ^[0-9a-f]{64}$
+```
+
+Each slash-separated `path` component must be neither `.` nor `..`. Because the path grammar is ASCII-only and excludes quotes and backslashes, `path`, `git_blob_sha`, and `sha256` must be serialized using their literal ASCII bytes; JSON escape sequences, non-ASCII bytes, control characters, quotes inside values, and backslashes are prohibited. Every executable/imported Phi remote-code file must have an exact Git blob SHA at the pinned `model_revision`; inability to resolve a manifest path to a Git blob is `BLOCKED` rather than represented by `null` or an omitted field. Object keys are serialized lexicographically, entries are sorted ascending by decoded `path` ASCII bytes, JSON separators are exactly `,` and `:`, insignificant whitespace is prohibited, and duplicate paths are prohibited.
+
+Before `PHI_REMOTE_CODE_MANIFEST_SHA256` may be accepted, a duplicate-member-rejecting JSON parser must validate the top-level type, exact member set, exact scalar types/formats, path grammar, ordering, and duplicate-path prohibition. The verifier must canonically reserialize the parsed value under the rules above and require byte-for-byte equality with the supplied manifest. Only those validated canonical bytes are hashed. Malformed JSON, duplicate members, wrong scalar types, extra/missing keys, non-canonical serialization, duplicate paths, unresolved Git blobs, digest/length mismatch, or inability to reproduce the bytes => `BLOCKED`.
+
+The remaining Phi remote-code predicates are:
+
+- `PHI_REMOTE_CODE_MANIFEST_SHA256` is the SHA-256 of the exact validated canonical manifest bytes;
+- every manifest `path` resolves at the pinned Phi `model_revision` to the exact `git_blob_sha`, and the file bytes hash to the exact `sha256` and have the exact `byte_length`;
 - the executed file set equals the manifest exactly, with no additional dynamically fetched or imported remote file;
 - `PHI_REMOTE_CODE_SECURITY_REVIEW` explicitly binds `PHI_REMOTE_CODE_MANIFEST_SHA256` and records an independent security-review disposition of `PASS` for every manifest file and for the complete import graph reachable from those files;
 - `PHI_REMOTE_CODE_SECURITY_REVIEW_SHA256` is the SHA-256 of the exact security-review artifact bytes;
-- any executed file, import, digest, manifest, or review disposition mismatch => `BLOCKED`.
+- any executed file, import, digest, manifest, parser, or review disposition mismatch => `BLOCKED`.
 
 Phi model execution must occur in a dedicated model process with all of these controls active before any remote-code import or model load:
 
@@ -218,6 +233,8 @@ EXECUTOR_ALLOWLIST_SHA256 = <SHA-256 of exact canonical allowlist artifact bytes
 ```
 
 `EXECUTOR_PATHS_AND_BLOB_SHAS` is an immutable canonical UTF-8 JSON array. Each entry is an object with exactly the keys `git_blob_sha` and `path`. Each decoded `path` must match `^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$`; each slash-separated component must be neither `.` nor `..`. Because this grammar is ASCII-only and excludes both `"` and `\`, every `path` must be serialized between JSON double quotes using exactly its literal ASCII bytes: JSON escape sequences (including `\uXXXX`), non-ASCII bytes, control characters, quotes, and backslashes are prohibited in `path`. Each `git_blob_sha` must match `^[0-9a-f]{40}$` and must likewise be serialized as its literal lowercase-ASCII bytes. Object keys are serialized lexicographically, entries are sorted ascending by the exact decoded `path` ASCII bytes, JSON separators are exactly `,` and `:`, insignificant whitespace is prohibited, and there is no trailing newline. Duplicate paths are prohibited. `EXECUTOR_ALLOWLIST_SHA256` is the SHA-256 of those exact canonical artifact bytes and must change whenever the executable allowlist or any allowlisted blob identity changes.
+
+Before `EXECUTOR_ALLOWLIST_SHA256` may be accepted, parse the supplied allowlist using a JSON parser that rejects duplicate member names. Require the top level to be an array; require every entry to contain exactly one `git_blob_sha` member and exactly one `path` member; require both values to be JSON string scalars; reject extra/missing members, wrong scalar types, duplicate member names, malformed JSON, non-canonical ordering/whitespace/escaping, and duplicate decoded paths. Canonically reserialize the parsed value under the preceding rules and require byte-for-byte equality with the supplied bytes before accepting the digest. The future executor/activation conformance suite must include negative fixtures containing duplicate `path` members and duplicate `git_blob_sha` members and must prove each fixture terminates as `BLOCKED`.
 
 Before activation, mechanically verify that `EXECUTION_CODE_SHA` resolves exactly to `EXECUTION_CODE_TREE`. Then, for every allowlist entry, resolve `path` against that exact commit/tree and require the resolved Git object to exist, be a blob, and have a Git blob SHA exactly equal to the entry's `git_blob_sha`. The independently reviewed executable/imported executor-and-harness path set must equal the allowlist exactly: no reviewed executable path may be absent, no extra allowlist entry may exist, and no executor/harness file outside the allowlist may execute or be imported. Missing paths, duplicate paths, wrong object types, Git blob mismatches, commit/tree mismatches, malformed canonical bytes, allowlist-digest mismatches, extra or omitted executable paths, or inability to reproduce any predicate => `BLOCKED`. The allowlist is therefore bound to `EXECUTION_CODE_SHA`/`EXECUTION_CODE_TREE`; it must never be accepted as independent metadata.
 
@@ -313,6 +330,15 @@ explicitly identifies the exact two repositories/revisions and the terms/access 
 
 Credentials, tokens, private keys, and session secrets must never be committed to the repository or copied into governance records.
 
+The separate gated-access decision must define and canonically adopt two immutable, non-secret human access-attestation artifacts before activation. Their exact SHA-256 values remain unbound here and must be fixed only after that decision is canonical:
+
+```text
+APERTUS_ACCESS_ATTESTATION_SHA256 = <exact SHA-256 of canonical Apertus access-attestation bytes>
+MEDGEMMA_ACCESS_ATTESTATION_SHA256 = <exact SHA-256 of canonical MedGemma access-attestation bytes>
+```
+
+Each attestation artifact must be included in the exact canonical `FD-MESC-BT-EXEC-1-GATED-ACCESS-1` merge and must explicitly bind the human attester identity, exact model repository and revision, repository-access state, and terms/access state authorized by that decision, without storing credentials, tokens, cookies, session material, or secret values. The gated-access decision must define the attestation artifact's exact path, canonical byte serialization, Git blob identity, and SHA-256 before the corresponding access/terms action is treated as usable evidence. The activation verifier must prove the selected gated-access decision merge contains those exact immutable bytes and that the two SHA-256 values recompute exactly. Post-hoc, mutable, external-only, or unhashed access statements do not satisfy this contract.
+
 Before activation of this four-candidate authorization require:
 
 ```text
@@ -322,7 +348,7 @@ MEDGEMMA_EXACT_REVISION_ACCESS = ATTESTED
 CREDENTIAL_DISCLOSURE_IN_REPOSITORY = NONE
 ```
 
-If gated access is not separately authorized, activation is `BLOCKED`. A smaller subset requires a separately reviewed Founder amendment; it is not an automatic fallback.
+If gated access is not separately authorized, either attestation hash is unbound/missing, either attestation is not contained in the pinned decision merge, or the exact access/terms state cannot be verified, activation is `BLOCKED`. A smaller subset requires a separately reviewed Founder amendment; it is not an automatic fallback.
 
 ## H. Attempt bounds
 
@@ -349,6 +375,7 @@ A full tournament rerun requires a new Founder decision.
 The future execution-activation receipt must contain an `identity_preimage` object with exactly these keys, shown without leading whitespace and in lexical order:
 
 ```text
+apertus_access_attestation_sha256
 authorization_merge_sha
 authorization_merge_tree
 decision_id
@@ -357,6 +384,7 @@ execution_code_tree
 executor_allowlist_sha256
 founder_attestation_comment_id
 gated_access_decision_merge_sha
+medgemma_access_attestation_sha256
 phi_remote_code_manifest_sha256
 phi_remote_code_security_review_sha256
 phi_sandbox_qualification_sha256
@@ -365,19 +393,21 @@ runtime_binding_sha256
 telemetry_qualification_sha256
 ```
 
-Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, `EXECUTOR_ALLOWLIST_SHA256`, the exact current-head Founder attestation comment ID selected under Section A.1, canonical gated-access decision merge, `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact Phi security-review and sandbox qualification artifact SHA-256 values, exact canonical runtime-binding artifact SHA-256, exact no-model live telemetry qualification SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
+Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, `EXECUTOR_ALLOWLIST_SHA256`, the exact current-head Founder attestation comment ID selected under Section A.1, canonical gated-access decision merge, `APERTUS_ACCESS_ATTESTATION_SHA256`, `MEDGEMMA_ACCESS_ATTESTATION_SHA256`, `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact Phi security-review and sandbox qualification artifact SHA-256 values, exact canonical runtime-binding artifact SHA-256, exact no-model live telemetry qualification SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
 
 The following equality is mandatory and removes any naming ambiguity:
 
 ```text
-telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256
+apertus_access_attestation_sha256 = APERTUS_ACCESS_ATTESTATION_SHA256
+executor_allowlist_sha256 = EXECUTOR_ALLOWLIST_SHA256
+medgemma_access_attestation_sha256 = MEDGEMMA_ACCESS_ATTESTATION_SHA256
 phi_remote_code_manifest_sha256 = PHI_REMOTE_CODE_MANIFEST_SHA256
 phi_remote_code_security_review_sha256 = PHI_REMOTE_CODE_SECURITY_REVIEW_SHA256
 phi_sandbox_qualification_sha256 = PHI_SANDBOX_QUALIFICATION_SHA256
-executor_allowlist_sha256 = EXECUTOR_ALLOWLIST_SHA256
+telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256
 ```
 
-Define canonical activation identity serialization as UTF-8 JSON with object keys sorted lexicographically, separators exactly `,` and `:`, no insignificant whitespace, and no trailing newline. Then:
+Define canonical activation identity serialization as UTF-8 JSON with object keys sorted lexicographically, separators exactly `,` and `:`, no insignificant whitespace, and no trailing newline. A duplicate-member-rejecting parser must require exactly the key set above, exact JSON scalar types required by the activation schema, and byte-for-byte equality after canonical reserialization; duplicate member names, extra/missing keys, or alternate serialization => `BLOCKED`. Then:
 
 ```text
 ACTIVATION_ID = lowercase_hex(SHA256(canonical_json(identity_preimage)))
@@ -408,7 +438,11 @@ RELATIVE_PATH = PATH_COMPONENT ( "/" PATH_COMPONENT )*
 
 On the activation Linux runtime, the normative mechanism is `openat2(2)` with `RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_XDEV` for path resolution. Crossing any mount point, bind mount, or different filesystem beneath either trusted activation root is categorically prohibited; an `EXDEV`/mount-traversal result is `BLOCKED`. File creation must additionally use no-follow/exclusive creation semantics appropriate to the operation; directory creation must operate one `PATH_COMPONENT` at a time relative to a trusted parent descriptor and reopen/verify the created directory descriptor before descending. Magic links, symlinks, mount traversal, descriptor/root mismatch, resolution outside the trusted root, a pre-existing exact-byte collision with a different activation artifact, or any race-safe resolution failure => `BLOCKED` before model access.
 
-If the exact runtime cannot provide `openat2` with `RESOLVE_NO_XDEV` and the other resolution guarantees above, activation is `BLOCKED` unless a separately reviewed equivalent mechanism proves the same descriptor-relative atomic confinement against TOCTOU races **and** a categorical no-cross-mount invariant for both trusted roots. The executor must never perform a security decision using a check-then-open pathname sequence.
+The filesystem mutation surface under both activation roots is closed and explicit. The only permitted path-creating mutations are descriptor-relative `mkdirat` for a single already validated `PATH_COMPONENT` under a trusted parent descriptor, and descriptor-relative `openat2` creation of a new regular file using `O_CREAT | O_EXCL | O_NOFOLLOW` together with the required `RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_XDEV` constraints. After a file descriptor is safely opened, writes, truncation to the intended new file, synchronization, and close may operate on that descriptor; they must not perform a second pathname lookup.
+
+`rename`, `renameat`, `renameat2`, `link`, `linkat`, `symlink`, `symlinkat`, `unlink`, `unlinkat`, hard-link creation, symbolic-link creation, `mknod*`, `mount*`, bind mounts, and pathname-based mutation fallbacks are prohibited for both activation roots. No object may be moved, linked, or renamed into either root from another location, between the two roots, or between directories after creation. Temporary-file-plus-rename publication is therefore prohibited; the final validated artifact path must be selected before exclusive creation. If an implementation requires replacement, cleanup, rename, link, unlink, symlink, or any other pathname mutation not explicitly permitted above, activation is `BLOCKED` pending a separately reviewed contract change. A failed run may leave activation-scoped partial artifacts, but those bytes grant no authority and must not be adopted as canonical results.
+
+If the exact runtime cannot provide `openat2` with `RESOLVE_NO_XDEV` and the other resolution guarantees above, activation is `BLOCKED` unless a separately reviewed equivalent mechanism proves the same descriptor-relative atomic confinement against TOCTOU races **and** a categorical no-cross-mount invariant for both trusted roots. Any equivalent must also preserve the closed mutation surface above; an equivalent that reintroduces pathname-based rename/link/unlink/symlink or cross-mount behavior is not equivalent. The executor must never perform a security decision using a check-then-open pathname sequence.
 
 The executor must keep frozen inputs read-only and place generated evidence only under the external runtime root during execution.
 
@@ -440,15 +474,15 @@ A separate execution-activation package is mandatory. It must bind all values le
 2. the selected Founder attestation comment still exists, is unedited, is authored by `TheHalfMoon`, and exactly binds the reviewed authorization head that became the canonical merge's second parent;
 3. unchanged four-candidate set and model revisions;
 4. exact tokenizer/processor/custom-code identities and exact BF16 execution precision for Phi-4, Apertus, and MedGemma plus native MXFP4 for GPT-OSS;
-5. canonical executor implementation SHA/tree/blob allowlist and exact `EXECUTOR_ALLOWLIST_SHA256`, including proof that `EXECUTION_CODE_SHA` resolves to `EXECUTION_CODE_TREE`, every allowlisted path resolves at that exact commit/tree to the exact recorded Git blob SHA, and the reviewed executable/imported path set equals the allowlist exactly;
-6. exact `PHI_REMOTE_CODE_MANIFEST_SHA256`, executed remote-code set equality, and independent `PASS` security-review artifact;
+5. canonical executor implementation SHA/tree/blob allowlist and exact `EXECUTOR_ALLOWLIST_SHA256`, including duplicate-member-rejecting parsing, canonical reserialization equality, negative duplicate-member fixture PASS, proof that `EXECUTION_CODE_SHA` resolves to `EXECUTION_CODE_TREE`, every allowlisted path resolves at that exact commit/tree to the exact recorded Git blob SHA, and the reviewed executable/imported path set equals the allowlist exactly;
+6. exact canonical `PHI_REMOTE_CODE_MANIFEST` bytes/schema/parser/reserialization, exact `PHI_REMOTE_CODE_MANIFEST_SHA256`, exact pinned-revision path→Git-blob/SHA-256/byte-length equality, executed remote-code set equality, and independent `PASS` security-review artifact;
 7. exact Phi offline/secretless/read-only sandbox qualification artifact `PASS` on the activation runtime;
 8. exact runtime/container/dependency identities;
 9. exact provider/GPU identity;
 10. exact-instance no-model H100 telemetry qualification `PASS`, with `telemetry_qualification_sha256 = NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256`;
 11. measurement harness implementation and deterministic fixture/self-test evidence;
-12. exact `ACTIVATION_ID` recomputation, regex validation, exact ASCII path-grammar/collision/no-cross-mount validation, and race-safe descriptor-relative artifact-root confinement proof;
-13. canonical gated-access Founder decision and human access attestations for both gated models;
+12. exact `ACTIVATION_ID` recomputation, strict identity-preimage parsing, regex validation, exact ASCII path-grammar/collision/no-cross-mount validation, closed filesystem-mutation-surface validation, and race-safe descriptor-relative artifact-root confinement proof;
+13. canonical gated-access Founder decision, exact immutable human access-attestation bytes for both gated models contained in that decision merge, and exact `APERTUS_ACCESS_ATTESTATION_SHA256` / `MEDGEMMA_ACCESS_ATTESTATION_SHA256` bindings in `identity_preimage`;
 14. both preflight audits remain PASS and digest-identical;
 15. frozen protocol/report/scoring/corpus digests remain unchanged;
 16. exact-head CI and CodeQL PASS;
