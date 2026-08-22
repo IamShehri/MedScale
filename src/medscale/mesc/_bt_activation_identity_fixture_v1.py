@@ -136,9 +136,7 @@ def qualify_fixture_activation_identity(
     identity = _parse_identity_preimage(identity_preimage_bytes)
 
     expected = {
-        "apertus_access_attestation_sha256": (
-            independent.apertus_access_attestation_sha256
-        ),
+        "apertus_access_attestation_sha256": (independent.apertus_access_attestation_sha256),
         "authorization_merge_sha": independent.authorization_merge_sha,
         "authorization_merge_tree": independent.authorization_merge_tree,
         "execution_code_sha": independent.execution_code_sha,
@@ -149,16 +147,12 @@ def qualify_fixture_activation_identity(
         "gated_access_founder_attestation_comment_id": (
             independent.gated_access_founder_attestation_comment_id
         ),
-        "medgemma_access_attestation_sha256": (
-            independent.medgemma_access_attestation_sha256
-        ),
+        "medgemma_access_attestation_sha256": (independent.medgemma_access_attestation_sha256),
         "phi_remote_code_manifest_sha256": independent.phi_remote_code_manifest_sha256,
         "phi_remote_code_security_review_sha256": (
             independent.phi_remote_code_security_review_sha256
         ),
-        "phi_sandbox_qualification_sha256": (
-            independent.phi_sandbox_qualification_sha256
-        ),
+        "phi_sandbox_qualification_sha256": (independent.phi_sandbox_qualification_sha256),
         "runtime_binding_sha256": runtime_binding_sha256,
         "telemetry_qualification_sha256": independent.telemetry_qualification_sha256,
     }
@@ -193,16 +187,12 @@ def _parse_runtime_binding(raw: bytes) -> dict[str, object]:
         for item in identities
     ]
     if len(set(validated_identities)) != len(validated_identities):
-        raise FixtureActivationBlockedError(
-            "acceleration runtime identities must be unique"
-        )
+        raise FixtureActivationBlockedError("acceleration runtime identities must be unique")
     if validated_identities != sorted(
         validated_identities,
         key=lambda item: item.encode("ascii"),
     ):
-        raise FixtureActivationBlockedError(
-            "acceleration runtime identities must be byte-sorted"
-        )
+        raise FixtureActivationBlockedError("acceleration runtime identities must be byte-sorted")
 
     _require_regex_string(
         value["base_container_oci_digest"],
@@ -248,13 +238,9 @@ def _parse_runtime_binding(raw: bytes) -> dict[str, object]:
     if value["provider_class"] != PROVIDER_CLASS:
         raise FixtureActivationBlockedError("provider_class mismatch")
     if type(value["sequential_single_gpu_execution"]) is not bool:
-        raise FixtureActivationBlockedError(
-            "sequential_single_gpu_execution must be boolean true"
-        )
+        raise FixtureActivationBlockedError("sequential_single_gpu_execution must be boolean true")
     if value["sequential_single_gpu_execution"] is not True:
-        raise FixtureActivationBlockedError(
-            "sequential_single_gpu_execution must be boolean true"
-        )
+        raise FixtureActivationBlockedError("sequential_single_gpu_execution must be boolean true")
 
     _require_regex_string(
         value["repository_checkout_root_path"],
@@ -341,9 +327,7 @@ def _parse_canonical_object(raw: bytes, *, field: str) -> dict[str, object]:
             sort_keys=True,
         ).encode("ascii")
     except (TypeError, ValueError) as error:
-        raise FixtureActivationBlockedError(
-            f"{field} cannot be canonically serialized"
-        ) from error
+        raise FixtureActivationBlockedError(f"{field} cannot be canonically serialized") from error
     if canonical != raw:
         raise FixtureActivationBlockedError(f"{field} is not canonical JSON")
     return parsed
