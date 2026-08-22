@@ -30,6 +30,11 @@ _VALID = (
 ).encode("ascii")
 
 
+def _single_entry_payload(blob_sha: str = _SHA_A, path: str = "a.py") -> bytes:
+    entry = f'{{"git_blob_sha":"{blob_sha}","path":"{path}"}}'
+    return f"[{entry}]".encode("ascii")
+
+
 def test_valid_canonical_allowlist_binds_exact_bytes_and_digest() -> None:
     allowlist = parse_executor_allowlist(_VALID)
 
@@ -65,9 +70,9 @@ def test_duplicate_path_member_is_rejected_before_mapping_creation() -> None:
 
 
 def test_duplicate_git_blob_member_is_rejected_before_mapping_creation() -> None:
-    payload = (
-        f'[{{"git_blob_sha":"{_SHA_A}","git_blob_sha":"{_SHA_B}","path":"a.py"}}]'
-    ).encode("ascii")
+    first = f'"git_blob_sha":"{_SHA_A}"'
+    second = f'"git_blob_sha":"{_SHA_B}"'
+    payload = f"[{{{first},{second},\"path\":\"a.py\"}}]".encode("ascii")
     with pytest.raises(ExecutorAllowlistDuplicateMemberError, match="git_blob_sha"):
         parse_executor_allowlist(payload)
 
@@ -102,22 +107,17 @@ def test_closed_entry_schema_is_enforced(payload: bytes) -> None:
     ],
 )
 def test_path_grammar_is_fail_closed(path: str) -> None:
-    payload = (
-        '[{"git_blob_sha":"'
-        + _SHA_A
-        + '","path":"'
-        + path.replace("\\", "\\\\")
-        + '"}]'
-    ).encode("utf-8")
+    escaped_path = path.replace("\\", "\\\\")
+    entry = f'{{"git_blob_sha":"{_SHA_A}","path":"{escaped_path}"}}'
+    payload = f"[{entry}]".encode("utf-8")
     with pytest.raises(ExecutorAllowlistSchemaError):
         parse_executor_allowlist(payload)
 
 
 @pytest.mark.parametrize("blob_sha", ["A" * 40, "a" * 39, "g" * 40, ""])
 def test_git_blob_sha_must_be_exact_lowercase_40_hex(blob_sha: str) -> None:
-    payload = f'[{{"git_blob_sha":"{blob_sha}","path":"a.py"}}]'.encode("ascii")
     with pytest.raises(ExecutorAllowlistSchemaError, match="Git blob SHA"):
-        parse_executor_allowlist(payload)
+        parse_executor_allowlist(_single_entry_payload(blob_sha=blob_sha))
 
 
 def test_duplicate_decoded_paths_are_rejected() -> None:
@@ -163,15 +163,12 @@ def test_regular_file_blob_resolution_passes_for_100644_and_100755() -> None:
         "scripts/runner.py": ResolvedExecutorObject("blob", "100755", _SHA_A),
         "src/medscale/mesc/harness.py": ResolvedExecutorObject("blob", "100644", _SHA_B),
     }
-
     verify_executor_allowlist_objects(allowlist, resolved.__getitem__)
 
 
 @pytest.mark.parametrize("mode", ["120000", "160000", "040000", "100600"])
 def test_non_regular_or_unapproved_modes_are_blocked(mode: str) -> None:
-    allowlist = parse_executor_allowlist(
-        f'[{{"git_blob_sha":"{_SHA_A}","path":"a.py"}}]'.encode("ascii")
-    )
+    allowlist = parse_executor_allowlist(_single_entry_payload())
 
     def resolve(_: str) -> ResolvedExecutorObject:
         return ResolvedExecutorObject("blob", mode, _SHA_A)
@@ -181,9 +178,7 @@ def test_non_regular_or_unapproved_modes_are_blocked(mode: str) -> None:
 
 
 def test_non_blob_object_is_blocked() -> None:
-    allowlist = parse_executor_allowlist(
-        f'[{{"git_blob_sha":"{_SHA_A}","path":"a.py"}}]'.encode("ascii")
-    )
+    allowlist = parse_executor_allowlist(_single_entry_payload())
 
     def resolve(_: str) -> ResolvedExecutorObject:
         return ResolvedExecutorObject("tree", "040000", _SHA_A)
@@ -193,9 +188,7 @@ def test_non_blob_object_is_blocked() -> None:
 
 
 def test_blob_identity_mismatch_is_blocked() -> None:
-    allowlist = parse_executor_allowlist(
-        f'[{{"git_blob_sha":"{_SHA_A}","path":"a.py"}}]'.encode("ascii")
-    )
+    allowlist = parse_executor_allowlist(_single_entry_payload())
 
     def resolve(_: str) -> ResolvedExecutorObject:
         return ResolvedExecutorObject("blob", "100644", _SHA_B)
@@ -205,9 +198,7 @@ def test_blob_identity_mismatch_is_blocked() -> None:
 
 
 def test_resolver_failure_is_fail_closed() -> None:
-    allowlist = parse_executor_allowlist(
-        f'[{{"git_blob_sha":"{_SHA_A}","path":"a.py"}}]'.encode("ascii")
-    )
+    allowlist = parse_executor_allowlist(_single_entry_payload())
 
     def resolve(_: str) -> ResolvedExecutorObject:
         raise KeyError("missing")
