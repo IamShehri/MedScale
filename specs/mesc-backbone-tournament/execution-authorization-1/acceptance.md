@@ -4,9 +4,9 @@ Status: **DRAFT NORMATIVE CONTRACT — NO PRESENT EXECUTION AUTHORITY**
 
 Date: 2026-08-22
 
-Every applicable predicate is fail-closed. Unknown values, stale evidence, floating revisions, unreviewed executable code, ambiguous measurement semantics, incomplete PR replay, or inability to reproduce an identity => `BLOCKED`.
+Every applicable predicate is fail-closed. Unknown values, stale evidence, floating revisions, unreviewed executable code, ambiguous measurement semantics, incomplete PR replay, missing authentication, or inability to reproduce an identity => `BLOCKED`.
 
-## A. Canonical prerequisite
+## A. Canonical prerequisite and Founder authentication
 
 The authorization candidate is drafted against:
 
@@ -22,6 +22,9 @@ GH2_CORPUS_CONFORMANCE_AUDIT_SHA256 = 842f2e0dbeaea59087223ddd94c8a95844c8f14822
 GH2_ADOPTION_RECORD_PATH = specs/mesc-backbone-tournament/execution-preflight-1-gh2-adoption/14a2229c184d3ef29b6032d5cb00e11ac28d1413/canonical-adoption-verification.json
 GH2_ADOPTION_RECORD_GIT_BLOB_SHA = ac7d0681daa453bccffea5648d6605c119e0298d
 GH2_ADOPTION_RECORD_SHA256 = 7bd7a2108b2730107a6bbcc0d8eaa915df8047c8158a2652e67b392995a33101
+FOUNDER_GITHUB_LOGIN = TheHalfMoon
+FOUNDER_ATTESTATION_VERSION = MESC-BT-EXEC-1-FOUNDER-ATTESTATION-V1
+FOUNDER_ATTESTATION_PR = 139
 ```
 
 The exact canonical GH2 adoption record above is the only record that may satisfy the preflight-adoption prerequisite. Its bytes must match both the pinned Git blob and SHA-256, and its fields must equal exactly:
@@ -40,18 +43,41 @@ merge_signature_verification.verified = true
 merge_signature_verification.reason = valid
 ```
 
+### A.1 Exact-head Founder attestation
+
+`founder-authorization.md` records the decision text but does not authenticate the decision by itself. After the final reviewed authorization head is stable and before Ready, require exactly one top-level PR #139 issue comment that matches all of these predicates:
+
+```text
+author.login = TheHalfMoon
+created_at = updated_at
+body = EXACT_FOUNDER_ATTESTATION_BODY
+```
+
+Where `EXACT_FOUNDER_ATTESTATION_BODY` is exactly five LF-separated lines, with no leading/trailing whitespace and one final LF:
+
+```text
+MESC-BT-EXEC-1-FOUNDER-ATTESTATION-V1
+PR=139
+HEAD_SHA=<FINAL_REVIEWED_HEAD_SHA>
+DECISION=APPROVE_CONDITIONAL_CANONICAL_ADOPTION
+EXECUTION_AUTHORITY=NONE_UNTIL_SEPARATE_ACTIVATION_PASS
+```
+
+`<FINAL_REVIEWED_HEAD_SHA>` must be replaced by the exact 40-lowercase-hex PR head under review. Capture the immutable GitHub numeric comment ID as `FOUNDER_ATTESTATION_COMMENT_ID`. The selected matching comment must still exist, remain authored by `TheHalfMoon`, remain unedited, and retain exact body bytes before Ready, immediately before merge, after merge, and before any later activation. A head mutation burns the prior attestation for the new head; a fresh exact-head attestation is then required. Stale attestation comments for older heads do not match and grant no authority.
+
 Before this authorization PR may become Ready, and again immediately before merge, mechanically require:
 
 1. `GH2_ADOPTION_RECORD_PATH` exists on canonical `main`, its Git blob equals `GH2_ADOPTION_RECORD_GIT_BLOB_SHA`, its exact bytes hash to `GH2_ADOPTION_RECORD_SHA256`, and every pinned field above matches exactly;
 2. that exact adoption record has `failed_checks=[]` and `outcome=PREFLIGHT_READY_FOR_EXECUTION_AUTHORIZATION`;
 3. the two pre-execution audits remain byte-identical and PASS;
-4. canonical `main` has not moved from the PR's final-review base;
-5. exact-head CI PASS;
-6. exact-head CodeQL PASS;
-7. fresh independent exact-head governance review reports no blocker;
-8. unresolved blocking review threads = 0;
-9. the PR delta is confined to this execution-authorization package;
-10. merge uses exact expected-head protection and is followed by SHA/tree/ordered-parent/signature/path verification.
+4. exactly one current-head Founder attestation matches Section A.1 and its comment ID is captured;
+5. canonical `main` has not moved from the PR's final-review base;
+6. exact-head CI PASS;
+7. exact-head CodeQL PASS;
+8. fresh independent exact-head governance/security review reports no blocker;
+9. unresolved blocking review threads = 0;
+10. the PR delta is confined to this execution-authorization package;
+11. merge uses exact expected-head protection and is followed by SHA/tree/ordered-parent/hosting-signature/path/byte/account verification.
 
 Any failure => no canonical conditional authorization.
 
@@ -81,7 +107,7 @@ CORPUS_CONFORMANCE_AUDIT_SHA256 = 842f2e0dbeaea59087223ddd94c8a95844c8f14822a16e
 
 No corpus substitution, rematerialization, prompt change, scoring change, parser change, post-output rule, or report-validator weakening is authorized.
 
-## C. Candidate set and immutable revisions
+## C. Candidate set, immutable revisions, and executable-code trust
 
 The selected execution set is exactly four candidates:
 
@@ -121,7 +147,32 @@ trust_remote_code = true
 precision_mode = BF16
 ```
 
-BF16 is mandatory for Phi-4 under this authorization. Activation may not substitute FP16, FP32, automatic dtype selection, or a quantized derivative. If `trust_remote_code=true`, activation must enumerate, hash, and bind every executed remote-code file from that exact immutable repository revision. Floating code is prohibited.
+BF16 is mandatory for Phi-4 under this authorization. Activation may not substitute FP16, FP32, automatic dtype selection, or a quantized derivative.
+
+Because `trust_remote_code=true` executes externally sourced Python, immutable revision/hash binding is necessary but not sufficient. Before activation require a canonical `PHI_REMOTE_CODE_SECURITY_REVIEW` artifact that:
+
+- enumerates every executable remote-code file by repository-relative path, Git blob SHA when available, SHA-256, and byte length;
+- proves the executed file set equals the reviewed allowlist exactly, with no additional dynamically fetched or imported remote file;
+- records an independent security-review disposition of `PASS` for every allowlisted executable file and for the complete import graph reachable from those files;
+- records `PHI_REMOTE_CODE_SECURITY_REVIEW_SHA256` for the exact review artifact;
+- fails closed if any executed file, import, digest, or review disposition differs from the allowlist.
+
+Phi model execution must occur in a dedicated model process with all of these controls active before any remote-code import or model load:
+
+```text
+NETWORK_EGRESS = DENY_ALL
+NETWORK_INGRESS = DENY_ALL
+DNS = UNAVAILABLE_TO_MODEL_PROCESS
+CREDENTIAL_ENVIRONMENT = EMPTY
+CLOUD_METADATA_ACCESS = DENIED
+HOST_OR_CONTAINER_CONTROL_SOCKETS = NONE
+MODEL_AND_RUNTIME_INPUT_MOUNTS = READ_ONLY_ALLOWLIST_ONLY
+FROZEN_GOLD_SCORING_INPUTS_VISIBLE_TO_MODEL_PROCESS = NO
+WRITABLE_PATHS = ACTIVATION_SCOPED_SCRATCH_AND_OUTPUT_ONLY
+REMOTE_FETCH_DURING_MODEL_PROCESS = PROHIBITED
+```
+
+Required model/runtime files must be acquired by a separately reviewed trusted acquisition step, fully identity-verified, and mounted read-only before the isolated model process starts. Hugging Face/provider tokens, GitHub credentials, cloud credentials, SSH keys, API keys, and unrelated environment secrets must not enter the model process. The activation package must bind a `PHI_SANDBOX_QUALIFICATION_SHA256` artifact proving these controls on the exact runtime. Failure to prove isolation => `BLOCKED`.
 
 ### C.4 MedGemma 1.5 4B IT
 
@@ -153,7 +204,7 @@ Before activation require a separately reviewed canonical implementation that pr
 - per-attempt evidence recording;
 - peak-VRAM and item-latency telemetry;
 - complete artifact-manifest hashing and byte lengths;
-- fail-closed behavior on runtime, identity, schema, and measurement violations;
+- fail-closed behavior on runtime, identity, schema, measurement, sandbox, and remote-code-review violations;
 - no tools, web, retrieval, function calls, training, or candidate-specific prompt optimization.
 
 Define at activation:
@@ -166,7 +217,7 @@ EXECUTOR_PATHS_AND_BLOB_SHAS = <complete reviewed allowlist>
 
 Unbound executor identity => `BLOCKED`.
 
-## E. Runtime/hardware binding
+## E. Runtime/hardware and live telemetry binding
 
 Target class:
 
@@ -198,6 +249,20 @@ DEPENDENCY_LOCK_SHA256 = <exact>
 All four candidates must execute sequentially against the same activation-bound GPU identity. Provider/hardware replacement mid-run invalidates the run unless a separately reviewed recovery rule exists before execution.
 
 No additional quantization is permitted beyond GPT-OSS's canonically recorded native MXFP4 unless separately reviewed before activation.
+
+### E.1 Exact-instance no-model telemetry qualification
+
+After the exact provider instance/GPU is allocated but before any candidate model-weight access or prompt serialization, run a no-model live qualification on that exact activation-bound H100. It must use the same telemetry code and container/runtime identities intended for execution and produce a deterministic evidence artifact with `RESULT=PASS`, an exact SHA-256, and raw evidence proving:
+
+- NVML is available and identifies the exact bound `GPU_UUID` and H100 model;
+- per-process GPU-memory sampling works at the configured interval and produces raw samples with monotonic timestamps;
+- process-tree attribution is deterministic for a controlled non-model GPU test process;
+- the co-tenant detector identifies all unexpected GPU compute processes and the qualification fails if any unexplained co-tenant process exists;
+- device synchronization is executed and evidenced before terminal measurement capture;
+- monotonic latency timing records non-negative finite values and can be recomputed from raw timestamps;
+- raw-sample capture, serialization, hashing, and artifact-manifest inclusion all succeed.
+
+The qualification may execute only a trivial non-model GPU workload needed to test telemetry. It must not download/load candidate weights, request/accept gated terms, serialize candidate prompts, run inference, rank candidates, or access frozen gold answers. Bind the artifact as `NO_MODEL_H100_TELEMETRY_QUALIFICATION_SHA256`. Missing or non-PASS evidence => `BLOCKED`.
 
 ## F. Measurement contract
 
@@ -275,22 +340,26 @@ At most `4 * 240 * 2 = 1920` generation attempts can exist, and only infrastruct
 
 A full tournament rerun requires a new Founder decision.
 
-## I. Artifact destination and identity contract
+## I. Artifact destination and activation identity contract
 
-The future execution-activation receipt must contain an `identity_preimage` object with exactly these keys:
+The future execution-activation receipt must contain an `identity_preimage` object with exactly these keys, shown without leading whitespace and in lexical order:
 
 ```text
 authorization_merge_sha
- authorization_merge_tree
- decision_id
- execution_code_sha
- execution_code_tree
- gated_access_decision_merge_sha
- runtime_binding_sha256
- receipt_version
+authorization_merge_tree
+decision_id
+execution_code_sha
+execution_code_tree
+founder_attestation_comment_id
+gated_access_decision_merge_sha
+phi_remote_code_security_review_sha256
+phi_sandbox_qualification_sha256
+receipt_version
+runtime_binding_sha256
+telemetry_qualification_sha256
 ```
 
-The leading spaces above are presentation only; the actual JSON keys have no leading whitespace. Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, canonical gated-access decision merge, exact canonical runtime-binding artifact SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
+Values must bind the exact canonical authorization merge, reviewed execution-code commit/tree, the exact current-head Founder attestation comment ID selected under Section A.1, canonical gated-access decision merge, exact Phi security-review and sandbox qualification artifact SHA-256 values, exact canonical runtime-binding artifact SHA-256, exact no-model live telemetry qualification SHA-256, `decision_id=FD-MESC-BT-EXEC-1-ACTIVATION-1`, and `receipt_version=MESC-BT-EXEC-1-ACTIVATION-RECEIPT-V1`.
 
 Define canonical activation identity serialization as UTF-8 JSON with object keys sorted lexicographically, separators exactly `,` and `:`, no insignificant whitespace, and no trailing newline. Then:
 
@@ -337,24 +406,28 @@ Canonical merge of this authorization package does not activate execution.
 A separate execution-activation package is mandatory. It must bind all values left open above and include an activation receipt whose state is initially non-executing. Before that activation can authorize the first model-access operation, mechanically prove:
 
 1. this authorization package's canonical merge SHA/tree and exact package blobs;
-2. unchanged four-candidate set and model revisions;
-3. exact tokenizer/processor/custom-code identities and exact BF16 execution precision for Phi-4, Apertus, and MedGemma plus native MXFP4 for GPT-OSS;
-4. canonical executor implementation SHA/tree/blob allowlist;
-5. exact runtime/container/dependency identities;
-6. exact provider/GPU identity;
-7. measurement harness implementation and deterministic self-test evidence;
-8. exact `ACTIVATION_ID` recomputation, regex validation, collision check, and artifact-root containment proof;
-9. canonical gated-access Founder decision and human access attestations for both gated models;
-10. both preflight audits remain PASS and digest-identical;
-11. frozen protocol/report/scoring/corpus digests remain unchanged;
-12. exact-head CI and CodeQL PASS;
-13. fresh independent exact-head governance/security review with no blocker;
-14. unresolved blocking threads = 0;
-15. Ready then fresh post-Ready reconciliation;
-16. expected-head merge;
-17. post-merge canonical SHA/tree/ordered-parent/signature/path/byte verification.
+2. the selected Founder attestation comment still exists, is unedited, is authored by `TheHalfMoon`, and exactly binds the reviewed authorization head that became the canonical merge's second parent;
+3. unchanged four-candidate set and model revisions;
+4. exact tokenizer/processor/custom-code identities and exact BF16 execution precision for Phi-4, Apertus, and MedGemma plus native MXFP4 for GPT-OSS;
+5. canonical executor implementation SHA/tree/blob allowlist;
+6. exact Phi remote-code executable allowlist and independent `PASS` security-review artifact;
+7. exact Phi offline/secretless/read-only sandbox qualification artifact `PASS` on the activation runtime;
+8. exact runtime/container/dependency identities;
+9. exact provider/GPU identity;
+10. exact-instance no-model H100 telemetry qualification `PASS` and artifact SHA-256;
+11. measurement harness implementation and deterministic fixture/self-test evidence;
+12. exact `ACTIVATION_ID` recomputation, regex validation, collision check, and artifact-root containment proof;
+13. canonical gated-access Founder decision and human access attestations for both gated models;
+14. both preflight audits remain PASS and digest-identical;
+15. frozen protocol/report/scoring/corpus digests remain unchanged;
+16. exact-head CI and CodeQL PASS;
+17. fresh independent exact-head governance/security review with no blocker;
+18. unresolved blocking threads = 0;
+19. Ready then fresh post-Ready reconciliation;
+20. expected-head merge;
+21. post-merge canonical SHA/tree/ordered-parent/hosting-signature/path/byte/account verification.
 
-Only after all seventeen pass may activation state become:
+Only after all twenty-one pass may activation state become:
 
 ```text
 MODEL_WEIGHT_ACCESS = AUTHORIZED_FOR_BOUND_EXECUTION_ONLY
@@ -365,7 +438,7 @@ BACKBONE_TOURNAMENT_EXECUTION = AUTHORIZED_FOR_ONE_BOUND_EPISODE
 
 Training and fine-tuning remain prohibited.
 
-## K. Authorization-package PR gates
+## K. Authorization-package PR gates and merge authentication
 
 This package itself is governance-only. Keep its PR Draft until the unchanged exact head passes:
 
@@ -376,14 +449,27 @@ CI = PASS
 CODEQL = PASS
 FRESH_INDEPENDENT_REVIEW = NO_BLOCKER
 UNRESOLVED_BLOCKING_THREADS = 0
+FOUNDER_ATTESTATION_MATCH_COUNT_FOR_EXACT_HEAD = 1
+FOUNDER_ATTESTATION_AUTHOR = TheHalfMoon
+FOUNDER_ATTESTATION_EDITED = NO
 CANONICAL_MAIN = unchanged final-review base
 ```
 
 Then mark Ready and perform a fresh reconciliation. Merge only using the fully reviewed expected head SHA.
 
-After merge require canonical main equals returned merge SHA, ordered parents equal `[PREMERGE_MAIN_SHA, REVIEWED_HEAD_SHA]`, merge tree/path scope matches the reviewed candidate, all four package blobs equal reviewed bytes, and GitHub hosting verification is `verified=true`, `reason=valid`, with non-null signature and payload.
+The GitHub hosting signature is an integrity/authenticity signal for GitHub's merge infrastructure; it is **not** treated as the Founder signature. Founder authorization is authenticated separately by Section A.1. After merge require all of the following:
 
-Failure => `FD-MESC-BT-EXEC-1` remains noncanonical/non-authoritative.
+- canonical `main` equals the merge SHA returned by GitHub;
+- ordered parents equal `[PREMERGE_MAIN_SHA, REVIEWED_HEAD_SHA]`;
+- merge tree/path scope matches the reviewed candidate and all four package blobs equal reviewed bytes;
+- GitHub commit API `author.login` equals `TheHalfMoon`;
+- GitHub commit API `committer.login` equals `web-flow`;
+- hosting `verification.verified=true` and `verification.reason=valid`;
+- hosting `verification.signature` and `verification.payload` are non-null;
+- the selected `FOUNDER_ATTESTATION_COMMENT_ID` still exists with exact author/body/head and remains unedited;
+- no merge mechanism bypassed `expected_head_sha=REVIEWED_HEAD_SHA`.
+
+Failure => `FD-MESC-BT-EXEC-1` remains noncanonical/non-authoritative. These checks do not alter repository branch protection and do not reinterpret the GitHub hosting signature as a Founder signature.
 
 ## L. Hard stop
 
