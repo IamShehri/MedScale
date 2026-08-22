@@ -98,9 +98,7 @@ def _independent() -> IndependentActivationBindings:
 def _identity(runtime_digest: str) -> dict[str, object]:
     independent = _independent()
     return {
-        "apertus_access_attestation_sha256": (
-            independent.apertus_access_attestation_sha256
-        ),
+        "apertus_access_attestation_sha256": (independent.apertus_access_attestation_sha256),
         "authorization_merge_sha": independent.authorization_merge_sha,
         "authorization_merge_tree": independent.authorization_merge_tree,
         "decision_id": DECISION_ID,
@@ -112,16 +110,12 @@ def _identity(runtime_digest: str) -> dict[str, object]:
         "gated_access_founder_attestation_comment_id": (
             independent.gated_access_founder_attestation_comment_id
         ),
-        "medgemma_access_attestation_sha256": (
-            independent.medgemma_access_attestation_sha256
-        ),
+        "medgemma_access_attestation_sha256": (independent.medgemma_access_attestation_sha256),
         "phi_remote_code_manifest_sha256": independent.phi_remote_code_manifest_sha256,
         "phi_remote_code_security_review_sha256": (
             independent.phi_remote_code_security_review_sha256
         ),
-        "phi_sandbox_qualification_sha256": (
-            independent.phi_sandbox_qualification_sha256
-        ),
+        "phi_sandbox_qualification_sha256": (independent.phi_sandbox_qualification_sha256),
         "receipt_version": RECEIPT_VERSION,
         "runtime_binding_sha256": runtime_digest,
         "telemetry_qualification_sha256": independent.telemetry_qualification_sha256,
@@ -145,12 +139,9 @@ def test_valid_fixture_derives_activation_id_and_roots() -> None:
     expected_activation_id = hashlib.sha256(identity_bytes).hexdigest()
     assert result.runtime_binding_sha256 == hashlib.sha256(runtime_bytes).hexdigest()
     assert result.activation_id == expected_activation_id
-    assert result.external_runtime_root == (
-        f"/workspace/mesc-bt-exec-1/{expected_activation_id}/"
-    )
+    assert result.external_runtime_root == (f"/workspace/mesc-bt-exec-1/{expected_activation_id}/")
     assert result.repository_result_root == (
-        "specs/mesc-backbone-tournament/execution-result-1/"
-        f"{expected_activation_id}/"
+        f"specs/mesc-backbone-tournament/execution-result-1/{expected_activation_id}/"
     )
 
 
