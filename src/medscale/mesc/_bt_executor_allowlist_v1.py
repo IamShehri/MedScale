@@ -22,7 +22,7 @@ import json
 import re
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Final
+from typing import Final, Never, cast
 
 _PATH_RE: Final = re.compile(r"^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$")
 _GIT_BLOB_RE: Final = re.compile(r"^[0-9a-f]{40}$")
@@ -97,29 +97,30 @@ def parse_executor_allowlist(payload: bytes) -> ExecutorAllowlist:
         raise ExecutorAllowlistJsonError("UTF-8 BOM is prohibited")
 
     parsed = _load_duplicate_safe_json(payload)
-    if type(parsed) is not list:
+    if not isinstance(parsed, list):
         raise ExecutorAllowlistSchemaError("executor allowlist top level must be a JSON array")
+    raw_entries = cast(list[object], parsed)
 
     entries: list[ExecutorAllowlistEntry] = []
     seen_paths: set[str] = set()
-    for index, raw_entry in enumerate(parsed):
+    for index, raw_entry in enumerate(raw_entries):
         entry = _validate_entry(raw_entry, index=index)
         if entry.path in seen_paths:
-            raise ExecutorAllowlistSchemaError(f"duplicate executor path: {entry.path!r}")
+            message = f"duplicate executor path: {entry.path!r}"
+            raise ExecutorAllowlistSchemaError(message)
         seen_paths.add(entry.path)
         entries.append(entry)
 
     paths = [entry.path for entry in entries]
-    if paths != sorted(paths, key=lambda value: value.encode("ascii")):
-        raise ExecutorAllowlistCanonicalizationError(
-            "executor allowlist entries must be sorted by decoded path ASCII bytes"
-        )
+    expected_order = sorted(paths, key=lambda value: value.encode("ascii"))
+    if paths != expected_order:
+        message = "executor allowlist entries must be sorted by decoded path ASCII bytes"
+        raise ExecutorAllowlistCanonicalizationError(message)
 
     canonical = canonical_executor_allowlist_bytes(tuple(entries))
     if payload != canonical:
-        raise ExecutorAllowlistCanonicalizationError(
-            "supplied executor allowlist bytes are not the exact canonical serialization"
-        )
+        message = "supplied executor allowlist bytes are not the exact canonical serialization"
+        raise ExecutorAllowlistCanonicalizationError(message)
 
     return ExecutorAllowlist(
         entries=tuple(entries),
@@ -137,22 +138,21 @@ def canonical_executor_allowlist_bytes(entries: tuple[ExecutorAllowlistEntry, ..
     """
     document = [{"git_blob_sha": entry.git_blob_sha, "path": entry.path} for entry in entries]
     try:
-        return json.dumps(
+        text = json.dumps(
             document,
             ensure_ascii=False,
             allow_nan=False,
             separators=(",", ":"),
             sort_keys=True,
-        ).encode("ascii")
+        )
+        return text.encode("ascii")
     except (TypeError, UnicodeEncodeError, ValueError) as error:
-        raise ExecutorAllowlistCanonicalizationError(
-            "executor allowlist cannot be serialized as canonical ASCII JSON"
-        ) from error
+        message = "executor allowlist cannot be serialized as canonical ASCII JSON"
+        raise ExecutorAllowlistCanonicalizationError(message) from error
 
 
 def verify_executor_allowlist_objects(
-    allowlist: ExecutorAllowlist,
-    resolve: ExecutorObjectResolver,
+    allowlist: ExecutorAllowlist, resolve: ExecutorObjectResolver
 ) -> None:
     """Verify every allowlist entry against injected exact-commit Git object metadata.
 
@@ -160,44 +160,40 @@ def verify_executor_allowlist_objects(
     Only regular-file blob modes ``100644`` and ``100755`` are accepted. Symlinks, trees,
     gitlinks/submodules, missing objects, non-blobs, mode mismatches, and blob mismatches fail.
     """
-    if type(allowlist) is not ExecutorAllowlist:
-        raise ExecutorAllowlistResolutionError("allowlist must be a validated ExecutorAllowlist")
+    if not isinstance(allowlist, ExecutorAllowlist):
+        message = "allowlist must be a validated ExecutorAllowlist"
+        raise ExecutorAllowlistResolutionError(message)
 
     for entry in allowlist.entries:
         try:
             resolved = resolve(entry.path)
         except Exception as error:
-            raise ExecutorAllowlistResolutionError(
-                f"failed to resolve allowlisted executor path {entry.path!r}"
-            ) from error
+            message = f"failed to resolve allowlisted executor path {entry.path!r}"
+            raise ExecutorAllowlistResolutionError(message) from error
 
-        if type(resolved) is not ResolvedExecutorObject:
-            raise ExecutorAllowlistResolutionError(
-                f"resolver returned an invalid object for {entry.path!r}"
-            )
+        if not isinstance(resolved, ResolvedExecutorObject):
+            message = f"resolver returned an invalid object for {entry.path!r}"
+            raise ExecutorAllowlistResolutionError(message)
         if resolved.object_type != "blob":
-            raise ExecutorAllowlistResolutionError(
-                f"allowlisted executor path {entry.path!r} must resolve to a blob"
-            )
+            message = f"allowlisted executor path {entry.path!r} must resolve to a blob"
+            raise ExecutorAllowlistResolutionError(message)
         if resolved.mode not in _ALLOWED_REGULAR_FILE_MODES:
-            raise ExecutorAllowlistResolutionError(
-                f"allowlisted executor path {entry.path!r} has prohibited mode {resolved.mode!r}"
-            )
+            message = f"allowlisted executor path {entry.path!r} has prohibited mode {resolved.mode!r}"
+            raise ExecutorAllowlistResolutionError(message)
         if _GIT_BLOB_RE.fullmatch(resolved.git_blob_sha) is None:
-            raise ExecutorAllowlistResolutionError(
-                f"resolver returned an invalid Git blob SHA for {entry.path!r}"
-            )
+            message = f"resolver returned an invalid Git blob SHA for {entry.path!r}"
+            raise ExecutorAllowlistResolutionError(message)
         if resolved.git_blob_sha != entry.git_blob_sha:
-            raise ExecutorAllowlistResolutionError(
-                f"Git blob mismatch for allowlisted executor path {entry.path!r}"
-            )
+            message = f"Git blob mismatch for allowlisted executor path {entry.path!r}"
+            raise ExecutorAllowlistResolutionError(message)
 
 
 def _load_duplicate_safe_json(payload: bytes) -> object:
     try:
         text = payload.decode("utf-8", errors="strict")
     except UnicodeDecodeError as error:
-        raise ExecutorAllowlistJsonError("executor allowlist must be valid UTF-8") from error
+        message = "executor allowlist must be valid UTF-8"
+        raise ExecutorAllowlistJsonError(message) from error
 
     try:
         return json.loads(
@@ -205,63 +201,60 @@ def _load_duplicate_safe_json(payload: bytes) -> object:
             object_pairs_hook=_object_from_unique_pairs,
             parse_constant=_reject_json_constant,
         )
-    except ExecutorAllowlistDuplicateMemberError:
+    except ExecutorAllowlistJsonError:
         raise
-    except (json.JSONDecodeError, ExecutorAllowlistJsonError) as error:
-        if isinstance(error, ExecutorAllowlistJsonError):
-            raise
-        raise ExecutorAllowlistJsonError("executor allowlist is not valid JSON") from error
+    except json.JSONDecodeError as error:
+        message = "executor allowlist is not valid JSON"
+        raise ExecutorAllowlistJsonError(message) from error
 
 
 def _object_from_unique_pairs(pairs: list[tuple[str, object]]) -> dict[str, object]:
     document: dict[str, object] = {}
     for key, value in pairs:
         if key in document:
-            raise ExecutorAllowlistDuplicateMemberError(f"duplicate JSON member: {key!r}")
+            message = f"duplicate JSON member: {key!r}"
+            raise ExecutorAllowlistDuplicateMemberError(message)
         document[key] = value
     return document
 
 
-def _reject_json_constant(value: str) -> object:
-    raise ExecutorAllowlistJsonError(f"non-standard JSON constant is prohibited: {value}")
+def _reject_json_constant(value: str) -> Never:
+    message = f"non-standard JSON constant is prohibited: {value}"
+    raise ExecutorAllowlistJsonError(message)
 
 
 def _validate_entry(raw_entry: object, *, index: int) -> ExecutorAllowlistEntry:
-    if type(raw_entry) is not dict:
-        raise ExecutorAllowlistSchemaError(f"allowlist entry {index} must be a JSON object")
+    if not isinstance(raw_entry, dict):
+        message = f"allowlist entry {index} must be a JSON object"
+        raise ExecutorAllowlistSchemaError(message)
+    entry = cast(dict[str, object], raw_entry)
 
-    entry_keys = frozenset(raw_entry)
+    entry_keys = frozenset(entry)
     if entry_keys != _REQUIRED_ENTRY_KEYS:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} must contain exactly git_blob_sha and path"
-        )
+        message = f"allowlist entry {index} must contain exactly git_blob_sha and path"
+        raise ExecutorAllowlistSchemaError(message)
 
-    raw_path = raw_entry["path"]
-    raw_blob = raw_entry["git_blob_sha"]
+    raw_path = entry["path"]
+    raw_blob = entry["git_blob_sha"]
     if type(raw_path) is not str or type(raw_blob) is not str:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} path and git_blob_sha must be JSON strings"
-        )
+        message = f"allowlist entry {index} path and git_blob_sha must be JSON strings"
+        raise ExecutorAllowlistSchemaError(message)
 
     try:
         raw_path.encode("ascii")
         raw_blob.encode("ascii")
     except UnicodeEncodeError as error:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} values must contain ASCII bytes only"
-        ) from error
+        message = f"allowlist entry {index} values must contain ASCII bytes only"
+        raise ExecutorAllowlistSchemaError(message) from error
 
     if _PATH_RE.fullmatch(raw_path) is None:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} has invalid path grammar: {raw_path!r}"
-        )
+        message = f"allowlist entry {index} has invalid path grammar: {raw_path!r}"
+        raise ExecutorAllowlistSchemaError(message)
     if any(component in {".", ".."} for component in raw_path.split("/")):
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} path contains a prohibited dot component"
-        )
+        message = f"allowlist entry {index} path contains a prohibited dot component"
+        raise ExecutorAllowlistSchemaError(message)
     if _GIT_BLOB_RE.fullmatch(raw_blob) is None:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} has invalid Git blob SHA"
-        )
+        message = f"allowlist entry {index} has invalid Git blob SHA"
+        raise ExecutorAllowlistSchemaError(message)
 
     return ExecutorAllowlistEntry(git_blob_sha=raw_blob, path=raw_path)
