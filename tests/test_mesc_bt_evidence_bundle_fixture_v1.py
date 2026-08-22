@@ -168,9 +168,7 @@ def test_retry_after_success_blocks() -> None:
 def test_duplicate_attempt_number_blocks() -> None:
     observations = _matrix(("ITEM-001",))
     observations[0] = replace(observations[0], disposition="timeout", raw_response=None)
-    observations.append(
-        _attempt(CANDIDATE_KEYS[0], "ITEM-001", number=1, disposition="success")
-    )
+    observations.append(_attempt(CANDIDATE_KEYS[0], "ITEM-001", number=1, disposition="success"))
     with pytest.raises(FixtureEvidenceBlockedError, match="unique and contiguous"):
         build_fixture_evidence_bundle(observations, expected_item_ids=("ITEM-001",))
 
