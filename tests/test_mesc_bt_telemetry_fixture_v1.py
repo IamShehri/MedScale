@@ -68,7 +68,12 @@ def _qualification() -> FixtureTelemetryQualification:
         frames=(
             _frame(0, root, system),
             _frame(100_000_000, root, child, system),
-            _frame(175_000_000, replace(root, used_memory_bytes=1200 * MIB), child, system),
+            _frame(
+                175_000_000,
+                replace(root, used_memory_bytes=1200 * MIB),
+                child,
+                system,
+            ),
         ),
     )
 
@@ -183,7 +188,9 @@ def test_unexpected_compute_process_blocks() -> None:
         _process(100, None, 1000),
         _process(700, None, 1, compute=True),
     )
-    with pytest.raises(FixtureTelemetryBlockedError, match="unexpected GPU compute process"):
+    with pytest.raises(
+        FixtureTelemetryBlockedError, match="unexpected GPU compute process"
+    ):
         qualify_fixture_telemetry(replace(qualification, frames=tuple(frames)))
 
 
@@ -245,10 +252,13 @@ def test_stop_before_sync_blocks() -> None:
 
 def test_last_frame_before_sync_blocks() -> None:
     qualification = _qualification()
-    frames = qualification.frames[:-1] + (
+    frames = (
+        *qualification.frames[:-1],
         replace(qualification.frames[-1], monotonic_ns=174_999_999),
     )
-    with pytest.raises(FixtureTelemetryBlockedError, match="after device synchronization"):
+    with pytest.raises(
+        FixtureTelemetryBlockedError, match="after device synchronization"
+    ):
         qualify_fixture_telemetry(replace(qualification, frames=frames))
 
 
