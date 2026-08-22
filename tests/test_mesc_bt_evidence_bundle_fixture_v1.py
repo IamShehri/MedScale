@@ -13,7 +13,6 @@ from medscale.mesc._bt_evidence_bundle_fixture_v1 import (
     EvidenceArtifact,
     FixtureAttemptObservation,
     FixtureEvidenceBlockedError,
-    FixtureEvidenceBundle,
     build_fixture_evidence_bundle,
     verify_fixture_evidence_bundle,
 )
@@ -232,7 +231,7 @@ def test_verify_rejects_tampered_manifest_sha256() -> None:
 
 def test_verify_rejects_duplicate_artifact_path() -> None:
     bundle = build_fixture_evidence_bundle(_matrix(("ITEM-001",)), expected_item_ids=("ITEM-001",))
-    duplicate = replace(bundle, artifacts=bundle.artifacts + (bundle.artifacts[0],))
+    duplicate = replace(bundle, artifacts=(*bundle.artifacts, bundle.artifacts[0]))
     with pytest.raises(FixtureEvidenceBlockedError, match="duplicate artifact path"):
         verify_fixture_evidence_bundle(duplicate)
 
