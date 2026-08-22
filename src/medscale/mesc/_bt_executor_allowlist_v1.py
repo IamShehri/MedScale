@@ -178,7 +178,10 @@ def verify_executor_allowlist_objects(
             message = f"allowlisted executor path {entry.path!r} must resolve to a blob"
             raise ExecutorAllowlistResolutionError(message)
         if resolved.mode not in _ALLOWED_REGULAR_FILE_MODES:
-            message = f"allowlisted executor path {entry.path!r} has prohibited mode {resolved.mode!r}"
+            message = (
+                f"allowlisted executor path {entry.path!r} has prohibited mode "
+                f"{resolved.mode!r}"
+            )
             raise ExecutorAllowlistResolutionError(message)
         if _GIT_BLOB_RE.fullmatch(resolved.git_blob_sha) is None:
             message = f"resolver returned an invalid Git blob SHA for {entry.path!r}"
