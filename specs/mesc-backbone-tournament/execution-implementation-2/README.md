@@ -22,8 +22,8 @@ The implementation provides:
 - deterministic fixture payload serialization with model-visible and gold bytes held separately;
 - recursive rejection of declared gold/scoring keys from model-visible fixture payloads;
 - a hard maximum of two attempts, representing the initial attempt plus at most one retry;
-- an activation-bindable retry policy whose retryable failure classes are limited to timeout and
-  infrastructure failure;
+- an activation-bindable retry policy that permits a second attempt only after an
+  `infrastructure_error`; `timeout` is terminal and cannot trigger a retry;
 - injected monotonic nanosecond timing around the adapter call only;
 - per-attempt start/end timestamps, elapsed time, disposition, raw response, and response SHA-256;
 - terminal item latency equal to the sum of all attempted generation-call durations;
@@ -53,7 +53,7 @@ work must still provide and prove at least:
 
 - canonical corpus projection against post-claim frozen inputs;
 - exact frozen prompt construction and model-specific adapter implementation;
-- exact timeout/retry values reconstructed from the frozen protocol configuration;
+- exact timeout value reconstructed from the frozen protocol configuration;
 - strict canonical parser/schema/scoring/report-validator implementations rather than fixture
   hooks;
 - runtime executor/harness allowlist binding to the final execution commit/tree;
