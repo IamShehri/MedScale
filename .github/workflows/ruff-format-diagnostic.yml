@@ -1,9 +1,7 @@
 name: Ruff Format Diagnostic
 
 on:
-  push:
-    branches:
-      - "feat/mesc-bt-executor-allowlist-1/ab4d64f8708f649d33e494a4bed0272a2a526d9c"
+  pull_request:
 
 permissions:
   contents: read
