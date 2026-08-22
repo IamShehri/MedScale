@@ -33,9 +33,7 @@ class FakeAdapter:
         self.actions = list(actions or ["ok"])
         self.calls: list[tuple[str, bytes, int]] = []
 
-    def invoke(
-        self, candidate: CandidateBinding, model_payload: bytes, timeout_ms: int
-    ) -> str:
+    def invoke(self, candidate: CandidateBinding, model_payload: bytes, timeout_ms: int) -> str:
         self.calls.append((candidate.key, model_payload, timeout_ms))
         action = self.actions.pop(0) if self.actions else "ok"
         if isinstance(action, Exception):
@@ -82,9 +80,7 @@ def _hooks(events: list[str] | None = None) -> PostGenerationHooks:
         log.append("scorer")
         return {"correct": True}
 
-    def report(
-        item_id: str, candidate: CandidateBinding, parsed: object, score: object
-    ) -> None:
+    def report(item_id: str, candidate: CandidateBinding, parsed: object, score: object) -> None:
         assert item_id == "BT-FIXTURE-001"
         assert candidate.key in {entry.key for entry in TOURNAMENT_CANDIDATES}
         assert parsed == {"answer": "ok"}
