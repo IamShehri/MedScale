@@ -109,7 +109,7 @@ def test_closed_entry_schema_is_enforced(payload: bytes) -> None:
 def test_path_grammar_is_fail_closed(path: str) -> None:
     escaped_path = path.replace("\\", "\\\\")
     entry = f'{{"git_blob_sha":"{_SHA_A}","path":"{escaped_path}"}}'
-    payload = f"[{entry}]".encode("utf-8")
+    payload = f"[{entry}]".encode()
     with pytest.raises(ExecutorAllowlistSchemaError):
         parse_executor_allowlist(payload)
 
