@@ -135,10 +135,7 @@ def canonical_executor_allowlist_bytes(entries: tuple[ExecutorAllowlistEntry, ..
     :func:`parse_executor_allowlist`: callers must parse and byte-compare externally supplied
     bytes before treating an allowlist digest as authoritative.
     """
-    document = [
-        {"git_blob_sha": entry.git_blob_sha, "path": entry.path}
-        for entry in entries
-    ]
+    document = [{"git_blob_sha": entry.git_blob_sha, "path": entry.path} for entry in entries]
     try:
         return json.dumps(
             document,
