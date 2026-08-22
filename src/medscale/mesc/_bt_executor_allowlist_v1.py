@@ -105,10 +105,7 @@ def canonical_executor_allowlist_bytes(
     entries: tuple[ExecutorAllowlistEntry, ...],
 ) -> bytes:
     """Serialize validated entries without a terminal newline."""
-    document = [
-        {"git_blob_sha": entry.git_blob_sha, "path": entry.path}
-        for entry in entries
-    ]
+    document = [{"git_blob_sha": entry.git_blob_sha, "path": entry.path} for entry in entries]
     try:
         text = json.dumps(
             document,
@@ -146,9 +143,7 @@ def _validate_entries(
     for index, raw_entry in enumerate(raw_entries):
         entry = _validate_entry(raw_entry, index=index)
         if entry.path in seen_paths:
-            raise ExecutorAllowlistSchemaError(
-                f"duplicate executor path: {entry.path!r}"
-            )
+            raise ExecutorAllowlistSchemaError(f"duplicate executor path: {entry.path!r}")
         seen_paths.add(entry.path)
         entries.append(entry)
 
@@ -225,17 +220,13 @@ def _object_from_unique_pairs(
     document: dict[str, object] = {}
     for key, value in pairs:
         if key in document:
-            raise ExecutorAllowlistDuplicateMemberError(
-                f"duplicate JSON member: {key!r}"
-            )
+            raise ExecutorAllowlistDuplicateMemberError(f"duplicate JSON member: {key!r}")
         document[key] = value
     return document
 
 
 def _reject_json_constant(value: str) -> Never:
-    raise ExecutorAllowlistJsonError(
-        f"non-standard JSON constant is prohibited: {value}"
-    )
+    raise ExecutorAllowlistJsonError(f"non-standard JSON constant is prohibited: {value}")
 
 
 def _validate_entry(
@@ -244,9 +235,7 @@ def _validate_entry(
     index: int,
 ) -> ExecutorAllowlistEntry:
     if not isinstance(raw_entry, dict):
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} must be a JSON object"
-        )
+        raise ExecutorAllowlistSchemaError(f"allowlist entry {index} must be a JSON object")
     entry = cast(dict[str, object], raw_entry)
 
     if frozenset(entry) != _REQUIRED_ENTRY_KEYS:
@@ -257,9 +246,7 @@ def _validate_entry(
     raw_path = entry["path"]
     raw_blob = entry["git_blob_sha"]
     if type(raw_path) is not str or type(raw_blob) is not str:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} values must be JSON strings"
-        )
+        raise ExecutorAllowlistSchemaError(f"allowlist entry {index} values must be JSON strings")
 
     try:
         raw_path.encode("ascii")
@@ -270,17 +257,11 @@ def _validate_entry(
         ) from error
 
     if _PATH_RE.fullmatch(raw_path) is None:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} has invalid path grammar"
-        )
+        raise ExecutorAllowlistSchemaError(f"allowlist entry {index} has invalid path grammar")
     if any(component in {".", ".."} for component in raw_path.split("/")):
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} contains a dot path component"
-        )
+        raise ExecutorAllowlistSchemaError(f"allowlist entry {index} contains a dot path component")
     if _GIT_BLOB_RE.fullmatch(raw_blob) is None:
-        raise ExecutorAllowlistSchemaError(
-            f"allowlist entry {index} has invalid Git blob SHA"
-        )
+        raise ExecutorAllowlistSchemaError(f"allowlist entry {index} has invalid Git blob SHA")
 
     return ExecutorAllowlistEntry(
         git_blob_sha=raw_blob,
